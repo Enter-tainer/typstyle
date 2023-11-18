@@ -1,4 +1,6 @@
 use clap::Parser;
+use typst_syntax::parse;
+use typst_geshihua::convert;
 
 use crate::cli::CliArguments;
 
@@ -6,5 +8,11 @@ mod cli;
 
 fn main() {
     let CliArguments { input } = CliArguments::parse();
-    println!("Hello, world!");
+    let content = std::fs::read_to_string(input).unwrap();
+    let root = parse(&content);
+    let markup = root.cast().unwrap();
+    let doc = convert(markup);
+    let res = doc.pretty(80).to_string();
+    print!("{}", res);
 }
+
