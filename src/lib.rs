@@ -5,7 +5,7 @@ use pretty::BoxDoc;
 use typst_syntax::ast::*;
 use typst_syntax::{ast, SyntaxNode};
 
-pub fn convert(root: Markup<'_>) -> BoxDoc<'_, ()> {
+pub fn convert_markup(root: Markup<'_>) -> BoxDoc<'_, ()> {
     let doc: BoxDoc<()> = BoxDoc::nil();
     for expr in root.exprs() {
         let expr_doc = convert_expr(expr);
@@ -25,15 +25,15 @@ fn convert_expr(expr: Expr<'_>) -> BoxDoc<'_, ()> {
         ast::Expr::Strong(s) => convert_strong(s),
         ast::Expr::Emph(e) => convert_emph(e),
         ast::Expr::Raw(r) => convert_raw(r),
-        ast::Expr::Link(l) => todo!(),
-        ast::Expr::Label(l) => todo!(),
-        ast::Expr::Ref(r) => todo!(),
-        ast::Expr::Heading(h) => todo!(),
-        ast::Expr::List(l) => todo!(),
-        ast::Expr::Enum(e) => todo!(),
-        ast::Expr::Term(t) => todo!(),
-        ast::Expr::Equation(e) => todo!(),
-        ast::Expr::Math(m) => todo!(),
+        ast::Expr::Link(l) => convert_link(l),
+        ast::Expr::Label(l) => convert_label(l),
+        ast::Expr::Ref(r) => convert_ref(r),
+        ast::Expr::Heading(h) => convert_heading(h),
+        ast::Expr::List(l) => convert_list_item(l),
+        ast::Expr::Enum(e) => convert_enum_item(e),
+        ast::Expr::Term(t) => convert_term_item(t),
+        ast::Expr::Equation(e) => convert_equation(e),
+        ast::Expr::Math(m) => convert_math(m),
         ast::Expr::MathIdent(mi) => todo!(),
         ast::Expr::MathAlignPoint(map) => todo!(),
         ast::Expr::MathDelimited(md) => todo!(),
@@ -41,17 +41,17 @@ fn convert_expr(expr: Expr<'_>) -> BoxDoc<'_, ()> {
         ast::Expr::MathPrimes(mp) => todo!(),
         ast::Expr::MathFrac(mf) => todo!(),
         ast::Expr::MathRoot(mr) => todo!(),
-        ast::Expr::Ident(i) => todo!(),
-        ast::Expr::None(n) => todo!(),
-        ast::Expr::Auto(a) => todo!(),
-        ast::Expr::Bool(b) => todo!(),
-        ast::Expr::Int(i) => todo!(),
-        ast::Expr::Float(f) => todo!(),
-        ast::Expr::Numeric(n) => todo!(),
-        ast::Expr::Str(s) => todo!(),
-        ast::Expr::Code(c) => todo!(),
-        ast::Expr::Content(c) => todo!(),
-        ast::Expr::Parenthesized(p) => todo!(),
+        ast::Expr::Ident(i) => convert_ident(i),
+        ast::Expr::None(n) => convert_none(n),
+        ast::Expr::Auto(a) => convert_auto(a),
+        ast::Expr::Bool(b) => convert_bool(b),
+        ast::Expr::Int(i) => convert_int(i),
+        ast::Expr::Float(f) => convert_float(f),
+        ast::Expr::Numeric(n) => convert_numeric(n),
+        ast::Expr::Str(s) => convert_str(s),
+        ast::Expr::Code(c) => convert_code_block(c),
+        ast::Expr::Content(c) => convert_content_block(c),
+        ast::Expr::Parenthesized(p) => convert_parenthesized(p),
         ast::Expr::Array(a) => todo!(),
         ast::Expr::Dict(d) => todo!(),
         ast::Expr::Unary(u) => todo!(),
@@ -113,12 +113,12 @@ fn convert_smart_quote(smart_quote: SmartQuote<'_>) -> BoxDoc<'_, ()> {
 }
 
 fn convert_strong(strong: Strong<'_>) -> BoxDoc<'_, ()> {
-    let body = convert(strong.body());
+    let body = convert_markup(strong.body());
     BoxDoc::text("*").append(body).append(BoxDoc::text("*"))
 }
 
 fn convert_emph(emph: Emph<'_>) -> BoxDoc<'_, ()> {
-    let body = convert(emph.body());
+    let body = convert_markup(emph.body());
     BoxDoc::text("_").append(body).append(BoxDoc::text("_"))
 }
 
@@ -141,8 +141,143 @@ fn convert_raw(raw: Raw<'_>) -> BoxDoc<'_, ()> {
     doc
 }
 
+fn convert_link(link: Link<'_>) -> BoxDoc<'_, ()> {
+    let node = link.to_untyped();
+    trivia(node)
+}
+
+fn convert_label(label: Label<'_>) -> BoxDoc<'_, ()> {
+    let node = label.to_untyped();
+    trivia(node)
+}
+
+fn convert_ref(reference: Ref<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = BoxDoc::text("@");
+    doc = doc.append(BoxDoc::text(reference.target()));
+    if let Some(supplement) = reference.supplement() {
+        doc = doc.append(convert_content_block(supplement));
+    }
+    doc
+}
+
+fn convert_heading(heading: Heading<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = BoxDoc::text("=".repeat(heading.level().into()));
+    doc = doc.append(BoxDoc::space());
+    doc = doc.append(convert_markup(heading.body()));
+    doc
+}
+
+fn convert_list_item(list_item: ListItem<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = BoxDoc::text("-");
+    doc = doc.append(BoxDoc::space());
+    doc = doc.append(convert_markup(list_item.body()));
+    doc
+}
+
+fn convert_enum_item(enum_item: EnumItem<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = if let Some(number) = enum_item.number() {
+        BoxDoc::text(format!("{number}."))
+    } else {
+        BoxDoc::text("+")
+    };
+    doc = doc.append(BoxDoc::space());
+    doc = doc.append(convert_markup(enum_item.body()));
+    doc
+}
+
+fn convert_term_item(term: TermItem<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = BoxDoc::text("/");
+    doc = doc.append(BoxDoc::space());
+    doc = doc.append(convert_markup(term.term()));
+    doc = doc.append(BoxDoc::text(":"));
+    doc = doc.append(BoxDoc::space());
+    doc = doc.append(convert_markup(term.description()));
+    doc
+}
+
+fn convert_equation(equation: Equation<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = BoxDoc::text("$");
+    if equation.block() {
+        doc = doc.append(BoxDoc::space());
+    }
+    doc = doc.append(convert_math(equation.body()));
+    if equation.block() {
+        doc = doc.append(BoxDoc::space());
+    }
+    doc = doc.append(BoxDoc::text("$"));
+    doc
+}
+
+fn convert_math(math: Math<'_>) -> BoxDoc<'_, ()> {
+    // TODO: check this later
+    let mut doc = BoxDoc::nil();
+    for expr in math.exprs() {
+        doc = doc.append(convert_expr(expr));
+    }
+    doc
+}
+
+fn convert_ident(ident: Ident<'_>) -> BoxDoc<'_, ()> {
+    let doc = BoxDoc::text(ident.as_str());
+    doc
+}
+
+fn convert_none(_none: None<'_>) -> BoxDoc<'_, ()> {
+    BoxDoc::text("none")
+}
+
+fn convert_auto(_auto: Auto<'_>) -> BoxDoc<'_, ()> {
+    BoxDoc::text("auto")
+}
+
+fn convert_bool(boolean: Bool<'_>) -> BoxDoc<'_, ()> {
+    let node = boolean.to_untyped();
+    trivia(node)
+}
+
+fn convert_int(int: Int<'_>) -> BoxDoc<'_, ()> {
+    let node = int.to_untyped();
+    trivia(node)
+}
+
+fn convert_float(float: Float<'_>) -> BoxDoc<'_, ()> {
+    let node = float.to_untyped();
+    trivia(node)
+}
+
+fn convert_numeric(numeric: Numeric<'_>) -> BoxDoc<'_, ()> {
+    let node = numeric.to_untyped();
+    trivia(node)
+}
+
+fn convert_str(str: Str<'_>) -> BoxDoc<'_, ()> {
+    let node = str.to_untyped();
+    trivia(node)
+}
+
+fn convert_code_block(code_block: CodeBlock<'_>) -> BoxDoc<'_, ()> {
+    todo!()
+}
+
+fn convert_parenthesized(parenthesized: Parenthesized<'_>) -> BoxDoc<'_, ()> {
+    let mut doc = BoxDoc::text("(");
+    doc = doc.append(convert_expr(parenthesized.expr()));
+    doc = doc.append(BoxDoc::text(")"));
+    doc
+}
+
+fn convert_content_block(content_block: ContentBlock<'_>) -> BoxDoc<'_, ()> {
+    // let mut doc = BoxDoc::text("{");
+    // for expr in content_block.exprs() {
+    //   doc = doc.append(convert_expr(expr));
+    // }
+    // doc = doc.append(BoxDoc::text("}"));
+    // doc
+    todo!()
+}
+
 fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
-    to_doc(node.text().to_string().into())
+    to_doc(std::borrow::Cow::Borrowed(node.text()))
 }
 
 pub fn to_doc(s: Cow<'_, str>) -> BoxDoc<'_, ()> {
