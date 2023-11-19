@@ -4,3 +4,11 @@
 
 a#emph[abc]d
 _123_
+
+#1231231
+
+#false
+
+#none
+
+#auto

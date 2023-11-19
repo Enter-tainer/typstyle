@@ -7,13 +7,13 @@ use typst_syntax::{ast, SyntaxNode};
 
 #[derive(Debug)]
 pub struct PrettyPrinter {
-    is_markup: RefCell<bool>,
+    is_code: RefCell<bool>,
 }
 
 impl Default for PrettyPrinter {
     fn default() -> Self {
         Self {
-            is_markup: RefCell::new(false),
+            is_code: RefCell::new(false),
         }
     }
 }
@@ -26,6 +26,14 @@ impl PrettyPrinter {
             doc = doc.append(expr_doc).append(BoxDoc::hardline());
         }
         doc
+    }
+
+    fn optional_hash(&self) -> BoxDoc<'_, ()> {
+        if *self.is_code.borrow() {
+            BoxDoc::nil()
+        } else {
+            BoxDoc::text("#")
+        }
     }
 
     fn convert_expr<'a>(&'a self, expr: Expr<'a>) -> BoxDoc<'a, ()> {
@@ -233,16 +241,16 @@ impl PrettyPrinter {
     }
 
     fn convert_ident<'a>(&'a self, ident: Ident<'a>) -> BoxDoc<'a, ()> {
-        let doc = BoxDoc::text(ident.as_str());
+        let doc = self.optional_hash().append(BoxDoc::text(ident.as_str()));
         doc
     }
 
     fn convert_none<'a>(&'a self, _none: None<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("none")
+        self.optional_hash().append(BoxDoc::text("none"))
     }
 
     fn convert_auto<'a>(&'a self, _auto: Auto<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("auto")
+        self.optional_hash().append(BoxDoc::text("auto"))
     }
 
     fn convert_bool<'a>(&'a self, boolean: Bool<'a>) -> BoxDoc<'a, ()> {
@@ -271,12 +279,22 @@ impl PrettyPrinter {
     }
 
     fn convert_code_block<'a>(&'a self, code_block: CodeBlock<'a>) -> BoxDoc<'a, ()> {
+        let current_is_markup = { *self.is_code.borrow() };
+        self.is_code.replace(false);
         let code = self.convert_code(code_block.body()).group().nest(2);
-        let doc = BoxDoc::text("{")
-            .append(BoxDoc::line())
-            .append(code)
-            .append(BoxDoc::line())
-            .append(BoxDoc::text("}"));
+        self.is_code.replace(current_is_markup);
+
+        let doc = {
+            if current_is_markup {
+                BoxDoc::text("#{")
+            } else {
+                BoxDoc::text("{")
+            }
+        }
+        .append(BoxDoc::line())
+        .append(code)
+        .append(BoxDoc::line())
+        .append(BoxDoc::text("}"));
         doc
     }
 
@@ -289,7 +307,10 @@ impl PrettyPrinter {
     }
 
     fn convert_content_block<'a>(&'a self, content_block: ContentBlock<'a>) -> BoxDoc<'a, ()> {
+        let current_is_markup = { *self.is_code.borrow() };
+        self.is_code.replace(true);
         let content = self.convert_markup(content_block.body()).group().nest(2);
+        self.is_code.replace(current_is_markup);
         let doc = BoxDoc::text("[")
             .append(BoxDoc::line())
             .append(content)
@@ -318,14 +339,20 @@ impl PrettyPrinter {
     }
 
     fn convert_array_item<'a>(&'a self, array_item: ArrayItem<'a>) -> BoxDoc<'a, ()> {
-        match array_item {
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
+        let doc = match array_item {
             ArrayItem::Pos(p) => self.convert_expr(p),
             // TODO: recheck how spread works
             ArrayItem::Spread(s) => BoxDoc::text("..").append(self.convert_expr(s)),
-        }
+        };
+        self.is_code.replace(current_is_code);
+        doc
     }
 
     fn convert_dict<'a>(&'a self, dict: Dict<'a>) -> BoxDoc<'a, ()> {
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
         let mut doc = BoxDoc::text("(");
         let items = BoxDoc::intersperse(
             dict.items().map(|item| self.convert_dict_item(item)),
@@ -334,6 +361,7 @@ impl PrettyPrinter {
         .group();
         doc = doc.append(items);
         doc = doc.append(BoxDoc::text(")"));
+        self.is_code.replace(current_is_code);
         doc
     }
 
@@ -379,18 +407,26 @@ impl PrettyPrinter {
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::nil()
+        let doc = BoxDoc::nil()
             .append(self.convert_expr(field_access.target()))
-            .append(BoxDoc::text("."))
-            .append(self.convert_ident(field_access.field()))
+            .append(BoxDoc::text("."));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
+        let doc = doc.append(self.convert_ident(field_access.field()));
+        self.is_code.replace(current_is_code);
+        doc
     }
 
     fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::nil()
-            .append(self.convert_expr(func_call.callee()))
+        let doc = BoxDoc::nil().append(self.convert_expr(func_call.callee()));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
+        let doc = doc
             .append(BoxDoc::text("("))
             .append(self.convert_args(func_call.args()))
-            .append(BoxDoc::text(")"))
+            .append(BoxDoc::text(")"));
+        self.is_code.replace(current_is_code);
+        doc
     }
 
     fn convert_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
@@ -490,7 +526,12 @@ impl PrettyPrinter {
     }
 
     fn convert_let_binding<'a>(&'a self, let_binding: LetBinding<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("let").append(BoxDoc::space());
+        let mut doc = self
+            .optional_hash()
+            .append(BoxDoc::text("let"))
+            .append(BoxDoc::space());
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
         match let_binding.kind() {
             LetBindingKind::Normal(n) => {
                 doc = doc.append(self.convert_pattern(n));
@@ -507,6 +548,7 @@ impl PrettyPrinter {
                 }
             }
         }
+        self.is_code.replace(current_is_code);
         doc
     }
 
@@ -522,7 +564,12 @@ impl PrettyPrinter {
     }
 
     fn convert_set_rule<'a>(&'a self, set_rule: SetRule<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("set").append(BoxDoc::space());
+        let mut doc = self
+            .optional_hash()
+            .append(BoxDoc::text("set"))
+            .append(BoxDoc::space());
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
         doc = doc.append(self.convert_expr(set_rule.target()));
         doc = doc.append(self.convert_args(set_rule.args()));
         if let Some(condition) = set_rule.condition() {
@@ -531,22 +578,29 @@ impl PrettyPrinter {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(self.convert_expr(condition));
         }
+        self.is_code.replace(current_is_code);
         doc
     }
 
     fn convert_show_rule<'a>(&'a self, show_rule: ShowRule<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("show");
+        let mut doc = self.optional_hash().append(BoxDoc::text("show"));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
         if let Some(selector) = show_rule.selector() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(self.convert_expr(selector));
         }
         doc = doc.append(BoxDoc::text(":"));
         doc = doc.append(self.convert_expr(show_rule.transform()));
+        self.is_code.replace(current_is_code);
         doc
     }
 
     fn convert_conditional<'a>(&'a self, conditional: Conditional<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("if")
+        let mut doc = self.optional_hash().append(BoxDoc::text("if"));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
+        doc = doc
             .append(BoxDoc::space())
             .append(self.convert_expr(conditional.condition()))
             .append(BoxDoc::space());
@@ -558,19 +612,28 @@ impl PrettyPrinter {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(self.convert_expr(else_body));
         }
+        self.is_code.replace(current_is_code);
         doc
     }
 
     fn convert_while<'a>(&'a self, while_loop: WhileLoop<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("while")
+        let doc = self.optional_hash().append(BoxDoc::text("while"));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
+        let doc = doc
             .append(BoxDoc::space())
             .append(self.convert_expr(while_loop.condition()))
             .append(BoxDoc::space())
-            .append(self.convert_expr(while_loop.body()))
+            .append(self.convert_expr(while_loop.body()));
+        self.is_code.replace(current_is_code);
+        doc
     }
 
     fn convert_for<'a>(&'a self, for_loop: ForLoop<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("for")
+        let doc = self.optional_hash().append(BoxDoc::text("for"));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
+        let doc = doc
             .append(BoxDoc::space())
             .append(self.convert_pattern(for_loop.pattern()))
             .append(BoxDoc::space())
@@ -578,11 +641,15 @@ impl PrettyPrinter {
             .append(BoxDoc::space())
             .append(self.convert_expr(for_loop.iter()))
             .append(BoxDoc::space())
-            .append(self.convert_expr(for_loop.body()))
+            .append(self.convert_expr(for_loop.body()));
+        self.is_code.replace(current_is_code);
+        doc
     }
 
     fn convert_import<'a>(&'a self, import: ModuleImport<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("import");
+        let mut doc = self.optional_hash().append(BoxDoc::text("import"));
+        let current_is_code = { *self.is_code.borrow() };
+        self.is_code.replace(true);
         doc = doc.append(BoxDoc::space());
         doc = doc.append(self.convert_expr(import.source()));
         if let Some(imports) = import.imports() {
@@ -597,6 +664,7 @@ impl PrettyPrinter {
             };
             doc = doc.append(imports.group());
         }
+        self.is_code.replace(current_is_code);
         doc
     }
 
@@ -613,21 +681,25 @@ impl PrettyPrinter {
     }
 
     fn convert_include<'a>(&'a self, include: ModuleInclude<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("include")
+        self.optional_hash()
+            .append(BoxDoc::text("include"))
             .append(BoxDoc::space())
             .append(self.convert_expr(include.source()))
     }
 
     fn convert_break<'a>(&'a self, _break: LoopBreak<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("break")
+        self.optional_hash().append(BoxDoc::text("break"))
     }
 
     fn convert_continue<'a>(&'a self, _continue: LoopContinue<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("continue")
+        self.optional_hash().append(BoxDoc::text("continue"))
     }
 
     fn convert_return<'a>(&'a self, return_stmt: FuncReturn<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("return").append(BoxDoc::space());
+        let mut doc = self
+            .optional_hash()
+            .append(BoxDoc::text("return"))
+            .append(BoxDoc::space());
         if let Some(body) = return_stmt.body() {
             doc = doc.append(self.convert_expr(body));
         }
@@ -635,11 +707,11 @@ impl PrettyPrinter {
     }
 }
 
-fn trivia<'a>(node: &'a SyntaxNode) -> BoxDoc<'a, ()> {
+fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
     to_doc(std::borrow::Cow::Borrowed(node.text()))
 }
 
-pub fn to_doc<'a>(s: Cow<'a, str>) -> BoxDoc<'a, ()> {
+pub fn to_doc(s: Cow<'_, str>) -> BoxDoc<'_, ()> {
     match s {
         Cow::Borrowed(s) => BoxDoc::intersperse(s.lines().map(BoxDoc::text), BoxDoc::hardline()),
         Cow::Owned(o) => BoxDoc::intersperse(
