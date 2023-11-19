@@ -7,6 +7,8 @@ use pretty::BoxDoc;
 use typst_syntax::ast::*;
 use typst_syntax::{ast, SyntaxNode};
 
+use crate::util::pretty_items;
+
 #[derive(Debug)]
 pub struct PrettyPrinter {
     is_code: RefCell<bool>,
@@ -283,7 +285,7 @@ impl PrettyPrinter {
     fn convert_code_block<'a>(&'a self, code_block: CodeBlock<'a>) -> BoxDoc<'a, ()> {
         let current_is_markup = { *self.is_code.borrow() };
         self.is_code.replace(false);
-        let code = self.convert_code(code_block.body()).group().nest(2);
+        let code = self.convert_code(code_block.body());
         self.is_code.replace(current_is_markup);
 
         let doc = {
@@ -296,16 +298,20 @@ impl PrettyPrinter {
         .append(BoxDoc::line())
         .append(code)
         .append(BoxDoc::line())
-        .append(BoxDoc::text("}"));
+        .append(BoxDoc::text("}"))
+        .group();
         doc
     }
 
     fn convert_code<'a>(&'a self, code: Code<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::nil();
-        for expr in code.exprs() {
-            doc = doc.append(self.convert_expr(expr)).append(BoxDoc::line());
-        }
-        doc
+        let codes: Vec<_> = code.exprs().map(|expr| self.convert_expr(expr)).collect();
+        let inner = pretty_items(
+            &codes,
+            BoxDoc::text(";"),
+            BoxDoc::nil(),
+            (BoxDoc::nil(), BoxDoc::nil()),
+        );
+        inner
     }
 
     fn convert_content_block<'a>(&'a self, content_block: ContentBlock<'a>) -> BoxDoc<'a, ()> {
@@ -593,6 +599,7 @@ impl PrettyPrinter {
             doc = doc.append(self.convert_expr(selector));
         }
         doc = doc.append(BoxDoc::text(":"));
+        doc = doc.append(BoxDoc::space());
         doc = doc.append(self.convert_expr(show_rule.transform()));
         self.is_code.replace(current_is_code);
         doc

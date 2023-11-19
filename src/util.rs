@@ -1,21 +1,24 @@
 use pretty::BoxDoc;
 
 pub fn pretty_items<'a>(
-    items: impl Iterator<Item = BoxDoc<'a, ()>> + Clone,
-    sperator: BoxDoc<'a, ()>,
+    items: &[BoxDoc<'a, ()>],
+    single_line_separator: BoxDoc<'a, ()>,
+    multi_line_bracket: BoxDoc<'a, ()>,
     bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
 ) -> BoxDoc<'a, ()> {
     let (left, right) = bracket;
     let inner_flat: BoxDoc<'a, ()> = {
-        let separator = sperator.clone();
-        BoxDoc::intersperse(items.clone(), separator.append(BoxDoc::space()))
+        BoxDoc::intersperse(
+            items.iter().cloned(),
+            single_line_separator.append(BoxDoc::space()),
+        )
     };
     let inner_multi = {
         let mut inner = BoxDoc::nil();
         for item in items {
             inner = inner
-                .append(item)
-                .append(sperator.clone().append(BoxDoc::hardline()));
+                .append(item.clone())
+                .append(multi_line_bracket.clone().append(BoxDoc::hardline()));
         }
         BoxDoc::line().append(inner)
     }
@@ -31,10 +34,10 @@ mod tests {
     #[test]
     fn test_pretty_items() {
         let strs = ["123", "12345", "1234", "1234567"];
-
         let docs: Vec<_> = strs.iter().map(|s| BoxDoc::text(s.to_string())).collect();
         let outer = pretty_items(
-            docs.into_iter(),
+            &docs,
+            BoxDoc::text(","),
             BoxDoc::text(","),
             (BoxDoc::text("["), BoxDoc::text("]")),
         );
