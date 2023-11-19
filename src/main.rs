@@ -1,6 +1,6 @@
 use clap::Parser;
+use typst_geshihua::PrettyPrinter;
 use typst_syntax::parse;
-use typst_geshihua::convert_markup;
 
 use crate::cli::CliArguments;
 
@@ -12,9 +12,9 @@ fn main() {
     let root = parse(&content);
     // print!("{:#?}", root);
     let markup = root.cast().unwrap();
-    let doc = convert_markup(markup);
+    let printer = PrettyPrinter::default();
+    let doc = printer.convert_markup(markup);
     print!("{:#?}", doc);
     let res = doc.pretty(120).to_string();
     print!("{}", res);
 }
-
