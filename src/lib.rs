@@ -23,7 +23,7 @@ impl PrettyPrinter {
         let mut doc: BoxDoc<()> = BoxDoc::nil();
         for expr in root.exprs() {
             let expr_doc = self.convert_expr(expr);
-            doc = doc.append(expr_doc).append(BoxDoc::hardline());
+            doc = doc.append(expr_doc);
         }
         doc
     }
@@ -718,5 +718,41 @@ pub fn to_doc(s: Cow<'_, str>) -> BoxDoc<'_, ()> {
             o.lines().map(|s| BoxDoc::text(s.to_string())),
             BoxDoc::hardline(),
         ),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use typst_syntax::parse;
+
+    use super::*;
+
+    #[test]
+    fn test_to_doc() {
+        let tests = [
+            "command can take a directory as an argument to use as the book",
+            "123\n456\n789",
+            "123\n4567\n789\n",
+            "123\n4568\n789\n",
+        ];
+        for test in tests.into_iter() {
+            insta::assert_debug_snapshot!(to_doc(test.into()));
+        }
+    }
+
+    #[test]
+    fn convert_markup() {
+        let tests = [r"=== --open
+
+When you use the `--open` flag, typst-book will open the rendered book in
+your default web browser after building it."];
+        for test in tests.into_iter() {
+            let root = parse(test);
+            insta::assert_debug_snapshot!(root);
+            let markup = root.cast().unwrap();
+            let printer = PrettyPrinter::default();
+            let doc = printer.convert_markup(markup);
+            insta::assert_debug_snapshot!(doc.pretty(120).to_string());
+        }
     }
 }

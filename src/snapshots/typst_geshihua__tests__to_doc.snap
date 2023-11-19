@@ -1,0 +1,5 @@
+---
+source: src/lib.rs
+expression: to_doc(test.into())
+---
+"command can take a directory as an argument to use as the book"

@@ -1,0 +1,5 @@
+---
+source: src/lib.rs
+expression: doc.pretty(120).to_string()
+---
+"=== --open\n\nWhen you use the `--open` flag, typst-book will open the rendered book in\nyour default web browser after building it."

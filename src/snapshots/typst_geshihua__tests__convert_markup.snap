@@ -1,0 +1,22 @@
+---
+source: src/lib.rs
+expression: root
+---
+Markup: 129 [
+    Heading: 10 [
+        HeadingMarker: "===",
+        Space: " ",
+        Markup: 6 [
+            Shorthand: "--",
+            Text: "open",
+        ],
+    ],
+    Parbreak: "\n\n",
+    Text: "When you use the",
+    Space: " ",
+    Raw: "`--open`",
+    Space: " ",
+    Text: "flag, typst-book will open the rendered book in",
+    Space: "\n",
+    Text: "your default web browser after building it.",
+]

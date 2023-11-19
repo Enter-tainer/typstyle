@@ -1,0 +1,11 @@
+---
+source: src/lib.rs
+expression: to_doc(test.into())
+---
+[
+    "123",
+    Hardline,
+    "456",
+    Hardline,
+    "789",
+]
