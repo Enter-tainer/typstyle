@@ -1,28 +1,15 @@
 use pretty::BoxDoc;
+use typst_geshihua::util::pretty_items;
 
 fn main() {
     let strs = ["123", "12345", "1234", "1234567"];
 
-    let inner_flat: BoxDoc<'_, ()> = BoxDoc::intersperse(
-        strs.into_iter().map(BoxDoc::text),
-        BoxDoc::text(",").append(BoxDoc::space()),
+    let docs: Vec<_> = strs.iter().map(|s| BoxDoc::text(s.to_string())).collect();
+    let outer = pretty_items(
+        docs.into_iter(),
+        BoxDoc::text(","),
+        (BoxDoc::text("["), BoxDoc::text("]")),
     );
-
-    let inner_multi = {
-        let mut inner = BoxDoc::nil();
-        for s in strs {
-            inner = inner
-                .append(BoxDoc::text(s))
-                .append(BoxDoc::text(",").append(BoxDoc::hardline()));
-        }
-        BoxDoc::line().append(inner)
-    }
-    .nest(2);
-
-    let outer = BoxDoc::text("[")
-        .append(inner_multi.flat_alt(inner_flat).group())
-        // https://hackage.haskell.org/package/prettyprinter-1.7.1/docs/Prettyprinter.html#v:group
-        .append(BoxDoc::text("]"));
 
     let res_10 = outer.pretty(10).to_string();
     let res_80 = outer.pretty(80).to_string();
