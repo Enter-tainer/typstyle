@@ -13,7 +13,8 @@ fn main() {
     // print!("{:#?}", root);
     let markup = root.cast().unwrap();
     let doc = convert_markup(markup);
-    let res = doc.pretty(80).to_string();
+    print!("{:#?}", doc);
+    let res = doc.pretty(120).to_string();
     print!("{}", res);
 }
 

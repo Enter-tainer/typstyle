@@ -615,27 +615,11 @@ fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
 }
 
 pub fn to_doc(s: Cow<'_, str>) -> BoxDoc<'_, ()> {
-    let mut doc: BoxDoc<()> = BoxDoc::nil();
     match s {
-        Cow::Borrowed(s) => {
-            for line in s.lines() {
-                doc = if line.is_empty() {
-                    doc.append(BoxDoc::hardline())
-                } else {
-                    doc.append(BoxDoc::text(line)).append(BoxDoc::hardline())
-                };
-            }
-        }
-        Cow::Owned(o) => {
-            for line in o.lines() {
-                doc = if line.is_empty() {
-                    doc.append(BoxDoc::hardline())
-                } else {
-                    doc.append(BoxDoc::text(line.to_string()))
-                        .append(BoxDoc::hardline())
-                };
-            }
-        }
+        Cow::Borrowed(s) => BoxDoc::intersperse(s.lines().map(BoxDoc::text), BoxDoc::hardline()),
+        Cow::Owned(o) => BoxDoc::intersperse(
+            o.lines().map(|s| BoxDoc::text(s.to_string())),
+            BoxDoc::hardline(),
+        ),
     }
-    doc
 }
