@@ -468,9 +468,14 @@ impl PrettyPrinter {
         if let Some(name) = closure.name() {
             doc = doc.append(self.convert_ident(name));
         }
-        doc = doc.append(BoxDoc::text("("));
-        doc = doc.append(self.convert_params(closure.params()));
-        doc = doc.append(BoxDoc::text(")"));
+        doc = doc.append(pretty_items(
+            &self.convert_params(closure.params()),
+            BoxDoc::text(",").append(BoxDoc::space()),
+            BoxDoc::text(","),
+            (BoxDoc::text("("), BoxDoc::text(")")),
+            false,
+            util::FoldStyle::Fit,
+        ));
         doc = doc.append(BoxDoc::space());
         doc = doc.append(BoxDoc::text("=>"));
         doc = doc.append(BoxDoc::space());
@@ -478,11 +483,11 @@ impl PrettyPrinter {
         doc
     }
 
-    fn convert_params<'a>(&'a self, params: Params<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::intersperse(
-            params.children().map(|param| self.convert_param(param)),
-            BoxDoc::text(",").append(BoxDoc::line()),
-        )
+    fn convert_params<'a>(&'a self, params: Params<'a>) -> Vec<BoxDoc<'a, ()>> {
+        params
+            .children()
+            .map(|param| self.convert_param(param))
+            .collect()
     }
 
     fn convert_param<'a>(&'a self, param: Param<'a>) -> BoxDoc<'a, ()> {
