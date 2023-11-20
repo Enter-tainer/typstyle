@@ -1,0 +1,7 @@
+---
+source: tests/assets.rs
+expression: doc_80
+input_file: tests/assets/test.typ
+---
+#link("http://example.com")[test]
+
