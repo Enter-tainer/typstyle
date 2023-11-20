@@ -15,6 +15,6 @@ fn main() {
     let printer = PrettyPrinter::default();
     let doc = printer.convert_markup(markup);
     print!("{:#?}", doc);
-    let res = doc.pretty(120).to_string();
+    let res = doc.pretty(80).to_string();
     print!("{}", res);
 }

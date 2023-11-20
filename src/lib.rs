@@ -290,30 +290,20 @@ impl PrettyPrinter {
         let code = self.convert_code(code_block.body());
         self.is_code.replace(current_is_markup);
 
-        let doc = {
-            if current_is_markup {
-                BoxDoc::text("#{")
-            } else {
-                BoxDoc::text("{")
-            }
-        }
-        .append(BoxDoc::line())
-        .append(code)
-        .append(BoxDoc::line())
-        .append(BoxDoc::text("}"))
-        .group();
+        let doc = pretty_items(
+            &code,
+            BoxDoc::text(";").append(BoxDoc::space()),
+            BoxDoc::nil(),
+            (BoxDoc::text("{"), BoxDoc::text("}")),
+            true,
+            util::FoldStyle::Single,
+        );
         doc
     }
 
-    fn convert_code<'a>(&'a self, code: Code<'a>) -> BoxDoc<'a, ()> {
+    fn convert_code<'a>(&'a self, code: Code<'a>) -> Vec<BoxDoc<'a, ()>> {
         let codes: Vec<_> = code.exprs().map(|expr| self.convert_expr(expr)).collect();
-        let inner = pretty_items(
-            &codes,
-            BoxDoc::text(";"),
-            BoxDoc::nil(),
-            (BoxDoc::nil(), BoxDoc::nil()),
-        );
-        inner
+        codes
     }
 
     fn convert_content_block<'a>(&'a self, content_block: ContentBlock<'a>) -> BoxDoc<'a, ()> {
@@ -592,7 +582,9 @@ impl PrettyPrinter {
         let current_is_code = { *self.is_code.borrow() };
         self.is_code.replace(true);
         doc = doc.append(self.convert_expr(set_rule.target()));
+        doc = doc.append(BoxDoc::text("("));
         doc = doc.append(self.convert_parenthesized_args(set_rule.args()));
+        doc = doc.append(BoxDoc::text(")"));
         if let Some(condition) = set_rule.condition() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("if"));

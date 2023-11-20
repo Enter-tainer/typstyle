@@ -4,6 +4,8 @@ expression: outer
 ---
 [
     "{",
+    " ",
     "let a = 1;",
+    " ",
     "}",
 ]

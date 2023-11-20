@@ -1,0 +1,5 @@
+---
+source: src/util.rs
+expression: outer.pretty(80).to_string()
+---
+{ let a = 1; }

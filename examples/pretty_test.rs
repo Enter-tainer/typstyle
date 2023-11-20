@@ -10,6 +10,8 @@ fn main() {
         BoxDoc::text(",").append(BoxDoc::space()),
         BoxDoc::text(","),
         (BoxDoc::text("["), BoxDoc::text("]")),
+        false,
+        typst_geshihua::util::FoldStyle::Fit,
     );
 
     let res_10 = outer.pretty(10).to_string();
