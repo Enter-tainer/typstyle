@@ -4,7 +4,7 @@ use pretty::BoxDoc;
 pub enum FoldStyle {
     /// Fold items if them can fit in a single line
     Fit,
-    /// Fold items if there is only one item, other wise put each item in a single line
+    /// Fold items if there is only one item and it fit in a single line, other wise put each item in a line
     Single,
 }
 
@@ -23,67 +23,57 @@ pub fn pretty_items<'a>(
             bracket.1
         });
     }
-    let bracket = if bracket_space {
-        (
-            bracket.0.append(BoxDoc::space()),
-            BoxDoc::space().append(bracket.1),
-        )
-    } else {
-        bracket
-    };
-    match fold_style {
-        FoldStyle::Fit => {
-            pretty_items_fit(items, single_line_separator, multi_line_separator, bracket)
-        }
-        FoldStyle::Single => {
-            pretty_items_single(items, single_line_separator, multi_line_separator, bracket)
-        }
-    }
+    pretty_items_impl(
+        items,
+        single_line_separator,
+        multi_line_separator,
+        bracket,
+        bracket_space,
+        fold_style,
+    )
 }
 
-fn pretty_items_fit<'a>(
+fn pretty_items_impl<'a>(
     items: &[BoxDoc<'a, ()>],
     single_line_separator: BoxDoc<'a, ()>,
     multi_line_separator: BoxDoc<'a, ()>,
     bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
+    bracket_space: bool,
+    fold_style: FoldStyle,
 ) -> BoxDoc<'a, ()> {
     let (left, right) = bracket;
-    let inner_flat: BoxDoc<'a, ()> =
-        { BoxDoc::intersperse(items.iter().cloned(), single_line_separator) };
-    let inner_multi = {
+    let flat: BoxDoc<'a, ()> = {
+        let inner = BoxDoc::intersperse(items.iter().cloned(), single_line_separator);
+        let (left, right) = if bracket_space {
+            (
+                left.clone().append(BoxDoc::space()),
+                BoxDoc::space().append(right.clone()),
+            )
+        } else {
+            (left.clone(), right.clone())
+        };
+        left.append(inner).append(right)
+    };
+    let multi = {
         let mut inner = BoxDoc::nil();
         for item in items {
             inner = inner
                 .append(item.clone())
                 .append(multi_line_separator.clone().append(BoxDoc::hardline()));
         }
-        BoxDoc::hardline().append(inner)
-    }
-    .nest(2);
-    let inner = inner_multi.flat_alt(inner_flat).group();
-    left.append(inner).append(right)
-}
-
-fn pretty_items_single<'a>(
-    items: &[BoxDoc<'a, ()>],
-    _single_line_separator: BoxDoc<'a, ()>,
-    multi_line_separator: BoxDoc<'a, ()>,
-    bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
-) -> BoxDoc<'a, ()> {
-    let (left, right) = bracket;
-    if items.len() == 1 {
-        left.append(items[0].clone()).append(right)
-    } else {
-        let multi = {
-            let mut inner = BoxDoc::nil();
-            for item in items {
-                inner = inner
-                    .append(item.clone())
-                    .append(multi_line_separator.clone().append(BoxDoc::hardline()));
+        let doc = BoxDoc::hardline().append(inner).nest(2);
+        left.append(doc).append(right)
+    };
+    let auto_items = multi.clone().flat_alt(flat).group();
+    match fold_style {
+        FoldStyle::Fit => auto_items,
+        FoldStyle::Single => {
+            if items.len() == 1 {
+                auto_items
+            } else {
+                multi
             }
-            BoxDoc::hardline().append(inner).nest(2).group()
-        };
-        left.append(multi).append(right)
+        }
     }
 }
 
@@ -110,7 +100,7 @@ mod tests {
 
     #[test]
     fn test_pretty_items_single() {
-        let strs = ["let a = 1;"];
+        let strs = ["let a = 1"];
         let docs: Vec<_> = strs.iter().map(|s| BoxDoc::text(s.to_string())).collect();
         let outer = pretty_items(
             &docs,

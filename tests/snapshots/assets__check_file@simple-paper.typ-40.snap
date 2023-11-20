@@ -9,7 +9,7 @@ input_file: tests/assets/simple-paper.typ
   abstract: none,
   keywords: (),
   body,
-) = { 
+) = {
   let song = "FZShuSong-Z01"
   let hei = "FZHei-B01"
   let kai = "FZKai-Z03"
@@ -43,13 +43,15 @@ input_file: tests/assets/simple-paper.typ
     lang: "zh",
     region: "cn",
   )
-  set bibliography(style: "gb-7114-2015-numeric")
+  set bibliography(
+    style: "gb-7114-2015-numeric",
+  )
   show heading: (it) = box(width: 100%)[
     #v(0.50em)
     #set text(font: heading-font)
-    #if it.numbering != none { counter(
-      heading,
-    ).display() }
+    #if it.numbering != none {
+      counter(heading).display()
+    }
     #h(0.75em)
     #it.body
   ]
@@ -119,7 +121,9 @@ input_file: tests/assets/simple-paper.typ
     #set text(font: body-font)
     #it
   ]
-  show strong: set text(font: strong-font)
+  show strong: set text(
+    font: strong-font,
+  )
   show emph: set text(font: emph-font)
   show ref: set text(red)
   show raw.where(
@@ -145,13 +149,13 @@ input_file: tests/assets/simple-paper.typ
     #v(2pt)
   ]
   body
- }
+}
 #let problem-counter = counter(
   "problem",
 )
 #problem-counter.step()
 
-#let problem(body) = { 
+#let problem(body) = {
   problem-counter.step()
   set enum(numbering: "(1)")
   block(
@@ -162,13 +166,13 @@ input_file: tests/assets/simple-paper.typ
   )[*题目 #problem-counter.display().* #h(
       0.75em,
     ) #body]
- }
+}
 
-#let solution(body) = { 
+#let solution(body) = {
   set enum(numbering: "(1)")
   block(
     inset: 8pt,
     width: 100%,
   )[*解答.* #h(0.75em) #body]
- }
+}
 

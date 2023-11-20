@@ -2,10 +2,27 @@
 source: src/util.rs
 expression: outer
 ---
-[
-    "{",
-    " ",
-    "let a = 1;",
-    " ",
-    "}",
-]
+Group(
+    FlatAlt(
+        [
+            "{",
+            Nest(
+                2,
+                [
+                    Hardline,
+                    "let a = 1",
+                    ";",
+                    Hardline,
+                ],
+            ),
+            "}",
+        ],
+        [
+            "{",
+            " ",
+            "let a = 1",
+            " ",
+            "}",
+        ],
+    ),
+)

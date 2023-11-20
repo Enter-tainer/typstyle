@@ -3,7 +3,7 @@ source: tests/assets.rs
 expression: doc_80
 input_file: tests/assets/simple-paper.typ
 ---
-#let project(title: "", authors: (), abstract: none, keywords: (), body) = { 
+#let project(title: "", authors: (), abstract: none, keywords: (), body) = {
   let song = "FZShuSong-Z01"
   let hei = "FZHei-B01"
   let kai = "FZKai-Z03"
@@ -111,11 +111,11 @@ input_file: tests/assets/simple-paper.typ
     #v(2pt)
   ]
   body
- }
+}
 #let problem-counter = counter("problem")
 #problem-counter.step()
 
-#let problem(body) = { 
+#let problem(body) = {
   problem-counter.step()
   set enum(numbering: "(1)")
   block(
@@ -124,10 +124,10 @@ input_file: tests/assets/simple-paper.typ
     radius: 2pt,
     width: 100%,
   )[*题目 #problem-counter.display().* #h(0.75em) #body]
- }
+}
 
-#let solution(body) = { 
+#let solution(body) = {
   set enum(numbering: "(1)")
   block(inset: 8pt, width: 100%)[*解答.* #h(0.75em) #body]
- }
+}
 
