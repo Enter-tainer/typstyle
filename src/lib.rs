@@ -12,12 +12,14 @@ use crate::util::pretty_items;
 #[derive(Debug)]
 pub struct PrettyPrinter {
     is_code: RefCell<bool>,
+    is_let_closure: RefCell<bool>,
 }
 
 impl Default for PrettyPrinter {
     fn default() -> Self {
         Self {
             is_code: RefCell::new(false),
+            is_let_closure: RefCell::new(false),
         }
     }
 }
@@ -302,7 +304,15 @@ impl PrettyPrinter {
     }
 
     fn convert_code<'a>(&'a self, code: Code<'a>) -> Vec<BoxDoc<'a, ()>> {
-        let codes: Vec<_> = code.exprs().map(|expr| self.convert_expr(expr)).collect();
+        let mut codes: Vec<_> = vec![];
+        for node in code.to_untyped().children() {
+            if let Some(expr) = node.cast::<Expr>() {
+                let expr_doc = self.convert_expr(expr);
+                codes.push(expr_doc);
+            } else if node.kind() == SyntaxKind::LineComment {
+                codes.push(trivia(node));
+            }
+        }
         codes
     }
 
@@ -477,7 +487,11 @@ impl PrettyPrinter {
             util::FoldStyle::Fit,
         ));
         doc = doc.append(BoxDoc::space());
-        doc = doc.append(BoxDoc::text("=>"));
+        if *self.is_let_closure.borrow() {
+            doc = doc.append(BoxDoc::text("="));
+        } else {
+            doc = doc.append(BoxDoc::text("=>"));
+        }
         doc = doc.append(BoxDoc::space());
         doc = doc.append(self.convert_expr(closure.body()));
         doc
@@ -562,9 +576,11 @@ impl PrettyPrinter {
                 }
             }
             LetBindingKind::Closure(_c) => {
+                self.is_let_closure.replace(true);
                 if let Some(c) = let_binding.init() {
                     doc = doc.append(self.convert_expr(c));
                 }
+                self.is_let_closure.replace(false);
             }
         }
         self.is_code.replace(current_is_code);

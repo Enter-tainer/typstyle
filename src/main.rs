@@ -10,11 +10,11 @@ fn main() {
     let CliArguments { input } = CliArguments::parse();
     let content = std::fs::read_to_string(input).unwrap();
     let root = parse(&content);
-    println!("{:#?}", root);
+    // eprintln!("{:#?}", root);
     let markup = root.cast().unwrap();
     let printer = PrettyPrinter::default();
     let doc = printer.convert_markup(markup);
-    print!("{:#?}", doc);
+    // eprint!("{:#?}", doc);
     let res = doc.pretty(80).to_string();
     print!("{}", res);
 }
