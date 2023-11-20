@@ -16,28 +16,32 @@ pub fn pretty_items<'a>(
     bracket_space: bool,
     fold_style: FoldStyle,
 ) -> BoxDoc<'a, ()> {
+    if items.is_empty() {
+        return bracket.0.append(if bracket_space {
+            BoxDoc::space().append(bracket.1)
+        } else {
+            bracket.1
+        });
+    }
     let bracket = if bracket_space {
-        (bracket.0.append(BoxDoc::space()), BoxDoc::space().append(bracket.1))
+        (
+            bracket.0.append(BoxDoc::space()),
+            BoxDoc::space().append(bracket.1),
+        )
     } else {
         bracket
     };
     match fold_style {
-        FoldStyle::Fit => pretty_items_fit(
-            items,
-            single_line_separator,
-            multi_line_separator,
-            bracket,
-        ),
-        FoldStyle::Single => pretty_items_single(
-            items,
-            single_line_separator,
-            multi_line_separator,
-            bracket,
-        ),
+        FoldStyle::Fit => {
+            pretty_items_fit(items, single_line_separator, multi_line_separator, bracket)
+        }
+        FoldStyle::Single => {
+            pretty_items_single(items, single_line_separator, multi_line_separator, bracket)
+        }
     }
 }
 
-pub fn pretty_items_fit<'a>(
+fn pretty_items_fit<'a>(
     items: &[BoxDoc<'a, ()>],
     single_line_separator: BoxDoc<'a, ()>,
     multi_line_separator: BoxDoc<'a, ()>,
@@ -60,7 +64,7 @@ pub fn pretty_items_fit<'a>(
     left.append(inner).append(right)
 }
 
-pub fn pretty_items_single<'a>(
+fn pretty_items_single<'a>(
     items: &[BoxDoc<'a, ()>],
     _single_line_separator: BoxDoc<'a, ()>,
     multi_line_separator: BoxDoc<'a, ()>,

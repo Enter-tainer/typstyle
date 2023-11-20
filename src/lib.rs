@@ -418,25 +418,28 @@ impl PrettyPrinter {
         let current_is_code = { *self.is_code.borrow() };
         self.is_code.replace(true);
         let doc = doc
-            .append(BoxDoc::text("("))
-            .append(self.convert_parenthesized_args(func_call.args()))
-            .append(BoxDoc::text(")"))
+            .append(pretty_items(
+                &self.convert_parenthesized_args(func_call.args()),
+                BoxDoc::text(",").append(BoxDoc::space()),
+                BoxDoc::text(","),
+                (BoxDoc::text("("), BoxDoc::text(")")),
+                false,
+                util::FoldStyle::Single,
+            ))
             .append(self.convert_additional_args(func_call.args()));
         self.is_code.replace(current_is_code);
         doc
     }
 
-    fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+    fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> Vec<BoxDoc<'a, ()>> {
         let node = args.to_untyped();
         let args = node
             .children()
             .take_while(|node| node.kind() != SyntaxKind::RightParen)
-            .filter_map(|node| node.cast::<'_, Arg>());
-        BoxDoc::intersperse(
-            args.map(|arg| self.convert_arg(arg)),
-            BoxDoc::text(",").append(BoxDoc::line()),
-        )
-        .group()
+            .filter_map(|node| node.cast::<'_, Arg>())
+            .map(|arg| self.convert_arg(arg))
+            .collect();
+        args
     }
 
     fn convert_additional_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
@@ -582,9 +585,14 @@ impl PrettyPrinter {
         let current_is_code = { *self.is_code.borrow() };
         self.is_code.replace(true);
         doc = doc.append(self.convert_expr(set_rule.target()));
-        doc = doc.append(BoxDoc::text("("));
-        doc = doc.append(self.convert_parenthesized_args(set_rule.args()));
-        doc = doc.append(BoxDoc::text(")"));
+        doc = doc.append(pretty_items(
+            &self.convert_parenthesized_args(set_rule.args()),
+            BoxDoc::text(",").append(BoxDoc::space()),
+            BoxDoc::text(","),
+            (BoxDoc::text("("), BoxDoc::text(")")),
+            false,
+            util::FoldStyle::Single,
+        ));
         if let Some(condition) = set_rule.condition() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("if"));
