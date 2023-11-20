@@ -3,22 +3,18 @@ use pretty::BoxDoc;
 pub fn pretty_items<'a>(
     items: &[BoxDoc<'a, ()>],
     single_line_separator: BoxDoc<'a, ()>,
-    multi_line_bracket: BoxDoc<'a, ()>,
+    multi_line_separator: BoxDoc<'a, ()>,
     bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
 ) -> BoxDoc<'a, ()> {
     let (left, right) = bracket;
-    let inner_flat: BoxDoc<'a, ()> = {
-        BoxDoc::intersperse(
-            items.iter().cloned(),
-            single_line_separator.append(BoxDoc::space()),
-        )
-    };
+    let inner_flat: BoxDoc<'a, ()> =
+        { BoxDoc::intersperse(items.iter().cloned(), single_line_separator) };
     let inner_multi = {
         let mut inner = BoxDoc::nil();
         for item in items {
             inner = inner
                 .append(item.clone())
-                .append(multi_line_bracket.clone().append(BoxDoc::hardline()));
+                .append(multi_line_separator.clone().append(BoxDoc::hardline()));
         }
         BoxDoc::line().append(inner)
     }
@@ -37,7 +33,7 @@ mod tests {
         let docs: Vec<_> = strs.iter().map(|s| BoxDoc::text(s.to_string())).collect();
         let outer = pretty_items(
             &docs,
-            BoxDoc::text(","),
+            BoxDoc::text(",").append(BoxDoc::space()),
             BoxDoc::text(","),
             (BoxDoc::text("["), BoxDoc::text("]")),
         );

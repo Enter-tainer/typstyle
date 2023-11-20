@@ -7,7 +7,7 @@ fn main() {
     let docs: Vec<_> = strs.iter().map(|s| BoxDoc::text(s.to_string())).collect();
     let outer = pretty_items(
         &docs,
-        BoxDoc::text(","),
+        BoxDoc::text(",").append(BoxDoc::space()),
         BoxDoc::text(","),
         (BoxDoc::text("["), BoxDoc::text("]")),
     );
