@@ -25,19 +25,21 @@ impl Default for PrettyPrinter {
 impl PrettyPrinter {
     pub fn convert_markup<'a>(&'a self, root: Markup<'a>) -> BoxDoc<'a, ()> {
         let mut doc: BoxDoc<()> = BoxDoc::nil();
-        for expr in root.exprs() {
-            let expr_doc = self.convert_expr(expr);
-            doc = doc.append(expr_doc);
+        for node in root.to_untyped().children() {
+            if let Some(expr) = node.cast::<Expr>() {
+                let expr_doc = self.convert_expr(expr);
+                doc = doc.append(expr_doc);
+            } else if let Some(space) = node.cast::<Space>() {
+                doc = doc.append(self.convert_space(space));
+            } else {
+                doc = doc.append(trivia(node));
+            }
         }
         doc
     }
 
     fn optional_hash(&self) -> BoxDoc<'_, ()> {
-        if *self.is_code.borrow() {
-            BoxDoc::nil()
-        } else {
-            BoxDoc::text("#")
-        }
+        BoxDoc::nil()
     }
 
     fn convert_expr<'a>(&'a self, expr: Expr<'a>) -> BoxDoc<'a, ()> {
@@ -319,11 +321,7 @@ impl PrettyPrinter {
         self.is_code.replace(true);
         let content = self.convert_markup(content_block.body()).group().nest(2);
         self.is_code.replace(current_is_markup);
-        let doc = BoxDoc::text("[")
-            .append(BoxDoc::line())
-            .append(content)
-            .append(BoxDoc::line())
-            .append(BoxDoc::text("]"));
+        let doc = BoxDoc::text("[").append(content).append(BoxDoc::text("]"));
         doc
     }
 
