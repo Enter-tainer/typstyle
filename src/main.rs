@@ -7,7 +7,10 @@ use crate::cli::CliArguments;
 mod cli;
 
 fn main() {
-    let CliArguments { input } = CliArguments::parse();
+    let CliArguments {
+        input,
+        column: line_width,
+    } = CliArguments::parse();
     let content = std::fs::read_to_string(input).unwrap();
     let root = parse(&content);
     // eprintln!("{:#?}", root);
@@ -15,6 +18,6 @@ fn main() {
     let printer = PrettyPrinter::default();
     let doc = printer.convert_markup(markup);
     // eprint!("{:#?}", doc);
-    let res = doc.pretty(80).to_string();
+    let res = doc.pretty(line_width).to_string();
     print!("{}", res);
 }

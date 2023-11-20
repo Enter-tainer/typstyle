@@ -434,7 +434,7 @@ impl PrettyPrinter {
                 BoxDoc::text(","),
                 (BoxDoc::text("("), BoxDoc::text(")")),
                 false,
-                util::FoldStyle::Single,
+                util::FoldStyle::Fit,
             ))
             .append(self.convert_additional_args(func_call.args()));
         self.is_code.replace(current_is_code);

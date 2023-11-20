@@ -7,6 +7,9 @@ use once_cell::sync::Lazy;
 #[clap(name = "typst-geshihua", author, version, about, long_version(LONG_VERSION.as_str()))]
 pub struct CliArguments {
     pub input: PathBuf,
+    /// The width of the output
+    #[clap(short, long, default_value = "80")]
+    pub column: usize,
 }
 
 static NONE: &str = "None";
