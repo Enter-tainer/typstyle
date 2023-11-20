@@ -4,8 +4,8 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 
 use pretty::BoxDoc;
-use typst_syntax::ast::*;
 use typst_syntax::{ast, SyntaxNode};
+use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::util::pretty_items;
 
@@ -431,18 +431,33 @@ impl PrettyPrinter {
         self.is_code.replace(true);
         let doc = doc
             .append(BoxDoc::text("("))
-            .append(self.convert_args(func_call.args()))
-            .append(BoxDoc::text(")"));
+            .append(self.convert_parenthesized_args(func_call.args()))
+            .append(BoxDoc::text(")"))
+            .append(self.convert_additional_args(func_call.args()));
         self.is_code.replace(current_is_code);
         doc
     }
 
-    fn convert_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+    fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+        let node = args.to_untyped();
+        let args = node
+            .children()
+            .take_while(|node| node.kind() != SyntaxKind::RightParen)
+            .filter_map(|node| node.cast::<'_, Arg>());
         BoxDoc::intersperse(
-            args.items().map(|arg| self.convert_arg(arg)),
+            args.map(|arg| self.convert_arg(arg)),
             BoxDoc::text(",").append(BoxDoc::line()),
         )
         .group()
+    }
+
+    fn convert_additional_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+        let node = args.to_untyped();
+        let args = node
+            .children()
+            .skip_while(|node| node.kind() != SyntaxKind::RightParen)
+            .filter_map(|node| node.cast::<'_, Arg>());
+        BoxDoc::concat(args.map(|arg| self.convert_arg(arg))).group()
     }
 
     fn convert_arg<'a>(&'a self, arg: Arg<'a>) -> BoxDoc<'a, ()> {
@@ -579,7 +594,7 @@ impl PrettyPrinter {
         let current_is_code = { *self.is_code.borrow() };
         self.is_code.replace(true);
         doc = doc.append(self.convert_expr(set_rule.target()));
-        doc = doc.append(self.convert_args(set_rule.args()));
+        doc = doc.append(self.convert_parenthesized_args(set_rule.args()));
         if let Some(condition) = set_rule.condition() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("if"));
@@ -755,6 +770,19 @@ mod tests {
 
 When you use the `--open` flag, typst-book will open the rendered book in
 your default web browser after building it."];
+        for test in tests.into_iter() {
+            let root = parse(test);
+            insta::assert_debug_snapshot!(root);
+            let markup = root.cast().unwrap();
+            let printer = PrettyPrinter::default();
+            let doc = printer.convert_markup(markup);
+            insta::assert_debug_snapshot!(doc.pretty(120).to_string());
+        }
+    }
+
+    #[test]
+    fn convert_func_call() {
+        let tests = [r#"#link("http://example.com")[test]"#];
         for test in tests.into_iter() {
             let root = parse(test);
             insta::assert_debug_snapshot!(root);

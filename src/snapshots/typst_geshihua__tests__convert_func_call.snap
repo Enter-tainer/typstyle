@@ -1,0 +1,22 @@
+---
+source: src/lib.rs
+expression: root
+---
+Markup: 33 [
+    Hash: "#",
+    FuncCall: 32 [
+        Ident: "link",
+        Args: 28 [
+            LeftParen: "(",
+            Str: "\"http://example.com\"",
+            RightParen: ")",
+            ContentBlock: 6 [
+                LeftBracket: "[",
+                Markup: 4 [
+                    Text: "test",
+                ],
+                RightBracket: "]",
+            ],
+        ],
+    ],
+]
