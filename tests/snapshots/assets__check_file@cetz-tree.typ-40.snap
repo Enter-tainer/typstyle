@@ -89,7 +89,7 @@ input_file: tests/assets/cetz-tree.typ
         float,
         int,
       ) {
-        content = $content$
+        content = $#content$
       } else if type(
         content,
       ) == dictionary and "content" in content {

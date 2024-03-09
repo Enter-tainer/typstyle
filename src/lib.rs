@@ -226,10 +226,16 @@ impl PrettyPrinter {
     }
 
     fn convert_math<'a>(&'a self, math: Math<'a>) -> BoxDoc<'a, ()> {
-        // TODO: check this later
-        let mut doc = BoxDoc::nil();
-        for expr in math.exprs() {
-            doc = doc.append(self.convert_expr(expr));
+        let mut doc: BoxDoc<()> = BoxDoc::nil();
+        for node in math.to_untyped().children() {
+            if let Some(expr) = node.cast::<Expr>() {
+                let expr_doc = self.convert_expr(expr);
+                doc = doc.append(expr_doc);
+            } else if let Some(space) = node.cast::<Space>() {
+                doc = doc.append(self.convert_space(space));
+            } else {
+                doc = doc.append(trivia(node));
+            }
         }
         doc
     }

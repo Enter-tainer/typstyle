@@ -74,7 +74,7 @@ input_file: tests/assets/cetz-tree.typ
       if type(content) == str {
         content = [#content]
       } else if type(content) in (float, int) {
-        content = $content$
+        content = $#content$
       } else if type(content) == dictionary and "content" in content {
         content = content.content
       } else if type(content) != typst-content {
