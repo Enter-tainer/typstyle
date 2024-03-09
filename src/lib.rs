@@ -374,7 +374,7 @@ impl PrettyPrinter {
     }
 
     fn convert_keyed<'a>(&'a self, keyed: Keyed<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = self.convert_str(keyed.key());
+        let mut doc = self.convert_expr(keyed.key());
         doc = doc.append(BoxDoc::text(":"));
         doc = doc.append(BoxDoc::space());
         doc = doc.append(self.convert_expr(keyed.expr()));
