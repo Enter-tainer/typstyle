@@ -28,8 +28,17 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                         .display()
                         .to_string();
 
-                    let test = Trial::test(name, move || check_file(&path)).with_kind("typst");
-                    tests.push(test);
+                    let test_40 = {
+                        let path = path.clone();
+                        Trial::test(name.clone(), move || check_file(&path, 40)).with_kind("typst")
+                    };
+                    let test_80 = {
+                        let path = path.clone();
+                        Trial::test(name.clone(), move || check_file(&path, 80)).with_kind("typst")
+                    };
+                    let test_120 =
+                        Trial::test(name, move || check_file(&path, 120)).with_kind("typst");
+                    tests.extend([test_40, test_80, test_120]);
                 }
             } else if file_type.is_dir() {
                 // Handle directories
@@ -50,7 +59,7 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
 }
 
 /// Performs a couple of tidy tests.
-fn check_file(path: &Path) -> Result<(), Failed> {
+fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
 
     // Check that the file is valid UTF-8
@@ -61,28 +70,13 @@ fn check_file(path: &Path) -> Result<(), Failed> {
     let root = typst_syntax::parse(&content);
     let markup = root.cast().unwrap();
     let doc = printer.convert_markup(markup);
-    let doc_40 = doc.pretty(40).to_string();
+    let doc_string = doc.pretty(width).to_string();
     let filename = path.file_name().unwrap().to_str().unwrap();
     insta::with_settings!({
-        snapshot_suffix => format!("{}-40", filename),
+        snapshot_suffix => format!("{}-{width}", filename),
         input_file => path,
     }, {
-        insta::assert_snapshot!(doc_40);
-    });
-    let doc_80 = doc.pretty(80).to_string();
-    insta::with_settings!({
-        snapshot_suffix => format!("{}-80", filename),
-        input_file => path,
-    }, {
-        insta::assert_snapshot!(doc_80);
-    });
-
-    let doc_120 = doc.pretty(120).to_string();
-    insta::with_settings!({
-        snapshot_suffix => format!("{}-120", filename),
-        input_file => path,
-    }, {
-        insta::assert_snapshot!(doc_120);
+        insta::assert_snapshot!(doc_string);
     });
     Ok(())
 }

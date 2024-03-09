@@ -64,4 +64,3 @@ your default web browser after building it.
 
 // ***Note:*** *Only the `.gitignore` from the book root directory is used. Global
 // `$HOME/.gitignore` or `.gitignore` files in parent directories are not used.*
-

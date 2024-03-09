@@ -126,9 +126,8 @@ input_file: tests/assets/simple-paper.typ
   )
   show emph: set text(font: emph-font)
   show ref: set text(red)
-  show raw.where(
-    block: true,
-  ): block.with(
+  show raw.where(block: true): block
+    .with(
     width: 100%,
     fill: luma(240),
     inset: 10pt,
@@ -163,9 +162,8 @@ input_file: tests/assets/simple-paper.typ
     inset: 8pt,
     radius: 2pt,
     width: 100%,
-  )[*题目 #problem-counter.display().* #h(
-      0.75em,
-    ) #body]
+  )[*题目 #problem-counter
+      .display().* #h(0.75em) #body]
 }
 
 #let solution(body) = {
@@ -175,4 +173,3 @@ input_file: tests/assets/simple-paper.typ
     width: 100%,
   )[*解答.* #h(0.75em) #body]
 }
-

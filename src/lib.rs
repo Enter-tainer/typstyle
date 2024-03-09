@@ -3,6 +3,7 @@ pub mod util;
 use std::borrow::Cow;
 use std::cell::RefCell;
 
+use itertools::Itertools;
 use pretty::BoxDoc;
 use typst_syntax::{ast, SyntaxNode};
 use typst_syntax::{ast::*, SyntaxKind};
@@ -97,6 +98,7 @@ impl PrettyPrinter {
             ast::Expr::Continue(c) => self.convert_continue(c),
             ast::Expr::Return(r) => self.convert_return(r),
         }
+        .group()
     }
 
     fn convert_text<'a>(&'a self, text: Text<'a>) -> BoxDoc<'a, ()> {
@@ -195,7 +197,7 @@ impl PrettyPrinter {
     fn convert_list_item<'a>(&'a self, list_item: ListItem<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("-");
         doc = doc.append(BoxDoc::space());
-        doc = doc.append(self.convert_markup(list_item.body()));
+        doc = doc.append(self.convert_markup(list_item.body()).nest(2));
         doc
     }
 
@@ -206,7 +208,7 @@ impl PrettyPrinter {
             BoxDoc::text("+")
         };
         doc = doc.append(BoxDoc::space());
-        doc = doc.append(self.convert_markup(enum_item.body()));
+        doc = doc.append(self.convert_markup(enum_item.body()).nest(2));
         doc
     }
 
@@ -216,7 +218,7 @@ impl PrettyPrinter {
         doc = doc.append(self.convert_markup(term.term()));
         doc = doc.append(BoxDoc::text(":"));
         doc = doc.append(BoxDoc::space());
-        doc = doc.append(self.convert_markup(term.description()));
+        doc = doc.append(self.convert_markup(term.description()).nest(2));
         doc
     }
 
@@ -225,7 +227,7 @@ impl PrettyPrinter {
         if equation.block() {
             doc = doc.append(BoxDoc::space());
         }
-        doc = doc.append(self.convert_math(equation.body()));
+        doc = doc.append(self.convert_math(equation.body()).nest(2));
         if equation.block() {
             doc = doc.append(BoxDoc::space());
         }
@@ -315,21 +317,29 @@ impl PrettyPrinter {
 
     fn convert_parenthesized<'a>(&'a self, parenthesized: Parenthesized<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("(");
-        doc = doc.append(self.convert_expr(parenthesized.expr()));
+        let multiline_expr = BoxDoc::line()
+            .append(self.convert_expr(parenthesized.expr()).nest(2))
+            .append(BoxDoc::line())
+            .group();
+        let singleline_expr = self.convert_expr(parenthesized.expr());
+        doc = doc.append(multiline_expr.flat_alt(singleline_expr));
         doc = doc.append(BoxDoc::text(")"));
         doc
     }
 
     fn convert_array<'a>(&'a self, array: Array<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("(");
-        let items = BoxDoc::intersperse(
-            array.items().map(|item| self.convert_array_item(item)),
-            BoxDoc::text(",").append(BoxDoc::line()),
+        let array_items = array
+            .items()
+            .map(|item| self.convert_array_item(item))
+            .collect_vec();
+        pretty_items(
+            &array_items,
+            BoxDoc::text(",").append(BoxDoc::space()),
+            BoxDoc::text(","),
+            (BoxDoc::text("("), BoxDoc::text(")")),
+            false,
+            util::FoldStyle::Fit,
         )
-        .group();
-        doc = doc.append(items);
-        doc = doc.append(BoxDoc::text(")"));
-        doc
     }
 
     fn convert_array_item<'a>(&'a self, array_item: ArrayItem<'a>) -> BoxDoc<'a, ()> {
@@ -342,15 +352,21 @@ impl PrettyPrinter {
     }
 
     fn convert_dict<'a>(&'a self, dict: Dict<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("(");
-        let items = BoxDoc::intersperse(
-            dict.items().map(|item| self.convert_dict_item(item)),
-            BoxDoc::text(",").append(BoxDoc::line()),
+        if dict.items().count() == 0 {
+            return BoxDoc::text("(:)");
+        }
+        let dict_items = dict
+            .items()
+            .map(|item| self.convert_dict_item(item))
+            .collect_vec();
+        pretty_items(
+            &dict_items,
+            BoxDoc::text(",").append(BoxDoc::space()),
+            BoxDoc::text(","),
+            (BoxDoc::text("("), BoxDoc::text(")")),
+            false,
+            util::FoldStyle::Fit,
         )
-        .group();
-        doc = doc.append(items);
-        doc = doc.append(BoxDoc::text(")"));
-        doc
     }
 
     fn convert_dict_item<'a>(&'a self, dict_item: DictItem<'a>) -> BoxDoc<'a, ()> {
@@ -395,11 +411,14 @@ impl PrettyPrinter {
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
-        let doc = BoxDoc::nil()
-            .append(self.convert_expr(field_access.target()))
-            .append(BoxDoc::text("."));
-        let doc = doc.append(self.convert_ident(field_access.field()));
-        doc
+        let left = BoxDoc::nil().append(self.convert_expr(field_access.target()));
+        let singleline_right = BoxDoc::text(".").append(self.convert_ident(field_access.field()));
+        let multiline_right = BoxDoc::hardline()
+            .append(BoxDoc::text("."))
+            .append(self.convert_ident(field_access.field()))
+            .nest(2)
+            .group();
+        left.append(multiline_right.flat_alt(singleline_right))
     }
 
     fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
@@ -605,18 +624,17 @@ impl PrettyPrinter {
     }
 
     fn convert_conditional<'a>(&'a self, conditional: Conditional<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::nil().append(BoxDoc::text("if"));
-        doc = doc
-            .append(BoxDoc::space())
-            .append(self.convert_expr(conditional.condition()))
+        let mut doc = BoxDoc::nil()
+            .append(BoxDoc::text("if"))
             .append(BoxDoc::space());
-        let body = self.convert_expr(conditional.if_body());
-        doc = doc.append(body);
+        doc = doc.append(self.convert_expr(conditional.condition()));
+        let body = self.convert_expr(conditional.if_body()).group();
+        doc = doc.append(BoxDoc::space()).append(body);
         if let Some(else_body) = conditional.else_body() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("else"));
             doc = doc.append(BoxDoc::space());
-            doc = doc.append(self.convert_expr(else_body));
+            doc = doc.append(self.convert_expr(else_body).group());
         }
         doc
     }

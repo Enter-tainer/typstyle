@@ -42,15 +42,19 @@ input_file: tests/assets/cetz-tree.typ
   assert(spread > 0)
   if direction == "down" { direction = "bottom" }
   if direction == "up" { direction = "top" }
-  let opposite-dir = (left: "right",
-  right: "left",
-  bottom: "top",
-  top: "bottom")
+  let opposite-dir = (
+    left: "right",
+    right: "left",
+    bottom: "top",
+    top: "bottom",
+  )
   if draw-edge == auto {
     draw-edge = (source-name, target-name, target-node) = {
       let (a,
-      b) = (source-name + "." + direction,
-      target-name + "." + opposite-dir.at(direction))
+      b) = (
+        source-name + "." + direction,
+        target-name + "." + opposite-dir.at(direction),
+      )
       draw.line(a, b)
     }
   } else if draw-edge == none { draw-edge = (..) = { } }
@@ -91,12 +95,14 @@ input_file: tests/assets/cetz-tree.typ
       )
       cnt = tree.at(0)
     } else { cnt = tree }
-    return (x: 0,
-    y: depth * grow,
-    n: sibling,
-    depth: depth,
-    children: children,
-    content: cnt)
+    return (
+      x: 0,
+      y: depth * grow,
+      n: sibling,
+      depth: depth,
+      children: children,
+      content: cnt,
+    )
   }
   // Layout node recursive
   //
@@ -107,18 +113,13 @@ input_file: tests/assets/cetz-tree.typ
       node.x = shift-x
       return (node, node.x, node.x)
     } else {
-      let (min-x,
-      max-x) = (none, none)
-      let (left,
-      right) = (none, none)
+      let (min-x, max-x) = (none, none)
+      let (left, right) = (none, none)
       let n-children = node.children.len()
       for i in range(0, n-children) {
         let child = node.children.at(i)
-        let (child-min-x,
-        child-max-x) = (none, none)
-        (child,
-        child-min-x,
-        child-max-x) = layout-node(child, shift-x, ctx)
+        let (child-min-x, child-max-x) = (none, none)
+        (child, child-min-x, child-max-x) = layout-node(child, shift-x, ctx)
         node.children.at(i) = child
         left = util.min(child.x, left)
         right = util.max(child.x, right)
@@ -138,8 +139,7 @@ input_file: tests/assets/cetz-tree.typ
     }
   }
   let layout(node, ctx) = {
-    let (n,
-    ..) = layout-node(node, 0, ctx)
+    let (n, ..) = layout-node(node, 0, ctx)
     return n
   }
   let node-position(node) = {
@@ -155,7 +155,7 @@ input_file: tests/assets/cetz-tree.typ
   }
   let anchors(node, parent-path) = {
     if parent-path != none { parent-path += "-" } else { parent-path = "" }
-    let d = ()
+    let d = (:)
     d.insert(parent-path + str(node.n), node-position(node))
     for child in node.children {
       d += anchors(child, parent-path + str(node.n))
@@ -178,26 +178,29 @@ input_file: tests/assets/cetz-tree.typ
     return cmds
   }
   let root = build-node(root)
-  ((name: name,
-  style: style.named(),
-  before: (ctx) => {
-    ctx.groups.push((ctx: ctx, anchors: (), tree-root: layout(root, ctx)))
-    return ctx
-  },
-  after: (ctx) => {
-    let self = ctx.groups.pop()
-    let nodes = ctx.nodes
-    ctx = self.ctx
-    if name != none { ctx.nodes.insert(name, nodes.at(name)) }
-    return ctx
-  },
-  custom-anchors-ctx: (ctx) => {
-    let self = ctx.groups.last()
-    return anchors(self.tree-root, none)
-  },
-  children: (ctx) => {
-    let self = ctx.groups.last()
-    render(self.tree-root, none)
-  }))
+  (
+    (
+      name: name,
+      style: style.named(),
+      before: (ctx) => {
+        ctx.groups.push((ctx: ctx, anchors: (:), tree-root: layout(root, ctx)))
+        return ctx
+      },
+      after: (ctx) => {
+        let self = ctx.groups.pop()
+        let nodes = ctx.nodes
+        ctx = self.ctx
+        if name != none { ctx.nodes.insert(name, nodes.at(name)) }
+        return ctx
+      },
+      custom-anchors-ctx: (ctx) => {
+        let self = ctx.groups.last()
+        return anchors(self.tree-root, none)
+      },
+      children: (ctx) => {
+        let self = ctx.groups.last()
+        render(self.tree-root, none)
+      },
+    ),
+  )
 }
-
