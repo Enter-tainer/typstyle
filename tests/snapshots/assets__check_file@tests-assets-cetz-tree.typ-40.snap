@@ -233,7 +233,7 @@ input_file: tests/assets/cetz-tree.typ
         node.x = left
       } else {
         node.x = left + (
-        right - left
+          right - left
         ) / 2
       }
       

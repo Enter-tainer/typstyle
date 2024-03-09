@@ -328,11 +328,13 @@ impl PrettyPrinter {
 
     fn convert_parenthesized<'a>(&'a self, parenthesized: Parenthesized<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("(");
+        let inner = self.convert_expr(parenthesized.expr());
         let multiline_expr = BoxDoc::line()
-            .append(self.convert_expr(parenthesized.expr()).nest(2))
+            .append(inner.clone())
             .append(BoxDoc::line())
+            .nest(2)
             .group();
-        let singleline_expr = self.convert_expr(parenthesized.expr());
+        let singleline_expr = inner;
         doc = doc.append(multiline_expr.flat_alt(singleline_expr));
         doc = doc.append(BoxDoc::text(")"));
         doc
@@ -427,7 +429,12 @@ impl PrettyPrinter {
     }
 
     fn convert_unary<'a>(&'a self, unary: Unary<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text(unary.op().as_str()).append(self.convert_expr(unary.expr()))
+        let op_text = match unary.op() {
+            UnOp::Pos => "+",
+            UnOp::Neg => "-",
+            UnOp::Not => "not ",
+        };
+        BoxDoc::text(op_text).append(self.convert_expr(unary.expr()))
     }
 
     fn convert_binary<'a>(&'a self, binary: Binary<'a>) -> BoxDoc<'a, ()> {
@@ -776,8 +783,10 @@ impl PrettyPrinter {
         let body = self.convert_math(math_delimited.body());
         let singleline = open.clone().append(body.clone()).append(close.clone());
         let multiline = open
-            .append(BoxDoc::hardline().append(body).nest(2))
             .append(BoxDoc::hardline())
+            .append(body)
+            .append(BoxDoc::hardline())
+            .nest(2)
             .append(close);
         multiline.flat_alt(singleline)
     }
