@@ -12,8 +12,9 @@ fn main() {
         column: line_width,
         ast,
         pretty_doc,
+        inplace,
     } = CliArguments::parse();
-    let content = std::fs::read_to_string(input).unwrap();
+    let content = std::fs::read_to_string(&input).unwrap();
     let root = parse(&content);
     if ast {
         println!("{:#?}", root);
@@ -25,5 +26,9 @@ fn main() {
         println!("{:#?}", doc);
     }
     let res = doc.pretty(line_width).to_string();
-    print!("{}", res);
+    if inplace {
+        std::fs::write(&input, res).unwrap();
+    } else {
+        print!("{}", res);
+    }
 }
