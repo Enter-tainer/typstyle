@@ -22,3 +22,5 @@ Options:
 cargo test
 cargo insta review
 ```
+
+Tested against cetz manual and tablex
