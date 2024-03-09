@@ -147,8 +147,7 @@ input_file: tests/assets/cetz-tree.typ
       children = tree.slice(1)
         .enumerate()
         .map(
-        (n,
-        c) => build-node(
+        ((n, c)) => build-node(
           c,
           depth: depth + 1,
           sibling: n,

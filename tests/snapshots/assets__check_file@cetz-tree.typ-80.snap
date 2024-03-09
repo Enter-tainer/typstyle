@@ -68,7 +68,7 @@ input_file: tests/assets/cetz-tree.typ
     draw-edge = (..) => { }
   }
   
-  if draw-node == auto or draw-node in ("rect") {
+  if draw-node == auto or draw-node in ("rect",) {
     draw-node = (node, parent-name) => {
       let content = node.content
       if type(content) == str {
@@ -105,7 +105,7 @@ input_file: tests/assets/cetz-tree.typ
     let cnt = none
     if type(tree) == array {
       children = tree.slice(1).enumerate().map(
-        (n, c) => build-node(c, depth: depth + 1, sibling: n),
+        ((n, c)) => build-node(c, depth: depth + 1, sibling: n),
       )
       cnt = tree.at(0)
     } else {

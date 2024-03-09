@@ -335,14 +335,32 @@ impl PrettyPrinter {
             .items()
             .map(|item| self.convert_array_item(item))
             .collect_vec();
-        pretty_items(
-            &array_items,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            util::FoldStyle::Fit,
-        )
+        if array_items.len() == 1 {
+            let singleline = BoxDoc::text("(")
+                .append(array_items[0].clone())
+                .append(BoxDoc::text(","))
+                .append(BoxDoc::text(")"));
+            let multiline = BoxDoc::text("(")
+                .append(
+                    BoxDoc::hardline()
+                        .append(array_items[0].clone())
+                        .append(BoxDoc::text(","))
+                        .nest(2),
+                )
+                .append(BoxDoc::hardline())
+                .append(BoxDoc::text(")"))
+                .group();
+            multiline.flat_alt(singleline)
+        } else {
+            pretty_items(
+                &array_items,
+                BoxDoc::text(",").append(BoxDoc::space()),
+                BoxDoc::text(","),
+                (BoxDoc::text("("), BoxDoc::text(")")),
+                false,
+                util::FoldStyle::Fit,
+            )
+        }
     }
 
     fn convert_array_item<'a>(&'a self, array_item: ArrayItem<'a>) -> BoxDoc<'a, ()> {
@@ -491,7 +509,11 @@ impl PrettyPrinter {
             doc = doc.append(self.convert_expr(closure.body()));
         } else {
             if params.len() == 1
-                && !matches!(closure.params().children().next().unwrap(), Param::Sink(_))
+                && matches!(closure.params().children().next().unwrap(), Param::Pos(_))
+                && !matches!(
+                    closure.params().children().next().unwrap(),
+                    Param::Pos(Pattern::Destructuring(_))
+                )
             {
                 doc = params[0].clone();
             } else {

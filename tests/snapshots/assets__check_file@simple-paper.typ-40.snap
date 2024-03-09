@@ -87,7 +87,7 @@ input_file: tests/assets/simple-paper.typ
     bottom: 0.5em,
     x: 2em,
     grid(
-      columns: (1fr) * calc.min(
+      columns: (1fr,) * calc.min(
         3,
         authors.len(),
       ),
