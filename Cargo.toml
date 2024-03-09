@@ -1,12 +1,12 @@
 [package]
-name = "typst_geshihua"
+name = "typst-geshihua"
 version = "0.10.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "typst_geshihua"
+name = "typst-geshihua"
 path = "src/main.rs"
 
 [lib]

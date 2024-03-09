@@ -1,8 +1,8 @@
-# typst_geshihua
+# typst-geshihua
 
 Usage: 
 ```
-Usage: typst_geshihua [OPTIONS] <INPUT>
+Usage: typst-geshihua [OPTIONS] <INPUT>
 
 Arguments:
   <INPUT>  

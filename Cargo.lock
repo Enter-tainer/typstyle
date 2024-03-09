@@ -732,24 +732,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6af6ae20167a9ece4bcb41af5b80f8a1f1df981f6391189ce00fd257af04126a"
 
 [[package]]
-name = "typst-syntax"
-version = "0.10.0"
-source = "git+https://github.com/typst/typst.git?tag=v0.10.0#70ca0d257bb4ba927f63260e20443f244e0bb58c"
-dependencies = [
- "comemo",
- "ecow",
- "once_cell",
- "serde",
- "tracing",
- "unicode-ident",
- "unicode-math-class",
- "unicode-script",
- "unicode-segmentation",
- "unscanny",
-]
-
-[[package]]
-name = "typst_geshihua"
+name = "typst-geshihua"
 version = "0.10.0"
 dependencies = [
  "anyhow",
@@ -764,6 +747,23 @@ dependencies = [
  "thiserror",
  "typst-syntax",
  "vergen",
+]
+
+[[package]]
+name = "typst-syntax"
+version = "0.10.0"
+source = "git+https://github.com/typst/typst.git?tag=v0.10.0#70ca0d257bb4ba927f63260e20443f244e0bb58c"
+dependencies = [
+ "comemo",
+ "ecow",
+ "once_cell",
+ "serde",
+ "tracing",
+ "unicode-ident",
+ "unicode-math-class",
+ "unicode-script",
+ "unicode-segmentation",
+ "unscanny",
 ]
 
 [[package]]
