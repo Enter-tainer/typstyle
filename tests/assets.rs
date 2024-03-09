@@ -3,7 +3,7 @@ extern crate libtest_mimic;
 use libtest_mimic::{Arguments, Failed, Trial};
 use typst_geshihua::PrettyPrinter;
 
-use std::{env, error::Error, ffi::OsStr, fmt::format, fs, path::Path};
+use std::{env, error::Error, ffi::OsStr, fs, path::Path};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Arguments::from_args();
