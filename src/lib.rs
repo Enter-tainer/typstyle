@@ -713,6 +713,12 @@ impl PrettyPrinter {
             };
             doc = doc.append(imports.group());
         }
+        if let Some(new_name) = import.new_name() {
+            doc = doc.append(BoxDoc::space());
+            doc = doc.append(BoxDoc::text("as"));
+            doc = doc.append(BoxDoc::space());
+            doc = doc.append(self.convert_ident(new_name));
+        }
         doc
     }
 
