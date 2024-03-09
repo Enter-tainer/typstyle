@@ -10,6 +10,10 @@ pub struct CliArguments {
     /// The width of the output
     #[clap(short, long, default_value = "80")]
     pub column: usize,
+    #[clap(short, long, default_value = "false")]
+    pub ast: bool,
+    #[clap(short, long, default_value = "false")]
+    pub pretty_doc: bool,
 }
 
 static NONE: &str = "None";

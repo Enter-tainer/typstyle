@@ -10,14 +10,20 @@ fn main() {
     let CliArguments {
         input,
         column: line_width,
+        ast,
+        pretty_doc,
     } = CliArguments::parse();
     let content = std::fs::read_to_string(input).unwrap();
     let root = parse(&content);
-    // eprintln!("{:#?}", root);
+    if ast {
+        println!("{:#?}", root);
+    }
     let markup = root.cast().unwrap();
     let printer = PrettyPrinter::default();
     let doc = printer.convert_markup(markup);
-    // eprint!("{:#?}", doc);
+    if pretty_doc {
+        println!("{:#?}", doc);
+    }
     let res = doc.pretty(line_width).to_string();
     print!("{}", res);
 }

@@ -10,14 +10,8 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::util::pretty_items;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PrettyPrinter {}
-
-impl Default for PrettyPrinter {
-    fn default() -> Self {
-        Self {}
-    }
-}
 
 impl PrettyPrinter {
     pub fn convert_markup<'a>(&'a self, root: Markup<'a>) -> BoxDoc<'a, ()> {
@@ -298,8 +292,15 @@ impl PrettyPrinter {
             if let Some(expr) = node.cast::<Expr>() {
                 let expr_doc = self.convert_expr(expr);
                 codes.push(expr_doc);
-            } else if node.kind() == SyntaxKind::LineComment {
+            } else if node.kind() == SyntaxKind::LineComment
+                || node.kind() == SyntaxKind::BlockComment
+            {
                 codes.push(trivia(node));
+            } else if node.kind() == SyntaxKind::Space {
+                let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
+                for _ in 0..newline_cnt.saturating_sub(1) {
+                    codes.push(BoxDoc::nil());
+                }
             }
         }
         codes
@@ -483,10 +484,12 @@ impl PrettyPrinter {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(self.convert_expr(closure.body()));
         } else {
-            if params.len() > 1 {
-                doc = arg_list
-            } else {
+            if params.len() == 1
+                && !matches!(closure.params().children().next().unwrap(), Param::Sink(_))
+            {
                 doc = params[0].clone();
+            } else {
+                doc = arg_list
             }
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("=>"));
@@ -513,12 +516,14 @@ impl PrettyPrinter {
 
     fn convert_spread<'a>(&'a self, spread: Spread<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("..");
-        if let Some(id) = spread.name() {
-            doc = doc.append(self.convert_ident(id));
-        }
-        if let Some(expr) = spread.expr() {
-            doc = doc.append(self.convert_expr(expr));
-        }
+        let ident = if let Some(id) = spread.name() {
+            self.convert_ident(id)
+        } else if let Some(expr) = spread.expr() {
+            self.convert_expr(expr)
+        } else {
+            BoxDoc::nil()
+        };
+        doc = doc.append(ident);
         doc
     }
 
@@ -563,7 +568,7 @@ impl PrettyPrinter {
             .append(BoxDoc::space());
         match let_binding.kind() {
             LetBindingKind::Normal(n) => {
-                doc = doc.append(self.convert_pattern(n));
+                doc = doc.append(self.convert_pattern(n).group());
                 if let Some(expr) = let_binding.init() {
                     doc = doc.append(BoxDoc::space());
                     doc = doc.append(BoxDoc::text("="));
