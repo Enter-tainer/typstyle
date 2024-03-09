@@ -11,8 +11,9 @@ input_file: tests/assets/unit/comment/block-comment.typ
   ) => {
     let (a, b) = (
       source-name + "." + direction,
-      target-name + "." + opposite-dir
-        .at(direction),
+      target-name + "." + opposite-dir.at(
+        direction,
+      ),
     )
     
     draw.line(a, b)

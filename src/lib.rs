@@ -433,12 +433,14 @@ impl PrettyPrinter {
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
         let left = BoxDoc::nil().append(self.convert_expr(field_access.target()));
         let singleline_right = BoxDoc::text(".").append(self.convert_ident(field_access.field()));
-        let multiline_right = BoxDoc::hardline()
+        let _multiline_right = BoxDoc::hardline()
             .append(BoxDoc::text("."))
             .append(self.convert_ident(field_access.field()))
             .nest(2)
             .group();
-        left.append(multiline_right.flat_alt(singleline_right))
+        // TODO: typst doesn't support this
+        // left.append(multiline_right.flat_alt(singleline_right))
+        left.append(singleline_right)
     }
 
     fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
