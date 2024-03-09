@@ -6,6 +6,8 @@ pub enum FoldStyle {
     Fit,
     /// Fold items if there is only one item and it fit in a single line, other wise put each item in a line
     Single,
+    /// Never fold items
+    Never,
 }
 
 pub fn pretty_items<'a>(
@@ -73,7 +75,8 @@ fn pretty_items_impl<'a>(
             } else {
                 multi
             }
-        }
+        },
+        FoldStyle::Never => multi,
     }
 }
 

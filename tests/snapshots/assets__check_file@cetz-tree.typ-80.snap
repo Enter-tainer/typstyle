@@ -40,8 +40,12 @@ input_file: tests/assets/cetz-tree.typ
   assert(parent-position in ("begin", "center"))
   assert(grow > 0)
   assert(spread > 0)
-  if direction == "down" { direction = "bottom" }
-  if direction == "up" { direction = "top" }
+  if direction == "down" {
+    direction = "bottom"
+  }
+  if direction == "up" {
+    direction = "top"
+  }
   let opposite-dir = (
     left: "right",
     right: "left",
@@ -57,15 +61,17 @@ input_file: tests/assets/cetz-tree.typ
       )
       draw.line(a, b)
     }
-  } else if draw-edge == none { draw-edge = .. => { } }
+  } else if draw-edge == none {
+    draw-edge = .. => { }
+  }
   if draw-node == auto or draw-node in ("rect") {
     draw-node = (node, parent-name) => {
       let content = node.content
-      if type(content) == str { content = [#content] } else if type(
-        content,
-      ) in (float, int) { content = $content$ } else if type(
-        content,
-      ) == dictionary and "content" in content {
+      if type(content) == str {
+        content = [#content]
+      } else if type(content) in (float, int) {
+        content = $content$
+      } else if type(content) == dictionary and "content" in content {
         content = content.content
       } else if type(content) != typst-content {
         panic(
@@ -74,7 +80,9 @@ input_file: tests/assets/cetz-tree.typ
           ) + "! " + "Provide your own `draw-node` implementation.",
         )
       }
-      if content != none { draw.content((), content, name: "content") } else {
+      if content != none {
+        draw.content((), content, name: "content")
+      } else {
         draw.content((), [?], name: "content")
       }
       if draw-node == "rect" {
@@ -94,7 +102,9 @@ input_file: tests/assets/cetz-tree.typ
         (n, c) => build-node(c, depth: depth + 1, sibling: n),
       )
       cnt = tree.at(0)
-    } else { cnt = tree }
+    } else {
+      cnt = tree
+    }
     return (
       x: 0,
       y: depth * grow,
@@ -125,10 +135,14 @@ input_file: tests/assets/cetz-tree.typ
         right = util.max(child.x, right)
         min-x = util.min(min-x, child-min-x)
         max-x = util.max(max-x, child-max-x)
-        if child-max-x > right { shift-x = child-max-x }
+        if child-max-x > right {
+          shift-x = child-max-x
+        }
         shift-x += spread
       }
-      if parent-position == "begin" { node.x = left } else {
+      if parent-position == "begin" {
+        node.x = left
+      } else {
         node.x = left + (right - left) / 2
       }
       node.direct-min-x = left
@@ -149,12 +163,18 @@ input_file: tests/assets/cetz-tree.typ
       return (node.x, node.y)
     } else if direction == "left" {
       return (-node.y, node.x)
-    } else if direction == "right" { return (node.y, node.x) } else {
+    } else if direction == "right" {
+      return (node.y, node.x)
+    } else {
       panic(message: "Invalid tree direction.")
     }
   }
   let anchors(node, parent-path) = {
-    if parent-path != none { parent-path += "-" } else { parent-path = "" }
+    if parent-path != none {
+      parent-path += "-"
+    } else {
+      parent-path = ""
+    }
     let d = (:)
     d.insert(parent-path + str(node.n), node-position(node))
     for child in node.children {
@@ -173,8 +193,12 @@ input_file: tests/assets/cetz-tree.typ
         draw-node(node, parent-name)
       },
     )
-    if parent-name != none { cmds += draw-edge(parent-name, name, node) }
-    for child in node.children { cmds += render(child, name) }
+    if parent-name != none {
+      cmds += draw-edge(parent-name, name, node)
+    }
+    for child in node.children {
+      cmds += render(child, name)
+    }
     return cmds
   }
   let root = build-node(root)
@@ -190,7 +214,9 @@ input_file: tests/assets/cetz-tree.typ
         let self = ctx.groups.pop()
         let nodes = ctx.nodes
         ctx = self.ctx
-        if name != none { ctx.nodes.insert(name, nodes.at(name)) }
+        if name != none {
+          ctx.nodes.insert(name, nodes.at(name))
+        }
         return ctx
       },
       custom-anchors-ctx: ctx => {

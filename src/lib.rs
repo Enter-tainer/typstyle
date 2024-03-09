@@ -287,7 +287,7 @@ impl PrettyPrinter {
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
             true,
-            util::FoldStyle::Single,
+            util::FoldStyle::Never,
         );
         doc
     }
