@@ -214,11 +214,11 @@ impl PrettyPrinter {
     fn convert_equation<'a>(&'a self, equation: Equation<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("$");
         if equation.block() {
-            doc = doc.append(BoxDoc::space());
+            doc = doc.append(BoxDoc::line());
         }
         doc = doc.append(self.convert_math(equation.body()).nest(2));
         if equation.block() {
-            doc = doc.append(BoxDoc::space());
+            doc = doc.append(BoxDoc::line());
         }
         doc = doc.append(BoxDoc::text("$"));
         doc

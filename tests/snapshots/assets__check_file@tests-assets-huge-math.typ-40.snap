@@ -3,7 +3,8 @@ source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/huge-math.typ
 ---
-$ U(P)
+$
+U(P)
   &= - G integral_(r=0)^R integral_(theta = 0)^(pi) integral_(phi=0)^(2 pi) rho(
     r,
   ) / q r^2 dif r dif theta sin(
@@ -86,4 +87,5 @@ $ U(P)
   &= - G / s integral_(r=0)^R rho(
     r,
   ) 4 pi r^2 dif r\
-  &= - (G M) / s $
+  &= - (G M) / s
+$
