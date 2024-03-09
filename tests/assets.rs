@@ -3,7 +3,7 @@ extern crate libtest_mimic;
 use libtest_mimic::{Arguments, Failed, Trial};
 use typst_geshihua::PrettyPrinter;
 
-use std::{env, error::Error, ffi::OsStr, fs, path::Path};
+use std::{env, error::Error, ffi::OsStr, fmt::format, fs, path::Path};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Arguments::from_args();
@@ -29,15 +29,19 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                         .to_string();
 
                     let test_40 = {
-                        let path = path.clone();
-                        Trial::test(name.clone(), move || check_file(&path, 40)).with_kind("typst")
+                        let path: std::path::PathBuf = path.clone();
+                        Trial::test(format!("{} - 40char", name), move || check_file(&path, 40))
+                            .with_kind("typst")
                     };
                     let test_80 = {
                         let path = path.clone();
-                        Trial::test(name.clone(), move || check_file(&path, 80)).with_kind("typst")
+                        Trial::test(format!("{} - 80char", name), move || check_file(&path, 80))
+                            .with_kind("typst")
                     };
-                    let test_120 =
-                        Trial::test(name, move || check_file(&path, 120)).with_kind("typst");
+                    let test_120 = Trial::test(format!("{} - 120char", name), move || {
+                        check_file(&path, 120)
+                    })
+                    .with_kind("typst");
                     tests.extend([test_40, test_80, test_120]);
                 }
             } else if file_type.is_dir() {
