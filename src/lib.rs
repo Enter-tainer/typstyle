@@ -1,7 +1,6 @@
 pub mod util;
 
 use std::borrow::Cow;
-use std::cell::RefCell;
 
 use itertools::Itertools;
 use pretty::BoxDoc;
@@ -50,13 +49,13 @@ impl PrettyPrinter {
             ast::Expr::Term(t) => self.convert_term_item(t),
             ast::Expr::Equation(e) => self.convert_equation(e),
             ast::Expr::Math(m) => self.convert_math(m),
-            ast::Expr::MathIdent(mi) => todo!(),
-            ast::Expr::MathAlignPoint(map) => todo!(),
-            ast::Expr::MathDelimited(md) => todo!(),
-            ast::Expr::MathAttach(ma) => todo!(),
-            ast::Expr::MathPrimes(mp) => todo!(),
-            ast::Expr::MathFrac(mf) => todo!(),
-            ast::Expr::MathRoot(mr) => todo!(),
+            ast::Expr::MathIdent(mi) => trivia(mi.to_untyped()),
+            ast::Expr::MathAlignPoint(map) => trivia(map.to_untyped()),
+            ast::Expr::MathDelimited(md) => self.convert_math_delimited(md),
+            ast::Expr::MathAttach(ma) => self.convert_math_attach(ma),
+            ast::Expr::MathPrimes(mp) => self.convert_math_primes(mp),
+            ast::Expr::MathFrac(mf) => self.convert_math_frac(mf),
+            ast::Expr::MathRoot(mr) => self.convert_math_root(mr),
             ast::Expr::Ident(i) => self.convert_ident(i),
             ast::Expr::None(n) => self.convert_none(n),
             ast::Expr::Auto(a) => self.convert_auto(a),
@@ -752,6 +751,65 @@ impl PrettyPrinter {
             doc = doc.append(self.convert_expr(body));
         }
         doc
+    }
+
+    fn convert_math_delimited<'a>(&'a self, math_delimited: MathDelimited<'a>) -> BoxDoc<'a, ()> {
+        let open = self.convert_expr(math_delimited.open());
+        let close = self.convert_expr(math_delimited.close());
+        let body = self.convert_math(math_delimited.body());
+        let singleline = open.clone().append(body.clone()).append(close.clone());
+        let multiline = open
+            .append(BoxDoc::hardline().append(body).nest(2))
+            .append(BoxDoc::hardline())
+            .append(close);
+        multiline.flat_alt(singleline)
+    }
+
+    fn convert_math_attach<'a>(&'a self, math_attach: MathAttach<'a>) -> BoxDoc<'a, ()> {
+        let mut doc = self.convert_expr(math_attach.base());
+        if let Some(primes) = math_attach.primes() {
+            doc = doc.append(self.convert_math_primes(primes));
+        }
+        if let Some(bottom) = math_attach.bottom() {
+            doc = doc.append(BoxDoc::text("_"));
+            doc = doc.append(self.convert_expr(bottom));
+        }
+        if let Some(top) = math_attach.top() {
+            doc = doc.append(BoxDoc::text("^"));
+            doc = doc.append(self.convert_expr(top));
+        }
+        doc
+    }
+
+    fn convert_math_primes<'a>(&'a self, math_primes: MathPrimes<'a>) -> BoxDoc<'a, ()> {
+        BoxDoc::text("'".repeat(math_primes.count()))
+    }
+
+    fn convert_math_frac<'a>(&'a self, math_frac: MathFrac<'a>) -> BoxDoc<'a, ()> {
+        let singleline = self
+            .convert_expr(math_frac.num())
+            .append(BoxDoc::space())
+            .append(BoxDoc::text("/"))
+            .append(BoxDoc::space())
+            .append(self.convert_expr(math_frac.denom()));
+        // TODO: add multiline version
+        singleline
+    }
+
+    fn convert_math_root<'a>(&'a self, math_root: MathRoot<'a>) -> BoxDoc<'a, ()> {
+        let sqrt_sym = if let Some(index) = math_root.index() {
+            if index == 3 {
+                BoxDoc::text("∛")
+            } else if index == 4 {
+                BoxDoc::text("∜")
+            } else {
+                // TODO: actually unreachable
+                BoxDoc::text("√")
+            }
+        } else {
+            BoxDoc::text("√")
+        };
+        sqrt_sym.append(self.convert_expr(math_root.radicand()))
     }
 }
 
