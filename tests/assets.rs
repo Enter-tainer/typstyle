@@ -38,11 +38,18 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                         Trial::test(format!("{} - 80char", name), move || check_file(&path, 80))
                             .with_kind("typst")
                     };
-                    let test_120 = Trial::test(format!("{} - 120char", name), move || {
-                        check_file(&path, 120)
-                    })
-                    .with_kind("typst");
-                    tests.extend([test_40, test_80, test_120]);
+                    let test_120 = {
+                        let path = path.clone();
+                        Trial::test(format!("{} - 120char", name), move || {
+                            check_file(&path, 120)
+                        })
+                        .with_kind("typst")
+                    };
+                    let test_convergence =
+                        Trial::test(format!("{} - convergence", name), move || {
+                            check_convergence(&path, 80)
+                        });
+                    tests.extend([test_40, test_80, test_120, test_convergence]);
                 }
             } else if file_type.is_dir() {
                 // Handle directories
@@ -82,5 +89,28 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     }, {
         insta::assert_snapshot!(doc_string);
     });
+    Ok(())
+}
+
+fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
+    let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
+
+    // Check that the file is valid UTF-8
+    let content = String::from_utf8(content)
+        .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
+    let pretty_print = |content: &str| {
+        let printer = PrettyPrinter::default();
+        let root = typst_syntax::parse(content);
+        let markup = root.cast().unwrap();
+        let doc = printer.convert_markup(markup);
+        doc.pretty(width).to_string()
+    };
+    let first_pass = pretty_print(&content);
+    let second_pass = pretty_print(&first_pass);
+    pretty_assertions::assert_str_eq!(
+        first_pass,
+        second_pass,
+        "first pass and second pass are not the same!"
+    );
     Ok(())
 }

@@ -10,10 +10,13 @@ pub struct CliArguments {
     /// The width of the output
     #[clap(short, long, default_value = "80")]
     pub column: usize,
+    /// Print the AST of the input file
     #[clap(short, long, default_value = "false")]
     pub ast: bool,
+    /// Print the pretty document
     #[clap(short, long, default_value = "false")]
     pub pretty_doc: bool,
+    /// Format the file in place
     #[clap(short, long, default_value = "false")]
     pub inplace: bool,
 }

@@ -1,8 +1,13 @@
+Our study design is as follows:
+/* Somebody write this up:
+   - 1000 participants.
+   - 2x2 data design. */
+
 #if draw-edge == auto {
   draw-edge = (source-name, target-name, target-node) => {
     let (a, b) = (source-name + "." + direction,
                   target-name + "." + opposite-dir.at(direction))
-
+    /* see this */
     draw.line(a, b)
     /*
     if direction == "bottom" {

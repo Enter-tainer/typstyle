@@ -146,12 +146,12 @@ impl PrettyPrinter {
                 doc = doc.append(BoxDoc::text(lang));
             }
             doc = doc.append(BoxDoc::hardline());
-            doc = doc.append(to_doc(raw.text().to_string().into()));
+            doc = doc.append(to_doc(raw.text().to_string().into(), false));
             doc = doc.append(BoxDoc::hardline());
             doc = doc.append(BoxDoc::text("```"));
         } else {
             doc = doc.append(BoxDoc::text("`"));
-            doc = doc.append(to_doc(raw.text().to_string().into()));
+            doc = doc.append(to_doc(raw.text().to_string().into(), false));
             doc = doc.append(BoxDoc::text("`"));
         }
         doc
@@ -278,10 +278,19 @@ impl PrettyPrinter {
     }
 
     fn convert_code_block<'a>(&'a self, code_block: CodeBlock<'a>) -> BoxDoc<'a, ()> {
-        let code = self.convert_code(code_block.body());
-
+        let mut codes: Vec<_> = vec![];
+        for node in code_block.to_untyped().children() {
+            if let Some(code) = node.cast::<Code>() {
+                let code_doc = self.convert_code(code);
+                codes.extend(code_doc);
+            } else if node.kind() == SyntaxKind::LineComment
+                || node.kind() == SyntaxKind::BlockComment
+            {
+                codes.push(to_doc(std::borrow::Cow::Borrowed(node.text()), true));
+            }
+        }
         let doc = pretty_items(
-            &code,
+            &codes,
             BoxDoc::text(";").append(BoxDoc::space()),
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
@@ -300,7 +309,7 @@ impl PrettyPrinter {
             } else if node.kind() == SyntaxKind::LineComment
                 || node.kind() == SyntaxKind::BlockComment
             {
-                codes.push(trivia(node));
+                codes.push(to_doc(std::borrow::Cow::Borrowed(node.text()), true));
             } else if node.kind() == SyntaxKind::Space {
                 let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
                 for _ in 0..newline_cnt.saturating_sub(1) {
@@ -822,17 +831,21 @@ impl PrettyPrinter {
 }
 
 fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
-    to_doc(std::borrow::Cow::Borrowed(node.text()))
+    to_doc(std::borrow::Cow::Borrowed(node.text()), false)
 }
 
-pub fn to_doc(s: Cow<'_, str>) -> BoxDoc<'_, ()> {
-    match s {
-        Cow::Borrowed(s) => BoxDoc::intersperse(s.lines().map(BoxDoc::text), BoxDoc::hardline()),
-        Cow::Owned(o) => BoxDoc::intersperse(
-            o.lines().map(|s| BoxDoc::text(s.to_string())),
-            BoxDoc::hardline(),
-        ),
-    }
+pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
+    let get_line = |s: &str| {
+        if strip_prefix {
+            s.trim_start().to_string()
+        } else {
+            s.to_string()
+        }
+    };
+    BoxDoc::intersperse(
+        s.lines().map(|s| BoxDoc::text(get_line(s))),
+        BoxDoc::hardline(),
+    )
 }
 
 #[cfg(test)]
@@ -850,7 +863,7 @@ mod tests {
             "123\n4568\n789\n",
         ];
         for test in tests.into_iter() {
-            insta::assert_debug_snapshot!(to_doc(test.into()));
+            insta::assert_debug_snapshot!(to_doc(test.into(), false));
         }
     }
 
