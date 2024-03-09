@@ -11,15 +11,11 @@ use typst_syntax::{ast::*, SyntaxKind};
 use crate::util::pretty_items;
 
 #[derive(Debug)]
-pub struct PrettyPrinter {
-    is_let_closure: RefCell<bool>,
-}
+pub struct PrettyPrinter {}
 
 impl Default for PrettyPrinter {
     fn default() -> Self {
-        Self {
-            is_let_closure: RefCell::new(false),
-        }
+        Self {}
     }
 }
 
@@ -470,25 +466,33 @@ impl PrettyPrinter {
 
     fn convert_closure<'a>(&'a self, closure: Closure<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::nil();
-        if let Some(name) = closure.name() {
-            doc = doc.append(self.convert_ident(name));
-        }
-        doc = doc.append(pretty_items(
-            &self.convert_params(closure.params()),
+        let params = self.convert_params(closure.params());
+        let arg_list = pretty_items(
+            &params,
             BoxDoc::text(",").append(BoxDoc::space()),
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
             util::FoldStyle::Fit,
-        ));
-        doc = doc.append(BoxDoc::space());
-        if *self.is_let_closure.borrow() {
+        );
+        if let Some(name) = closure.name() {
+            doc = doc.append(self.convert_ident(name));
+            doc = doc.append(arg_list);
+            doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("="));
+            doc = doc.append(BoxDoc::space());
+            doc = doc.append(self.convert_expr(closure.body()));
         } else {
+            if params.len() > 1 {
+                doc = arg_list
+            } else {
+                doc = params[0].clone();
+            }
+            doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("=>"));
+            doc = doc.append(BoxDoc::space());
+            doc = doc.append(self.convert_expr(closure.body()));
         }
-        doc = doc.append(BoxDoc::space());
-        doc = doc.append(self.convert_expr(closure.body()));
         doc
     }
 
@@ -568,11 +572,9 @@ impl PrettyPrinter {
                 }
             }
             LetBindingKind::Closure(_c) => {
-                self.is_let_closure.replace(true);
                 if let Some(c) = let_binding.init() {
                     doc = doc.append(self.convert_expr(c));
                 }
-                self.is_let_closure.replace(false);
             }
         }
         doc

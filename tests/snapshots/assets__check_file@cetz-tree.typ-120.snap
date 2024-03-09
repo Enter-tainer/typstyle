@@ -1,6 +1,6 @@
 ---
 source: tests/assets.rs
-expression: doc_120
+expression: doc_string
 input_file: tests/assets/cetz-tree.typ
 ---
 // CeTZ Library for Layouting Tree-Nodes
@@ -44,13 +44,13 @@ input_file: tests/assets/cetz-tree.typ
   if direction == "up" { direction = "top" }
   let opposite-dir = (left: "right", right: "left", bottom: "top", top: "bottom")
   if draw-edge == auto {
-    draw-edge = (source-name, target-name, target-node) = {
+    draw-edge = (source-name, target-name, target-node) => {
       let (a, b) = (source-name + "." + direction, target-name + "." + opposite-dir.at(direction))
       draw.line(a, b)
     }
-  } else if draw-edge == none { draw-edge = (..) = { } }
+  } else if draw-edge == none { draw-edge = .. => { } }
   if draw-node == auto or draw-node in ("rect") {
-    draw-node = (node, parent-name) = {
+    draw-node = (node, parent-name) => {
       let content = node.content
       if type(content) == str { content = [#content] } else if type(content) in (float, int) {
         content = $content$
@@ -70,7 +70,7 @@ input_file: tests/assets/cetz-tree.typ
     let children = ()
     let cnt = none
     if type(tree) == array {
-      children = tree.slice(1).enumerate().map(((n, c)) = build-node(c, depth: depth + 1, sibling: n))
+      children = tree.slice(1).enumerate().map((n, c) => build-node(c, depth: depth + 1, sibling: n))
       cnt = tree.at(0)
     } else { cnt = tree }
     return (x: 0, y: depth * grow, n: sibling, depth: depth, children: children, content: cnt)
@@ -145,22 +145,22 @@ input_file: tests/assets/cetz-tree.typ
     (
       name: name,
       style: style.named(),
-      before: (ctx) => {
+      before: ctx => {
         ctx.groups.push((ctx: ctx, anchors: (:), tree-root: layout(root, ctx)))
         return ctx
       },
-      after: (ctx) => {
+      after: ctx => {
         let self = ctx.groups.pop()
         let nodes = ctx.nodes
         ctx = self.ctx
         if name != none { ctx.nodes.insert(name, nodes.at(name)) }
         return ctx
       },
-      custom-anchors-ctx: (ctx) => {
+      custom-anchors-ctx: ctx => {
         let self = ctx.groups.last()
         return anchors(self.tree-root, none)
       },
-      children: (ctx) => {
+      children: ctx => {
         let self = ctx.groups.last()
         render(self.tree-root, none)
       },

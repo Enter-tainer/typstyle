@@ -38,14 +38,14 @@ input_file: tests/assets/simple-paper.typ
     region: "cn",
   )
   set bibliography(style: "gb-7114-2015-numeric")
-  show heading: (it) = box(width: 100%)[
+  show heading: it => box(width: 100%)[
     #v(0.50em)
     #set text(font: heading-font)
     #if it.numbering != none { counter(heading).display() }
     #h(0.75em)
     #it.body
   ]
-  show heading.where(level: 1): (it) = box(width: 100%)[
+  show heading.where(level: 1): it => box(width: 100%)[
     #v(0.5em)
     #set align(center)
     #set heading(numbering: "一")
@@ -65,25 +65,25 @@ input_file: tests/assets/simple-paper.typ
     grid(
       columns: (1fr) * calc.min(3, authors.len()),
       gutter: 1em,
-      ..authors.map((author) = align(center, text(font: author-font, author))),
+      ..authors.map(author => align(center, text(font: author-font, author))),
     ),
   )
   // Main body
   set par(first-line-indent: 2em)
   set enum(indent: 2em)
   set figure(gap: 0.8cm)
-  show figure: (it) = [
+  show figure: it => [
     #v(12pt)
     #set text(font: caption-font)
     #it
     #par()[#text(size: 0.0em)[#h(0.0em)]]
     #v(12pt)
   ]
-  show image: (it) = [
+  show image: it => [
     #it
     #par()[#text(size: 0.0em)[#h(0.0em)]]
   ]
-  show table: (it) = [
+  show table: it => [
     #set text(font: body-font)
     #it
   ]

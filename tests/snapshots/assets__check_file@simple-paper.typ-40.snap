@@ -1,6 +1,6 @@
 ---
 source: tests/assets.rs
-expression: doc_40
+expression: doc_string
 input_file: tests/assets/simple-paper.typ
 ---
 #let project(
@@ -46,7 +46,7 @@ input_file: tests/assets/simple-paper.typ
   set bibliography(
     style: "gb-7114-2015-numeric",
   )
-  show heading: (it) = box(width: 100%)[
+  show heading: it => box(width: 100%)[
     #v(0.50em)
     #set text(font: heading-font)
     #if it.numbering != none {
@@ -55,9 +55,9 @@ input_file: tests/assets/simple-paper.typ
     #h(0.75em)
     #it.body
   ]
-  show heading.where(level: 1): (
-    it,
-  ) = box(width: 100%)[
+  show heading.where(
+    level: 1,
+  ): it => box(width: 100%)[
     #v(0.5em)
     #set align(center)
     #set heading(numbering: "一")
@@ -88,7 +88,7 @@ input_file: tests/assets/simple-paper.typ
       ),
       gutter: 1em,
       ..authors.map(
-        (author) = align(
+        author => align(
           center,
           text(
             font: author-font,
@@ -102,7 +102,7 @@ input_file: tests/assets/simple-paper.typ
   set par(first-line-indent: 2em)
   set enum(indent: 2em)
   set figure(gap: 0.8cm)
-  show figure: (it) = [
+  show figure: it => [
     #v(12pt)
     #set text(font: caption-font)
     #it
@@ -111,13 +111,13 @@ input_file: tests/assets/simple-paper.typ
         )]]
     #v(12pt)
   ]
-  show image: (it) = [
+  show image: it => [
     #it
     #par()[#text(size: 0.0em)[#h(
           0.0em,
         )]]
   ]
-  show table: (it) = [
+  show table: it => [
     #set text(font: body-font)
     #it
   ]
