@@ -1,7 +1,7 @@
 extern crate libtest_mimic;
 
 use libtest_mimic::{Arguments, Failed, Trial};
-use typst_geshihua::PrettyPrinter;
+use typst_geshihua::pretty_print;
 
 use std::{env, error::Error, ffi::OsStr, fs, path::Path};
 
@@ -76,15 +76,11 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     // Check that the file is valid UTF-8
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
-
-    let printer = PrettyPrinter::default();
-    let root = typst_syntax::parse(&content);
-    let markup = root.cast().unwrap();
-    let doc = printer.convert_markup(markup);
-    let doc_string = doc.pretty(width).to_string();
-    let filename = path.file_name().unwrap().to_str().unwrap();
+    let rel_path = pathdiff::diff_paths(path, env::current_dir().unwrap()).unwrap();
+    let doc_string = pretty_print(&content, width);
+    let replaced_path = rel_path.to_str().unwrap().replace(std::path::MAIN_SEPARATOR, "-");
     insta::with_settings!({
-        snapshot_suffix => format!("{}-{width}", filename),
+        snapshot_suffix => format!("{}-{width}", replaced_path),
         input_file => path,
     }, {
         insta::assert_snapshot!(doc_string);
@@ -98,15 +94,8 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
     // Check that the file is valid UTF-8
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
-    let pretty_print = |content: &str| {
-        let printer = PrettyPrinter::default();
-        let root = typst_syntax::parse(content);
-        let markup = root.cast().unwrap();
-        let doc = printer.convert_markup(markup);
-        doc.pretty(width).to_string()
-    };
-    let first_pass = pretty_print(&content);
-    let second_pass = pretty_print(&first_pass);
+    let first_pass = pretty_print(&content, width);
+    let second_pass = pretty_print(&first_pass, width);
     pretty_assertions::assert_str_eq!(
         first_pass,
         second_pass,

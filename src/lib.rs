@@ -848,6 +848,14 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
     )
 }
 
+pub fn pretty_print(content: &str, width: usize) -> String {
+    let printer = PrettyPrinter::default();
+    let root = typst_syntax::parse(content);
+    let markup = root.cast().unwrap();
+    let doc = printer.convert_markup(markup);
+    doc.pretty(width).to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use typst_syntax::parse;

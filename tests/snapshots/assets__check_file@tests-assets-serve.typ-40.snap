@@ -1,11 +1,13 @@
 ---
 source: tests/assets.rs
-expression: doc_80
+expression: doc_string
 input_file: tests/assets/serve.typ
 ---
 #import "/github-pages/docs/book.typ": book-page
 
-#show: book-page.with(title: "CLI Serve Command")
+#show: book-page.with(
+  title: "CLI Serve Command",
+)
 
 = The serve command
 
@@ -62,4 +64,3 @@ your default web browser after building it.
 
 // ***Note:*** *Only the `.gitignore` from the book root directory is used. Global
 // `$HOME/.gitignore` or `.gitignore` files in parent directories are not used.*
-
