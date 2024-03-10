@@ -750,26 +750,77 @@ impl PrettyPrinter {
     }
 
     fn convert_while<'a>(&'a self, while_loop: WhileLoop<'a>) -> BoxDoc<'a, ()> {
-        let doc = BoxDoc::nil().append(BoxDoc::text("while"));
-        let doc = doc
-            .append(BoxDoc::space())
-            .append(self.convert_expr(while_loop.condition()))
-            .append(BoxDoc::space())
-            .append(self.convert_expr(while_loop.body()));
+        let mut doc = BoxDoc::nil();
+        #[derive(Debug, PartialEq)]
+        enum CastType {
+            Condition,
+            Body,
+        }
+        let mut expr_type = CastType::Condition;
+        for child in while_loop.to_untyped().children() {
+            if child.kind() == SyntaxKind::While {
+                doc = doc.append(BoxDoc::text("while"));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::BlockComment
+                || child.kind() == SyntaxKind::LineComment
+            {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::space());
+            } else if let Some(expr) = child.cast() {
+                doc = doc.append(self.convert_expr(expr));
+                if expr_type == CastType::Condition {
+                    doc = doc.append(BoxDoc::space());
+                    expr_type = CastType::Body;
+                }
+            }
+        }
         doc
     }
 
     fn convert_for<'a>(&'a self, for_loop: ForLoop<'a>) -> BoxDoc<'a, ()> {
-        let doc = BoxDoc::nil().append(BoxDoc::text("for"));
-        let doc = doc
-            .append(BoxDoc::space())
-            .append(self.convert_pattern(for_loop.pattern()))
-            .append(BoxDoc::space())
-            .append(BoxDoc::text("in"))
-            .append(BoxDoc::space())
-            .append(self.convert_expr(for_loop.iterable()))
-            .append(BoxDoc::space())
-            .append(self.convert_expr(for_loop.body()));
+        let mut doc = BoxDoc::nil();
+        enum CastType {
+            Pattern,
+            Iter,
+            Body,
+        }
+        let mut expr_type = CastType::Pattern;
+        for child in for_loop.to_untyped().children() {
+            if child.kind() == SyntaxKind::For {
+                doc = doc.append(BoxDoc::text("for"));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::In {
+                doc = doc.append(BoxDoc::text("in"));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::BlockComment
+                || child.kind() == SyntaxKind::LineComment
+            {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::space());
+            } else {
+                match expr_type {
+                    CastType::Pattern => {
+                        if let Some(pattern) = child.cast() {
+                            doc = doc.append(self.convert_pattern(pattern));
+                            doc = doc.append(BoxDoc::space());
+                            expr_type = CastType::Iter;
+                        }
+                    }
+                    CastType::Iter => {
+                        if let Some(iter) = child.cast() {
+                            doc = doc.append(self.convert_expr(iter));
+                            doc = doc.append(BoxDoc::space());
+                            expr_type = CastType::Body;
+                        }
+                    }
+                    CastType::Body => {
+                        if let Some(body) = child.cast() {
+                            doc = doc.append(self.convert_expr(body));
+                        }
+                    }
+                }
+            }
+        }
         doc
     }
 
