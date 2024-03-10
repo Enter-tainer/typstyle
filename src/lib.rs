@@ -734,17 +734,52 @@ impl PrettyPrinter {
     }
 
     fn convert_conditional<'a>(&'a self, conditional: Conditional<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::nil()
-            .append(BoxDoc::text("if"))
-            .append(BoxDoc::space());
-        doc = doc.append(self.convert_expr(conditional.condition()));
-        let body = self.convert_expr(conditional.if_body()).group();
-        doc = doc.append(BoxDoc::space()).append(body);
-        if let Some(else_body) = conditional.else_body() {
-            doc = doc.append(BoxDoc::space());
-            doc = doc.append(BoxDoc::text("else"));
-            doc = doc.append(BoxDoc::space());
-            doc = doc.append(self.convert_expr(else_body).group());
+        let mut doc = BoxDoc::nil();
+        enum CastType {
+            Condition,
+            Then,
+            Else,
+        }
+        let has_else = conditional.else_body().is_some();
+        let mut expr_type = CastType::Condition;
+        for child in conditional.to_untyped().children() {
+            if child.kind() == SyntaxKind::If {
+                doc = doc.append(BoxDoc::text("if"));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::Else {
+                doc = doc.append(BoxDoc::text("else"));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::BlockComment {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::LineComment {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::hardline());
+            } else {
+                match expr_type {
+                    CastType::Condition => {
+                        if let Some(condition) = child.cast() {
+                            doc = doc.append(self.convert_expr(condition));
+                            doc = doc.append(BoxDoc::space());
+                            expr_type = CastType::Then;
+                        }
+                    }
+                    CastType::Then => {
+                        if let Some(then_expr) = child.cast() {
+                            doc = doc.append(self.convert_expr(then_expr).group());
+                            if has_else {
+                                expr_type = CastType::Else;
+                                doc = doc.append(BoxDoc::space());
+                            }
+                        }
+                    }
+                    CastType::Else => {
+                        if let Some(else_expr) = child.cast() {
+                            doc = doc.append(self.convert_expr(else_expr).group());
+                        }
+                    }
+                }
+            }
         }
         doc
     }
@@ -761,11 +796,12 @@ impl PrettyPrinter {
             if child.kind() == SyntaxKind::While {
                 doc = doc.append(BoxDoc::text("while"));
                 doc = doc.append(BoxDoc::space());
-            } else if child.kind() == SyntaxKind::BlockComment
-                || child.kind() == SyntaxKind::LineComment
-            {
+            } else if child.kind() == SyntaxKind::BlockComment {
                 doc = doc.append(trivia(child));
                 doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::LineComment {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::hardline());
             } else if let Some(expr) = child.cast() {
                 doc = doc.append(self.convert_expr(expr));
                 if expr_type == CastType::Condition {
@@ -792,11 +828,12 @@ impl PrettyPrinter {
             } else if child.kind() == SyntaxKind::In {
                 doc = doc.append(BoxDoc::text("in"));
                 doc = doc.append(BoxDoc::space());
-            } else if child.kind() == SyntaxKind::BlockComment
-                || child.kind() == SyntaxKind::LineComment
-            {
+            } else if child.kind() == SyntaxKind::BlockComment {
                 doc = doc.append(trivia(child));
                 doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::LineComment {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::hardline());
             } else {
                 match expr_type {
                     CastType::Pattern => {
