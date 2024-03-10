@@ -14,7 +14,11 @@ Markup: 129 [
     Parbreak: "\n\n",
     Text: "When you use the",
     Space: " ",
-    Raw: "`--open`",
+    Raw: 8 [
+        RawDelim: "`",
+        Text: "--open",
+        RawDelim: "`",
+    ],
     Space: " ",
     Text: "flag, typst-book will open the rendered book in",
     Space: "\n",

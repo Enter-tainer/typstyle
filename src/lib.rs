@@ -86,6 +86,7 @@ impl PrettyPrinter {
             ast::Expr::Break(b) => self.convert_break(b),
             ast::Expr::Continue(c) => self.convert_continue(c),
             ast::Expr::Return(r) => self.convert_return(r),
+            ast::Expr::Contextual(c) => self.convert_contextual(c),
         }
         .group()
     }
@@ -143,15 +144,19 @@ impl PrettyPrinter {
         if raw.block() {
             doc = doc.append(BoxDoc::text("```"));
             if let Some(lang) = raw.lang() {
-                doc = doc.append(BoxDoc::text(lang));
+                doc = doc.append(trivia(lang.to_untyped()));
             }
             doc = doc.append(BoxDoc::hardline());
-            doc = doc.append(to_doc(raw.text().to_string().into(), false));
-            doc = doc.append(BoxDoc::hardline());
+            for line in raw.lines() {
+                doc = doc.append(to_doc(line.get().to_string().into(), false));
+                doc = doc.append(BoxDoc::hardline());
+            }
             doc = doc.append(BoxDoc::text("```"));
         } else {
             doc = doc.append(BoxDoc::text("`"));
-            doc = doc.append(to_doc(raw.text().to_string().into(), false));
+            for line in raw.lines() {
+                doc = doc.append(to_doc(line.get().to_string().into(), false));
+            }
             doc = doc.append(BoxDoc::text("`"));
         }
         doc
@@ -177,7 +182,7 @@ impl PrettyPrinter {
     }
 
     fn convert_heading<'a>(&'a self, heading: Heading<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("=".repeat(heading.level().into()));
+        let mut doc = BoxDoc::text("=".repeat(heading.depth().into()));
         doc = doc.append(BoxDoc::space());
         doc = doc.append(self.convert_markup(heading.body()));
         doc
@@ -376,8 +381,7 @@ impl PrettyPrinter {
     fn convert_array_item<'a>(&'a self, array_item: ArrayItem<'a>) -> BoxDoc<'a, ()> {
         let doc = match array_item {
             ArrayItem::Pos(p) => self.convert_expr(p),
-            // TODO: recheck how spread works
-            ArrayItem::Spread(s) => BoxDoc::text("..").append(self.convert_expr(s)),
+            ArrayItem::Spread(s) => self.convert_spread(s),
         };
         doc
     }
@@ -404,11 +408,7 @@ impl PrettyPrinter {
         match dict_item {
             DictItem::Named(n) => self.convert_named(n),
             DictItem::Keyed(k) => self.convert_keyed(k),
-            DictItem::Spread(s) => {
-                let mut doc = BoxDoc::text("..");
-                doc = doc.append(self.convert_expr(s));
-                doc
-            }
+            DictItem::Spread(s) => self.convert_spread(s),
         }
     }
 
@@ -498,11 +498,7 @@ impl PrettyPrinter {
         match arg {
             Arg::Pos(p) => self.convert_expr(p),
             Arg::Named(n) => self.convert_named(n),
-            Arg::Spread(s) => {
-                let mut doc = BoxDoc::text("..");
-                doc = doc.append(self.convert_expr(s));
-                doc
-            }
+            Arg::Spread(s) => self.convert_spread(s),
         }
     }
 
@@ -555,15 +551,15 @@ impl PrettyPrinter {
         match param {
             Param::Pos(p) => self.convert_pattern(p),
             Param::Named(n) => self.convert_named(n),
-            Param::Sink(s) => self.convert_spread(s),
+            Param::Spread(s) => self.convert_spread(s),
         }
     }
 
     fn convert_spread<'a>(&'a self, spread: Spread<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("..");
-        let ident = if let Some(id) = spread.name() {
+        let ident = if let Some(id) = spread.sink_ident() {
             self.convert_ident(id)
-        } else if let Some(expr) = spread.expr() {
+        } else if let Some(expr) = spread.sink_expr() {
             self.convert_expr(expr)
         } else {
             BoxDoc::nil()
@@ -577,6 +573,7 @@ impl PrettyPrinter {
             Pattern::Normal(n) => self.convert_expr(n),
             Pattern::Placeholder(p) => self.convert_underscore(p),
             Pattern::Destructuring(d) => self.convert_destructuring(d),
+            Pattern::Parenthesized(p) => self.convert_parenthesized(p),
         }
     }
 
@@ -588,22 +585,21 @@ impl PrettyPrinter {
         BoxDoc::text("(")
             .append(BoxDoc::intersperse(
                 destructuring
-                    .bindings()
-                    .map(|item| self.convert_destructuring_kind(item)),
+                    .items()
+                    .map(|item| self.convert_destructuring_item(item)),
                 BoxDoc::text(",").append(BoxDoc::line()),
             ))
             .append(BoxDoc::text(")"))
     }
 
-    fn convert_destructuring_kind<'a>(
+    fn convert_destructuring_item<'a>(
         &'a self,
-        destructuring_kind: DestructuringKind<'a>,
+        destructuring_item: DestructuringItem<'a>,
     ) -> BoxDoc<'a, ()> {
-        match destructuring_kind {
-            DestructuringKind::Normal(e) => self.convert_expr(e),
-            DestructuringKind::Sink(s) => self.convert_spread(s),
-            DestructuringKind::Named(n) => self.convert_named(n),
-            DestructuringKind::Placeholder(p) => self.convert_underscore(p),
+        match destructuring_item {
+            DestructuringItem::Spread(s) => self.convert_spread(s),
+            DestructuringItem::Named(n) => self.convert_named(n),
+            DestructuringItem::Pattern(p) => self.convert_pattern(p),
         }
     }
 
@@ -709,7 +705,7 @@ impl PrettyPrinter {
             .append(BoxDoc::space())
             .append(BoxDoc::text("in"))
             .append(BoxDoc::space())
-            .append(self.convert_expr(for_loop.iter()))
+            .append(self.convert_expr(for_loop.iterable()))
             .append(BoxDoc::space())
             .append(self.convert_expr(for_loop.body()));
         doc
@@ -836,6 +832,11 @@ impl PrettyPrinter {
             BoxDoc::text("√")
         };
         sqrt_sym.append(self.convert_expr(math_root.radicand()))
+    }
+
+    fn convert_contextual<'a>(&'a self, ctx: Contextual<'a>) -> BoxDoc<'a, ()> {
+        let body = self.convert_expr(ctx.body());
+        BoxDoc::text("context").append(BoxDoc::space()).append(body)
     }
 }
 
