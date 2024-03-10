@@ -1,0 +1,3 @@
+#[#{
+let something = 0;
+}\ ]
