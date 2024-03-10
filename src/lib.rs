@@ -397,6 +397,14 @@ impl PrettyPrinter {
                             .append(trivia(node))
                             .append(BoxDoc::space()),
                     );
+                } else if node.kind() == SyntaxKind::Space {
+                    let newline_cnt = node.text().chars().filter(|c| *c == '\n').count().saturating_sub(1);
+                    for _ in 0..newline_cnt {
+                        doc = Some(
+                            doc.unwrap_or(BoxDoc::nil())
+                                .append(BoxDoc::hardline()),
+                        );
+                    }
                 } else if node.kind() == SyntaxKind::Comma {
                     if let Some(d) = doc {
                         array_items.push(d);
