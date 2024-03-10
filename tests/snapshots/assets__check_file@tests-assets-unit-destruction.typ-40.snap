@@ -18,3 +18,15 @@ input_file: tests/assets/unit/destruction.typ
     ),
   ),
 )
+
+#let books = (
+  Shakespeare: "Hamlet",
+  Homer: ("The Odyssey", "The Iliad"),
+  Austen: "Persuasion",
+)
+
+#let (Austen) = books
+Austen wrote #Austen.
+
+#let (Homer: h) = books
+Homer wrote #h.

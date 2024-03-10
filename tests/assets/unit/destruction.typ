@@ -6,3 +6,14 @@
   ..authors.map(author => align(center, text(font: author-font, author))),
 )
 
+#let books = (
+  Shakespeare: "Hamlet",
+  Homer: ("The Odyssey", "The Iliad"),
+  Austen: "Persuasion",
+)
+
+#let (Austen,) = books
+Austen wrote #Austen.
+
+#let (Homer: h) = books
+Homer wrote #h.
