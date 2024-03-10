@@ -141,23 +141,28 @@ impl PrettyPrinter {
 
     fn convert_raw<'a>(&'a self, raw: Raw<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::nil();
-        let delim: RawDelim = raw.to_untyped().cast_first_match().unwrap();
-        doc = doc.append(trivia(delim.to_untyped()));
-        if raw.block() {
-            if let Some(lang) = raw.lang() {
-                doc = doc.append(trivia(lang.to_untyped()));
+        let is_block = raw.block();
+        let has_lang = raw.lang().is_some();
+        let mut is_opening = true;
+        for child in raw.to_untyped().children() {
+            if let Some(delim) = child.cast::<RawDelim>() {
+                doc = doc.append(trivia(delim.to_untyped()));
+                if is_block && !has_lang && is_opening {
+                    doc = doc.append(BoxDoc::hardline());
+                    is_opening = false;
+                }
             }
-            doc = doc.append(BoxDoc::hardline());
-            for line in raw.lines() {
-                doc = doc.append(to_doc(line.get().to_string().into(), false));
+            if let Some(lang) = child.cast::<RawLang>() {
+                doc = doc.append(trivia(lang.to_untyped()));
                 doc = doc.append(BoxDoc::hardline());
             }
-        } else {
-            for line in raw.lines() {
-                doc = doc.append(to_doc(line.get().to_string().into(), false));
+            if let Some(line) = child.cast::<Text>() {
+                doc = doc.append(trivia(line.to_untyped()));
+                if is_block {
+                    doc = doc.append(BoxDoc::hardline());
+                }
             }
         }
-        doc = doc.append(trivia(delim.to_untyped()));
         doc
     }
 
