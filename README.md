@@ -23,4 +23,9 @@ cargo test
 cargo insta review
 ```
 
-Tested against cetz manual and tablex
+Tested against cetz manual and tablex. We have test for 40/80/120 columns. We also have convergence test.
+
+## Known issues
+
+- comments and white lines get removed when it is not in code block or content block
+- currently doesn't recognize 2d matrix syntax `$mat(1, 2; 3, 4)$`

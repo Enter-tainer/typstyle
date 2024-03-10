@@ -412,9 +412,19 @@ impl PrettyPrinter {
     }
 
     fn convert_named<'a>(&'a self, named: Named<'a>) -> BoxDoc<'a, ()> {
+        // TODO: better handling hash #
+        let has_hash = named.to_untyped().children().any(|node| {
+            matches!(
+                node.kind(),
+                SyntaxKind::Hash
+            )
+        });
         let mut doc = self.convert_ident(named.name());
         doc = doc.append(BoxDoc::text(":"));
         doc = doc.append(BoxDoc::space());
+        if has_hash {
+            doc = doc.append(BoxDoc::text("#"));
+        }
         doc = doc.append(self.convert_expr(named.expr()));
         doc
     }
