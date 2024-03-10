@@ -377,11 +377,47 @@ impl PrettyPrinter {
     }
 
     fn convert_array<'a>(&'a self, array: Array<'a>) -> BoxDoc<'a, ()> {
-        let array_items = array
-            .items()
-            .map(|item| self.convert_array_item(item))
-            .collect_vec();
+        let mut array_items = vec![];
+        let is_empty = array.items().count() == 0;
+        {
+            let mut doc: Option<BoxDoc> = None;
+            for node in array.to_untyped().children() {
+                if let Some(item) = node.cast::<ArrayItem>() {
+                    let item_doc = self.convert_array_item(item);
+                    doc = Some(doc.unwrap_or(BoxDoc::nil()).append(item_doc));
+                } else if node.kind() == SyntaxKind::LineComment {
+                    doc = Some(
+                        doc.unwrap_or(BoxDoc::nil())
+                            .append(trivia(node))
+                            .append(BoxDoc::hardline()),
+                    );
+                } else if node.kind() == SyntaxKind::BlockComment {
+                    doc = Some(
+                        doc.unwrap_or(BoxDoc::nil())
+                            .append(trivia(node))
+                            .append(BoxDoc::space()),
+                    );
+                } else if node.kind() == SyntaxKind::Comma {
+                    if let Some(d) = doc {
+                        array_items.push(d);
+                        doc = None;
+                    }
+                }
+            }
+            if let Some(d) = doc {
+                array_items.push(d);
+            }
+        }
+
         if array_items.len() == 1 {
+            // in typst, single element array is required to have a trailing comma
+            // example: (1,)
+            if is_empty {
+                // the only item is a comment
+                return BoxDoc::text("(")
+                    .append(array_items[0].clone())
+                    .append(BoxDoc::text(")"));
+            }
             let singleline = BoxDoc::text("(")
                 .append(array_items[0].clone())
                 .append(BoxDoc::text(","))
