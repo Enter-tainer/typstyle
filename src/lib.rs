@@ -141,8 +141,9 @@ impl PrettyPrinter {
 
     fn convert_raw<'a>(&'a self, raw: Raw<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::nil();
+        let delim: RawDelim = raw.to_untyped().cast_first_match().unwrap();
+        doc = doc.append(trivia(delim.to_untyped()));
         if raw.block() {
-            doc = doc.append(BoxDoc::text("```"));
             if let Some(lang) = raw.lang() {
                 doc = doc.append(trivia(lang.to_untyped()));
             }
@@ -151,14 +152,12 @@ impl PrettyPrinter {
                 doc = doc.append(to_doc(line.get().to_string().into(), false));
                 doc = doc.append(BoxDoc::hardline());
             }
-            doc = doc.append(BoxDoc::text("```"));
         } else {
-            doc = doc.append(BoxDoc::text("`"));
             for line in raw.lines() {
                 doc = doc.append(to_doc(line.get().to_string().into(), false));
             }
-            doc = doc.append(BoxDoc::text("`"));
         }
+        doc = doc.append(trivia(delim.to_untyped()));
         doc
     }
 
