@@ -1,0 +1,6 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/typstfmt/96-destruct-comma.typ
+---
+#let (a, b) = (1, 2)
