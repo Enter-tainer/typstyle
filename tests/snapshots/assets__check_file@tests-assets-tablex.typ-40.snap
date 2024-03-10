@@ -269,7 +269,7 @@ input_file: tests/assets/tablex.typ
   } else if type(
     item,
   ) != _dict-type or "tablex-dict-type" not in item {
-    cellx([#item])
+    cellx[#item]
   } else {
     item
   }
@@ -1261,7 +1261,7 @@ input_file: tests/assets/tablex.typ
     grid,
     index: auto,
   ) = {
-    let empty_cell = cellx([])
+    let empty_cell = cellx[]
     let index = default-if-auto(
       index,
       grid.items.len(),

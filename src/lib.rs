@@ -460,16 +460,27 @@ impl PrettyPrinter {
 
     fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
         let doc = BoxDoc::nil().append(self.convert_expr(func_call.callee()));
-        let doc = doc
-            .append(pretty_items(
-                &self.convert_parenthesized_args(func_call.args()),
+        let has_parenthesized_args = func_call
+            .args()
+            .to_untyped()
+            .children()
+            .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
+        let parenthesized_args = if has_parenthesized_args {
+            let args = self.convert_parenthesized_args(func_call.args());
+            pretty_items(
+                &args,
                 BoxDoc::text(",").append(BoxDoc::space()),
                 BoxDoc::text(","),
                 (BoxDoc::text("("), BoxDoc::text(")")),
                 false,
                 util::FoldStyle::Fit,
-            ))
-            .append(self.convert_additional_args(func_call.args()));
+            )
+        } else {
+            BoxDoc::nil()
+        };
+        let doc = doc
+            .append(parenthesized_args)
+            .append(self.convert_additional_args(func_call.args(), has_parenthesized_args));
         doc
     }
 
@@ -484,11 +495,17 @@ impl PrettyPrinter {
         args
     }
 
-    fn convert_additional_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+    fn convert_additional_args<'a>(&'a self, args: Args<'a>, has_paren: bool) -> BoxDoc<'a, ()> {
         let node = args.to_untyped();
         let args = node
             .children()
-            .skip_while(|node| node.kind() != SyntaxKind::RightParen)
+            .skip_while(|node| {
+                if has_paren {
+                    node.kind() != SyntaxKind::RightParen
+                } else {
+                    node.kind() != SyntaxKind::ContentBlock
+                }
+            })
             .filter_map(|node| node.cast::<'_, Arg>());
         BoxDoc::concat(args.map(|arg| self.convert_arg(arg))).group()
     }

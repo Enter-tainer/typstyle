@@ -202,7 +202,7 @@ input_file: tests/assets/tablex.typ
   } else if keep_empty and item == () {
     item
   } else if type(item) != _dict-type or "tablex-dict-type" not in item {
-    cellx([#item])
+    cellx[#item]
   } else {
     item
   }
@@ -843,7 +843,7 @@ input_file: tests/assets/tablex.typ
   let range_of_items = range(items.len())
   
   let new_empty_cell(grid, index: auto) = {
-    let empty_cell = cellx([])
+    let empty_cell = cellx[]
     let index = default-if-auto(index, grid.items.len())
     let new_cell_pos = grid-index-to-pos(grid, index)
     empty_cell.x = new_cell_pos.at(0)
