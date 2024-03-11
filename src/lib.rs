@@ -398,12 +398,14 @@ impl PrettyPrinter {
                             .append(BoxDoc::space()),
                     );
                 } else if node.kind() == SyntaxKind::Space {
-                    let newline_cnt = node.text().chars().filter(|c| *c == '\n').count().saturating_sub(1);
+                    let newline_cnt = node
+                        .text()
+                        .chars()
+                        .filter(|c| *c == '\n')
+                        .count()
+                        .saturating_sub(1);
                     for _ in 0..newline_cnt {
-                        doc = Some(
-                            doc.unwrap_or(BoxDoc::nil())
-                                .append(BoxDoc::hardline()),
-                        );
+                        doc = Some(doc.unwrap_or(BoxDoc::nil()).append(BoxDoc::hardline()));
                     }
                 } else if node.kind() == SyntaxKind::Comma {
                     if let Some(d) = doc {
@@ -491,18 +493,41 @@ impl PrettyPrinter {
         if let Some(res) = self.check_disabled(named.to_untyped()) {
             return res;
         }
-        // TODO: better handling hash #
-        let has_hash = named
-            .to_untyped()
-            .children()
-            .any(|node| matches!(node.kind(), SyntaxKind::Hash));
-        let mut doc = self.convert_ident(named.name());
-        doc = doc.append(BoxDoc::text(":"));
-        doc = doc.append(BoxDoc::space());
-        if has_hash {
-            doc = doc.append(BoxDoc::text("#"));
+        let mut doc = BoxDoc::nil();
+        enum CastType {
+            Ident,
+            Expr,
+            Finished,
         }
-        doc = doc.append(self.convert_expr(named.expr()));
+        let mut cast_type = CastType::Ident;
+        for child in named.to_untyped().children() {
+            match cast_type {
+                CastType::Ident => {
+                    if let Some(ident) = child.cast::<Ident>() {
+                        doc = doc.append(self.convert_ident(ident));
+                        cast_type = CastType::Expr;
+                        continue;
+                    }
+                }
+                CastType::Expr => {
+                    if let Some(expr) = child.cast::<Expr>() {
+                        doc = doc.append(self.convert_expr(expr));
+                        cast_type = CastType::Finished;
+                        continue;
+                    }
+                }
+                CastType::Finished => {}
+            }
+            if child.kind() == SyntaxKind::Colon || child.kind() == SyntaxKind::BlockComment {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::space());
+            } else if child.kind() == SyntaxKind::LineComment {
+                doc = doc.append(trivia(child));
+                doc = doc.append(BoxDoc::hardline());
+            } else if child.kind() == SyntaxKind::Hash {
+                doc = doc.append(trivia(child));
+            }
+        }
         doc
     }
 
