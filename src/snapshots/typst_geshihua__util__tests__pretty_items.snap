@@ -1,9 +1,0 @@
----
-source: src/util.rs
-expression: outer
----
-[
-    "{",
-    "let a = 1;",
-    "}",
-]

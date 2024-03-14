@@ -1,6 +1,9 @@
 use std::collections::HashSet;
 
-use typst_syntax::{ast::{Args, AstNode}, SyntaxKind, SyntaxNode};
+use typst_syntax::{
+    ast::{Args, AstNode},
+    SyntaxKind, SyntaxNode,
+};
 
 pub fn get_no_format_nodes(root: SyntaxNode) -> HashSet<SyntaxNode> {
     let mut no_format_nodes = HashSet::new();

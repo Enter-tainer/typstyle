@@ -12,7 +12,7 @@ path = "src/main.rs"
 [lib]
 name = "typst_geshihua"
 path = "src/lib.rs"
-crate-type = ["lib"]
+crate-type = ["cdylib", "lib"]
 
 
 [dependencies]
@@ -20,6 +20,7 @@ clap = { version = "4.5.2", features = ["derive", "env"] }
 itertools = "0.12.1"
 once_cell = "1.19.0"
 pretty = "0.12.3"
+wasm-bindgen = "0.2"
 typst-syntax = { git = "https://github.com/typst/typst.git", tag = "v0.11.0-rc1" }
 
 [dev-dependencies]
