@@ -1,6 +1,6 @@
 ---
-source: src/lib.rs
-expression: to_doc(test.into())
+source: src/pretty.rs
+expression: "to_doc(test.into(), false)"
 ---
 [
     "123",

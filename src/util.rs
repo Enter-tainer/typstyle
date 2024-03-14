@@ -75,7 +75,7 @@ fn pretty_items_impl<'a>(
             } else {
                 multi
             }
-        },
+        }
         FoldStyle::Never => multi,
     }
 }
