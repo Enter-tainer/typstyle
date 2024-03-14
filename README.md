@@ -16,6 +16,12 @@ Options:
   -V, --version          Print version
 ```
 
+## Escape Route
+
+If you find typst-geshihua is not working as expected, you can use `// @geshihua off` or `/* @geshihua off */` to disable the formatter on the next node of code.
+
+And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/Enter-tainer/typst-geshihua)
+
 ## Test
 
 ```
