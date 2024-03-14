@@ -1,0 +1,11 @@
+---
+source: src/pretty.rs
+expression: "to_doc(test.into(), false)"
+---
+[
+    "123",
+    Hardline,
+    "4568",
+    Hardline,
+    "789",
+]
