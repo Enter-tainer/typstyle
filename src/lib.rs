@@ -1,16 +1,27 @@
+pub mod prop;
 pub mod util;
 
 use std::borrow::Cow;
+use std::collections::HashSet;
 
 use itertools::Itertools;
 use pretty::BoxDoc;
+use prop::get_no_format_nodes;
 use typst_syntax::{ast, SyntaxNode};
 use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::util::pretty_items;
 
 #[derive(Debug, Default)]
-pub struct PrettyPrinter {}
+pub struct PrettyPrinter {
+    disabled_nodes: HashSet<SyntaxNode>,
+}
+
+impl PrettyPrinter {
+    pub fn new(disabled_nodes: HashSet<SyntaxNode>) -> Self {
+        Self { disabled_nodes }
+    }
+}
 
 impl PrettyPrinter {
     pub fn convert_markup<'a>(&'a self, root: Markup<'a>) -> BoxDoc<'a, ()> {
@@ -28,7 +39,23 @@ impl PrettyPrinter {
         doc
     }
 
+    fn check_disabled<'a>(&'a self, node: &SyntaxNode) -> Option<BoxDoc<'a, ()>> {
+        if self.disabled_nodes.contains(node) {
+            Some(self.format_disabled(node))
+        } else {
+            None
+        }
+    }
+
+    fn format_disabled<'a>(&'a self, node: &SyntaxNode) -> BoxDoc<'a, ()> {
+        let doc: BoxDoc<()> = BoxDoc::text(node.clone().into_text().to_string());
+        doc
+    }
+
     fn convert_expr<'a>(&'a self, expr: Expr<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(expr.to_untyped()) {
+            return res;
+        }
         match expr {
             ast::Expr::Text(t) => self.convert_text(t),
             ast::Expr::Space(s) => self.convert_space(s),
@@ -418,12 +445,10 @@ impl PrettyPrinter {
 
     fn convert_named<'a>(&'a self, named: Named<'a>) -> BoxDoc<'a, ()> {
         // TODO: better handling hash #
-        let has_hash = named.to_untyped().children().any(|node| {
-            matches!(
-                node.kind(),
-                SyntaxKind::Hash
-            )
-        });
+        let has_hash = named
+            .to_untyped()
+            .children()
+            .any(|node| matches!(node.kind(), SyntaxKind::Hash));
         let mut doc = self.convert_ident(named.name());
         doc = doc.append(BoxDoc::text(":"));
         doc = doc.append(BoxDoc::space());
@@ -890,8 +915,9 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
 }
 
 pub fn pretty_print(content: &str, width: usize) -> String {
-    let printer = PrettyPrinter::default();
     let root = typst_syntax::parse(content);
+    let disabled_nodes = get_no_format_nodes(root.clone());
+    let printer = PrettyPrinter::new(disabled_nodes);
     let markup = root.cast().unwrap();
     let doc = printer.convert_markup(markup);
     doc.pretty(width).to_string()
