@@ -23,10 +23,11 @@ cargo test
 cargo insta review
 ```
 
-Tested against cetz manual and tablex. We have test for 40/80/120 columns. We also have convergence test.
+We have set up multiple tests:
+
+1. Convergence tests: format result must be the same when applied twice
+2. Snapshot tests: format result are stored in the `snapshots` directory and are compared to the current result
 
 ## Known issues
 
-- comments and white lines get removed when it is not in code block or content block
-- currently doesn't recognize 2d matrix syntax `$mat(1, 2; 3, 4)$`
-- cannot handling single character variable in math block as positional args
+- comments and white lines get removed when in strange places
