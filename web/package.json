@@ -1,0 +1,21 @@
+{
+  "name": "typst-geshihua-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6",
+    "vite-plugin-wasm": "^3.3.0"
+  },
+  "dependencies": {
+    "typst_geshihua": "file:../pkg",
+    "vanjs-core": "^1.5.0-rc.1",
+    "vite-plugin-top-level-await": "^1.4.1"
+  }
+}
