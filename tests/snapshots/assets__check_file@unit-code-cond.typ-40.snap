@@ -19,3 +19,7 @@ input_file: tests/assets/unit/code/cond.typ
 } else {
   acc
 }
+
+#let a = 0
+
+#let b = 1
