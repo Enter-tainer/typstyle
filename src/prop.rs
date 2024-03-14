@@ -14,11 +14,17 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
     }
     let mut no_format = false;
     for child in node.children() {
-        if (child.kind() == SyntaxKind::LineComment || child.kind() == SyntaxKind::BlockComment)
-            && child.text().contains("@geshihua off")
-        {
-            no_format = true;
-            map.insert(child.clone());
+        if child.kind() == SyntaxKind::LineComment || child.kind() == SyntaxKind::BlockComment {
+            if child.text().contains("@geshihua off") {
+                no_format = true;
+                map.insert(child.clone());
+            }
+            if node.kind() != SyntaxKind::ContentBlock
+                || node.kind() != SyntaxKind::CodeBlock
+                || node.kind() != SyntaxKind::Code
+            {
+                map.insert(node.clone());
+            }
         }
         if child.children().count() == 0 {
             continue;

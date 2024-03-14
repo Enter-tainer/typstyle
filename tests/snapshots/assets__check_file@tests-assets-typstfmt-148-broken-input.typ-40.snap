@@ -3,4 +3,10 @@ source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/typstfmt/148-broken-input.typ
 ---
-#cite
+#cite(
+// Newline
+
+= Level 1
+== Level 2
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.

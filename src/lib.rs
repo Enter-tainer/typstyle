@@ -444,6 +444,9 @@ impl PrettyPrinter {
     }
 
     fn convert_named<'a>(&'a self, named: Named<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(named.to_untyped()) {
+            return res;
+        }
         // TODO: better handling hash #
         let has_hash = named
             .to_untyped()
@@ -500,6 +503,9 @@ impl PrettyPrinter {
 
     fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
         let doc = BoxDoc::nil().append(self.convert_expr(func_call.callee()));
+        if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
+            return doc.append(res);
+        }
         let has_parenthesized_args = func_call
             .args()
             .to_untyped()
