@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use typst_syntax::{SyntaxKind, SyntaxNode};
+use typst_syntax::{ast::{Args, AstNode}, SyntaxKind, SyntaxNode};
 
 pub fn get_no_format_nodes(root: SyntaxNode) -> HashSet<SyntaxNode> {
     let mut no_format_nodes = HashSet::new();
@@ -26,6 +26,11 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
                 map.insert(node.clone());
             }
         }
+        if let Some(arg) = child.cast() {
+            if is_2d_arg(arg) {
+                map.insert(child.clone());
+            }
+        }
         if child.children().count() == 0 {
             continue;
         }
@@ -36,4 +41,13 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
             get_no_format_nodes_impl(child.clone(), map);
         }
     }
+}
+
+fn is_2d_arg(arg: Args) -> bool {
+    for child in arg.to_untyped().children() {
+        if child.kind() == SyntaxKind::Semicolon {
+            return true;
+        }
+    }
+    false
 }

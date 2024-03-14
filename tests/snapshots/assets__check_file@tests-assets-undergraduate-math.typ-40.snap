@@ -896,7 +896,7 @@ Get a matrix with the `mat` function. You can pass an array to it.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ mat((a, b), (c, d)) $],
+    [$ mat(a, b; c, d) $],
     [
       ```
       $ mat(a, b; c, d) $
