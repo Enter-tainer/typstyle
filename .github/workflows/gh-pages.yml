@@ -1,0 +1,55 @@
+name: GitHub Pages
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-gh-pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: recursive }
+      - uses: typst-community/setup-typst@v3
+        with: { typst-version: "0.10.0" }
+      - uses: rui314/setup-mold@v1
+      - uses: dtolnay/rust-toolchain@stable
+        with: { targets: wasm32-unknown-unknown }
+      - uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          version: "v0.12.1"
+      - uses: mozilla-actions/sccache-action@v0.0.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: |
+          wasm-pack build
+      - run: |
+          cd web
+          yarn
+          yarn build
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload `/github-pages` sub directory
+          path: "web/dist"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
