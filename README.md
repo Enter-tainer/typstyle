@@ -7,7 +7,7 @@ Usage:
 Usage: typst-geshihua [OPTIONS] <INPUT>
 
 Arguments:
-  <INPUT>  
+  <INPUT>  Path to the input file
 
 Options:
   -c, --column <COLUMN>  The width of the output [default: 80]
