@@ -1,7 +1,7 @@
 import './style.css'
 import { pretty_print_wasm } from "typst_geshihua"
 import van from "vanjs-core"
-const { div, textarea, input, label } = van.tags;
+const { div, textarea, input, label, p, a } = van.tags;
 
 const App = () => {
   const input_val = van.state("")
@@ -17,6 +17,9 @@ const App = () => {
     }
   )
   return div(
+    p("Powered by ", a({
+      href: "https://github.com/Enter-tainer/typst-geshihua"
+    }, "Typst Geshihua")),
     textarea({
       class: "mitex-input",
       placeholder: "Put typst code here",
