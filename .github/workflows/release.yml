@@ -1,0 +1,235 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+  CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER: arm-linux-gnueabihf-gcc
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+
+jobs:
+  pre_build:
+    permissions:
+      actions: write
+      contents: read
+    name: Duplicate Actions Detection
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          cancel_others: "true"
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.4
+      - name: Install cargo-tarpaulin
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tarpaulin
+      - name: Run tests with coverage
+        run: cargo tarpaulin --verbose --workspace --timeout 120 --out xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Enter-tainer/typst-geshihua
+
+  build:
+    needs: [pre_build, test]
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rust-target: x86_64-pc-windows-msvc
+            platform: win32
+            arch: x64
+          - os: windows-latest
+            rust-target: aarch64-pc-windows-msvc
+            platform: win32
+            arch: arm64
+          - os: ubuntu-20.04
+            rust-target: x86_64-unknown-linux-gnu
+            platform: linux
+            arch: x64
+          - os: ubuntu-20.04
+            rust-target: aarch64-unknown-linux-gnu
+            platform: linux
+            arch: arm64
+          - os: ubuntu-20.04
+            rust-target: arm-unknown-linux-gnueabihf
+            platform: linux
+            arch: armhf
+          - os: macos-11
+            rust-target: x86_64-apple-darwin
+            platform: darwin
+            arch: x64
+          - os: macos-11
+            rust-target: aarch64-apple-darwin
+            platform: darwin
+            arch: arm64
+
+    name: build (${{ matrix.platform }}-${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    env:
+      target: ${{ matrix.platform }}-${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.4
+      - name: rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-target }}
+      - name: Install llvm
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install llvm
+      - name: Install AArch64 target toolchain
+        if: matrix.rust-target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-aarch64-linux-gnu
+      - name: Install ARM target toolchain
+        if: matrix.rust-target == 'arm-unknown-linux-gnueabihf'
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-arm-linux-gnueabihf
+      - name: Build typst-geshihua binary
+        shell: pwsh
+        run: |
+          cargo build --release --target ${{ matrix.rust-target }}
+      - name: Rename debug symbols for windows
+        if: matrix.platform == 'win32'
+        run: |
+          cd target/${{ matrix.rust-target }}/release
+          cp typst_geshihua.pdb typst_geshihua-${{ env.target }}.pdb
+      - name: Upload split debug symbols for windows
+        if: matrix.platform == 'win32'
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst_geshihua-${{ env.target }}.pdb
+          path: target/${{ matrix.rust-target }}/release/typst_geshihua-${{ env.target }}.pdb
+      - name: Split debug symbols for linux
+        if: matrix.platform == 'linux'
+        run: |
+          cd target/${{ matrix.rust-target }}/release
+          llvm-objcopy --compress-debug-sections --only-keep-debug "typst-geshihua" "typst-geshihua-${{ env.target }}.debug"
+          llvm-objcopy --strip-debug --add-gnu-debuglink="typst-geshihua-${{ env.target }}.debug" "typst-geshihua"
+      - name: Upload split debug symbols for linux
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst-geshihua-${{ env.target }}.debug
+          path: target/${{ matrix.rust-target }}/release/typst-geshihua-${{ env.target }}.debug
+          compression-level: 0
+      - name: Collect debug symbols for mac
+        if: matrix.platform == 'darwin'
+        run: |
+          dsymutil -f "target/${{ matrix.rust-target }}/release/typst-geshihua"
+          mv "target/${{ matrix.rust-target }}/release/typst-geshihua.dwarf" "target/${{ matrix.rust-target }}/release/typst-geshihua-${{ env.target }}.dwarf"
+      - name: Upload split debug symbols for mac
+        if: matrix.platform == 'darwin'
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst-geshihua-${{ env.target }}.dwarf
+          path: target/${{ matrix.rust-target }}/release/typst-geshihua-${{ env.target }}.dwarf
+      - name: Copy binary to output directory
+        shell: pwsh
+        run: |
+          cp "target/${{ matrix.rust-target }}/release/typst-geshihua$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )" "typst-geshihua-${{ env.target }}$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )"
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst-geshihua-${{ env.target }}
+          path: typst-geshihua-${{ env.target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
+
+  build_alpine:
+    needs: [pre_build, test]
+    name: build (x86_64-unknown-linux-musl)
+    runs-on: ubuntu-latest
+    container:
+      image: rust:alpine
+      volumes:
+        - /usr/local/cargo/registry:/usr/local/cargo/registry
+    env:
+      target: alpine-x64
+      RUST_TARGET: x86_64-unknown-linux-musl
+      RUSTFLAGS: "-C link-arg=-fuse-ld=lld -C target-feature=-crt-static"
+    steps:
+      - name: Install dependencies
+        run: apk add --no-cache git clang lld musl-dev nodejs npm yarn binutils
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.4
+      - name: Build typst-geshihua binary
+        run: |
+          cargo build --release --target $RUST_TARGET
+      - name: Split debug symbols
+        run: |
+          cd target/$RUST_TARGET/release
+          objcopy --compress-debug-sections --only-keep-debug "typst-geshihua" "typst-geshihua-${{ env.target }}.debug"
+          objcopy --strip-debug --add-gnu-debuglink="typst-geshihua-${{ env.target }}.debug" "typst-geshihua"
+      - name: Upload split debug symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst-geshihua-${{ env.target }}.debug
+          path: target/${{ env.RUST_TARGET }}/release/typst-geshihua-${{ env.target }}.debug
+      - name: Copy binary to output directory
+        run: |
+          cp "target/${{ env.RUST_TARGET }}/release/typst-geshihua" "typst-geshihua-${{ env.target }}"
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst-geshihua-${{ env.target }}
+          path: typst-geshihua-${{ env.target }}
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build, build_alpine]
+    if: success() && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "artifacts/*/*"
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
