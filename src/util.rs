@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use pretty::BoxDoc;
 
 /// A style for formatting items
@@ -16,6 +17,7 @@ pub fn pretty_items<'a>(
     multi_line_separator: BoxDoc<'a, ()>,
     bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
     bracket_space: bool,
+    trialing_comma: bool,
     fold_style: FoldStyle,
 ) -> BoxDoc<'a, ()> {
     if items.is_empty() {
@@ -31,6 +33,7 @@ pub fn pretty_items<'a>(
         multi_line_separator,
         bracket,
         bracket_space,
+        trialing_comma,
         fold_style,
     )
 }
@@ -41,6 +44,7 @@ fn pretty_items_impl<'a>(
     multi_line_separator: BoxDoc<'a, ()>,
     bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
     bracket_space: bool,
+    trialing_comma: bool,
     fold_style: FoldStyle,
 ) -> BoxDoc<'a, ()> {
     let (left, right) = bracket;
@@ -57,11 +61,17 @@ fn pretty_items_impl<'a>(
         left.append(inner).append(right)
     };
     let multi = {
+        use itertools::Position::*;
         let mut inner = BoxDoc::nil();
-        for item in items {
+        for (pos, item) in items.iter().with_position() {
             inner = inner
                 .append(item.clone())
-                .append(multi_line_separator.clone().append(BoxDoc::hardline()));
+                .append(if matches!(pos, First | Middle) || trialing_comma {
+                    multi_line_separator.clone()
+                } else {
+                    BoxDoc::nil()
+                })
+                .append(BoxDoc::hardline());
         }
         let doc = BoxDoc::hardline().append(inner).nest(2);
         left.append(doc).append(right)
@@ -75,7 +85,7 @@ fn pretty_items_impl<'a>(
             } else {
                 multi
             }
-        },
+        }
         FoldStyle::Never => multi,
     }
 }
@@ -94,6 +104,7 @@ mod tests {
             BoxDoc::text(","),
             (BoxDoc::text("["), BoxDoc::text("]")),
             false,
+            true,
             FoldStyle::Fit,
         );
         insta::assert_debug_snapshot!(outer);
@@ -110,6 +121,7 @@ mod tests {
             BoxDoc::text(";").append(BoxDoc::space()),
             BoxDoc::text(";"),
             (BoxDoc::text("{"), BoxDoc::text("}")),
+            true,
             true,
             FoldStyle::Single,
         );

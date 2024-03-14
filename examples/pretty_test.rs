@@ -11,6 +11,7 @@ fn main() {
         BoxDoc::text(","),
         (BoxDoc::text("["), BoxDoc::text("]")),
         false,
+        true,
         typst_geshihua::util::FoldStyle::Fit,
     );
 

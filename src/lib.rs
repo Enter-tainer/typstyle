@@ -331,6 +331,7 @@ impl PrettyPrinter {
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
             true,
+            true,
             util::FoldStyle::Never,
         );
         doc
@@ -450,6 +451,7 @@ impl PrettyPrinter {
                 BoxDoc::text(","),
                 (BoxDoc::text("("), BoxDoc::text(")")),
                 false,
+                true,
                 util::FoldStyle::Fit,
             )
         }
@@ -477,6 +479,7 @@ impl PrettyPrinter {
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
+            true,
             util::FoldStyle::Fit,
         )
     }
@@ -581,13 +584,14 @@ impl PrettyPrinter {
             .children()
             .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
         let parenthesized_args = if has_parenthesized_args {
-            let args = self.convert_parenthesized_args(func_call.args());
+            let (args, _trailing_comment) = self.convert_parenthesized_args(func_call.args());
             pretty_items(
                 &args,
                 BoxDoc::text(",").append(BoxDoc::space()),
                 BoxDoc::text(","),
                 (BoxDoc::text("("), BoxDoc::text(")")),
                 false,
+                true,
                 util::FoldStyle::Fit,
             )
         } else {
@@ -599,15 +603,67 @@ impl PrettyPrinter {
         doc
     }
 
-    fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> Vec<BoxDoc<'a, ()>> {
+    fn convert_parenthesized_args<'a>(
+        &'a self,
+        args: Args<'a>,
+    ) -> (Vec<BoxDoc<'a, ()>>, Option<BoxDoc<'a, ()>>) {
         let node = args.to_untyped();
         let args = node
             .children()
-            .take_while(|node| node.kind() != SyntaxKind::RightParen)
-            .filter_map(|node| node.cast::<'_, Arg>())
-            .map(|arg| self.convert_arg(arg))
-            .collect();
-        args
+            .take_while(|node| node.kind() != SyntaxKind::RightParen);
+        let mut result = vec![];
+        let mut trailing_comment = None;
+        {
+            let mut doc: Option<BoxDoc> = None;
+            for child in args {
+                if let Some(arg) = child.cast::<Arg>() {
+                    let arg_doc = self.convert_arg(arg);
+                    doc = Some(doc.unwrap_or(BoxDoc::nil()).append(arg_doc));
+                } else if child.kind() == SyntaxKind::LineComment {
+                    if false {
+                        trailing_comment = Some(child);
+                    } else {
+                        doc = Some(
+                            doc.unwrap_or(BoxDoc::nil())
+                                .append(trivia(child))
+                                .append(BoxDoc::hardline()),
+                        );
+                    }
+                } else if child.kind() == SyntaxKind::BlockComment {
+                    if false {
+                        trailing_comment = Some(child);
+                    } else {
+                        doc = Some(
+                            doc.unwrap_or(BoxDoc::nil())
+                                .append(trivia(child))
+                                .append(BoxDoc::space()),
+                        );
+                    }
+                } else if child.kind() == SyntaxKind::Space {
+                    let newline_cnt = child
+                        .text()
+                        .chars()
+                        .filter(|c| *c == '\n')
+                        .count()
+                        .saturating_sub(1);
+                    for _ in 0..newline_cnt {
+                        doc = Some(doc.unwrap_or(BoxDoc::nil()).append(BoxDoc::hardline()));
+                    }
+                } else if child.kind() == SyntaxKind::Hash {
+                    doc = Some(doc.unwrap_or(BoxDoc::nil()).append(trivia(child)));
+                } else if child.kind() == SyntaxKind::Comma || child.kind() == SyntaxKind::Semicolon
+                {
+                    if let Some(d) = doc {
+                        result.push(d);
+                        doc = None;
+                    }
+                }
+            }
+            if let Some(d) = doc {
+                result.push(d);
+            }
+        }
+        (result, trailing_comment.map(trivia))
     }
 
     fn convert_additional_args<'a>(&'a self, args: Args<'a>, has_paren: bool) -> BoxDoc<'a, ()> {
@@ -642,6 +698,7 @@ impl PrettyPrinter {
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
+            true,
             util::FoldStyle::Fit,
         );
         if let Some(name) = closure.name() {
@@ -773,12 +830,14 @@ impl PrettyPrinter {
             .append(BoxDoc::text("set"))
             .append(BoxDoc::space());
         doc = doc.append(self.convert_expr(set_rule.target()));
+        let (args, _trailing_comment) = self.convert_parenthesized_args(set_rule.args());
         doc = doc.append(pretty_items(
-            &self.convert_parenthesized_args(set_rule.args()),
+            &args,
             BoxDoc::text(",").append(BoxDoc::space()),
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
+            true,
             util::FoldStyle::Single,
         ));
         if let Some(condition) = set_rule.condition() {

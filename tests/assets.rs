@@ -78,7 +78,10 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
     let rel_path = pathdiff::diff_paths(path, env::current_dir().unwrap()).unwrap();
     let doc_string = pretty_print(&content, width);
-    let replaced_path = rel_path.to_str().unwrap().replace(std::path::MAIN_SEPARATOR, "-");
+    let replaced_path = rel_path
+        .to_str()
+        .unwrap()
+        .replace(std::path::MAIN_SEPARATOR, "-");
     insta::with_settings!({
         snapshot_suffix => format!("{}-{width}", replaced_path),
         input_file => path,

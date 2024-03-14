@@ -7,6 +7,7 @@ input_file: tests/assets/typstfmt/160-fletcher.typ
   fletcher.diagram(
     node-outset: .5em,
     node-stroke: .075em,
+    
     node(
       (+1, 0),
       [variable],
@@ -17,6 +18,7 @@ input_file: tests/assets/typstfmt/160-fletcher.typ
       [const],
       radius: 3em,
     ),
+    
     edge((0, 0), (+1, 0), "=>"),
     edge((0.25, .75), (+1, 0), "->"),
     edge(
@@ -24,6 +26,7 @@ input_file: tests/assets/typstfmt/160-fletcher.typ
       (+1.25, .75),
       "=>",
     ),
+    
     node(
       (+0, 0),
       [pointer to \ variable],
@@ -44,6 +47,7 @@ input_file: tests/assets/typstfmt/160-fletcher.typ
       [pointer to \ const],
       radius: 3em,
     ),
+    
     edge((-1, 0), (+0, 0), "=>"),
     edge((-.75, .75), (+0, 0), "-X->"),
     edge(

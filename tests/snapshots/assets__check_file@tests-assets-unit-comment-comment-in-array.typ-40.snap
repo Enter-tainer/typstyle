@@ -7,7 +7,5 @@ input_file: tests/assets/unit/comment/comment-in-array.typ
 
 #(
   // 1,
-  2,
-  (3, /* 4, */ 5, 6),
-  7,
+  2, (3, /* 4, */ 5, 6), 7
 )
