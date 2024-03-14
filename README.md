@@ -1,5 +1,7 @@
 # typst-geshihua
 
+[![codecov](https://codecov.io/gh/Enter-tainer/typst-geshihua/graph/badge.svg?token=Y2SuYfwd7y)](https://codecov.io/gh/Enter-tainer/typst-geshihua)
+
 Usage: 
 ```
 Usage: typst-geshihua [OPTIONS] <INPUT>

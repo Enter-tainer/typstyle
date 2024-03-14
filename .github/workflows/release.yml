@@ -47,7 +47,7 @@ jobs:
         with:
           tool: cargo-tarpaulin
       - name: Run tests with coverage
-        run: cargo tarpaulin --verbose --workspace --timeout 120 --out xml
+        run: cargo tarpaulin --workspace --timeout 120 --out xml
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
