@@ -6,13 +6,18 @@ const { div, textarea, input, label, p, a } = van.tags;
 const App = () => {
   const input_val = van.state("")
   const output = van.state("")
+  const error_message = van.state("")
   const columns = van.state(80)
   van.derive(
     () => {
       try {
         output.val = pretty_print_wasm(input_val.val, columns.val)
-      } catch (e) {
-        output.val = e as string
+        error_message.val = ""
+        if (pretty_print_wasm(output.val, columns.val) !== output.val) {
+          throw new Error("Format doesn't converge! This means formatting the output again will result in a different output. This is a bug in the formatter. Please report it to https://github.com/Enter-tainer/typst-geshihua with the input code.")
+        }
+      } catch (e: any) {
+        error_message.val = e.message
       }
     }
   )
@@ -47,7 +52,7 @@ const App = () => {
           columns.val = parseInt((event.target! as HTMLInputElement).value)
         }
       })
-    )
+    ), div(p({ class: "error-message" }, error_message.val))
   )
 }
 

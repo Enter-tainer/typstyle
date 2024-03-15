@@ -101,3 +101,9 @@ textarea {
   transition: border-color 0.25s;
   width: 40%;
 }
+
+.error-message {
+  color: #ff4d4f;
+  margin-top: 0.5em;
+  font-family: monospace;
+}
