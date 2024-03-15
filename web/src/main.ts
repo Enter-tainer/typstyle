@@ -22,7 +22,7 @@ const App = () => {
     }
   )
   return div(
-    p("Powered by ", a({
+    p("Online Typst Code Formatter. Powered by ", a({
       href: "https://github.com/Enter-tainer/typst-geshihua"
     }, "Typst Geshihua")),
     textarea({
