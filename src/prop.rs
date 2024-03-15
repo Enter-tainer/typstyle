@@ -28,10 +28,16 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
             {
                 map.insert(node.clone());
             }
+            continue;
+        }
+        if child.kind().is_error() {
+            map.insert(child.clone());
+            continue;
         }
         if let Some(arg) = child.cast() {
             if is_2d_arg(arg) {
                 map.insert(child.clone());
+                continue;
             }
         }
         if child.children().count() == 0 {
@@ -40,9 +46,9 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
         if no_format {
             map.insert(child.clone());
             no_format = false;
-        } else {
-            get_no_format_nodes_impl(child.clone(), map);
+            continue;
         }
+        get_no_format_nodes_impl(child.clone(), map);
     }
 }
 
