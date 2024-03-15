@@ -480,12 +480,19 @@ impl PrettyPrinter {
     }
 
     fn convert_binary<'a>(&'a self, binary: Binary<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::nil()
-            .append(self.convert_expr(binary.lhs()))
-            .append(BoxDoc::space())
-            .append(BoxDoc::text(binary.op().as_str()))
-            .append(BoxDoc::space())
-            .append(self.convert_expr(binary.rhs()))
+        let left = self.convert_expr(binary.lhs()).append(BoxDoc::space());
+        let op = BoxDoc::text(binary.op().as_str());
+        // TODO: typst doesn't support this
+        // let right = if start_with_grouping(binary.rhs().to_untyped()) {
+        //     BoxDoc::space().append(self.convert_expr(binary.rhs()))
+        // } else {
+        //     BoxDoc::line()
+        //         .append(self.convert_expr(binary.rhs()))
+        //         .nest(2)
+        //         .group()
+        // };
+        let right = BoxDoc::space().append(self.convert_expr(binary.rhs()));
+        left.append(op).append(right)
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
@@ -1012,7 +1019,7 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
     )
 }
 
-pub fn to_doc_breaking(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
+fn to_doc_breaking(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
     let lines = s.lines().map(|line| {
         let line = if strip_prefix {
             line.trim_start()
@@ -1025,6 +1032,19 @@ pub fn to_doc_breaking(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
         )
     });
     BoxDoc::intersperse(lines, BoxDoc::hardline())
+}
+
+#[allow(unused)]
+fn start_with_grouping(node: &SyntaxNode) -> bool {
+    if node.kind().is_grouping() {
+        return true;
+    }
+    if let Some(child) = node.children().next() {
+        if start_with_grouping(child) {
+            return true;
+        }
+    }
+    false
 }
 
 #[cfg(test)]
