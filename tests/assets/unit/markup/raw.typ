@@ -45,3 +45,10 @@ let a = 1;
   let d = 1;
   ```
 ]
+
+
+```typ #link()```
+
+
+```typ #link() 
+```

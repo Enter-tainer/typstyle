@@ -177,7 +177,11 @@ impl PrettyPrinter {
             }
             if let Some(lang) = child.cast::<RawLang>() {
                 doc = doc.append(trivia(lang.to_untyped()));
-                doc = doc.append(BoxDoc::hardline());
+                doc = doc.append(if is_block {
+                    BoxDoc::hardline()
+                } else {
+                    BoxDoc::space()
+                });
             }
             if let Some(line) = child.cast::<Text>() {
                 doc = doc.append(trivia(line.to_untyped()));
