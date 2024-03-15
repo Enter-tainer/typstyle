@@ -116,7 +116,7 @@ impl PrettyPrinter {
 
     fn convert_text<'a>(&'a self, text: Text<'a>) -> BoxDoc<'a, ()> {
         let node = text.to_untyped();
-        trivia(node)
+        trivia_breaking(node)
     }
 
     fn convert_space<'a>(&'a self, space: Space<'a>) -> BoxDoc<'a, ()> {
@@ -124,7 +124,7 @@ impl PrettyPrinter {
         if node.text().contains('\n') {
             BoxDoc::hardline()
         } else {
-            BoxDoc::space()
+            BoxDoc::softline()
         }
     }
 
@@ -994,6 +994,10 @@ fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
     to_doc(std::borrow::Cow::Borrowed(node.text()), false)
 }
 
+fn trivia_breaking(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+    to_doc_breaking(std::borrow::Cow::Borrowed(node.text()), false)
+}
+
 pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
     let get_line = |s: &str| {
         if strip_prefix {
@@ -1006,6 +1010,21 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
         s.lines().map(|s| BoxDoc::text(get_line(s))),
         BoxDoc::hardline(),
     )
+}
+
+pub fn to_doc_breaking(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
+    let lines = s.lines().map(|line| {
+        let line = if strip_prefix {
+            line.trim_start()
+        } else {
+            line
+        };
+        BoxDoc::intersperse(
+            line.split(' ').map(|s| BoxDoc::text(s.to_owned())),
+            BoxDoc::softline(),
+        )
+    });
+    BoxDoc::intersperse(lines, BoxDoc::hardline())
 }
 
 #[cfg(test)]

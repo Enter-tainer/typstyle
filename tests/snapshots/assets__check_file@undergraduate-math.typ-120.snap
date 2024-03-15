@@ -155,9 +155,8 @@ Use as in `$cal(A)$`.
 $ cal(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) $
 
 #show math.equation: set text(stylistic-set: 1)
-Get script letters, such as $cal(
-    P,
-  )$ from `$cal(P)$`, by changing the `stylistic-set` parameter of `text()` to the corresponding set.
+Get script letters, such as $cal(P)$ from `$cal(P)$`, by changing the `stylistic-set` parameter of `text()` to the
+corresponding set.
 
 = Greek
 #align(
@@ -288,9 +287,8 @@ Get script letters, such as $cal(
 )
 
 Negate an operator, as in $subset.not$, with `subset.not`.
-Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ with `A^(complement)`, or $overline(
-    A,
-  )$ with `overline(A)`).
+Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ with `A^(complement)`, or $overline(A)$
+with `overline(A)`).
 
 // https://www.ctan.org/tex-archive/fonts/newcomputermodern
 //
@@ -310,7 +308,8 @@ Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ wit
 // The Math fonts provide the character \varnothing (⌀, U+2300), as an alternative to \emptyset (a slashed zero), through Character Variant cv01.
 // The fontsetup package provides the option ‘varnothing’ to easily switch to the alternative character.
 
-/ Remark: Using `diameter` for `\varnothing` may cause some confusion. However, #LaTeX also uses $diameter$ (`\u{2300}`) instead of $\u{2205}$ (`\u{2205}`), see #link(
+/ Remark: Using `diameter` for `\varnothing` may cause some confusion. However, #LaTeX also uses $diameter$ (`\u{2300}`)
+  instead of $\u{2205}$ (`\u{2205}`), see #link(
     "https://mirrors.sustech.edu.cn/CTAN/fonts/newcomputermodern/doc/newcm-doc.pdf",
   )[newcm $section$13.3].
   Another solution is to use `text(font: "Fira Sans", nothing)`, but the resultant glyph $text(
@@ -347,9 +346,8 @@ Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ wit
   ),
 )
 
-If the decorated letter is $i$ or $j$ then some decorations need `dotless.i` and `dotless.j`, as in $arrow(
-    dotless.i,
-  )$ with `arrow(dotless.i)`.
+If the decorated letter is $i$ or $j$ then some decorations need `dotless.i` and `dotless.j`, as in $arrow(dotless.i)$
+with `arrow(dotless.i)`.
 Some authors use boldface for vectors: `bold(x)`.
 
 Entering `overline(x + y)` produces $overline(x + y)$, and `hat(x + y)` gives $hat(x + y)$.
@@ -448,7 +446,8 @@ Just type them!
 
 #let cosec = math.op("cosec")
 
-If an operator you wish to use does not exist, you can create one using `math.op`. For example, to create the $cosec$ operator:
+If an operator you wish to use does not exist, you can create one using `math.op`. For example, to create the $cosec$
+operator:
 
 ```
 #let cosec = math.op("cosec")
@@ -604,10 +603,12 @@ Use `|` to get set builder notation ${a in S | a "is odd"}$ with `{a in S | a "i
   ),
 )
 
-The right arrows in the first column have matching left arrows, such as `arrow.l.not`, and there are some other matches for down arrows, etc.
+The right arrows in the first column have matching left arrows, such as `arrow.l.not`, and there are some other matches
+for down arrows, etc.
 
 = Variable-sized operators
-The summation $sum_(j = 0)^3 j^2$ `sum_(j = 0)^3 j^2` and the integral $integral_(x = 0)^3 x^2 dif x$ `integral_(x = 0)^3 x^2 dif x` expand when displayed.
+The summation $sum_(j = 0)^3 j^2$ `sum_(j = 0)^3 j^2` and the integral $integral_(x = 0)^3 x^2 dif x$
+`integral_(x = 0)^3 x^2 dif x` expand when displayed.
 
 $ sum_(j = 0)^3 j^2 wide integral_(x = 0)^3 x^2 dif x $
 
@@ -888,9 +889,8 @@ For modulo, there is a symbol $equiv$ from `equiv` and a text operator $mod$ fro
 For combinations the binomial symbol $binom(n, k)$ is from `binom(n, k)`.
 This resizes to be bigger in a display.
 
-For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors use $P(
-    n, r
-  )$, or $""_n P_r$ from `""_n P_r`).
+For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors use $P(n, r)$, or $""_n P_r$ from
+`""_n P_r`).
 
 = Statistics examples
 #align(

@@ -35,13 +35,15 @@ typst-book serve path/to/book
 
 == Build options
 
-The `serve` command will build your book once before serving the content. It is hence including all of the #link(
+The `serve` command will build your book once before serving the content. It is
+hence including all of the #link(
   "https://myriad-dreamin.github.io/typst-book/cli/build.html",
 )[options] from `build` command.
 
 == Server options
 
-The `serve` address defaults to `localhost:25520`. Either option can be specified on the command line:
+The `serve` address defaults to `localhost:25520`. Either option can be
+specified on the command line:
 
 ```bash
 typst-book serve path/to/book --addr 8000:127.0.0.1

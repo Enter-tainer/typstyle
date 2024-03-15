@@ -132,12 +132,8 @@ input_file: tests/assets/simple-paper.typ
 #let problem(body) = {
   problem-counter.step()
   set enum(numbering: "(1)")
-  block(
-    fill: rgb(241, 241, 255),
-    inset: 8pt,
-    radius: 2pt,
-    width: 100%,
-  )[*题目 #problem-counter.display().* #h(0.75em) #body]
+  block(fill: rgb(241, 241, 255), inset: 8pt, radius: 2pt, width: 100%)[*题目
+    #problem-counter.display().* #h(0.75em) #body]
 }
 
 #let solution(body) = {

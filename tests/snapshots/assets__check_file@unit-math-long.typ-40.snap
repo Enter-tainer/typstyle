@@ -7,15 +7,19 @@ input_file: tests/assets/unit/math/long.typ
 #let bbbbbbbbbbbbbbbbbbbbbb = 0
 #let CCCCCCCCCCCCCCCCCCCCCCCCC = 0
 $
-aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb + CCCCCCCCCCCCCCCCCCCCCCCCC
+aaaaaaaaaaaaaaaaaaaaa +
+  bbbbbbbbbbbbbbbbbbbbbb +
+  CCCCCCCCCCCCCCCCCCCCCCCCC
 $
 $
 [
-    aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb
+    aaaaaaaaaaaaaaaaaaaaa +
+    bbbbbbbbbbbbbbbbbbbbbb
   ] + CCCCCCCCCCCCCCCCCCCCCCCCC
 $
 $
 [
-    aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb
+    aaaaaaaaaaaaaaaaaaaaa +
+    bbbbbbbbbbbbbbbbbbbbbb
   ] + CCCCCCCCCCCCCCCCCCCCCCCCC
 $

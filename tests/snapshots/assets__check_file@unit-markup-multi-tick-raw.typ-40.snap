@@ -5,7 +5,8 @@ input_file: tests/assets/unit/markup/multi-tick-raw.typ
 ---
 `single tick`
 
-``double backtick. Actually this is not raw text.``
+``double backtick. Actually this is not
+raw text.``
 
 ```js
 function fib(n) {

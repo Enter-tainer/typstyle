@@ -11,7 +11,8 @@ input_file: tests/assets/serve.typ
 
 = The serve command
 
-The serve command is used to preview a book by serving it via HTTP at
+The serve command is used to preview a
+book by serving it via HTTP at
 `localhost:25520` by default:
 
 ```bash
@@ -23,13 +24,17 @@ typst-book serve
 // re-creating deleted files still mentioned in `book.typ`! A websocket
 // connection is used to trigger the client-side refresh.
 
-***Note:*** *The `serve` command is for testing a book's HTML output, and is not
-intended to be a complete HTTP server for a website.*
+***Note:*** *The `serve` command is for
+testing a book's HTML output, and is not
+intended to be a complete HTTP server
+for a website.*
 
 == Specify a directory
 
-The `serve` command can take a directory as an argument to use as the book's
-root instead of the current working directory.
+The `serve` command can take a directory
+as an argument to use as the book's
+root instead of the current working
+directory.
 
 ```bash
 typst-book serve path/to/book
@@ -37,13 +42,17 @@ typst-book serve path/to/book
 
 == Build options
 
-The `serve` command will build your book once before serving the content. It is hence including all of the #link(
+The `serve` command will build your book
+once before serving the content. It is
+hence including all of the #link(
   "https://myriad-dreamin.github.io/typst-book/cli/build.html",
 )[options] from `build` command.
 
 == Server options
 
-The `serve` address defaults to `localhost:25520`. Either option can be specified on the command line:
+The `serve` address defaults to
+`localhost:25520`. Either option can be
+specified on the command line:
 
 ```bash
 typst-book serve path/to/book --addr 8000:127.0.0.1
@@ -51,8 +60,11 @@ typst-book serve path/to/book --addr 8000:127.0.0.1
 
 === --open
 
-When you use the `--open` flag, typst-book will open the rendered book in
-your default web browser after building it.
+When you use the `--open` flag,
+typst-book will open the rendered book
+in
+your default web browser after building
+it.
 
 // == Specify exclude patterns
 

@@ -175,15 +175,12 @@ input_file: tests/assets/simple-paper.typ
     inset: 8pt,
     radius: 2pt,
     width: 100%,
-  )[*题目 #problem-counter.display().* #h(
-      0.75em,
-    ) #body]
+  )[*题目 #problem-counter.display().*
+    #h(0.75em) #body]
 }
 
 #let solution(body) = {
   set enum(numbering: "(1)")
-  block(
-    inset: 8pt,
-    width: 100%,
-  )[*解答.* #h(0.75em) #body]
+  block(inset: 8pt, width: 100%)[*解答.*
+    #h(0.75em) #body]
 }

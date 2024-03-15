@@ -31,7 +31,8 @@ input_file: tests/assets/typstfmt/160-fletcher.typ
     ),
     node(
       (-1, 0),
-      [pointer to \ pointer to \ variable],
+      [pointer to \ pointer to \
+        variable],
       radius: 3em,
     ),
     node(

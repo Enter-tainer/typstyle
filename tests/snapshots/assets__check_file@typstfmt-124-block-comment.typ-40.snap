@@ -13,9 +13,18 @@ input_file: tests/assets/typstfmt/124-block-comment.typ
   a: "test test test test test",
   b: "test test test test test",
 )[ /* test */
-  test test test test test test test test test test test test test test test test test test test test test test test test
+  test test test test test test test
+  test test test test test test test
+  test test test test test test test
+  test test test
 ][ /* test */
-  test test test test test test test test test test test test test test test test test test test test test test test test
+  test test test test test test test
+  test test test test test test test
+  test test test test test test test
+  test test test
 ][ /* test */
-  test test test test test test test test test test test test test test test test test test test test test test test test
+  test test test test test test test
+  test test test test test test test
+  test test test test test test test
+  test test test
 ]

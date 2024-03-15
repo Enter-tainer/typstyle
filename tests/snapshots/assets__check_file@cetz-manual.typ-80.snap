@@ -48,9 +48,11 @@ This package provides a way to draw onto a canvas using a similar API to #link(
   "https://processing.org/",
 )[Processing] but with relative coordinates and anchors from #link(
   "https://tikz.dev/",
-)[Ti#[_k_]Z]. You also won't have to worry about accidentally drawing over other content as the canvas will automatically resize. And remember: up is positive!
+)[Ti#[_k_]Z]. You also won't have to worry about accidentally drawing over other
+content as the canvas will automatically resize. And remember: up is positive!
 
-The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german for "CeTZ, a Typst drawing package").
+The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german
+for "CeTZ, a Typst drawing package").
 
 = Usage
 
@@ -62,7 +64,9 @@ This is the minimal starting point:
     ...
   })
   ```]
-Note that draw functions are imported inside the scope of the `canvas` block. This is recommended as some draw functions override Typst's function's such as `line`.
+Note that draw functions are imported inside the scope of the `canvas` block.
+This is recommended as some draw functions override Typst's function's such as
+`line`.
 
 #show raw.where(block: false): it => if it.text.starts-with(
   "<",
@@ -74,17 +78,22 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 }
 
 == CeTZ Unique Argument Types
-Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.
+Many CeTZ functions expect data in certain formats which we will call types.
+Note that these are actually made up of Typst primitives.
 / `<coordinate>`: Any coordinate system. See coordinate-systems.
 / `<number>`: Any of `<float>`, `<integer>` or `<length>`.
-/ `<style>`: Named arguments (or a dictionary if used for a single argument) of style key-values.
+/ `<style>`: Named arguments (or a dictionary if used for a single argument) of
+  style key-values.
 / `<context>`: A CeTZ context object that holds internal state.
 / `<vector>`: A three element array of `<float>`s
 
 == Anchors <anchors>
-You can refer to a position relative to an element by using its anchors. Anchors come in several different variations but can all be used in two different ways.
+You can refer to a position relative to an element by using its anchors. Anchors
+come in several different variations but can all be used in two different ways.
 
-The first is by using the `anchor` argument on an element. When given, the element will be translated such that the given anchor will be where the given position is. This is supported by all elements that have the `anchor` argument.
+The first is by using the `anchor` argument on an element. When given, the
+element will be translated such that the given anchor will be where the given
+position is. This is supported by all elements that have the `anchor` argument.
 ```example
 // Draw a circle and place its "west" anchor at the origin.
 circle((0,0), anchor: "west")
@@ -94,7 +103,10 @@ fill(red)
 stroke(none)
 circle((0,0), radius: 0.3)
 ```
-The second is by using anchor coordinates. You must first give the element a name by passing a string to its `name` argument, you can then use its anchors to place other elements, see @coordinate-anchor for more usage. Note this is only available for elements that have a `name` argument.
+The second is by using anchor coordinates. You must first give the element a
+name by passing a string to its `name` argument, you can then use its anchors to
+place other elements, see @coordinate-anchor for more usage. Note this is only
+available for elements that have a `name` argument.
 
 ```example
 // Name the circle
@@ -108,16 +120,22 @@ circle("circle.east", radius: 0.3)
 Note that all anchors are transformed along with the element.
 
 === Named
-Named anchors are normally unique to the type of element, such as a bezier curve's control points. Other anchor variants specify their own named anchors that are available to all elements that support the anchor variant.
+Named anchors are normally unique to the type of element, such as a bezier
+curve's control points. Other anchor variants specify their own named anchors
+that are available to all elements that support the anchor variant.
 
-All elements also have a "default" named anchor, it always refers to another anchor on the element.
+All elements also have a "default" named anchor, it always refers to another
+anchor on the element.
 
 === Border
-A border anchor refers to a point on the element's border where a ray is cast from the element's center at a given angle and hits the border.
+A border anchor refers to a point on the element's border where a ray is cast
+from the element's center at a given angle and hits the border.
 
 They are given as angles where `0deg` is towards the right and `90deg` is up.
 
-Border anchors also specify named compass directions such as "north", "north-east", etc. Border anchors also spefcify a "center" named anchor which is where the ray cast originates from.
+Border anchors also specify named compass directions such as "north",
+"north-east", etc. Border anchors also spefcify a "center" named anchor which is
+where the ray cast originates from.
 
 ```example-vertical
 circle((0, 0), name: "circle", radius: 1)
@@ -131,7 +149,9 @@ content("circle.south-west", [South West], anchor: "north-east")
 ```
 
 === Path
-A path anchor refers to a point along the path of an element. They can be given as either a `<number>` for an absolute distance along the path, or a `<ratio>` for a relative distance along the path.
+A path anchor refers to a point along the path of an element. They can be given
+as either a `<number>` for an absolute distance along the path, or a `<ratio>`
+for a relative distance along the path.
 
 Path anchors also specify three anchors "start", "mid" and "end".
 
@@ -154,7 +174,9 @@ content((name: "line", anchor: 50pt), [50pt])
 #doc-style.parse-show-module("/src/canvas.typ")
 
 == Styling <styling>
-You can style draw elements by passing the relevant named arguments to their draw functions. All elements that draw something have stroke and fill styling unless said otherwise.
+You can style draw elements by passing the relevant named arguments to their
+draw functions. All elements that draw something have stroke and fill styling
+unless said otherwise.
 
 #doc-style.show-parameter-block(
   "fill",
@@ -166,7 +188,9 @@ You can style draw elements by passing the relevant named arguments to their dra
   "stroke",
   ("none", "auto", "length", "color", "dictionary", "stroke"),
   default: black + 1pt,
-  [How to stroke the border or the path of the draw element. See Typst's line documentation for more details: https://typst.app/docs/reference/visualize/line/#parameters-stroke],
+  [How to stroke the border or the path of the draw element. See Typst's line
+    documentation for more details:
+    https://typst.app/docs/reference/visualize/line/#parameters-stroke],
 )
 
 ```example
@@ -176,7 +200,11 @@ circle((0, 0), fill: red, stroke: blue)
 line((0, 0), (1, 1), stroke: green)
 ```
 
-Instead of having to specify the same styling for each time you want to draw an element, you can use the `set-style()` function to change the style for all elements after it. You can still pass styling to a draw function to override what has been set with `set-style()`. You can also use the `fill()` and `stroke()` functions as a shorthand to set the fill and stroke respectively.
+Instead of having to specify the same styling for each time you want to draw an
+element, you can use the `set-style()` function to change the style for all
+elements after it. You can still pass styling to a draw function to override
+what has been set with `set-style()`. You can also use the `fill()` and
+`stroke()` functions as a shorthand to set the fill and stroke respectively.
 
 ```example
 // Draws an empty square with a black border
@@ -190,7 +218,11 @@ circle((0,0))
 line((), (1,1), stroke: green)
 ```
 
-When using a dictionary for a style, it is important to note that they update each other instead of overriding the entire option like a non-dictionary value would do. For example, if the stroke is set to `(paint: red, thickness: 5pt)` and you pass `(paint: blue)`, the stroke would become `(paint: blue, thickness: 5pt)`.
+When using a dictionary for a style, it is important to note that they update
+each other instead of overriding the entire option like a non-dictionary value
+would do. For example, if the stroke is set to `(paint: red, thickness: 5pt)`
+and you pass `(paint: blue)`, the stroke would become
+`(paint: blue, thickness: 5pt)`.
 
 ```example
 // Sets the stroke to red with a thickness of 5pt
@@ -203,7 +235,10 @@ line((0,0), (1,1), stroke: (paint: blue))
 line((0,0), (0,1), stroke: yellow)
 ```
 
-You can also specify styling for each type of element. Note that dictionary values will still update with its global value, the full hierarchy is `function > element type > global`. When the value of a style is `auto`, it will become exactly its parent style.
+You can also specify styling for each type of element. Note that dictionary
+values will still update with its global value, the full hierarchy is
+`function > element type > global`. When the value of a style is `auto`, it will
+become exactly its parent style.
 
 ```example
 set-style(
@@ -236,7 +271,11 @@ circle((0.5, -2.5), radius: 0.5, fill: green)
 ```
 
 === Marks <styling-mark>
-Marks are arrow tips that can be added to the end of path based elements that support the `mark` style key, or can be directly drawn by using the `mark` draw function. Marks are specified by giving there names as strings and have several options to customise them. You can give an array of names to have multiple marks in a row, dictionaries can also be used in the array for per mark styling.
+Marks are arrow tips that can be added to the end of path based elements that
+support the `mark` style key, or can be directly drawn by using the `mark` draw
+function. Marks are specified by giving there names as strings and have several
+options to customise them. You can give an array of names to have multiple marks
+in a row, dictionaries can also be used in the array for per mark styling.
 
 #figure(
   table(
@@ -290,17 +329,27 @@ line(..c)
 #doc-style.show-parameter-block(
   "symbol",
   ("none", "string", "array", "dictionary"),
-  [This option sets the mark to draw when using the `mark` draw function, or applies styling to both mark ends of path based elements. The mark's name or shorthand can be given, multiple marks can be drawn by passing an array of names or shorthands. When `none` no marks will be drawn. A style `dictionary` can be given instead of a `string` to override styling for that particular mark, just make sure to still give the mark name using the `symbol` key otherwise nothing will be drawn!. ],
+  [This option sets the mark to draw when using the `mark` draw function, or
+    applies styling to both mark ends of path based elements. The mark's name or
+    shorthand can be given, multiple marks can be drawn by passing an array of
+    names or shorthands. When `none` no marks will be drawn. A style
+    `dictionary` can be given instead of a `string` to override styling for that
+    particular mark, just make sure to still give the mark name using the
+    `symbol` key otherwise nothing will be drawn!. ],
 )
 #doc-style.show-parameter-block(
   "start",
   ("none", "string", "array", "dictionary"),
-  [This option sets the mark to draw at the start of a path based element. It will override all options of the `symbol` key and will not effect marks drawn using the `mark` draw function.],
+  [This option sets the mark to draw at the start of a path based element. It
+    will override all options of the `symbol` key and will not effect marks
+    drawn using the `mark` draw function.],
 )
 #doc-style.show-parameter-block(
   "end",
   ("none", "string", "array", "dictionary"),
-  [This option sets the mark to draw at the end of a path based element. It will override all options of the `symbol` key and will not effect marks drawn using the `mark` draw function.],
+  [This option sets the mark to draw at the end of a path based element. It will
+    override all options of the `symbol` key and will not effect marks drawn
+    using the `mark` draw function.],
 )
 
 #doc-style.show-parameter-block(
@@ -318,7 +367,9 @@ line(..c)
 #doc-style.show-parameter-block(
   "inset",
   "number",
-  [It specifies a distance by which something inside the arrow tip is set inwards; for the Stealth arrow tip it is the distance by which the back angle is moved inwards.],
+  [It specifies a distance by which something inside the arrow tip is set
+    inwards; for the Stealth arrow tip it is the distance by which the back
+    angle is moved inwards.],
   default: 0.05cm,
 )
 #doc-style.show-parameter-block(
@@ -336,20 +387,27 @@ line(..c)
 #doc-style.show-parameter-block(
   "flex",
   "boolean",
-  [Only applicable when marks are used on curves such as bezier and hobby. If true, the mark will point along the secant of the curve. If false, the tangent at the marks tip is used.],
+  [Only applicable when marks are used on curves such as bezier and hobby. If
+    true, the mark will point along the secant of the curve. If false, the
+    tangent at the marks tip is used.],
   default: true,
 )
 #doc-style.show-parameter-block(
   "position-samples",
   "integer",
-  [Only applicable when marks are used on curves such as bezier and hobby. The maximum number of samples to use for calculating curve positions. A higher number gives better results but may slow down compilation.],
+  [Only applicable when marks are used on curves such as bezier and hobby. The
+    maximum number of samples to use for calculating curve positions. A higher
+    number gives better results but may slow down compilation.],
   default: 30,
 )
 
 #doc-style.show-parameter-block(
   "pos",
   ("number", "ratio"),
-  [Overrides the mark's position along a path. A number will move it an absolute distance, while a ratio will be a distance relative to the length of the path. Note that this may be removed in the future in preference of a different method.],
+  [Overrides the mark's position along a path. A number will move it an absolute
+    distance, while a ratio will be a distance relative to the length of the
+    path. Note that this may be removed in the future in preference of a
+    different method.],
 )
 
 #doc-style.show-parameter-block(
@@ -361,7 +419,8 @@ line(..c)
 #doc-style.show-parameter-block(
   "slant",
   "ratio",
-  [How much to slant the mark relative to the axis of the arrow. 0% means no slant 100% slants at 45 degrees],
+  [How much to slant the mark relative to the axis of the arrow. 0% means no
+    slant 100% slants at 45 degrees],
   default: 0%,
 )
 #doc-style.show-parameter-block(
@@ -398,13 +457,17 @@ line(..c)
 #doc-style.show-parameter-block(
   "shorten-to",
   ("integer", "auto", "none"),
-  [Which mark to shorten the path to when multiple marks are given. `auto` will shorten to the last mark, `none` will shorten to the first mark (effectively disabling path shortening). An integer can be given to select the mark's index.],
+  [Which mark to shorten the path to when multiple marks are given. `auto` will
+    shorten to the last mark, `none` will shorten to the first mark (effectively
+    disabling path shortening). An integer can be given to select the mark's
+    index.],
 )
 
 #doc-style.show-parameter-block(
   "transform-shape",
   "bool",
-  [When false marks will not be streched/affected by the current transformation, marks will be placed after the path is transformed.],
+  [When false marks will not be streched/affected by the current transformation,
+    marks will be placed after the path is transformed.],
   default: true,
 )
 
@@ -418,7 +481,8 @@ line(..c)
 
 #pagebreak()
 == Transformations
-All transformation functions push a transformation matrix onto the current transform stack. To apply transformations scoped use a `group(...)` object.
+All transformation functions push a transformation matrix onto the current
+transform stack. To apply transformations scoped use a `group(...)` object.
 
 Transformation matrices get multiplied in the following order:
 $ M_"world" = M_"world" dot M_"local" $
@@ -426,7 +490,10 @@ $ M_"world" = M_"world" dot M_"local" $
 #doc-style.parse-show-module("/src/draw/transformations.typ")
 
 = Coordinate Systems <coordinate-systems>
-A _coordinate_ is a position on the canvas on which the picture is drawn. They take the form of dictionaries and the following sub-sections define the key value pairs for each system. Some systems have a more implicit form as an array of values and `CeTZ` attempts to infer the system based on the element types.
+A _coordinate_ is a position on the canvas on which the picture is drawn. They
+take the form of dictionaries and the following sub-sections define the key
+value pairs for each system. Some systems have a more implicit form as an array
+of values and `CeTZ` attempts to infer the system based on the element types.
 
 == XYZ <coordinate-xyz>
 Defines a point `x` units right, `y` units upward, and `z` units away.
@@ -449,7 +516,8 @@ Defines a point `x` units right, `y` units upward, and `z` units away.
   [The number of units in the `z` direction.],
 )
 
-The implicit form can be given as an array of two or three `<number>`s, as in `(x,y)` and `(x,y,z)`.
+The implicit form can be given as an array of two or three `<number>`s, as in
+`(x,y)` and `(x,y,z)`.
 
 ```example
 line((0,0), (x: 1))
@@ -463,7 +531,10 @@ line((0, -2), (0, -2, 1))
 ```
 
 == Previous <previous>
-Use this to reference the position of the previous coordinate passed to a draw function. This will never reference the position of a coordinate used in to define another coordinate. It takes the form of an empty array `()`. The previous position initially will be `(0, 0, 0)`.
+Use this to reference the position of the previous coordinate passed to a draw
+function. This will never reference the position of a coordinate used in to
+define another coordinate. It takes the form of an empty array `()`. The
+previous position initially will be `(0, 0, 0)`.
 
 ```example
 line((0,0), (1, 1))
@@ -473,7 +544,10 @@ circle(())
 ```
 
 == Relative <coordinate-relative>
-Places the given coordinate relative to the previous coordinate. Or in other words, for the given coordinate, the previous coordinate will be used as the origin. Another coordinate can be given to act as the previous coordinate instead.
+Places the given coordinate relative to the previous coordinate. Or in other
+words, for the given coordinate, the previous coordinate will be used as the
+origin. Another coordinate can be given to act as the previous coordinate
+instead.
 
 #doc-style.show-parameter-block(
   "rel",
@@ -494,7 +568,9 @@ Places the given coordinate relative to the previous coordinate. Or in other wor
   "The coordinate to treat as the previous coordinate.",
 )
 
-In the example below, the red circle is placed one unit below the blue circle. If the blue circle was to be moved to a different position, the red circle will move with the blue circle to stay one unit below.
+In the example below, the red circle is placed one unit below the blue circle.
+If the blue circle was to be moved to a different position, the red circle will
+move with the blue circle to stay one unit below.
 
 ```example
 circle((0, 0), stroke: blue)
@@ -502,18 +578,22 @@ circle((rel: (0, -1)), stroke: red)
 ```
 
 == Polar
-Defines a point that is `radius` distance away from the origin at the given `angle`.
+Defines a point that is `radius` distance away from the origin at the given
+`angle`.
 
 #doc-style.show-parameter-block(
   "angle",
   "angle",
-  [The angle of the coordinate. An angle of `0deg` is to the right, a degree of `90deg` is upward. See https://typst.app/docs/reference/layout/angle/ for details.],
+  [The angle of the coordinate. An angle of `0deg` is to the right, a degree of
+    `90deg` is upward. See https://typst.app/docs/reference/layout/angle/ for
+    details.],
   show-default: false,
 )
 #doc-style.show-parameter-block(
   "radius",
   ("number", "tuple<number>"),
-  [The distance from the origin. An array can be given, in the form `(x, y)` to define the `x` and `y` radii of an ellipse instead of a circle.],
+  [The distance from the origin. An array can be given, in the form `(x, y)` to
+    define the `x` and `y` radii of an ellipse instead of a circle.],
   show-default: false,
 )
 
@@ -521,7 +601,8 @@ Defines a point that is `radius` distance away from the origin at the given `ang
 line((0,0), (angle: 30deg, radius: 1cm))
 ```
 
-The implicit form is an array of the angle then the radius `(angle, radius)` or `(angle, (x, y))`.
+The implicit form is an array of the angle then the radius `(angle, radius)` or
+`(angle, (x, y))`.
 
 ```example
 line((0,0), (30deg, 1), (60deg, 1), 
@@ -529,14 +610,20 @@ line((0,0), (30deg, 1), (60deg, 1),
 ```
 
 == Barycentric
-In the barycentric coordinate system a point is expressed as the linear combination of multiple vectors. The idea is that you specify vectors $v_1$, $v_2$ ..., $v_n$ and numbers $alpha_1$, $alpha_2$, ..., $alpha_n$. Then the barycentric coordinate specified by these vectors and numbers is $
-(alpha_1 v_1 + alpha_2 v_1 + dots.c + alpha_n v_n) / (alpha_1 + alpha_2 + dots.c + alpha_n)
+In the barycentric coordinate system a point is expressed as the linear
+combination of multiple vectors. The idea is that you specify vectors $v_1$,
+$v_2$ ..., $v_n$ and numbers $alpha_1$, $alpha_2$, ..., $alpha_n$. Then the
+barycentric coordinate specified by these vectors and numbers is $
+(alpha_1 v_1 + alpha_2 v_1 + dots.c + alpha_n v_n) / (alpha_1 + alpha_2 + dots.c
+  + alpha_n)
 $
 
 #doc-style.show-parameter-block(
   "bary",
   "dictionary",
-  [A dictionary where the key is a named element and the value is a `<float>`. The `center` anchor of the named element is used as $v$ and the value is used as $a$.],
+  [A dictionary where the key is a named element and the value is a `<float>`.
+    The `center` anchor of the named element is used as $v$ and the value is
+    used as $a$.],
   show-default: false,
 )
 
@@ -585,10 +672,14 @@ Defines a point relative to a named element using anchors, see @anchors.
 #doc-style.show-parameter-block(
   "anchor",
   ("number", "angle", "string", "ratio", "none"),
-  [The anchor of the element. Strings are named anchors, angles are border anchors and numbers and ratios are path anchors. If not given the default anchor will be used, on most elements this is `center` but it can be different.],
+  [The anchor of the element. Strings are named anchors, angles are border
+    anchors and numbers and ratios are path anchors. If not given the default
+    anchor will be used, on most elements this is `center` but it can be
+    different.],
 )
 
-You can also use implicit syntax of a dot separated string in the form `"name.anchor"`
+You can also use implicit syntax of a dot separated string in the form
+`"name.anchor"`
 for named anchors.
 
 ```example
@@ -610,7 +701,11 @@ content((name: "circle", anchor: 3.14), box(fill: white, $ p = 3.14 $))
 ```
 
 == Tangent
-This system allows you to compute the point that lies tangent to a shape. In detail, consider an element and a point. Now draw a straight line from the point so that it "touches" the element (more formally, so that it is _tangent_ to this element). The point where the line touches the shape is the point referred to by this coordinate system.
+This system allows you to compute the point that lies tangent to a shape. In
+detail, consider an element and a point. Now draw a straight line from the point
+so that it "touches" the element (more formally, so that it is _tangent_ to this
+element). The point where the line touches the shape is the point referred to by
+this coordinate system.
 
 #doc-style.show-parameter-block(
   "element",
@@ -631,7 +726,9 @@ This system allows you to compute the point that lies tangent to a shape. In det
   [Which solution should be used if there are more than one.],
 )
 
-A special algorithm is needed in order to compute the tangent for a given shape. Currently it does this by assuming the distance between the center and top anchor (See @anchors) is the radius of a circle.
+A special algorithm is needed in order to compute the tangent for a given shape.
+Currently it does this by assuming the distance between the center and top
+anchor (See @anchors) is the radius of a circle.
 
 ```example
 grid((0,0), (3,2), help-lines: true)
@@ -647,7 +744,8 @@ line("a", (element: "c", point: "a", solution: 1),
 ```
 
 == Perpendicular
-Can be used to find the intersection of a vertical line going through a point $p$ and a horizontal line going through some other point $q$.
+Can be used to find the intersection of a vertical line going through a point
+$p$ and a horizontal line going through some other point $q$.
 
 #doc-style.show-parameter-block(
   show-default: false,
@@ -662,7 +760,8 @@ Can be used to find the intersection of a vertical line going through a point $p
   [The coordinate through which the vertical line passes.],
 )
 
-You can use the implicit syntax of `(horizontal, "-|", vertical)` or `(vertical, "|-", horizontal)`
+You can use the implicit syntax of `(horizontal, "-|", vertical)` or
+`(vertical, "|-", horizontal)`
 
 ```example
 set-style(content: (padding: .05))
@@ -681,8 +780,14 @@ line("p2.south-east", ((), "-|", "yline.end")) // Short form
 ```
 
 == Interpolation <coordinate-lerp>
-Use this to linearly interpolate between two coordinates `a` and `b` with a given distance `number`. If `number` is a `<number>` the position will be at the absolute distance away from `a` towards `b`, a `<ratio>` can be given instead to be the relative distance between `a` and `b`.
-An angle can also be given for the general meaning: "First consider the line from `a` to `b`. Then rotate this line by `angle` around point `a`. Then the two endpoints of this line will be `a` and some point `c`. Use this point `c` for the subsequent computation."
+Use this to linearly interpolate between two coordinates `a` and `b` with a
+given distance `number`. If `number` is a `<number>` the position will be at the
+absolute distance away from `a` towards `b`, a `<ratio>` can be given instead to
+be the relative distance between `a` and `b`.
+An angle can also be given for the general meaning: "First consider the line
+from `a` to `b`. Then rotate this line by `angle` around point `a`. Then the two
+endpoints of this line will be `a` and some point `c`. Use this point `c` for
+the subsequent computation."
 
 #doc-style.show-parameter-block(
   show-default: false,
@@ -701,19 +806,22 @@ An angle can also be given for the general meaning: "First consider the line fro
   "number",
   ("ratio", "number"),
   [
-    The distance between `a` and `b`. A ratio will be the relative distance between the two points, a number will be the absolute distance between the two points.
+    The distance between `a` and `b`. A ratio will be the relative distance
+    between the two points, a number will be the absolute distance between the
+    two points.
   ],
 )
 #doc-style.show-parameter-block(
   "angle",
   "angle",
-  [Angle between $arrow("AB")$ and $arrow(
-        "AP",
-      )$, where $P$ is the resulting coordinate. This can be used to get the _normal_ for a tangent between two points.],
+  [Angle between $arrow("AB")$ and $arrow("AP")$, where $P$ is the resulting
+    coordinate. This can be used to get the _normal_ for a tangent between two
+    points.],
   default: 0deg,
 )
 
-Can be used implicitly as an array in the form `(a, number, b)` or `(a, number, angle, b)`.
+Can be used implicitly as an array in the form `(a, number, b)` or
+`(a, number, angle, b)`.
 
 ```example
 grid((0,0), (3,3), help-lines: true)
@@ -788,9 +896,14 @@ line((a, .7, b), (a: (), b: a, number: .5, angle: 90deg), stroke: red)
 ```
 
 == Function
-An array where the first element is a function and the rest are coordinates will cause the function to be called with the resolved coordinates. The resolved coordinates have the same format as the implicit form of the 3-D XYZ coordinate system, @coordinate-xyz.
+An array where the first element is a function and the rest are coordinates will
+cause the function to be called with the resolved coordinates. The resolved
+coordinates have the same format as the implicit form of the 3-D XYZ coordinate
+system, @coordinate-xyz.
 
-The example below shows how to use this system to create an offset from an anchor, however this could easily be replaced with a relative coordinate with the `to` argument set, @coordinate-relative.
+The example below shows how to use this system to create an offset from an
+anchor, however this could easily be replaced with a relative coordinate with
+the `to` argument set, @coordinate-relative.
 
 ```example
 circle((0, 0), name: "c")
@@ -814,19 +927,16 @@ The library `plot` of CeTZ allows plotting data.
 === Types
 
 Types commonly used by function of the `plot` library:
-- #doc-style.show-type(
-    "domain",
-  ): Tuple representing a functions domain as closed interval.
+- #doc-style.show-type("domain"): Tuple representing a functions domain as
+  closed interval.
   Example domains are: `(0, 1)` for $[0, 1]$ or
   `(-calc.pi, calc.pi)` for $[-pi, pi]$.
-- #doc-style.show-type(
-    "axes",
-  ): Tuple of axis names. Plotting functions taking an `axes` tuple
+- #doc-style.show-type("axes"): Tuple of axis names. Plotting functions taking
+  an `axes` tuple
   will use those axes as their `x` and `y` axis for plotting.
   To rotate a plot, you can simply swap its axes, for example `("y", "x")`.
-- #doc-style.show-type(
-    "mark",
-  ): Plots feature their own set of marks. The following mark symbols are
+- #doc-style.show-type("mark"): Plots feature their own set of marks. The
+  following mark symbols are
   available:
   ```example-vertical
   let marks = ("+", "x", "-", "|", "o", "square", "triangle")
@@ -844,7 +954,8 @@ Types commonly used by function of the `plot` library:
 #doc-style.parse-show-module("/src/lib/plot.typ")
 
 === Legends <plot-legends>
-A legend for a plot will be drawn if at least one set of data with a label that is not `none` is given.
+A legend for a plot will be drawn if at least one set of data with a label that
+is not `none` is given.
 The following anchors are available when placing a legend on a plot:
 - `legend.north`
 - `legend.south`
@@ -925,7 +1036,8 @@ plot.plot(
   ("float"),
   default: .1,
   [
-    The legends frame padding, that is the distance added between its items and its frame.
+    The legends frame padding, that is the distance added between its items and
+    its frame.
   ],
 )
 #doc-style.show-parameter-block(
@@ -957,7 +1069,8 @@ plot.plot(
   ("number"),
   default: .75,
   [
-    The width of a legend items preview picture, a small preview of the graph the legend item belongs to.
+    The width of a legend items preview picture, a small preview of the graph
+    the legend item belongs to.
   ],
 )
 #doc-style.show-parameter-block(
@@ -1171,7 +1284,8 @@ The palette library provides some predefined palettes.
 
 == Angle <angle>
 
-The `angle` function of the angle module allows drawing angles with an optional label.
+The `angle` function of the angle module allows drawing angles with an optional
+label.
 
 #doc-style.parse-show-module("/src/lib/angle.typ")
 
@@ -1309,9 +1423,11 @@ my-star((0,6), inner-radius: .3)
 
 The state of the canvas is encoded in its context dictionary. Elements or other
 draw calls may return a modified context to the canvas to change its
-state, e.g. modifying the transformating matrix, adding a group or setting a style.
+state, e.g. modifying the transformating matrix, adding a group or setting a
+style.
 
-The context can be manually retrieved and modified using the `get-ctx` and `set-ctx`
+The context can be manually retrieved and modified using the `get-ctx` and
+`set-ctx`
 functions.
 
 == Elements
