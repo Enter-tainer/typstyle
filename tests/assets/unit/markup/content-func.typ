@@ -1,0 +1,1 @@
+#doc-style.show-parameter-block("length", "number", [The size of the mark in the direction it is pointing. The width of a legend items preview picture, a small preview of the graph the legend item belongs to.], default: 0.2cm)
