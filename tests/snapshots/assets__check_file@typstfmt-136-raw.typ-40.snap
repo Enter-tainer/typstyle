@@ -21,7 +21,8 @@ if b {
 ```
 
 #text[
-  J'ai fait un snippet neovim qui crée des banners ! ```
+  J'ai fait un snippet neovim qui crée
+  des banners ! ```
   //////////////////////
   // This is a banner //
   //////////////////////

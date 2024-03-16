@@ -91,10 +91,8 @@ input_file: tests/assets/book.typ
           none,
           section: "6.3",
         )[Typst Support]
-    - #chapter(
-        none,
-        section: "7",
-      )[For developers]
+    - #chapter(none, section: "7")[For
+        developers]
       - #chapter(
           none,
           section: "7.1",

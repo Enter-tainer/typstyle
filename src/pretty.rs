@@ -116,7 +116,7 @@ impl PrettyPrinter {
 
     fn convert_text<'a>(&'a self, text: Text<'a>) -> BoxDoc<'a, ()> {
         let node = text.to_untyped();
-        trivia(node)
+        trivia_breaking(node)
     }
 
     fn convert_space<'a>(&'a self, space: Space<'a>) -> BoxDoc<'a, ()> {
@@ -124,7 +124,7 @@ impl PrettyPrinter {
         if node.text().contains('\n') {
             BoxDoc::hardline()
         } else {
-            BoxDoc::space()
+            BoxDoc::softline()
         }
     }
 
@@ -480,12 +480,19 @@ impl PrettyPrinter {
     }
 
     fn convert_binary<'a>(&'a self, binary: Binary<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::nil()
-            .append(self.convert_expr(binary.lhs()))
-            .append(BoxDoc::space())
-            .append(BoxDoc::text(binary.op().as_str()))
-            .append(BoxDoc::space())
-            .append(self.convert_expr(binary.rhs()))
+        let left = self.convert_expr(binary.lhs()).append(BoxDoc::space());
+        let op = BoxDoc::text(binary.op().as_str());
+        // TODO: typst doesn't support this
+        // let right = if start_with_grouping(binary.rhs().to_untyped()) {
+        //     BoxDoc::space().append(self.convert_expr(binary.rhs()))
+        // } else {
+        //     BoxDoc::line()
+        //         .append(self.convert_expr(binary.rhs()))
+        //         .nest(2)
+        //         .group()
+        // };
+        let right = BoxDoc::space().append(self.convert_expr(binary.rhs()));
+        left.append(op).append(right)
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
@@ -994,6 +1001,10 @@ fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
     to_doc(std::borrow::Cow::Borrowed(node.text()), false)
 }
 
+fn trivia_breaking(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+    to_doc_breaking(std::borrow::Cow::Borrowed(node.text()), false)
+}
+
 pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
     let get_line = |s: &str| {
         if strip_prefix {
@@ -1006,6 +1017,34 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
         s.lines().map(|s| BoxDoc::text(get_line(s))),
         BoxDoc::hardline(),
     )
+}
+
+fn to_doc_breaking(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
+    let lines = s.lines().map(|line| {
+        let line = if strip_prefix {
+            line.trim_start()
+        } else {
+            line
+        };
+        BoxDoc::intersperse(
+            line.split(' ').map(|s| BoxDoc::text(s.to_owned())),
+            BoxDoc::softline(),
+        )
+    });
+    BoxDoc::intersperse(lines, BoxDoc::hardline())
+}
+
+#[allow(unused)]
+fn start_with_grouping(node: &SyntaxNode) -> bool {
+    if node.kind().is_grouping() {
+        return true;
+    }
+    if let Some(child) = node.children().next() {
+        if start_with_grouping(child) {
+            return true;
+        }
+    }
+    false
 }
 
 #[cfg(test)]
