@@ -47,7 +47,14 @@ impl PrettyPrinter {
                     break_line = true;
                 } else if let Some(expr) = node.cast::<Expr>() {
                     match expr {
-                        ast::Expr::Text(_) | ast::Expr::Raw(_) => current_line.has_text = true,
+                        ast::Expr::Text(_) => current_line.has_text = true,
+                        ast::Expr::Raw(r) => {
+                            if r.block() {
+                                break_line = true;
+                            } else {
+                                current_line.has_text = true;
+                            }
+                        }
                         ast::Expr::Code(_) => break_line = true,
                         ast::Expr::Equation(e) if e.block() => break_line = true,
                         _ => (),
@@ -65,16 +72,21 @@ impl PrettyPrinter {
             lines
         };
         for Line { has_text, nodes } in lines {
-            dbg!(has_text);
+            dbg!(has_text, &nodes);
             for node in nodes {
-                dbg!(node);
+                if let Some(space) = node.cast::<Space>() {
+                    doc = doc.append(self.convert_space(space));
+                    continue;
+                }
+                if let Some(pb) = node.cast::<Parbreak>() {
+                    doc = doc.append(self.convert_parbreak(pb));
+                    continue;
+                }
                 if has_text {
                     doc = doc.append(self.format_disabled(node));
                 } else if let Some(expr) = node.cast::<Expr>() {
                     let expr_doc = self.convert_expr(expr);
                     doc = doc.append(expr_doc);
-                } else if let Some(space) = node.cast::<Space>() {
-                    doc = doc.append(self.convert_space(space));
                 } else {
                     doc = doc.append(trivia(node));
                 }
@@ -91,16 +103,8 @@ impl PrettyPrinter {
         }
     }
 
-    #[allow(clippy::only_used_in_recursion)]
     fn format_disabled<'a>(&'a self, node: &'a SyntaxNode) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::nil();
-        if node.children().count() == 0 {
-            return trivia(node);
-        }
-        for child in node.children() {
-            doc = doc.append(self.format_disabled(child));
-        }
-        doc
+        return BoxDoc::text(node.clone().into_text().to_string());
     }
 
     fn convert_expr<'a>(&'a self, expr: Expr<'a>) -> BoxDoc<'a, ()> {
@@ -1062,11 +1066,11 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
         s.lines().map(|s| BoxDoc::text(get_line(s))),
         BoxDoc::hardline(),
     );
-    dbg!(if has_trailing_newline {
+    if has_trailing_newline {
         res.append(BoxDoc::hardline())
     } else {
         res
-    })
+    }
 }
 
 #[cfg(test)]

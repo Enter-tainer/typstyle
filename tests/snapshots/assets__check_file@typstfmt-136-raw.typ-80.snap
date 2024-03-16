@@ -22,7 +22,7 @@ if b {
 
 #text[
   J'ai fait un snippet neovim qui crée des banners ! ```
-  //////////////////////
-  // This is a banner //
-  //////////////////////
-  ```]
+                      //////////////////////
+                      // This is a banner //
+                      //////////////////////
+                      ```]
