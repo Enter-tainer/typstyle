@@ -24,9 +24,16 @@ If you find typstyle is not working as expected, you can use `// @typstyle off` 
 
 And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/Enter-tainer/typstyle)
 
+## Design Goals
+
+1. Opinionated: We want to have a consistent style across all codebases.
+2. Code only: We want to format only the code. Contents should be left untouched as much as possible.
+3. Convergence: Running the formatter twice should not change the code.
+4. Correctness: The formatter should not change the looking of the rendered output.
+
 ## Test
 
-```
+```sh
 cargo test
 cargo insta review
 ```
@@ -34,7 +41,8 @@ cargo insta review
 We have set up multiple tests:
 
 1. Convergence tests: format result must be the same when applied twice
-2. Snapshot tests: format result are stored in the `snapshots` directory and are compared to the current result
+2. Snapshot tests: format result are stored in the `snapshots` directory and are compared to the current result when running the tests
+3. Incoming: ~~Correctness test: We compare the rendered output of the code before and after formatting and ensure they are the same~~
 
 ## Known issues
 
