@@ -8,4 +8,5 @@ expression: "to_doc(test.into(), false)"
     "4568",
     Hardline,
     "789",
+    Hardline,
 ]

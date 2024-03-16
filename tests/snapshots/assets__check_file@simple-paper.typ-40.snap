@@ -175,9 +175,7 @@ input_file: tests/assets/simple-paper.typ
     inset: 8pt,
     radius: 2pt,
     width: 100%,
-  )[*题目 #problem-counter.display().* #h(
-      0.75em,
-    ) #body]
+  )[*题目 #problem-counter.display().* #h(0.75em) #body]
 }
 
 #let solution(body) = {

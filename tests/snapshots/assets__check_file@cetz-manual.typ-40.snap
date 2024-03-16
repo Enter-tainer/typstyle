@@ -53,11 +53,7 @@ input_file: tests/assets/cetz-manual.typ
 
 = Introduction
 
-This package provides a way to draw onto a canvas using a similar API to #link(
-  "https://processing.org/",
-)[Processing] but with relative coordinates and anchors from #link(
-  "https://tikz.dev/",
-)[Ti#[_k_]Z]. You also won't have to worry about accidentally drawing over other content as the canvas will automatically resize. And remember: up is positive!
+This package provides a way to draw onto a canvas using a similar API to #link("https://processing.org/")[Processing] but with relative coordinates and anchors from #link("https://tikz.dev/")[Ti#[_k_]Z]. You also won't have to worry about accidentally drawing over other content as the canvas will automatically resize. And remember: up is positive!
 
 The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german for "CeTZ, a Typst drawing package").
 
@@ -587,9 +583,7 @@ line((0,0), (30deg, 1), (60deg, 1),
 ```
 
 == Barycentric
-In the barycentric coordinate system a point is expressed as the linear combination of multiple vectors. The idea is that you specify vectors $v_1$, $v_2$ ..., $v_n$ and numbers $alpha_1$, $alpha_2$, ..., $alpha_n$. Then the barycentric coordinate specified by these vectors and numbers is $
-(alpha_1 v_1 + alpha_2 v_1 + dots.c + alpha_n v_n) / (alpha_1 + alpha_2 + dots.c + alpha_n)
-$
+In the barycentric coordinate system a point is expressed as the linear combination of multiple vectors. The idea is that you specify vectors $v_1$, $v_2$ ..., $v_n$ and numbers $alpha_1$, $alpha_2$, ..., $alpha_n$. Then the barycentric coordinate specified by these vectors and numbers is $ (alpha_1 v_1 + alpha_2 v_1 + dots.c + alpha_n v_n)/(alpha_1 + alpha_2 + dots.c + alpha_n) $
 
 #doc-style.show-parameter-block(
   "bary",
@@ -771,11 +765,7 @@ An angle can also be given for the general meaning: "First consider the line fro
 #doc-style.show-parameter-block(
   "angle",
   "angle",
-  [Angle between $arrow(
-        "AB",
-      )$ and $arrow(
-        "AP",
-      )$, where $P$ is the resulting coordinate. This can be used to get the _normal_ for a tangent between two points.],
+  [Angle between $arrow("AB")$ and $arrow("AP")$, where $P$ is the resulting coordinate. This can be used to get the _normal_ for a tangent between two points.],
   default: 0deg,
 )
 
@@ -882,21 +872,13 @@ The library `plot` of CeTZ allows plotting data.
 === Types
 
 Types commonly used by function of the `plot` library:
-- #doc-style.show-type(
-    "domain",
-  ): Tuple representing a functions domain as closed interval.
-  Example domains are: `(0, 1)` for $[
-      0, 1
-    ]$ or
+- #doc-style.show-type("domain"): Tuple representing a functions domain as closed interval.
+  Example domains are: `(0, 1)` for $[0, 1]$ or
   `(-calc.pi, calc.pi)` for $[-pi, pi]$.
-- #doc-style.show-type(
-    "axes",
-  ): Tuple of axis names. Plotting functions taking an `axes` tuple
+- #doc-style.show-type("axes"): Tuple of axis names. Plotting functions taking an `axes` tuple
   will use those axes as their `x` and `y` axis for plotting.
   To rotate a plot, you can simply swap its axes, for example `("y", "x")`.
-- #doc-style.show-type(
-    "mark",
-  ): Plots feature their own set of marks. The following mark symbols are
+- #doc-style.show-type("mark"): Plots feature their own set of marks. The following mark symbols are
   available:
   ```example-vertical
   let marks = ("+", "x", "-", "|", "o", "square", "triangle")
@@ -1261,42 +1243,20 @@ The palette library provides some predefined palettes.
   [
     - `gray` #show-palette(palette.gray)
     - `red` #show-palette(palette.red)
-    - `orange` #show-palette(
-        palette.orange,
-      )
-    - `light-green` #show-palette(
-        palette.light-green,
-      )
-    - `dark-green` #show-palette(
-        palette.dark-green,
-      )
-    - `turquoise` #show-palette(
-        palette.turquoise,
-      )
+    - `orange` #show-palette(palette.orange)
+    - `light-green` #show-palette(palette.light-green)
+    - `dark-green` #show-palette(palette.dark-green)
+    - `turquoise` #show-palette(palette.turquoise)
     - `cyan` #show-palette(palette.cyan)
     - `blue` #show-palette(palette.blue)
-    - `indigo` #show-palette(
-        palette.indigo,
-      )
-    - `purple` #show-palette(
-        palette.purple,
-      )
-    - `magenta` #show-palette(
-        palette.magenta,
-      )
+    - `indigo` #show-palette(palette.indigo)
+    - `purple` #show-palette(palette.purple)
+    - `magenta` #show-palette(palette.magenta)
     - `pink` #show-palette(palette.pink)
-    - `rainbow` #show-palette(
-        palette.rainbow,
-      )
-    - `tango-light` #show-palette(
-        palette.tango-light,
-      )
-    - `tango` #show-palette(
-        palette.tango,
-      )
-    - `tango-dark` #show-palette(
-        palette.tango-dark,
-      )
+    - `rainbow` #show-palette(palette.rainbow)
+    - `tango-light` #show-palette(palette.tango-light)
+    - `tango` #show-palette(palette.tango)
+    - `tango-dark` #show-palette(palette.tango-dark)
   ],
 )
 
