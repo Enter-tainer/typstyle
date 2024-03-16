@@ -18,7 +18,7 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
     let mut no_format = false;
     for child in node.children() {
         if child.kind() == SyntaxKind::LineComment || child.kind() == SyntaxKind::BlockComment {
-            if child.text().contains("@geshihua off") {
+            if child.text().contains("@typstyle off") {
                 no_format = true;
                 map.insert(child.clone());
             }

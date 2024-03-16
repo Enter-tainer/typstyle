@@ -1,5 +1,5 @@
 use clap::Parser;
-use typst_geshihua::{prop::get_no_format_nodes, PrettyPrinter};
+use typstyle::{prop::get_no_format_nodes, PrettyPrinter};
 use typst_syntax::parse;
 
 use crate::cli::CliArguments;

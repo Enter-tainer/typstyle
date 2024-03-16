@@ -6,7 +6,7 @@ input_file: tests/assets/unit/off/code-block.typ
 #let alert(body, fill: red) = {
   set text(white)
   set align(center)
-  // @geshihua off
+  // @typstyle off
   rect(
     fill: fill,
         inset: 8pt,
@@ -14,6 +14,6 @@ input_file: tests/assets/unit/off/code-block.typ
   )
 }
 
-// @geshihua off
+// @typstyle off
 #alert[
   Danger is imminent!]

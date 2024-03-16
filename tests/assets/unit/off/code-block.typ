@@ -1,7 +1,7 @@
 #let alert(body, fill: red) = {
   set text(white)
   set align(center)
-  // @geshihua off
+  // @typstyle off
   rect(
     fill: fill,
         inset: 8pt,
@@ -9,6 +9,6 @@
   )
 }
 
-// @geshihua off
+// @typstyle off
 #alert[
   Danger is imminent!]

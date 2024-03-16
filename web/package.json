@@ -1,5 +1,5 @@
 {
-  "name": "typst-geshihua-web",
+  "name": "typstyle-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +14,7 @@
     "vite-plugin-wasm": "^3.3.0"
   },
   "dependencies": {
-    "typst_geshihua": "file:../pkg",
+    "typstyle": "file:../pkg",
     "vanjs-core": "^1.5.0-rc.1",
     "vite-plugin-top-level-await": "^1.4.1"
   }

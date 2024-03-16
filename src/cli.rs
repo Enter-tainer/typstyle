@@ -4,7 +4,7 @@ use clap::Parser;
 use once_cell::sync::Lazy;
 
 #[derive(Debug, Clone, Parser)]
-#[clap(name = "typst-geshihua", author, version, about, long_version(LONG_VERSION.as_str()))]
+#[clap(name = "typstyle", author, version, about, long_version(LONG_VERSION.as_str()))]
 pub struct CliArguments {
     /// Path to the input file
     pub input: PathBuf,

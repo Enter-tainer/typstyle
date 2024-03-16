@@ -52,7 +52,7 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: Enter-tainer/typst-geshihua
+          slug: Enter-tainer/typstyle
 
   build:
     needs: [pre_build, test]
@@ -117,7 +117,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gcc-arm-linux-gnueabihf
-      - name: Build typst-geshihua binary
+      - name: Build typstyle binary
         shell: pwsh
         run: |
           cargo build --release --target ${{ matrix.rust-target }}
@@ -125,46 +125,46 @@ jobs:
         if: matrix.platform == 'win32'
         run: |
           cd target/${{ matrix.rust-target }}/release
-          cp typst_geshihua.pdb typst_geshihua-${{ env.target }}.pdb
+          cp typstyle.pdb typstyle-${{ env.target }}.pdb
       - name: Upload split debug symbols for windows
         if: matrix.platform == 'win32'
         uses: actions/upload-artifact@v4
         with:
-          name: typst_geshihua-${{ env.target }}.pdb
-          path: target/${{ matrix.rust-target }}/release/typst_geshihua-${{ env.target }}.pdb
+          name: typstyle-${{ env.target }}.pdb
+          path: target/${{ matrix.rust-target }}/release/typstyle-${{ env.target }}.pdb
       - name: Split debug symbols for linux
         if: matrix.platform == 'linux'
         run: |
           cd target/${{ matrix.rust-target }}/release
-          llvm-objcopy --compress-debug-sections --only-keep-debug "typst-geshihua" "typst-geshihua-${{ env.target }}.debug"
-          llvm-objcopy --strip-debug --add-gnu-debuglink="typst-geshihua-${{ env.target }}.debug" "typst-geshihua"
+          llvm-objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ env.target }}.debug"
+          llvm-objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ env.target }}.debug" "typstyle"
       - name: Upload split debug symbols for linux
         if: matrix.platform == 'linux'
         uses: actions/upload-artifact@v4
         with:
-          name: typst-geshihua-${{ env.target }}.debug
-          path: target/${{ matrix.rust-target }}/release/typst-geshihua-${{ env.target }}.debug
+          name: typstyle-${{ env.target }}.debug
+          path: target/${{ matrix.rust-target }}/release/typstyle-${{ env.target }}.debug
           compression-level: 0
       - name: Collect debug symbols for mac
         if: matrix.platform == 'darwin'
         run: |
-          dsymutil -f "target/${{ matrix.rust-target }}/release/typst-geshihua"
-          mv "target/${{ matrix.rust-target }}/release/typst-geshihua.dwarf" "target/${{ matrix.rust-target }}/release/typst-geshihua-${{ env.target }}.dwarf"
+          dsymutil -f "target/${{ matrix.rust-target }}/release/typstyle"
+          mv "target/${{ matrix.rust-target }}/release/typstyle.dwarf" "target/${{ matrix.rust-target }}/release/typstyle-${{ env.target }}.dwarf"
       - name: Upload split debug symbols for mac
         if: matrix.platform == 'darwin'
         uses: actions/upload-artifact@v4
         with:
-          name: typst-geshihua-${{ env.target }}.dwarf
-          path: target/${{ matrix.rust-target }}/release/typst-geshihua-${{ env.target }}.dwarf
+          name: typstyle-${{ env.target }}.dwarf
+          path: target/${{ matrix.rust-target }}/release/typstyle-${{ env.target }}.dwarf
       - name: Copy binary to output directory
         shell: pwsh
         run: |
-          cp "target/${{ matrix.rust-target }}/release/typst-geshihua$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )" "typst-geshihua-${{ env.target }}$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )"
+          cp "target/${{ matrix.rust-target }}/release/typstyle$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )" "typstyle-${{ env.target }}$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )"
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: typst-geshihua-${{ env.target }}
-          path: typst-geshihua-${{ env.target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
+          name: typstyle-${{ env.target }}
+          path: typstyle-${{ env.target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
 
   build_alpine:
     needs: [pre_build, test]
@@ -187,27 +187,27 @@ jobs:
           submodules: recursive
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.4
-      - name: Build typst-geshihua binary
+      - name: Build typstyle binary
         run: |
           cargo build --release --target $RUST_TARGET
       - name: Split debug symbols
         run: |
           cd target/$RUST_TARGET/release
-          objcopy --compress-debug-sections --only-keep-debug "typst-geshihua" "typst-geshihua-${{ env.target }}.debug"
-          objcopy --strip-debug --add-gnu-debuglink="typst-geshihua-${{ env.target }}.debug" "typst-geshihua"
+          objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ env.target }}.debug"
+          objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ env.target }}.debug" "typstyle"
       - name: Upload split debug symbols
         uses: actions/upload-artifact@v4
         with:
-          name: typst-geshihua-${{ env.target }}.debug
-          path: target/${{ env.RUST_TARGET }}/release/typst-geshihua-${{ env.target }}.debug
+          name: typstyle-${{ env.target }}.debug
+          path: target/${{ env.RUST_TARGET }}/release/typstyle-${{ env.target }}.debug
       - name: Copy binary to output directory
         run: |
-          cp "target/${{ env.RUST_TARGET }}/release/typst-geshihua" "typst-geshihua-${{ env.target }}"
+          cp "target/${{ env.RUST_TARGET }}/release/typstyle" "typstyle-${{ env.target }}"
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: typst-geshihua-${{ env.target }}
-          path: typst-geshihua-${{ env.target }}
+          name: typstyle-${{ env.target }}
+          path: typstyle-${{ env.target }}
 
   release:
     runs-on: ubuntu-latest

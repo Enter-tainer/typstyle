@@ -1,5 +1,5 @@
 import './style.css'
-import { pretty_print_wasm } from "typst_geshihua"
+import { pretty_print_wasm } from "typstyle"
 import van from "vanjs-core"
 const { div, textarea, input, label, p, a } = van.tags;
 
@@ -14,7 +14,7 @@ const App = () => {
         output.val = pretty_print_wasm(input_val.val, columns.val)
         error_message.val = ""
         if (pretty_print_wasm(output.val, columns.val) !== output.val) {
-          throw new Error("Format doesn't converge! This means formatting the output again will result in a different output. This is a bug in the formatter. Please report it to https://github.com/Enter-tainer/typst-geshihua with the input code.")
+          throw new Error("Format doesn't converge! This means formatting the output again will result in a different output. This is a bug in the formatter. Please report it to https://github.com/Enter-tainer/typstyle with the input code.")
         }
       } catch (e: any) {
         error_message.val = e.message
@@ -23,8 +23,8 @@ const App = () => {
   )
   return div(
     p("Online Typst Code Formatter. Powered by ", a({
-      href: "https://github.com/Enter-tainer/typst-geshihua"
-    }, "Typst Geshihua")),
+      href: "https://github.com/Enter-tainer/typstyle"
+    }, "Typstyle")),
     textarea({
       class: "mitex-input",
       placeholder: "Put typst code here",

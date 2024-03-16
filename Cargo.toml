@@ -1,16 +1,16 @@
 [package]
-name = "typst-geshihua"
+name = "typstyle"
 version = "0.11.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "typst-geshihua"
+name = "typstyle"
 path = "src/main.rs"
 
 [lib]
-name = "typst_geshihua"
+name = "typstyle"
 path = "src/lib.rs"
 crate-type = ["cdylib", "lib"]
 

@@ -1,5 +1,5 @@
 use pretty::BoxDoc;
-use typst_geshihua::util::pretty_items;
+use typstyle::util::pretty_items;
 
 fn main() {
     let strs = ["123", "12345", "1234", "1234567"];
@@ -11,7 +11,7 @@ fn main() {
         BoxDoc::text(","),
         (BoxDoc::text("["), BoxDoc::text("]")),
         false,
-        typst_geshihua::util::FoldStyle::Fit,
+        typstyle::util::FoldStyle::Fit,
     );
 
     let res_10 = outer.pretty(10).to_string();

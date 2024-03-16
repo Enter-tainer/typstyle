@@ -1,10 +1,10 @@
-# typst-geshihua
+# typstyle
 
-[![codecov](https://codecov.io/gh/Enter-tainer/typst-geshihua/graph/badge.svg?token=Y2SuYfwd7y)](https://codecov.io/gh/Enter-tainer/typst-geshihua)
+[![codecov](https://codecov.io/gh/Enter-tainer/typstyle/graph/badge.svg?token=Y2SuYfwd7y)](https://codecov.io/gh/Enter-tainer/typstyle)
 
 Usage: 
 ```
-Usage: typst-geshihua [OPTIONS] <INPUT>
+Usage: typstyle [OPTIONS] <INPUT>
 
 Arguments:
   <INPUT>  Path to the input file
@@ -20,9 +20,9 @@ Options:
 
 ## Escape Route
 
-If you find typst-geshihua is not working as expected, you can use `// @geshihua off` or `/* @geshihua off */` to disable the formatter on the next node of code.
+If you find typstyle is not working as expected, you can use `// @typstyle off` or `/* @typstyle off */` to disable the formatter on the next node of code.
 
-And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/Enter-tainer/typst-geshihua)
+And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/Enter-tainer/typstyle)
 
 ## Test
 
