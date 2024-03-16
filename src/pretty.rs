@@ -55,6 +55,7 @@ impl PrettyPrinter {
                                 current_line.has_text = true;
                             }
                         }
+                        ast::Expr::Strong(_) | ast::Expr::Emph(_) => current_line.has_text = true,
                         ast::Expr::Code(_) => break_line = true,
                         ast::Expr::Equation(e) if e.block() => break_line = true,
                         _ => (),
