@@ -27,6 +27,8 @@ impl PrettyPrinter {
             has_text: bool,
             nodes: Vec<&'a SyntaxNode>,
         }
+        // break markup into lines, split by stmt, parbreak, newline, multiline raw, equation
+        // if a line contains text, it will be skipped by the formatter to keep the original format
         let lines = {
             let mut lines: Vec<Line> = vec![];
             let mut current_line = Line {
@@ -73,7 +75,6 @@ impl PrettyPrinter {
             lines
         };
         for Line { has_text, nodes } in lines {
-            dbg!(has_text, &nodes);
             for node in nodes {
                 if let Some(space) = node.cast::<Space>() {
                     doc = doc.append(self.convert_space(space));
