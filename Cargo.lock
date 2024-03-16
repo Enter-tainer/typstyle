@@ -770,7 +770,7 @@ checksum = "6af6ae20167a9ece4bcb41af5b80f8a1f1df981f6391189ce00fd257af04126a"
 
 [[package]]
 name = "typst-geshihua"
-version = "0.11.0-rc1-0"
+version = "0.11.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -788,8 +788,9 @@ dependencies = [
 
 [[package]]
 name = "typst-syntax"
-version = "0.11.0-rc1"
-source = "git+https://github.com/typst/typst.git?tag=v0.11.0-rc1#fe94bd85aec9348c4f86a7b20befb6562655c93f"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "367d86bf18f0363146bea1ea76fad19b54458695fdfad5e74ead3ede574b75fe"
 dependencies = [
  "comemo",
  "ecow",
