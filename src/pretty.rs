@@ -1063,6 +1063,7 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
             s.to_string()
         }
     };
+    // String::lines() doesn't include the trailing newline
     let has_trailing_newline = s.ends_with('\n');
     let res = BoxDoc::intersperse(
         s.lines().map(|s| BoxDoc::text(get_line(s))),
