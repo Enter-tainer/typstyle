@@ -10,10 +10,10 @@ input_file: tests/assets/unit/comment/comment-in-if.typ
   if true /*(condition)*/ {
   }
   
-  if 
-  // (condition)
-  false
-  { }
+  if
+   // (condition)
+   false {
+   }
   if true {
     
   } // (condition)

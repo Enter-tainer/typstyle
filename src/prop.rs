@@ -30,10 +30,6 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
             }
             continue;
         }
-        if child.kind().is_error() {
-            map.insert(child.clone());
-            continue;
-        }
         if let Some(arg) = child.cast() {
             if is_2d_arg(arg) {
                 map.insert(child.clone());

@@ -1,6 +1,6 @@
 use clap::Parser;
-use typstyle::{prop::get_no_format_nodes, PrettyPrinter};
 use typst_syntax::parse;
+use typstyle::{prop::get_no_format_nodes, PrettyPrinter};
 
 use crate::cli::CliArguments;
 
@@ -26,7 +26,11 @@ fn main() {
     if pretty_doc {
         println!("{:#?}", doc);
     }
-    let res = doc.pretty(line_width).to_string();
+    let res = if root.erroneous() {
+        content
+    } else {
+        doc.pretty(line_width).to_string()
+    };
     if inplace {
         std::fs::write(&input, res).unwrap();
     } else {
