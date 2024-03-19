@@ -7,6 +7,9 @@ pub use prop::get_no_format_nodes;
 
 pub fn pretty_print(content: &str, width: usize) -> String {
     let root = typst_syntax::parse(content);
+    if root.erroneous() {
+        return content.to_string();
+    }
     let disabled_nodes = get_no_format_nodes(root.clone());
     let printer = PrettyPrinter::new(disabled_nodes);
     let markup = root.cast().unwrap();
