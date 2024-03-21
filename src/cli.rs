@@ -6,8 +6,8 @@ use once_cell::sync::Lazy;
 #[derive(Debug, Clone, Parser)]
 #[clap(name = "typstyle", author, version, about, long_version(LONG_VERSION.as_str()))]
 pub struct CliArguments {
-    /// Path to the input file
-    pub input: PathBuf,
+    /// Path to the input file, if not provided, read from stdin
+    pub input: Option<PathBuf>,
     /// The width of the output
     #[clap(short, long, default_value = "80")]
     pub column: usize,
