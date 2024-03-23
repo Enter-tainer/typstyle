@@ -15,7 +15,7 @@ name = "typstyle"
 path = "src/main.rs"
 
 [lib]
-name = "typstyle"
+name = "typstyle_lib"
 path = "src/lib.rs"
 crate-type = ["cdylib", "lib"]
 

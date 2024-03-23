@@ -1,7 +1,7 @@
 extern crate libtest_mimic;
 
 use libtest_mimic::{Arguments, Failed, Trial};
-use typstyle::pretty_print;
+use typstyle_lib::pretty_print;
 
 use std::{env, error::Error, ffi::OsStr, fs, path::Path};
 

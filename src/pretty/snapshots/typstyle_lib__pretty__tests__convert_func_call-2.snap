@@ -1,5 +1,5 @@
 ---
-source: src/pretty.rs
+source: src/pretty/mod.rs
 expression: doc.pretty(120).to_string()
 ---
 "#link(\"http://example.com\")[test]"

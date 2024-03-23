@@ -1,5 +1,5 @@
 ---
-source: src/pretty.rs
+source: src/pretty/mod.rs
 expression: root
 ---
 Markup: 129 [

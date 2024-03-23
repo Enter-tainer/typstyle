@@ -1,5 +1,5 @@
 ---
-source: src/pretty.rs
+source: src/pretty/mod.rs
 expression: "to_doc(test.into(), false)"
 ---
 [
