@@ -14,8 +14,6 @@ on:
 env:
   CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
   CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER: arm-linux-gnueabihf-gcc
-  SCCACHE_GHA_ENABLED: "true"
-  RUSTC_WRAPPER: "sccache"
 
 jobs:
   pre_build:
@@ -40,8 +38,12 @@ jobs:
           submodules: recursive
       - name: rust toolchain
         uses: dtolnay/rust-toolchain@stable
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.4
+      - name: Run rust cache
+        uses: Swatinem/rust-cache@v2
+      - name: Cargo fmt and clippy
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --all-targets --all-features -- -D warnings
       - name: Install cargo-tarpaulin
         uses: taiki-e/install-action@v2
         with:
@@ -92,6 +94,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       target: ${{ matrix.platform }}-${{ matrix.arch }}
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: "sccache"
+
     steps:
       - uses: actions/checkout@v4
         with:

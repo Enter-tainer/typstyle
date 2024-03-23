@@ -1,21 +1,30 @@
 use std::collections::HashSet;
 
 use typst_syntax::{
-    ast::{Args, AstNode},
+    ast::{Args, AstNode, Math},
     SyntaxKind, SyntaxNode,
 };
 
+struct State {
+    is_math: bool,
+}
+
 pub fn get_no_format_nodes(root: SyntaxNode) -> HashSet<SyntaxNode> {
     let mut no_format_nodes = HashSet::new();
-    get_no_format_nodes_impl(root, &mut no_format_nodes);
+    let mut state = State { is_math: false };
+    get_no_format_nodes_impl(root, &mut no_format_nodes, &mut state);
     no_format_nodes
 }
 
-fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
+fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>, state: &mut State) {
     if map.get(&node).is_some() {
         return;
     }
     let mut no_format = false;
+    let original_is_math = state.is_math;
+    if node.cast::<Math>().is_some() {
+        state.is_math = true;
+    }
     for child in node.children() {
         if child.kind() == SyntaxKind::LineComment || child.kind() == SyntaxKind::BlockComment {
             if child.text().contains("@typstyle off") {
@@ -30,11 +39,9 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
             }
             continue;
         }
-        if let Some(arg) = child.cast() {
-            if is_2d_arg(arg) {
-                map.insert(child.clone());
-                continue;
-            }
+        if child.cast::<Args>().is_some() && state.is_math {
+            map.insert(child.clone());
+            continue;
         }
         if child.children().count() == 0 {
             continue;
@@ -44,10 +51,12 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>) {
             no_format = false;
             continue;
         }
-        get_no_format_nodes_impl(child.clone(), map);
+        get_no_format_nodes_impl(child.clone(), map, state);
     }
+    state.is_math = original_is_math;
 }
 
+#[allow(unused)]
 fn is_2d_arg(arg: Args) -> bool {
     for child in arg.to_untyped().children() {
         if child.kind() == SyntaxKind::Semicolon {

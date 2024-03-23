@@ -1000,16 +1000,65 @@ impl PrettyPrinter {
 
     fn convert_math_attach<'a>(&'a self, math_attach: MathAttach<'a>) -> BoxDoc<'a, ()> {
         let mut doc = self.convert_expr(math_attach.base());
-        if let Some(primes) = math_attach.primes() {
-            doc = doc.append(self.convert_math_primes(primes));
+        let prime_index = math_attach
+            .to_untyped()
+            .children()
+            .enumerate()
+            .skip_while(|(_i, node)| node.cast::<Expr<'_>>().is_none())
+            .nth(1)
+            .filter(|(_i, n)| n.cast::<MathPrimes>().is_some())
+            .map(|(i, _n)| i);
+
+        let bottom_index = math_attach
+            .to_untyped()
+            .children()
+            .enumerate()
+            .skip_while(|(_i, node)| !matches!(node.kind(), SyntaxKind::Underscore))
+            .find_map(|(i, n)| SyntaxNode::cast::<Expr<'_>>(n).map(|n| (i, n)))
+            .map(|(i, _n)| i);
+
+        let top_index = math_attach
+            .to_untyped()
+            .children()
+            .enumerate()
+            .skip_while(|(_i, node)| !matches!(node.kind(), SyntaxKind::Hat))
+            .find_map(|(i, n)| SyntaxNode::cast::<Expr<'_>>(n).map(|n| (i, n)))
+            .map(|(i, _n)| i);
+
+        #[derive(Debug)]
+        enum IndexType {
+            Prime,
+            Bottom,
+            Top,
         }
-        if let Some(bottom) = math_attach.bottom() {
-            doc = doc.append(BoxDoc::text("_"));
-            doc = doc.append(self.convert_expr(bottom));
-        }
-        if let Some(top) = math_attach.top() {
-            doc = doc.append(BoxDoc::text("^"));
-            doc = doc.append(self.convert_expr(top));
+
+        let mut index_types = [IndexType::Prime, IndexType::Bottom, IndexType::Top];
+        index_types.sort_by_key(|index_type| match index_type {
+            IndexType::Prime => prime_index,
+            IndexType::Bottom => bottom_index,
+            IndexType::Top => top_index,
+        });
+
+        for index in index_types {
+            match index {
+                IndexType::Prime => {
+                    if let Some(primes) = math_attach.primes() {
+                        doc = doc.append(self.convert_math_primes(primes));
+                    }
+                }
+                IndexType::Bottom => {
+                    if let Some(bottom) = math_attach.bottom() {
+                        doc = doc.append(BoxDoc::text("_"));
+                        doc = doc.append(self.convert_expr(bottom));
+                    }
+                }
+                IndexType::Top => {
+                    if let Some(top) = math_attach.top() {
+                        doc = doc.append(BoxDoc::text("^"));
+                        doc = doc.append(self.convert_expr(top));
+                    }
+                }
+            }
         }
         doc
     }

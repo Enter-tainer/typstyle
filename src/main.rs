@@ -2,7 +2,7 @@ use std::{io::Read, path::PathBuf};
 
 use clap::Parser;
 use typst_syntax::parse;
-use typstyle_lib::{prop::get_no_format_nodes, PrettyPrinter};
+use typstyle_core::{prop::get_no_format_nodes, PrettyPrinter};
 
 use crate::cli::CliArguments;
 
