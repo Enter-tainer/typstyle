@@ -4,10 +4,12 @@
 
 Usage: 
 ```
-Usage: typstyle [OPTIONS] <INPUT>
+A typst source code formatter
+
+Usage: typstyle [OPTIONS] [INPUT]
 
 Arguments:
-  <INPUT>  Path to the input file
+  [INPUT]  Path to the input file, if not provided, read from stdin
 
 Options:
   -c, --column <COLUMN>  The width of the output [default: 80]
@@ -15,7 +17,7 @@ Options:
   -p, --pretty-doc       Print the pretty document
   -i, --inplace          Format the file in place
   -h, --help             Print help
-  -V, --version          Print version
+  -V, --version          Print version```
 ```
 
 ## Escape Route
