@@ -3,8 +3,8 @@
     node-outset: .5em,
     node-stroke: .075em,
 
-    node((+1, 0), [variable], radius: 3em),
-    node((+1.25, .75), [const], radius: 3em),
+    node((+1, 0), [variable], radius: 3em), // test
+    node((+1.25, .75), [const], radius: 3em), // this is the second test
 
     edge((0, 0), (+1, 0), "=>"),
     edge((0.25, .75), (+1, 0), "->"),
