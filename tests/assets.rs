@@ -18,7 +18,7 @@ use typst_ts_compiler::{
 use typst_ts_core::{
     config::CompileOpts, diag::SourceDiagnostic, typst::prelude::EcoVec, TypstDocument,
 };
-use typstyle_lib::pretty_print;
+use typstyle_core::pretty_print;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Arguments::from_args();

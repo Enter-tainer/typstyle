@@ -40,6 +40,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Run rust cache
         uses: Swatinem/rust-cache@v2
+      - name: Cargo fmt and clippy
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --all-targets --all-features -- -D warnings
       - name: Install cargo-tarpaulin
         uses: taiki-e/install-action@v2
         with:
@@ -51,10 +55,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Enter-tainer/typstyle
-      - name: Cargo fmt and clippy
-        run: |
-          cargo fmt --all -- --check
-          cargo clippy --all-targets --all-features -- -D warnings
 
   build:
     needs: [pre_build, test]
