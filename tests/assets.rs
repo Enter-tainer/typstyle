@@ -194,10 +194,12 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
             for (i, (doc, formatted_doc)) in
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
+                let svg = typst_svg::svg(&doc.frame);
+                let formatted_svg = typst_svg::svg(&formatted_doc.frame);
                 pretty_assertions::assert_eq!(
-                    format!("{:#?}", doc.frame),
-                    format!("{:#?}", formatted_doc.frame),
-                    "The contents are not consistent for page {}",
+                    svg,
+                    formatted_svg,
+                    "The output are not consistent for page {}",
                     i
                 );
             }

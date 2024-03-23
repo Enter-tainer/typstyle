@@ -47,7 +47,7 @@ typst-ts-compiler = { version = "0.4.2-rc9", default-features = false, features 
   "system-compile",
 ] }
 typst-assets = { version = "0.11.0", features = ["fonts"] }
-
+typst-svg = "0.11.0"
 
 [build-dependencies]
 anyhow = "1.0.80"

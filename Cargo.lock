@@ -3421,6 +3421,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "typst-svg"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ed9b13b1cfea54220435a93b11f63bee12e6af6fefd3d6bf37efc46ba1f514e"
+dependencies = [
+ "base64 0.22.0",
+ "comemo",
+ "ecow",
+ "flate2",
+ "ttf-parser",
+ "typst",
+ "typst-macros",
+ "typst-timing",
+ "xmlparser",
+ "xmlwriter",
+]
+
+[[package]]
 name = "typst-syntax"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3538,6 +3556,7 @@ dependencies = [
  "pretty",
  "pretty_assertions",
  "typst-assets",
+ "typst-svg",
  "typst-syntax",
  "typst-ts-compiler",
  "typst-ts-core",
