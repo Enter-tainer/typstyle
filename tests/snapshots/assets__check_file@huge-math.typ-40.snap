@@ -5,19 +5,11 @@ input_file: tests/assets/huge-math.typ
 ---
 $
 U(P)
-  &= - G integral_(r=0)^R integral_(theta = 0)^(pi) integral_(phi=0)^(2 pi) rho(r) / q r^2 dif r dif theta sin(
-    theta,
-  ) dif phi
+  &= - G integral_(r=0)^R integral_(theta = 0)^(pi) integral_(phi=0)^(2 pi) rho(r) / q r^2 dif r dif theta sin(theta) dif phi
   &"on choisit de prendre" phi in [0,2 pi[, theta in [0, pi[\
-  &=- 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / q r^2 dif r dif theta sin(
-    theta,
-  ) &"intégration par rapport à" phi "indépendant de" rho\
-  &=- 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / q r^2 dif r dif theta sin(
-    theta,
-  ) &"intégration par rapport à" phi "indépendant de" rho\
-  &=- 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / q 11 r^2 dif r dif theta sin(
-    theta,
-  ) &"intégration par rapport à" phi "indépendant de" rho\
+  &=- 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / q r^2 dif r dif theta sin(theta) &"intégration par rapport à" phi "indépendant de" rho\
+  &=- 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / q r^2 dif r dif theta sin(theta) &"intégration par rapport à" phi "indépendant de" rho\
+  &=- 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / q 11 r^2 dif r dif theta sin(theta) &"intégration par rapport à" phi "indépendant de" rho\
   &= - 2 pi G integral_(r=0)^R integral_(theta = 0)^(pi) rho(r) / (
     r^2 + s^2 - 2 r s cos(theta)
   )^(1\/2) r^2 dif r dif theta
