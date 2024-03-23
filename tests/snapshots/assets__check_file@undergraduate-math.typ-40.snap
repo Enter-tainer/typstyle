@@ -211,9 +211,7 @@ Your document should contain at least this.
 Use as in `$cal(A)$`.
 
 $
-cal(
-    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z,
-  )
+cal(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
 $
 
 #show math.equation: set text(
@@ -790,10 +788,7 @@ Fix the size with the `lr` function.
     columns: 2,
     column-gutter: 1em,
     [$
-      lr(
-          [sum_(k = 0)^n e^(k^2)],
-          size: #50%,
-        )
+      lr([sum_(k = 0)^n e^(k^2)], size: #50%)
       $],
     [
       ```
@@ -897,9 +892,9 @@ Definition by cases can be easily obtained with the `cases` function.
     [
       $
       f_n = cases(
-          a &"if" n = 0,
-          r dot f_(n - 1) &"else",
-        )
+      a &"if" n = 0,
+      r dot f_(n - 1) &"else"
+    )
       $
     ],
     [
@@ -1013,13 +1008,7 @@ The last three here are display style.
       ```
     ],
     [$
-      nabla = bold(
-          i,
-        ) dif / (dif x) + bold(
-          j,
-        ) dif / (dif y) + bold(
-          k,
-        ) dif / (dif z)
+      nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
       $],
     [
       ```
@@ -1044,9 +1033,7 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
     columns: 2,
     column-gutter: 1em,
     [$
-      sigma^2 = sqrt(
-          sum(x_i - mu)^2 \/ N,
-        )
+      sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
       $],
     [
       ```
