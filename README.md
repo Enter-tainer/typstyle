@@ -22,6 +22,11 @@ Options:
 
 If you find typstyle is not working as expected, you can use `// @typstyle off` or `/* @typstyle off */` to disable the formatter on the next node of code.
 
+typstyle also gives up formatting **part** of the code if it is not able to format it correctly. Specifically, it will print that part as is if:
+
+- contains syntax error
+- contains syntaxes that are not supported by the formatter
+
 And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/Enter-tainer/typstyle)
 
 ## Design Goals
@@ -46,4 +51,18 @@ We have set up multiple tests:
 
 ## Known issues
 
-- comments and white lines get removed when in strange places
+You tell us! Bad formatting? Incorrect output? Please create an issue on the [GitHub repository](https://github.com/Enter-tainer/typstyle)!
+
+We've set up comprehensive test suites to ensure the correctness of the formatter. If you find any issues, please let us know! And we can add more tests to prevent the issue from happening again.
+
+## Why another formatter?
+
+Why there is a need for another formatter? We already have [typstfmt](https://github.com/astrale-sharp/typstfmt) and [typstfmt](https://github.com/jeffa5/typstfmt). Why another one?
+
+typstyle started because I had a bunch of ideas on how to improve typst source code formatting but kept finding typstfmt wasn't a good codebase to explore them with. Namely:
+
+- I wanted to use Wadler's pretty printer to get consistent and beautiful output for any width. (Note that it is the same technique used in the prettier formatter)
+- I didn't have much energy to maintain a bunch combination of configuration options. It turns out to be very hard to make everything correct. So I decided to make it opinionated.
+- I wanted to experiment with more testing techniques and make sure the formatter is correct.
+
+So I decided to write something from scratch. I started it about half a year ago and kept working on it in my spare time. Currently it lacks some advanced features but it is already usable for most of the cases. I hope you like it!
