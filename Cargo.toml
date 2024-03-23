@@ -8,7 +8,13 @@ description = "A typst source code formatter"
 repository = "https://github.com/Enter-tainer/typstyle"
 homepage = "https://enter-tainer.github.io/typstyle/"
 
-include = ["src/**/*.rs", "/LICENSE", "/README.md", "build.rs", "tests/assets.rs"]
+include = [
+  "src/**/*.rs",
+  "/LICENSE",
+  "/README.md",
+  "build.rs",
+  "tests/assets.rs",
+]
 
 [[bin]]
 name = "typstyle"
@@ -33,6 +39,15 @@ insta = { version = "1.36.1" }
 libtest-mimic = "0.7.0"
 pathdiff = "0.2.1"
 pretty_assertions = "1.4.0"
+typst-ts-core = { version = "0.4.2-rc9", default-features = false, features = [
+  "no-content-hint",
+] }
+typst-ts-compiler = { version = "0.4.2-rc9", default-features = false, features = [
+  "no-content-hint",
+  "system-compile",
+] }
+typst-assets = { version = "0.11.0", features = ["fonts"] }
+
 
 [build-dependencies]
 anyhow = "1.0.80"

@@ -3,6 +3,7 @@ source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/typstfmt/82-non-converge-list.typ
 ---
+#let f(t) = t
 We have next things:
 - thing 1;
 - thing 2;

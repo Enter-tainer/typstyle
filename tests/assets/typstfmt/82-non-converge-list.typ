@@ -1,3 +1,4 @@
+#let f(t) = t
 We have next things:
 - thing 1;
 - thing 2;

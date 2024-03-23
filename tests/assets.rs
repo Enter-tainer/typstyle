@@ -1,9 +1,24 @@
 extern crate libtest_mimic;
 
 use libtest_mimic::{Arguments, Failed, Trial};
+use std::{
+    borrow::Cow,
+    env,
+    error::Error,
+    ffi::OsStr,
+    fs,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
+use typst_syntax::{FileId, VirtualPath};
+use typst_ts_compiler::{
+    service::{CompileDriver, Compiler, WorkspaceProvider},
+    ShadowApi, TypstSystemWorld,
+};
+use typst_ts_core::{
+    config::CompileOpts, diag::SourceDiagnostic, typst::prelude::EcoVec, TypstDocument,
+};
 use typstyle_lib::pretty_print;
-
-use std::{env, error::Error, ffi::OsStr, fs, path::Path};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Arguments::from_args();
@@ -45,11 +60,23 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                         })
                         .with_kind("typst")
                     };
-                    let test_convergence =
+                    let test_convergence = {
+                        let path = path.clone();
                         Trial::test(format!("{} - convergence", name), move || {
                             check_convergence(&path, 80)
+                        })
+                    };
+                    let test_output_consistency =
+                        Trial::test(format!("{} - output consistency", name), move || {
+                            check_output_consistency(&path, 80)
                         });
-                    tests.extend([test_40, test_80, test_120, test_convergence]);
+                    tests.extend([
+                        test_40,
+                        test_80,
+                        test_120,
+                        test_convergence,
+                        test_output_consistency,
+                    ]);
                 }
             } else if file_type.is_dir() {
                 // Handle directories
@@ -108,5 +135,93 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
         second_pass,
         "first pass and second pass are not the same!"
     );
+    Ok(())
+}
+
+fn compile_typst_src(content: &str) -> Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>> {
+    let root = if cfg!(windows) {
+        PathBuf::from("C:\\")
+    } else {
+        PathBuf::from("/")
+    };
+    let mut world = TypstSystemWorld::new(CompileOpts {
+        root_dir: root.clone(),
+        with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
+        ..Default::default()
+    })
+    .unwrap();
+    world
+        .map_shadow(&root.join("main.typ"), content.as_bytes().into())
+        .unwrap();
+    world.set_main_id(FileId::new(None, VirtualPath::new("/main.typ")));
+    let mut driver = CompileDriver::new(world).with_entry_file(root.join("main.typ"));
+    driver.compile(&mut Default::default())
+}
+
+fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
+    let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
+
+    // Check that the file is valid UTF-8
+    let content = String::from_utf8(content)
+        .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
+    let formatted_src = pretty_print(&content, width);
+    let doc = compile_typst_src(&content);
+    let formatted_doc = compile_typst_src(&formatted_src);
+
+    match (doc, formatted_doc) {
+        (Ok(doc), Ok(formatted_doc)) => {
+            pretty_assertions::assert_eq!(
+                doc.pages.len(),
+                formatted_doc.pages.len(),
+                "The page counts are not consistent"
+            );
+            pretty_assertions::assert_eq!(
+                doc.title,
+                formatted_doc.title,
+                "The titles are not consistent"
+            );
+            pretty_assertions::assert_eq!(
+                doc.author,
+                formatted_doc.author,
+                "The authors are not consistent"
+            );
+            pretty_assertions::assert_eq!(
+                doc.keywords,
+                formatted_doc.keywords,
+                "The keywords are not consistent"
+            );
+
+            for (i, (doc, formatted_doc)) in
+                doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
+            {
+                pretty_assertions::assert_eq!(
+                    format!("{:#?}", doc.frame),
+                    format!("{:#?}", formatted_doc.frame),
+                    "The contents are not consistent for page {}",
+                    i
+                );
+            }
+        }
+        (Err(e1), Err(e2)) => {
+            pretty_assertions::assert_eq!(
+                e1.len(),
+                e2.len(),
+                "The error counts are not consistent"
+            );
+            for (e1, e2) in e1.iter().zip(e2.iter()) {
+                pretty_assertions::assert_eq!(
+                    e1.message,
+                    e2.message,
+                    "The error messages are not consistent after formatting"
+                );
+            }
+        }
+        (res1, res2) => {
+            return Err(Failed::from(format!(
+                "One of the documents failed to compile: {:#?} {:#?}",
+                res1, res2
+            )));
+        }
+    }
     Ok(())
 }
