@@ -113,17 +113,15 @@ input_file: tests/assets/simple-paper.typ
     #v(12pt)
     #set text(font: caption-font)
     #it
-    #par()[#text(size: 0.0em)[#h(
-          0.0em,
-        )]]
+    #par()[#text(size: 0.0em)[#h(0.0em)]
+    ]
     #v(12pt)
   ]
   
   show image: it => [
     #it
-    #par()[#text(size: 0.0em)[#h(
-          0.0em,
-        )]]
+    #par()[#text(size: 0.0em)[#h(0.0em)]
+    ]
   ]
   
   show table: it => [
@@ -175,13 +173,14 @@ input_file: tests/assets/simple-paper.typ
     inset: 8pt,
     radius: 2pt,
     width: 100%,
-  )[*题目 #problem-counter.display().* #h(0.75em) #body]
+  )[
+    *题目 #problem-counter.display().* #h(0.75em) #body
+  ]
 }
 
 #let solution(body) = {
   set enum(numbering: "(1)")
-  block(
-    inset: 8pt,
-    width: 100%,
-  )[*解答.* #h(0.75em) #body]
+  block(inset: 8pt, width: 100%)[
+    *解答.* #h(0.75em) #body
+  ]
 }

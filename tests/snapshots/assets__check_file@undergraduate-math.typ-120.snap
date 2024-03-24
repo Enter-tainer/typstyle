@@ -98,9 +98,7 @@ input_file: tests/assets/undergraduate-math.typ
 // Title
 #align(
   center,
-  link("https://github.com/johanvx/typst-undergradmath")[
-    #text(large, headcolor)[*Typst Math for Undergrads*]
-  ],
+  link("https://github.com/johanvx/typst-undergradmath")[#text(large, headcolor)[*Typst Math for Undergrads*]],
 )
 
 This is a Typst port with typst #sys.version of _#LaTeX Math for Undergrads_ by Jim Hefferon.
@@ -751,12 +749,10 @@ Definition by cases can be easily obtained with the `cases` function.
   table(
     columns: 2,
     column-gutter: 1em,
-    [
-      $ f_n = cases(
+    [$ f_n = cases(
       a &"if" n = 0,
       r dot f_(n - 1) &"else"
-    ) $
-    ],
+    ) $],
     [
       ```
       $ f_n = cases(

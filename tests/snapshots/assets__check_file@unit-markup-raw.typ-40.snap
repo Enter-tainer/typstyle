@@ -63,10 +63,12 @@ let a = 1;
   ```
 ]
 
-#text[```typ
+#text[
+  ```typ
   #import "@preview/cetz:0.2.1"
   #cetz.canvas({
     import cetz.draw: *
     ...
   })
-  ```]
+  ```
+]
