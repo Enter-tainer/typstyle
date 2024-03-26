@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.3 - [2024-03-26]
+
+- Nothing new. Just testing ci auto-release
+
 ## v0.11.2 - [2024-03-24]
 
 - Fix math attach and function call mis-formatting
