@@ -425,9 +425,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.3"
+version = "4.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "949626d00e063efc93b6dca932419ceb5432f99769911c0b995f7e884c778813"
+checksum = "90bc066a67923782aa8515dbaea16946c5bcc5addbd668bb80af688e53e548a0"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -447,9 +447,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.5.3"
+version = "4.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90239a040c80f5e14809ca132ddc4176ab33d5e17e49691793296e3fcb34d72f"
+checksum = "528131438037fd55894f62d6e9f068b8f45ac57ffa77517819645d10aed04f64"
 dependencies = [
  "heck 0.5.0",
  "proc-macro2",
@@ -1547,15 +1547,14 @@ dependencies = [
 
 [[package]]
 name = "insta"
-version = "1.36.1"
+version = "1.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a7c22c4d34ef4788c351e971c52bfdfe7ea2766f8c5466bc175dd46e52ac22e"
+checksum = "1718b3f2b85bb5054baf8ce406e36401f27c3169205f4175504c4b1d98252d3f"
 dependencies = [
  "console",
  "lazy_static",
  "linked-hash-map",
  "similar",
- "yaml-rust",
 ]
 
 [[package]]
@@ -2347,9 +2346,9 @@ dependencies = [
 
 [[package]]
 name = "reflexo"
-version = "0.4.2-rc9"
+version = "0.5.0-rc2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3bf3d6c80be65ec408823031e560758c1de427601d61a82fdea0d0ecb7794f4"
+checksum = "247ea8050cb5c88b41a68b3269f5a2eb7ebff55851a564d96b035643418346e6"
 dependencies = [
  "base64 0.22.0",
  "bitvec",
@@ -3469,9 +3468,9 @@ dependencies = [
 
 [[package]]
 name = "typst-ts-compiler"
-version = "0.4.2-rc9"
+version = "0.5.0-rc2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "478dbcd334466a939420fa9e9429e0ecaa8ec8c5a943e74862b2b46b364e2938"
+checksum = "c18cf7d96c0c558901b3f7e3f5200ecb7e3d7d3dcc5a1222e94bc875237ff352"
 dependencies = [
  "append-only-vec",
  "base64 0.22.0",
@@ -3506,9 +3505,9 @@ dependencies = [
 
 [[package]]
 name = "typst-ts-core"
-version = "0.4.2-rc9"
+version = "0.5.0-rc2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d109fb49a9ffa1d9f7126b317313d29257ec0d34ae7a34c65d16ed1fea2b448"
+checksum = "a69135c380eb60efa4aeabd986d27d82ecd1b4c843fd3393992b449409317847"
 dependencies = [
  "base64 0.22.0",
  "base64-serde",

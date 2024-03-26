@@ -10,13 +10,15 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
-use typst_syntax::{FileId, VirtualPath};
 use typst_ts_compiler::{
-    service::{CompileDriver, Compiler, WorkspaceProvider},
+    service::{CompileDriver, Compiler},
     ShadowApi, TypstSystemWorld,
 };
 use typst_ts_core::{
-    config::CompileOpts, diag::SourceDiagnostic, typst::prelude::EcoVec, TypstDocument,
+    config::{compiler::EntryOpts, CompileOpts},
+    diag::SourceDiagnostic,
+    typst::prelude::EcoVec,
+    TypstDocument,
 };
 use typstyle_core::pretty_print;
 
@@ -144,8 +146,8 @@ fn compile_typst_src(content: &str) -> Result<Arc<TypstDocument>, EcoVec<SourceD
     } else {
         PathBuf::from("/")
     };
-    let mut world = TypstSystemWorld::new(CompileOpts {
-        root_dir: root.clone(),
+    let world = TypstSystemWorld::new(CompileOpts {
+        entry: EntryOpts::new_rooted(root.clone(), Some(PathBuf::from("/main.typ"))),
         with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
         ..Default::default()
     })
@@ -153,7 +155,6 @@ fn compile_typst_src(content: &str) -> Result<Arc<TypstDocument>, EcoVec<SourceD
     world
         .map_shadow(&root.join("main.typ"), content.as_bytes().into())
         .unwrap();
-    world.set_main_id(FileId::new(None, VirtualPath::new("/main.typ")));
     let mut driver = CompileDriver::new(world).with_entry_file(root.join("main.typ"));
     driver.compile(&mut Default::default())
 }

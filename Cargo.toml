@@ -27,7 +27,7 @@ crate-type = ["cdylib", "lib"]
 
 
 [dependencies]
-clap = { version = "4.5.2", features = ["derive", "env"] }
+clap = { version = "4.5.4", features = ["derive", "env"] }
 itertools = "0.12.1"
 once_cell = "1.19.0"
 pretty = "0.12.3"
@@ -35,14 +35,14 @@ wasm-bindgen = "0.2"
 typst-syntax = "0.11.0"
 
 [dev-dependencies]
-insta = { version = "1.36.1" }
+insta = { version = "1.37.0" }
 libtest-mimic = "0.7.0"
 pathdiff = "0.2.1"
 pretty_assertions = "1.4.0"
-typst-ts-core = { version = "0.4.2-rc9", default-features = false, features = [
+typst-ts-core = { version = "0.5.0-rc2", default-features = false, features = [
   "no-content-hint",
 ] }
-typst-ts-compiler = { version = "0.4.2-rc9", default-features = false, features = [
+typst-ts-compiler = { version = "0.5.0-rc2", default-features = false, features = [
   "no-content-hint",
   "system-compile",
 ] }
@@ -50,7 +50,7 @@ typst-assets = { version = "0.11.0", features = ["fonts"] }
 typst-svg = "0.11.0"
 
 [build-dependencies]
-anyhow = "1.0.80"
+anyhow = "1.0.81"
 vergen = { version = "8.3.1", features = [
   "build",
   "cargo",
