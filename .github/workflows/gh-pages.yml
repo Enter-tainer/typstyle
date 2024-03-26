@@ -35,8 +35,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+          registry-url: 'https://registry.npmjs.org'
       - run: |
           wasm-pack build
+      - name: Publish to npm
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd pkg
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: |
           cd web
           yarn
