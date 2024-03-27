@@ -5,9 +5,5 @@ input_file: tests/assets/unit/op/binary.typ
 ---
 #{
   let f(x) = x
-  f(
-    "Unsupported content type " + type(
-      content,
-    ) + "! " + "Provide your own `draw-node` implementation.",
-  )
+  f("Unsupported content type " + type(content) + "! " + "Provide your own `draw-node` implementation.")
 }

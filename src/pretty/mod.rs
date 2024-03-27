@@ -27,8 +27,9 @@ impl PrettyPrinter {
             has_text: bool,
             nodes: Vec<&'a SyntaxNode>,
         }
-        // break markup into lines, split by stmt, parbreak, newline, multiline raw, equation
-        // if a line contains text, it will be skipped by the formatter to keep the original format
+        // break markup into lines, split by stmt, parbreak, newline, multiline raw,
+        // equation if a line contains text, it will be skipped by the formatter
+        // to keep the original format
         let lines = {
             let mut lines: Vec<Line> = vec![];
             let mut current_line = Line {
@@ -563,7 +564,7 @@ impl PrettyPrinter {
     }
 
     fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
-        let doc = BoxDoc::nil().append(self.convert_expr(func_call.callee()));
+        let mut doc = BoxDoc::nil().append(self.convert_expr(func_call.callee()));
         if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
             return doc.append(res);
         }
@@ -572,22 +573,27 @@ impl PrettyPrinter {
             .to_untyped()
             .children()
             .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
-        let parenthesized_args = if has_parenthesized_args {
+        if has_parenthesized_args {
             let args = self.convert_parenthesized_args(func_call.args());
-            pretty_items(
-                &args,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
-                util::FoldStyle::Fit,
-            )
-        } else {
-            BoxDoc::nil()
+
+            if args.len() != 1 {
+                doc = doc.append(pretty_items(
+                    &args,
+                    BoxDoc::text(",").append(BoxDoc::space()),
+                    BoxDoc::text(","),
+                    (BoxDoc::text("("), BoxDoc::text(")")),
+                    false,
+                    util::FoldStyle::Fit,
+                ));
+            } else {
+                doc = doc
+                    .append(BoxDoc::text("("))
+                    .append(args.into_iter().next().unwrap().nest(-1))
+                    .append(BoxDoc::text(")"));
+            }
         };
-        let doc = doc
-            .append(parenthesized_args)
-            .append(self.convert_additional_args(func_call.args(), has_parenthesized_args));
+        let doc =
+            doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args));
         doc
     }
 

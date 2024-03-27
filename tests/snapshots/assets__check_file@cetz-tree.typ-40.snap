@@ -37,12 +37,10 @@ input_file: tests/assets/cetz-tree.typ
   name: none,
   ..style,
 ) = {
-  assert(
-    parent-position in (
-      "begin",
-      "center",
-    ),
-  )
+  assert(parent-position in (
+   "begin",
+   "center",
+ ))
   assert(grow > 0)
   assert(spread > 0)
   
@@ -98,18 +96,10 @@ input_file: tests/assets/cetz-tree.typ
         int,
       ) {
         content = $#content$
-      } else if type(
-        content,
-      ) == dictionary and "content" in content {
+      } else if type(content) == dictionary and "content" in content {
         content = content.content
-      } else if type(
-        content,
-      ) != typst-content {
-        panic(
-          "Unsupported content type " + type(
-            content,
-          ) + "! " + "Provide your own `draw-node` implementation.",
-        )
+      } else if type(content) != typst-content {
+        panic("Unsupported content type " + type(content) + "! " + "Provide your own `draw-node` implementation.")
       }
       
       if content != none {
@@ -152,15 +142,14 @@ input_file: tests/assets/cetz-tree.typ
     let children = ()
     let cnt = none
     if type(tree) == array {
-      children = tree.slice(
-        1,
-      ).enumerate().map(
-        ((n, c)) => build-node(
-          c,
-          depth: depth + 1,
-          sibling: n,
-        ),
-      )
+      children = tree.slice(1).enumerate().map((
+       (n,
+       c),
+     ) => build-node(
+       c,
+       depth: depth + 1,
+       sibling: n,
+     ))
       cnt = tree.at(0)
     } else {
       cnt = tree
@@ -261,9 +250,7 @@ input_file: tests/assets/cetz-tree.typ
     } else if direction == "right" {
       return (node.y, node.x)
     } else {
-      panic(
-        message: "Invalid tree direction.",
-      )
+      panic(message: "Invalid tree direction.")
     }
   }
   
@@ -289,17 +276,13 @@ input_file: tests/assets/cetz-tree.typ
   }
   
   let render(node, parent-name) = {
-    let name = "node-" + str(
-      node.depth,
-    ) + "-" + str(node.n)
+    let name = "node-" + str(node.depth) + "-" + str(node.n)
     
     let cmds = ()
     cmds += draw.group(
       name: name,
       {
-        draw.move-to(
-          node-position(node),
-        )
+        draw.move-to(node-position(node))
         draw.anchor("center", ())
         draw-node(node, parent-name)
       },
@@ -327,16 +310,11 @@ input_file: tests/assets/cetz-tree.typ
       name: name,
       style: style.named(),
       before: ctx => {
-        ctx.groups.push(
-          (
-            ctx: ctx,
-            anchors: (:),
-            tree-root: layout(
-              root,
-              ctx,
-            ),
-          ),
-        )
+        ctx.groups.push((
+         ctx: ctx,
+         anchors: (:),
+         tree-root: layout(root, ctx),
+       ))
         return ctx
       },
       after: ctx => {
