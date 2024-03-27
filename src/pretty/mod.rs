@@ -574,51 +574,49 @@ impl PrettyPrinter {
             .children()
             .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
         if has_parenthesized_args {
-            let (args, prefer_single) = self.convert_parenthesized_args(func_call.args());
+            let (args, prefer_tighter) = self.convert_parenthesized_args(func_call.args());
 
-            if !prefer_single {
-                doc = doc.append(pretty_items(
+            doc = if prefer_tighter && args.len() <= 1 {
+                doc.append(BoxDoc::text("("))
+                    .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
+                    .append(BoxDoc::text(")"))
+            } else {
+                doc.append(pretty_items(
                     &args,
                     BoxDoc::text(",").append(BoxDoc::space()),
                     BoxDoc::text(","),
                     (BoxDoc::text("("), BoxDoc::text(")")),
                     false,
                     util::FoldStyle::Fit,
-                ));
-            } else {
-                doc = doc
-                    .append(BoxDoc::text("("))
-                    .append(args.into_iter().next().unwrap())
-                    .append(BoxDoc::text(")"));
+                ))
             }
         };
-        let doc =
-            doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args));
-        doc
+        doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args))
     }
 
     fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> (Vec<BoxDoc<'a, ()>>, bool) {
         let node = args.to_untyped();
-        let mut the_only_arg = None;
+        let mut last_arg = None;
         let args: Vec<BoxDoc<'a, ()>> = node
             .children()
             .take_while(|node| node.kind() != SyntaxKind::RightParen)
             .filter_map(|node| node.cast::<'_, Arg>())
             .map(|arg| {
-                the_only_arg = Some(arg);
+                last_arg = Some(arg);
                 self.convert_arg(arg)
             })
             .collect();
-        let prefer_single = args.len() == 1 && {
-            let arg = the_only_arg.unwrap();
-            let rhs = match arg {
-                Arg::Pos(p) => p,
-                Arg::Named(n) => n.expr(),
-                Arg::Spread(s) => s.sink_expr().unwrap(),
-            };
-            !matches!(rhs, Expr::FuncCall(..))
-        };
-        (args, prefer_single)
+        let prefer_tighter = args.is_empty()
+            || (args.len() == 1 && {
+                let arg = last_arg.unwrap();
+                let rhs = match arg {
+                    Arg::Pos(p) => p,
+                    Arg::Named(n) => n.expr(),
+                    Arg::Spread(s) => s.sink_expr().unwrap(),
+                };
+                !matches!(rhs, Expr::FuncCall(..))
+            });
+        (args, prefer_tighter)
     }
 
     fn convert_additional_args<'a>(&'a self, args: Args<'a>, has_paren: bool) -> BoxDoc<'a, ()> {
