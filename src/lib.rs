@@ -17,10 +17,10 @@ pub fn pretty_print(content: &str, width: usize) -> String {
     doc.pretty(width).to_string()
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "wasm"))]
 use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "wasm"))]
 #[wasm_bindgen]
 pub fn pretty_print_wasm(content: &str, width: usize) -> String {
     pretty_print(content, width)

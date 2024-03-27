@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.4 - [2024-03-27]
+
+- Put `clap` and `wasm-bindgen` under feature flags to reduce binary size when use as a library
+
 ## v0.11.3 - [2024-03-26]
 
 - Nothing new. Just testing ci auto-release
