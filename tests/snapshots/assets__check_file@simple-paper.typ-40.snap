@@ -68,12 +68,14 @@ input_file: tests/assets/simple-paper.typ
   
   // Title
   align(center)[
-    #block(text(
-     font: title-font,
-     weight: 700,
-     1.75em,
-     title,
-   ))
+    #block(
+      text(
+        font: title-font,
+        weight: 700,
+        1.75em,
+        title,
+      ),
+    )
     #v(0.5em)
   ]
   
@@ -89,9 +91,9 @@ input_file: tests/assets/simple-paper.typ
       ),
       gutter: 1em,
       ..authors.map(author => align(
-       center,
-       text(font: author-font, author),
-     )),
+        center,
+        text(font: author-font, author),
+      )),
     ),
   )
   

@@ -114,10 +114,10 @@ input_file: tests/assets/cetz-tree.typ
     let cnt = none
     if type(tree) == array {
       children = tree.slice(1).enumerate().map(((n, c)) => build-node(
-       c,
-       depth: depth + 1,
-       sibling: n,
-     ))
+        c,
+        depth: depth + 1,
+        sibling: n,
+      ))
       cnt = tree.at(0)
     } else {
       cnt = tree

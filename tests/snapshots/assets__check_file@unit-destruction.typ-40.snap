@@ -12,9 +12,9 @@ input_file: tests/assets/unit/destruction.typ
   ),
   gutter: 1em,
   ..authors.map(author => align(
-   center,
-   text(font: author-font, author),
- )),
+    center,
+    text(font: author-font, author),
+  )),
 )
 
 #let books = (

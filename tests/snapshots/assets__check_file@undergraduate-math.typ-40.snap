@@ -80,17 +80,21 @@ input_file: tests/assets/undergraduate-math.typ
 #let date = datetime.today().display()
 
 // Unavailable (last check date)
-#show "??": box(text(
-  red,
-  [v#sys.version #emoji.crossmark],
-))
+#show "??": box(
+  text(
+    red,
+    [v#sys.version #emoji.crossmark],
+  ),
+)
 // Tricky
 #show "!!": box(text(blue, emoji.drops))
 // No idea
-#show "?!": box(text(
-  orange,
-  [No idea #emoji.face.unhappy],
-))
+#show "?!": box(
+  text(
+    orange,
+    [No idea #emoji.face.unhappy],
+  ),
+)
 // Tricky figure numbering
 #set figure(
   numbering: n => {
@@ -146,11 +150,13 @@ The original version is available at #link("https://gitlab.com/jim.hefferon/unde
 //    [??], [Unavailable until typst #sys.version.],
 //  )
 // ) <unavailable>
-#figure(table(
-  columns: (1fr, 2fr),
-  [!!],
-  [Tricky. A simpler method is needed.],
-)) <tricky>
+#figure(
+  table(
+    columns: (1fr, 2fr),
+    [!!],
+    [Tricky. A simpler method is needed.],
+  ),
+) <tricky>
 // #figure(
 //   table(
 //     columns: (1fr, 2fr),

@@ -38,9 +38,9 @@ input_file: tests/assets/cetz-tree.typ
   ..style,
 ) = {
   assert(parent-position in (
-   "begin",
-   "center",
- ))
+    "begin",
+    "center",
+  ))
   assert(grow > 0)
   assert(spread > 0)
   
@@ -143,13 +143,13 @@ input_file: tests/assets/cetz-tree.typ
     let cnt = none
     if type(tree) == array {
       children = tree.slice(1).enumerate().map((
-       (n,
-       c),
-     ) => build-node(
-       c,
-       depth: depth + 1,
-       sibling: n,
-     ))
+        (n,
+        c),
+      ) => build-node(
+        c,
+        depth: depth + 1,
+        sibling: n,
+      ))
       cnt = tree.at(0)
     } else {
       cnt = tree
@@ -282,7 +282,9 @@ input_file: tests/assets/cetz-tree.typ
     cmds += draw.group(
       name: name,
       {
-        draw.move-to(node-position(node))
+        draw.move-to(
+          node-position(node),
+        )
         draw.anchor("center", ())
         draw-node(node, parent-name)
       },
@@ -311,10 +313,10 @@ input_file: tests/assets/cetz-tree.typ
       style: style.named(),
       before: ctx => {
         ctx.groups.push((
-         ctx: ctx,
-         anchors: (:),
-         tree-root: layout(root, ctx),
-       ))
+          ctx: ctx,
+          anchors: (:),
+          tree-root: layout(root, ctx),
+        ))
         return ctx
       },
       after: ctx => {
