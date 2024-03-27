@@ -5,11 +5,9 @@ input_file: tests/assets/unit/markup/content-raw.typ
 ---
 #align(
   center,
-  table(
-    [
-      ```
-      underbrace(x + y, |A|)
-      ```
-    ],
-  ),
+  table([
+    ```
+    underbrace(x + y, |A|)
+    ```
+  ]),
 )

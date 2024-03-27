@@ -15,9 +15,7 @@ input_file: tests/assets/book.typ
   authors: ("Myriad-Dreamin", "7mile"),
   language: "en",
   summary: [ // begin of summary
-    #prefix-chapter(
-      "introduction.typ",
-    )[Introduction]
+    #prefix-chapter("introduction.typ")[Introduction]
     = User Guide
     - #chapter(
         "guide/installation.typ",

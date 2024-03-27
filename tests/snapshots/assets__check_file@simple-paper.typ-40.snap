@@ -58,9 +58,7 @@ input_file: tests/assets/simple-paper.typ
     #it.body
   ]
   
-  show heading.where(
-    level: 1,
-  ): it => box(width: 100%)[
+  show heading.where(level: 1): it => box(width: 100%)[
     #v(0.5em)
     #set align(center)
     #set heading(numbering: "一")
@@ -92,15 +90,10 @@ input_file: tests/assets/simple-paper.typ
         authors.len(),
       ),
       gutter: 1em,
-      ..authors.map(
-        author => align(
-          center,
-          text(
-            font: author-font,
-            author,
-          ),
-        ),
-      ),
+      ..authors.map(author => align(
+        center,
+        text(font: author-font, author),
+      )),
     ),
   )
   
@@ -113,17 +106,13 @@ input_file: tests/assets/simple-paper.typ
     #v(12pt)
     #set text(font: caption-font)
     #it
-    #par()[#text(size: 0.0em)[#h(
-          0.0em,
-        )]]
+    #par()[#text(size: 0.0em)[#h(0.0em)]]
     #v(12pt)
   ]
   
   show image: it => [
     #it
-    #par()[#text(size: 0.0em)[#h(
-          0.0em,
-        )]]
+    #par()[#text(size: 0.0em)[#h(0.0em)]]
   ]
   
   show table: it => [
@@ -135,9 +124,7 @@ input_file: tests/assets/simple-paper.typ
   )
   show emph: set text(font: emph-font)
   show ref: set text(red)
-  show raw.where(
-    block: true,
-  ): block.with(
+  show raw.where(block: true): block.with(
     width: 100%,
     fill: luma(240),
     inset: 10pt,
@@ -162,9 +149,7 @@ input_file: tests/assets/simple-paper.typ
   
   body
 }
-#let problem-counter = counter(
-  "problem",
-)
+#let problem-counter = counter("problem")
 #problem-counter.step()
 
 #let problem(body) = {
