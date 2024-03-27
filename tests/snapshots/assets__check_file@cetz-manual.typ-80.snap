@@ -51,13 +51,15 @@ The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german 
 = Usage
 
 This is the minimal starting point:
-#pad(left: 1em)[```typ
+#pad(left: 1em)[
+  ```typ
   #import "@preview/cetz:0.2.1"
   #cetz.canvas({
     import cetz.draw: *
     ...
   })
-  ```]
+  ```
+]
 Note that draw functions are imported inside the scope of the `canvas` block. This is recommended as some draw functions override Typst's function's such as `line`.
 
 #show raw.where(block: false): it => if it.text.starts-with(
@@ -162,7 +164,9 @@ You can style draw elements by passing the relevant named arguments to their dra
   "stroke",
   ("none", "auto", "length", "color", "dictionary", "stroke"),
   default: black + 1pt,
-  [How to stroke the border or the path of the draw element. See Typst's line documentation for more details: https://typst.app/docs/reference/visualize/line/#parameters-stroke],
+  [
+    How to stroke the border or the path of the draw element. See Typst's line documentation for more details: https://typst.app/docs/reference/visualize/line/#parameters-stroke
+  ],
 )
 
 ```example
@@ -256,7 +260,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
         }
         (
           raw(name),
-          name-to-mnemonic.at(name, default: ([],)).join([, ]),
+          name-to-mnemonic.at(name, default: ([],)).join([,]),
           cetz.canvas(cetz.draw.line((), (1, 0), mark: (end: name))),
         )
       }
@@ -286,17 +290,23 @@ line(..c)
 #doc-style.show-parameter-block(
   "symbol",
   ("none", "string", "array", "dictionary"),
-  [This option sets the mark to draw when using the `mark` draw function, or applies styling to both mark ends of path based elements. The mark's name or shorthand can be given, multiple marks can be drawn by passing an array of names or shorthands. When `none` no marks will be drawn. A style `dictionary` can be given instead of a `string` to override styling for that particular mark, just make sure to still give the mark name using the `symbol` key otherwise nothing will be drawn!. ],
+  [
+    This option sets the mark to draw when using the `mark` draw function, or applies styling to both mark ends of path based elements. The mark's name or shorthand can be given, multiple marks can be drawn by passing an array of names or shorthands. When `none` no marks will be drawn. A style `dictionary` can be given instead of a `string` to override styling for that particular mark, just make sure to still give the mark name using the `symbol` key otherwise nothing will be drawn!.
+  ],
 )
 #doc-style.show-parameter-block(
   "start",
   ("none", "string", "array", "dictionary"),
-  [This option sets the mark to draw at the start of a path based element. It will override all options of the `symbol` key and will not effect marks drawn using the `mark` draw function.],
+  [
+    This option sets the mark to draw at the start of a path based element. It will override all options of the `symbol` key and will not effect marks drawn using the `mark` draw function.
+  ],
 )
 #doc-style.show-parameter-block(
   "end",
   ("none", "string", "array", "dictionary"),
-  [This option sets the mark to draw at the end of a path based element. It will override all options of the `symbol` key and will not effect marks drawn using the `mark` draw function.],
+  [
+    This option sets the mark to draw at the end of a path based element. It will override all options of the `symbol` key and will not effect marks drawn using the `mark` draw function.
+  ],
 )
 
 #doc-style.show-parameter-block(
@@ -314,7 +324,9 @@ line(..c)
 #doc-style.show-parameter-block(
   "inset",
   "number",
-  [It specifies a distance by which something inside the arrow tip is set inwards; for the Stealth arrow tip it is the distance by which the back angle is moved inwards.],
+  [
+    It specifies a distance by which something inside the arrow tip is set inwards; for the Stealth arrow tip it is the distance by which the back angle is moved inwards.
+  ],
   default: 0.05cm,
 )
 #doc-style.show-parameter-block(
@@ -332,20 +344,26 @@ line(..c)
 #doc-style.show-parameter-block(
   "flex",
   "boolean",
-  [Only applicable when marks are used on curves such as bezier and hobby. If true, the mark will point along the secant of the curve. If false, the tangent at the marks tip is used.],
+  [
+    Only applicable when marks are used on curves such as bezier and hobby. If true, the mark will point along the secant of the curve. If false, the tangent at the marks tip is used.
+  ],
   default: true,
 )
 #doc-style.show-parameter-block(
   "position-samples",
   "integer",
-  [Only applicable when marks are used on curves such as bezier and hobby. The maximum number of samples to use for calculating curve positions. A higher number gives better results but may slow down compilation.],
+  [
+    Only applicable when marks are used on curves such as bezier and hobby. The maximum number of samples to use for calculating curve positions. A higher number gives better results but may slow down compilation.
+  ],
   default: 30,
 )
 
 #doc-style.show-parameter-block(
   "pos",
   ("number", "ratio"),
-  [Overrides the mark's position along a path. A number will move it an absolute distance, while a ratio will be a distance relative to the length of the path. Note that this may be removed in the future in preference of a different method.],
+  [
+    Overrides the mark's position along a path. A number will move it an absolute distance, while a ratio will be a distance relative to the length of the path. Note that this may be removed in the future in preference of a different method.
+  ],
 )
 
 #doc-style.show-parameter-block(
@@ -357,7 +375,9 @@ line(..c)
 #doc-style.show-parameter-block(
   "slant",
   "ratio",
-  [How much to slant the mark relative to the axis of the arrow. 0% means no slant 100% slants at 45 degrees],
+  [
+    How much to slant the mark relative to the axis of the arrow. 0% means no slant 100% slants at 45 degrees
+  ],
   default: 0%,
 )
 #doc-style.show-parameter-block(
@@ -394,13 +414,17 @@ line(..c)
 #doc-style.show-parameter-block(
   "shorten-to",
   ("integer", "auto", "none"),
-  [Which mark to shorten the path to when multiple marks are given. `auto` will shorten to the last mark, `none` will shorten to the first mark (effectively disabling path shortening). An integer can be given to select the mark's index.],
+  [
+    Which mark to shorten the path to when multiple marks are given. `auto` will shorten to the last mark, `none` will shorten to the first mark (effectively disabling path shortening). An integer can be given to select the mark's index.
+  ],
 )
 
 #doc-style.show-parameter-block(
   "transform-shape",
   "bool",
-  [When false marks will not be streched/affected by the current transformation, marks will be placed after the path is transformed.],
+  [
+    When false marks will not be streched/affected by the current transformation, marks will be placed after the path is transformed.
+  ],
   default: true,
 )
 
@@ -503,13 +527,17 @@ Defines a point that is `radius` distance away from the origin at the given `ang
 #doc-style.show-parameter-block(
   "angle",
   "angle",
-  [The angle of the coordinate. An angle of `0deg` is to the right, a degree of `90deg` is upward. See https://typst.app/docs/reference/layout/angle/ for details.],
+  [
+    The angle of the coordinate. An angle of `0deg` is to the right, a degree of `90deg` is upward. See https://typst.app/docs/reference/layout/angle/ for details.
+  ],
   show-default: false,
 )
 #doc-style.show-parameter-block(
   "radius",
   ("number", "tuple<number>"),
-  [The distance from the origin. An array can be given, in the form `(x, y)` to define the `x` and `y` radii of an ellipse instead of a circle.],
+  [
+    The distance from the origin. An array can be given, in the form `(x, y)` to define the `x` and `y` radii of an ellipse instead of a circle.
+  ],
   show-default: false,
 )
 
@@ -530,7 +558,9 @@ In the barycentric coordinate system a point is expressed as the linear combinat
 #doc-style.show-parameter-block(
   "bary",
   "dictionary",
-  [A dictionary where the key is a named element and the value is a `<float>`. The `center` anchor of the named element is used as $v$ and the value is used as $a$.],
+  [
+    A dictionary where the key is a named element and the value is a `<float>`. The `center` anchor of the named element is used as $v$ and the value is used as $a$.
+  ],
   show-default: false,
 )
 
@@ -579,7 +609,9 @@ Defines a point relative to a named element using anchors, see @anchors.
 #doc-style.show-parameter-block(
   "anchor",
   ("number", "angle", "string", "ratio", "none"),
-  [The anchor of the element. Strings are named anchors, angles are border anchors and numbers and ratios are path anchors. If not given the default anchor will be used, on most elements this is `center` but it can be different.],
+  [
+    The anchor of the element. Strings are named anchors, angles are border anchors and numbers and ratios are path anchors. If not given the default anchor will be used, on most elements this is `center` but it can be different.
+  ],
 )
 
 You can also use implicit syntax of a dot separated string in the form `"name.anchor"`
@@ -701,7 +733,9 @@ An angle can also be given for the general meaning: "First consider the line fro
 #doc-style.show-parameter-block(
   "angle",
   "angle",
-  [Angle between $arrow("AB")$ and $arrow("AP")$, where $P$ is the resulting coordinate. This can be used to get the _normal_ for a tangent between two points.],
+  [
+    Angle between $arrow("AB")$ and $arrow("AP")$, where $P$ is the resulting coordinate. This can be used to get the _normal_ for a tangent between two points.
+  ],
   default: 0deg,
 )
 
@@ -870,41 +904,31 @@ plot.plot(
   "orientation",
   ("direction"),
   default: ttb,
-  [
-    The direction the legend items get laid out to.
-  ],
+  [The direction the legend items get laid out to.],
 )
 #doc-style.show-parameter-block(
   "default-position",
   ("string", "coordinate"),
   default: "legend.north-east",
-  [
-    The default position the legend gets placed at.
-  ],
+  [The default position the legend gets placed at.],
 )
 #doc-style.show-parameter-block(
   "layer",
   ("number"),
   default: 1,
-  [
-    The layer index the legend gets drawn at, see on-layer.
-  ],
+  [The layer index the legend gets drawn at, see on-layer.],
 )
 #doc-style.show-parameter-block(
   "fill",
   ("paint"),
   default: rgb(255, 255, 255, 200),
-  [
-    The legends frame background color.
-  ],
+  [The legends frame background color.],
 )
 #doc-style.show-parameter-block(
   "stroke",
   ("stroke"),
   default: black,
-  [
-    The legends frame stroke style.
-  ],
+  [The legends frame stroke style.],
 )
 #doc-style.show-parameter-block(
   "padding",
@@ -918,25 +942,19 @@ plot.plot(
   "offset",
   ("tuple"),
   default: (0, 0),
-  [
-    An offset tuple (x and y coordinates) to add to the legends position.
-  ],
+  [An offset tuple (x and y coordinates) to add to the legends position.],
 )
 #doc-style.show-parameter-block(
   "spacing",
   ("number"),
   default: .1,
-  [
-    The spacing between the legend position and its frame.
-  ],
+  [The spacing between the legend position and its frame.],
 )
 #doc-style.show-parameter-block(
   "item.spacing",
   ("number"),
   default: .05,
-  [
-    The spacing between two legend items in canvas units.
-  ],
+  [The spacing between two legend items in canvas units.],
 )
 #doc-style.show-parameter-block(
   "item.preview.width",
@@ -950,17 +968,13 @@ plot.plot(
   "item.preview.height",
   ("number"),
   default: .3,
-  [
-    The height of a legend items preview picture.
-  ],
+  [The height of a legend items preview picture.],
 )
 #doc-style.show-parameter-block(
   "item.preview.margin",
   ("number"),
   default: .1,
-  [
-    Margin between the preview picture and the item label.
-  ],
+  [Margin between the preview picture and the item label.],
 )
 
 #doc-style.parse-show-module("/src/lib/plot/line.typ")
@@ -1192,8 +1206,10 @@ All path decoration functions support the following style keys:
   "rest",
   [`<string>`],
   default: "LINE",
-  [If set to `"LINE"`, generate lines between the paths start/end and
-    the decorations start/end if the path is _not closed_.],
+  [
+    If set to `"LINE"`, generate lines between the paths start/end and
+    the decorations start/end if the path is _not closed_.
+  ],
 )
 #def-arg(
   "width",
@@ -1205,8 +1221,10 @@ All path decoration functions support the following style keys:
   "segments",
   [`<int>`],
   default: 10,
-  [Number of repetitions/phases to generate.
-    This key is ignored if `segment-length` is set != `none`.],
+  [
+    Number of repetitions/phases to generate.
+    This key is ignored if `segment-length` is set != `none`.
+  ],
 )
 #def-arg(
   "segment-length",
@@ -1218,8 +1236,10 @@ All path decoration functions support the following style keys:
   "align",
   [`"START"`, `"MID"`, `"END"`],
   default: "START",
-  [Alignment of the decoration on the path _if `segment-length` is set_ and
-    the decoration does not fill up the full range between start and stop.],
+  [
+    Alignment of the decoration on the path _if `segment-length` is set_ and
+    the decoration does not fill up the full range between start and stop.
+  ],
 )
 
 #doc-style.parse-show-module("/src/lib/decorations/path.typ")

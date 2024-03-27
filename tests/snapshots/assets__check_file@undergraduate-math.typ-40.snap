@@ -148,10 +148,9 @@ input_file: tests/assets/undergraduate-math.typ
   link(
     "https://github.com/johanvx/typst-undergradmath",
   )[
-    #text(
-      large,
-      headcolor,
-    )[*Typst Math for Undergrads*]
+    #text(large, headcolor)[
+      *Typst Math for Undergrads*
+    ]
   ],
 )
 
@@ -169,7 +168,8 @@ The original version is available at #link("https://gitlab.com/jim.hefferon/unde
   table(
     columns: (1fr, 2fr),
     [!!],
-    [Tricky. A simpler method is needed.],
+    [Tricky. A simpler method is needed.
+    ],
   ),
 ) <tricky>
 // #figure(
@@ -787,9 +787,11 @@ Fix the size with the `lr` function.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$
+    [
+      $
       lr([sum_(k = 0)^n e^(k^2)], size: #50%)
-      $],
+      $
+    ],
     [
       ```
       lr([sum_(k = 0)^n e^(k^2)], size: #50%)
@@ -805,9 +807,8 @@ To have them grow with the enclosed formula, also use the `lr` function.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$
-      lr(angle.l i, 2^(2^i) angle.r)
-      $],
+    [$ lr(angle.l i, 2^(2^i) angle.r) $
+    ],
     [
       ```
       lr(angle.l i, 2^(2^i) angle.r)
@@ -849,9 +850,8 @@ The `lr` function also allows to scale unmatched delimiters and one-side fences.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$
-      lr(frac(dif f, dif x) |)_(x_0)
-      $],
+    [$ lr(frac(dif f, dif x) |)_(x_0) $
+    ],
     [
       ```
       lr(frac(dif f, dif x) |)_(x_0)
@@ -999,17 +999,21 @@ The last three here are display style.
       lim_(h -> 0) (f(x + h) - f(x)) / h
       ```
     ],
-    [$
+    [
+      $
       integral x^2 dif x = x^3 \/ 3 + C
-      $],
+      $
+    ],
     [
       ```
       integral x^2 dif x = x^3 \/ 3 + C
       ```
     ],
-    [$
+    [
+      $
       nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
-      $],
+      $
+    ],
     [
       ```
       nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
@@ -1032,27 +1036,30 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
   table(
     columns: 2,
     column-gutter: 1em,
-    [$
+    [
+      $
       sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
-      $],
+      $
+    ],
     [
       ```
       sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
       ```
     ],
-    [$
-      E(X) = mu_X = sum(x_i - P(x_i))
-      $],
+    [$ E(X) = mu_X = sum(x_i - P(x_i)) $
+    ],
     [
       ```
       E(X) = mu_X = sum(x_i - P(x_i))
       ```
     ],
-    [$
+    [
+      $
       1 / sqrt(2 sigma^2 pi) e^(- (
           x - mu
         )^2 / (2 sigma^2))
-      $],
+      $
+    ],
     [
       ```
       1 / sqrt(2 sigma^2 pi) e^(- (x - mu)^2 / (2 sigma^2))
@@ -1069,7 +1076,7 @@ See also the Typst Documentation at #link("https://typst.app/docs").
 #block(
   inset: 4pt,
   stroke: (top: headcolor),
-  text(
-    headcolor,
-  )[johanvx (https://github.com/johanvx) #h(1fr) #date],
+  text(headcolor)[
+    johanvx (https://github.com/johanvx) #h(1fr) #date
+  ],
 )

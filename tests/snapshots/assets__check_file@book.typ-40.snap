@@ -14,10 +14,11 @@ input_file: tests/assets/book.typ
   repository-edit: "https://github.com/Myriad-Dreamin/typst-book/edit/main/github-pages/docs/{path}",
   authors: ("Myriad-Dreamin", "7mile"),
   language: "en",
-  summary: [ // begin of summary
-    #prefix-chapter(
-      "introduction.typ",
-    )[Introduction]
+  summary: [
+    // begin of summary
+    #prefix-chapter("introduction.typ")[
+      Introduction
+    ]
     = User Guide
     - #chapter(
         "guide/installation.typ",
@@ -31,10 +32,9 @@ input_file: tests/assets/book.typ
         "guide/faq.typ",
         section: "3",
       )[Frequently Asked Questions]
-    - #chapter(
-        none,
-        section: "4",
-      )[Further reading]
+    - #chapter(none, section: "4")[
+        Further reading
+      ]
     = Reference Guide
     - #chapter(
         "cli/main.typ",
@@ -87,26 +87,21 @@ input_file: tests/assets/book.typ
           "format/theme.typ",
           section: "6.2",
         )[Theme]
-      - #chapter(
-          none,
-          section: "6.3",
-        )[Typst Support]
-    - #chapter(
-        none,
-        section: "7",
-      )[For developers]
-      - #chapter(
-          none,
-          section: "7.1",
-        )[Typst-side APIs]
-      - #chapter(
-          none,
-          section: "7.2",
-        )[typst-book CLI Internals]
-      - #chapter(
-          none,
-          section: "7.3",
-        )[Alternative Backends]
+      - #chapter(none, section: "6.3")[
+          Typst Support
+        ]
+    - #chapter(none, section: "7")[
+        For developers
+      ]
+      - #chapter(none, section: "7.1")[
+          Typst-side APIs
+        ]
+      - #chapter(none, section: "7.2")[
+          typst-book CLI Internals
+        ]
+      - #chapter(none, section: "7.3")[
+          Alternative Backends
+        ]
     // end of summary
   ],
 )

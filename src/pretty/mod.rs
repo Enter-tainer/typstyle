@@ -8,6 +8,8 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::util::{self, pretty_items};
 
+pub mod markup;
+
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
     disabled_nodes: HashSet<SyntaxNode>,
@@ -20,83 +22,6 @@ impl PrettyPrinter {
 }
 
 impl PrettyPrinter {
-    pub fn convert_markup<'a>(&'a self, root: Markup<'a>) -> BoxDoc<'a, ()> {
-        let mut doc: BoxDoc<()> = BoxDoc::nil();
-        #[derive(Debug, Default)]
-        struct Line<'a> {
-            has_text: bool,
-            nodes: Vec<&'a SyntaxNode>,
-        }
-        // break markup into lines, split by stmt, parbreak, newline, multiline raw, equation
-        // if a line contains text, it will be skipped by the formatter to keep the original format
-        let lines = {
-            let mut lines: Vec<Line> = vec![];
-            let mut current_line = Line {
-                has_text: false,
-                nodes: vec![],
-            };
-            for node in root.to_untyped().children() {
-                let mut break_line = false;
-                if let Some(space) = node.cast::<Space>() {
-                    if space.to_untyped().text().contains('\n') {
-                        break_line = true;
-                    }
-                } else if let Some(pb) = node.cast::<Parbreak>() {
-                    if pb.to_untyped().text().contains('\n') {
-                        break_line = true;
-                    }
-                } else if node.kind().is_stmt() {
-                    break_line = true;
-                } else if let Some(expr) = node.cast::<Expr>() {
-                    match expr {
-                        ast::Expr::Text(_) => current_line.has_text = true,
-                        ast::Expr::Raw(r) => {
-                            if r.block() {
-                                break_line = true;
-                            } else {
-                                current_line.has_text = true;
-                            }
-                        }
-                        ast::Expr::Strong(_) | ast::Expr::Emph(_) => current_line.has_text = true,
-                        ast::Expr::Code(_) => break_line = true,
-                        ast::Expr::Equation(e) if e.block() => break_line = true,
-                        _ => (),
-                    }
-                }
-                current_line.nodes.push(node);
-                if break_line {
-                    lines.push(current_line);
-                    current_line = Line::default();
-                }
-            }
-            if !current_line.nodes.is_empty() {
-                lines.push(current_line);
-            }
-            lines
-        };
-        for Line { has_text, nodes } in lines {
-            for node in nodes {
-                if let Some(space) = node.cast::<Space>() {
-                    doc = doc.append(self.convert_space(space));
-                    continue;
-                }
-                if let Some(pb) = node.cast::<Parbreak>() {
-                    doc = doc.append(self.convert_parbreak(pb));
-                    continue;
-                }
-                if has_text {
-                    doc = doc.append(self.format_disabled(node));
-                } else if let Some(expr) = node.cast::<Expr>() {
-                    let expr_doc = self.convert_expr(expr);
-                    doc = doc.append(expr_doc);
-                } else {
-                    doc = doc.append(trivia(node));
-                }
-            }
-        }
-        doc
-    }
-
     fn check_disabled<'a>(&'a self, node: &'a SyntaxNode) -> Option<BoxDoc<'a, ()>> {
         if self.disabled_nodes.contains(node) {
             Some(self.format_disabled(node))
@@ -418,7 +343,11 @@ impl PrettyPrinter {
     }
 
     fn convert_content_block<'a>(&'a self, content_block: ContentBlock<'a>) -> BoxDoc<'a, ()> {
-        let content = self.convert_markup(content_block.body()).group().nest(2);
+        let content = BoxDoc::line_()
+            .append(self.convert_markup(content_block.body()).group())
+            .group()
+            .nest(2)
+            .append(BoxDoc::line_());
         let doc = BoxDoc::text("[").append(content).append(BoxDoc::text("]"));
         doc
     }
@@ -1113,7 +1042,7 @@ pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
         }
     };
     // String::lines() doesn't include the trailing newline
-    let has_trailing_newline = s.ends_with('\n');
+    let has_trailing_newline = s.ends_with('\n') || s.ends_with('\r');
     let res = BoxDoc::intersperse(
         s.lines().map(|s| BoxDoc::text(get_line(s))),
         BoxDoc::hardline(),
