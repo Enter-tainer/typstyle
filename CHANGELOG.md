@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.5 - [2024-03-28]
+
+- Fix long import item being spread across multiple lines
+- Fix bad formatting of destruct items
+- Enable formatting when line comment presents in code block
+
 ## v0.11.4 - [2024-03-27]
 
 - Put `clap` and `wasm-bindgen` under feature flags to reduce binary size when use as a library
