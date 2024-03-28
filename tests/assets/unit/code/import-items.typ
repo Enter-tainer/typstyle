@@ -1,0 +1,1 @@
+#import "test.typ": aaa, bbb as cccccccccc, ddd as eeeeeeeeeee, fff as g, hhh as iiii, jjj as k, lll as m, nnn as o, ppp as q, rrr as s, ttt as u, vvv as w, xxx as y, zzz as aa, bbb as cc, ddd as ee, fff as gg, hhh as ii, jjj as kk, lll as mm, nnn as oo, ppp as qq, rrr as ss, ttt as uu, vvv as ww, xxx as yy, zzz as aaa, bbb as ccc, ddd as eee, fff as ggg, hhh as iii, jjj as k

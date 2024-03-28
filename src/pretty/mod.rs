@@ -954,7 +954,7 @@ impl PrettyPrinter {
                 Imports::Wildcard => BoxDoc::text("*"),
                 Imports::Items(i) => BoxDoc::intersperse(
                     i.iter().map(|item| self.convert_import_item(item)),
-                    BoxDoc::text(",").append(BoxDoc::line()),
+                    BoxDoc::text(",").append(BoxDoc::space()),
                 ),
             };
             doc = doc.append(imports.group());
