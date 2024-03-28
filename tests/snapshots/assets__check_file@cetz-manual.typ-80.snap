@@ -60,9 +60,7 @@ This is the minimal starting point:
   ```]
 Note that draw functions are imported inside the scope of the `canvas` block. This is recommended as some draw functions override Typst's function's such as `line`.
 
-#show raw.where(block: false): it => if it.text.starts-with(
-  "<",
-) and it.text.ends-with(">") {
+#show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") {
   set text(1.2em)
   doc-style.show-type(it.text.slice(1, -1))
 } else {
@@ -1113,24 +1111,22 @@ The palette library provides some predefined palettes.
 
 #doc-style.parse-show-module("/src/lib/palette.typ")
 
-#let show-palette(p) = box(
-  {
-    let p = p.with(stroke: true)
-    canvas(
-      length: 1em,
-      {
-        import cetz.draw: *
-        for i in range(0, p("len")) {
-          if calc.rem(i, 10) == 0 {
-            move-to((rel: (0, -.5)))
-          }
-          rect((), (rel: (1, .5)), name: "r", ..p(i))
-          move-to("r.south-east")
+#let show-palette(p) = box({
+  let p = p.with(stroke: true)
+  canvas(
+    length: 1em,
+    {
+      import cetz.draw: *
+      for i in range(0, p("len")) {
+        if calc.rem(i, 10) == 0 {
+          move-to((rel: (0, -.5)))
         }
-      },
-    )
-  },
-)
+        rect((), (rel: (1, .5)), name: "r", ..p(i))
+        move-to("r.south-east")
+      }
+    },
+  )
+})
 
 === List of predefined palettes
 #columns(

@@ -29,9 +29,10 @@ input_file: tests/assets/undergraduate-math.typ
 #let enspace = kern(0.5em)
 
 // For table/grid, something like "lhs \enspace rhs"
-#let cell(lhs, rhs) = box(
-  lhs + enspace + rhs,
-)
+#let cell(
+  lhs,
+  rhs,
+) = box(lhs + enspace + rhs)
 // Grid for code blocks
 #set grid(columns: (2em, auto))
 // Table for math-code listing
@@ -43,49 +44,37 @@ input_file: tests/assets/undergraduate-math.typ
 )
 
 // LaTeX and TeX logos
-#let TeX = style(
-  styles => {
-    let e = measure(
-      text(normalsize, "E"),
-      styles,
-    )
-    let T = "T"
-    let E = text(
-      normalsize,
-      baseline: e.height / 2,
-      "E",
-    )
-    let X = "X"
-    box(
-      T + kern(-0.1667em) + E + kern(
-        -0.125em,
-      ) + X,
-    )
-  },
-)
-#let LaTeX = style(
-  styles => {
-    let l = measure(
-      text(10pt, "L"),
-      styles,
-    )
-    let a = measure(
-      text(7pt, "A"),
-      styles,
-    )
-    let L = "L"
-    let A = text(
-      7pt,
-      baseline: a.height - l.height,
-      "A",
-    )
-    box(
-      L + kern(-0.36em) + A + kern(
-        -0.15em,
-      ) + TeX,
-    )
-  },
-)
+#let TeX = style(styles => {
+  let e = measure(
+    text(normalsize, "E"),
+    styles,
+  )
+  let T = "T"
+  let E = text(
+    normalsize,
+    baseline: e.height / 2,
+    "E",
+  )
+  let X = "X"
+  box(T + kern(-0.1667em) + E + kern(-0.125em) + X)
+})
+#let LaTeX = style(styles => {
+  let l = measure(
+    text(10pt, "L"),
+    styles,
+  )
+  let a = measure(
+    text(7pt, "A"),
+    styles,
+  )
+  let L = "L"
+  let A = text(
+    7pt,
+    baseline: a.height - l.height,
+    "A",
+  )
+  box(L + kern(-0.36em) + A + kern(-0.15em) + TeX)
+})
 
 // Update date
 #let date = datetime.today().display()
@@ -122,9 +111,7 @@ input_file: tests/assets/undergraduate-math.typ
 #let headcolor = rgb("004225")
 
 // Run-in sections, like LaTeX \paragraph
-#show heading.where(
-  level: 1,
-): it => text(
+#show heading.where(level: 1): it => text(
   size: normalsize,
   weight: "bold",
   fill: headcolor,
@@ -145,9 +132,7 @@ input_file: tests/assets/undergraduate-math.typ
 // Title
 #align(
   center,
-  link(
-    "https://github.com/johanvx/typst-undergradmath",
-  )[
+  link("https://github.com/johanvx/typst-undergradmath")[
     #text(
       large,
       headcolor,
@@ -1069,7 +1054,5 @@ See also the Typst Documentation at #link("https://typst.app/docs").
 #block(
   inset: 4pt,
   stroke: (top: headcolor),
-  text(
-    headcolor,
-  )[johanvx (https://github.com/johanvx) #h(1fr) #date],
+  text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #date],
 )

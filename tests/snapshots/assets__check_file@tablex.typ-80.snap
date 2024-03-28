@@ -38,9 +38,7 @@ input_file: tests/assets/tablex.typ
 #let using-typst-v080-or-later = str(type(_str-type)) == "type"
 
 // Attachments use "t" and "b" instead of "top" and "bottom" since v0.3.0.
-#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$.body.has(
-  "t",
-)
+#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$.body.has("t")
 
 // This is true if types have fields in the current Typst version.
 // This means we can use stroke.thickness, length.em, and so on.
@@ -110,11 +108,9 @@ input_file: tests/assets/tablex.typ
       }
     }
   } else {
-    panic(
-      "Tablex error:" + error-prefix + " Expected 'fit-spans' to be either a boolean or dictionary, found '" + str(
-        type(fit-spans),
-      ) + "'",
-    )
+    panic("Tablex error:" + error-prefix + " Expected 'fit-spans' to be either a boolean or dictionary, found '" + str(
+      type(fit-spans),
+    ) + "'")
   }
   fit-spans
 }
@@ -216,9 +212,7 @@ input_file: tests/assets/tablex.typ
 #let is-tablex-occupied(x) = is-tablex-dict-type(x, "occupied")
 
 #let table-item-convert(item, keep_empty: true) = {
-  if type(
-    item,
-  ) == _function-type {  // dynamic cell content
+  if type(item) == _function-type {  // dynamic cell content
         cellx(item)
     } else if keep_empty and item == () {
     item
@@ -268,14 +262,10 @@ input_file: tests/assets/tablex.typ
   )
   
   for item in items {
-    if is-tablex-cell(
-      item,
-    ) and item.x == auto and item.y == auto {
+    if is-tablex-cell(item) and item.x == auto and item.y == auto {
             // cell occupies (colspan * rowspan) spaces
             len += item.colspan * item.rowspan
-        } else if type(
-      item,
-    ) == _content-type {
+        } else if type(item) == _content-type {
       len += 1
     }
   }
@@ -349,15 +339,11 @@ input_file: tests/assets/tablex.typ
   )
   
   if not columns.all(col_row_is_valid) {
-    panic(
-      "Invalid column sizes (must all be 'auto' or a valid, finite length specifier).",
-    )
+    panic("Invalid column sizes (must all be 'auto' or a valid, finite length specifier).")
   }
   
   if not rows.all(col_row_is_valid) {
-    panic(
-      "Invalid row sizes (must all be 'auto' or a valid, finite length specifier).",
-    )
+    panic("Invalid row sizes (must all be 'auto' or a valid, finite length specifier).")
   }
   
   let col_len = columns.len()
@@ -675,13 +661,9 @@ input_file: tests/assets/tablex.typ
 ) = {
   page-size = 0pt + page-size
   
-  if is-infinite-len(
-    len,
-  ) {
+  if is-infinite-len(len) {
         0pt  // avoid the destruction of the universe
-    } else if type(
-    len,
-  ) == _length-type {
+    } else if type(len) == _length-type {
     convert-length-type-to-pt(len, styles: styles)
   } else if type(len) == _ratio-type {
     convert-ratio-type-to-pt(len, page-size)
@@ -1145,17 +1127,13 @@ input_file: tests/assets/tablex.typ
   align_default: left,
   fill_default: none,
 ) = {
-  let align_default = if type(
-    align_default,
-  ) == _function-type {
+  let align_default = if type(align_default) == _function-type {
         align_default(cell.x, cell.y)  // column, row
     } else {
     align_default
   }
   
-  let fill_default = if type(
-    fill_default,
-  ) == _function-type {
+  let fill_default = if type(fill_default) == _function-type {
         fill_default(cell.x, cell.y)  // row, column
     } else {
     fill_default
@@ -1194,9 +1172,7 @@ input_file: tests/assets/tablex.typ
   }
   
   if cell_fill != none and not is-color(cell_fill) {
-    panic(
-      "Tablex error: Invalid fill specified (must be either a function (column, row) -> fill, a color, an array of valid fill values, or 'none').",
-    )
+    panic("Tablex error: Invalid fill specified (must be either a function (column, row) -> fill, a color, an array of valid fill values, or 'none').")
   }
   
   if type(cell_align) == _array-type {
@@ -1223,9 +1199,7 @@ input_file: tests/assets/tablex.typ
     _align-type,
     _2d-align-type,
   ) {
-    panic(
-      "Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').",
-    )
+    panic("Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').")
   }
   
   let aligned_cell_content = if cell_align == auto {
@@ -1265,9 +1239,9 @@ input_file: tests/assets/tablex.typ
 // Calculate the size of fraction tracks (cols/rows) (1fr, 2fr, ...),
 // based on the remaining sizes (after fixed-size and auto columns)
 #let determine-frac-tracks(tracks, remaining: 0pt, gutter: none) = {
-  let frac-tracks = tracks.enumerate().filter(
-    t => type(t.at(1)) == _fraction-type,
-  )
+  let frac-tracks = tracks.enumerate().filter(t => type(
+    t.at(1),
+  ) == _fraction-type)
   
   let amount-frac = frac-tracks.fold(0, (acc, el) => acc + (el.at(1) / 1fr))
   
@@ -1374,9 +1348,9 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_columns = columns
   
-  let all-frac-columns = columns.enumerate().filter(
-    i-col => type(i-col.at(1)) == _fraction-type,
-  ).map(i-col => i-col.at(0))
+  let all-frac-columns = columns.enumerate().filter(i-col => type(
+    i-col.at(1),
+  ) == _fraction-type).map(i-col => i-col.at(0))
   for (i,
   col) in columns.enumerate() {
     if col == auto {
@@ -1464,9 +1438,7 @@ input_file: tests/assets/tablex.typ
 // Auto columns that are too wide will receive equal amounts of the remaining
 // width (the "fair-share").
 #let fit-auto-columns(available: 0pt, auto-cols: none, columns: none) = {
-  if is-infinite-len(
-    available,
-  ) {
+  if is-infinite-len(available) {
         // infinite space available => don't modify columns
         return columns
     }
@@ -1545,17 +1517,15 @@ input_file: tests/assets/tablex.typ
   col-gutter: none,
   fit-spans: none,
 ) = {
-  let columns = columns.map(
-    c => {
-      if type(c) in (_length-type, _rel-len-type, _ratio-type) {
-        convert-length-to-pt(c, styles: styles, page-size: page_width)
-      } else if c == none {
-        0pt
-      } else {
-        c
-      }
-    },
-  )
+  let columns = columns.map(c => {
+    if type(c) in (_length-type, _rel-len-type, _ratio-type) {
+      convert-length-to-pt(c, styles: styles, page-size: page_width)
+    } else if c == none {
+      0pt
+    } else {
+      c
+    }
+  })
   
   // what is the fixed size of the gutter?
   // (calculate it later if it's fractional)
@@ -1616,17 +1586,13 @@ input_file: tests/assets/tablex.typ
             })
         }
   } else {
-    columns = columns.map(
-      c => {
-        if c == auto or type(
-          c,
-        ) == _fraction-type {
+    columns = columns.map(c => {
+      if c == auto or type(c) == _fraction-type {
                 0pt  // no space remaining!
             } else {
-          c
-        }
-      },
-    )
+        c
+      }
+    })
   }
   
   (
@@ -1730,15 +1696,13 @@ input_file: tests/assets/tablex.typ
   row-gutter: none,
   fit-spans: none,
 ) = {
-  let rows = rows.map(
-    r => {
-      if type(r) in (_length-type, _rel-len-type, _ratio-type) {
-        convert-length-to-pt(r, styles: styles, page-size: page_height)
-      } else {
-        r
-      }
-    },
-  )
+  let rows = rows.map(r => {
+    if type(r) in (_length-type, _rel-len-type, _ratio-type) {
+      convert-length-to-pt(r, styles: styles, page-size: page_height)
+    } else {
+      r
+    }
+  })
   
   let auto_rows_res = determine-auto-rows(
     grid: grid,
@@ -1761,9 +1725,9 @@ input_file: tests/assets/tablex.typ
     0pt
   }
   
-  let remaining = page_height - sum-fixed-size-tracks(
-    rows,
-  ) - auto_size - fixed-size-gutter * (rows.len() - 1)
+  let remaining = page_height - sum-fixed-size-tracks(rows) - auto_size - fixed-size-gutter * (
+    rows.len() - 1
+  )
   
   if remaining >= 0pt {  // split fractions in one page
         let frac_res = determine-frac-tracks(rows, remaining: remaining, gutter: row-gutter)
@@ -1773,17 +1737,13 @@ input_file: tests/assets/tablex.typ
         )
     } else {
     (
-      rows: rows.map(
-        r => {
-          if type(
-            r,
-          ) == _fraction-type {  // no space remaining in this page or box
+      rows: rows.map(r => {
+        if type(r) == _fraction-type {  // no space remaining in this page or box
                     0pt
                 } else {
-            r
-          }
-        },
-      ),
+          r
+        }
+      }),
       gutter: if row-gutter == none {
         none
       } else {
@@ -2027,17 +1987,17 @@ input_file: tests/assets/tablex.typ
 // Are two hlines the same?
 // (Check to avoid double drawing)
 #let is-same-hline(a, b) = (
-  is-tablex-hline(a) and is-tablex-hline(
-    b,
-  ) and a.y == b.y and a.start == b.start and a.end == b.end and a.gutter-restrict == b.gutter-restrict
+  is-tablex-hline(a) and is-tablex-hline(b) and a.y == b.y and a.start == b.start and a.end == b.end and a.gutter-restrict == b.gutter-restrict
 )
 
 #let _largest-stroke-among-lines(lines, stroke-auto: 1pt, styles: none) = (
   calc.max(
     0pt,
-    ..lines.map(
-      l => stroke-len(l.stroke, stroke-auto: stroke-auto, styles: styles),
-    ),
+    ..lines.map(l => stroke-len(
+      l.stroke,
+      stroke-auto: stroke-auto,
+      styles: styles,
+    )),
   )
 )
 
@@ -2330,62 +2290,52 @@ input_file: tests/assets/tablex.typ
 // NOTE: This function cannot differentiate between the actual page
 // and a possible box or block where the component using this function
 // could be contained in.
-#let get-page-dim-writer() = locate(
-  w_loc => {
-    let table_id = _tablex-table-counter.at(w_loc)
-    let page_dim_state = get-page-dim-state(table_id)
-    
-    place(
-      top + left,
-      locate(
-        loc => {
-          page_dim_state.update(
-            s => {
-              if s.top_left != none {
-                s
-              } else {
-                let pos = loc.position()
-                let width = s.width - pos.x
-                let height = s.width - pos.y
-                (
-                  width: width,
-                  height: height,
-                  top_left: pos,
-                  bottom_right: s.bottom_right,
-                )
-              }
-            },
+#let get-page-dim-writer() = locate(w_loc => {
+  let table_id = _tablex-table-counter.at(w_loc)
+  let page_dim_state = get-page-dim-state(table_id)
+  
+  place(
+    top + left,
+    locate(loc => {
+      page_dim_state.update(s => {
+        if s.top_left != none {
+          s
+        } else {
+          let pos = loc.position()
+          let width = s.width - pos.x
+          let height = s.width - pos.y
+          (
+            width: width,
+            height: height,
+            top_left: pos,
+            bottom_right: s.bottom_right,
           )
-        },
-      ),
-    )
-    
-    place(
-      bottom + right,
-      locate(
-        loc => {
-          page_dim_state.update(
-            s => {
-              if s.bottom_right != none {
-                s
-              } else {
-                let pos = loc.position()
-                let width = s.width + pos.x
-                let height = s.width + pos.y
-                (
-                  width: width,
-                  height: height,
-                  top_left: s.top_left,
-                  bottom_right: pos,
-                )
-              }
-            },
+        }
+      })
+    }),
+  )
+  
+  place(
+    bottom + right,
+    locate(loc => {
+      page_dim_state.update(s => {
+        if s.bottom_right != none {
+          s
+        } else {
+          let pos = loc.position()
+          let width = s.width + pos.x
+          let height = s.width + pos.y
+          (
+            width: width,
+            height: height,
+            top_left: s.top_left,
+            bottom_right: pos,
           )
-        },
-      ),
-    )
-  },
-)
+        }
+      })
+    }),
+  )
+})
 
 // Draws a row group using locate() and a block().
 #let draw-row-group(
@@ -2432,8 +2382,7 @@ input_file: tests/assets/tablex.typ
   let vlines = row-group.vlines
   let (start-y, end-y) = row-group.y_span
   
-  locate(
-    loc => {
+  locate(loc => {
         // let old_page = latest-page-state.at(loc)
         // let this_page = loc.page()
 
@@ -2628,8 +2577,7 @@ input_file: tests/assets/tablex.typ
                 }
             }
         })
-    },
-  )
+    })
 }
 
 // Generates groups of rows.
@@ -2802,22 +2750,18 @@ input_file: tests/assets/tablex.typ
     line.expand = if line.expand == none {
       none
     } else {
-      line.expand.slice(0, 2).map(
-        e => {
-          if e == none {
-            e
-          } else {
-            e = default-if-auto(e, 0pt)
-            if type(e) not in (_length-type, _rel-len-type, _ratio-type) {
-              panic(
-                "'expand' argument to lines must be a pair (length, length).",
-              )
-            }
-            
-            convert-length-to-pt(e, styles: styles, page-size: page-size)
+      line.expand.slice(0, 2).map(e => {
+        if e == none {
+          e
+        } else {
+          e = default-if-auto(e, 0pt)
+          if type(e) not in (_length-type, _rel-len-type, _ratio-type) {
+            panic("'expand' argument to lines must be a pair (length, length).")
           }
-        },
-      )
+          
+          convert-length-to-pt(e, styles: styles, page-size: page-size)
+        }
+      })
     }
     
     line
@@ -2846,15 +2790,17 @@ input_file: tests/assets/tablex.typ
   let new_vlines = ()
   
   if auto-hlines {
-    new_hlines = range(0, row_len + 1).filter(
-      y => hlines.filter(h => h.y == y).len() == 0,
-    ).map(y => hlinex(y: y))
+    new_hlines = range(
+      0,
+      row_len + 1,
+    ).filter(y => hlines.filter(h => h.y == y).len() == 0).map(y => hlinex(y: y))
   }
   
   if auto-vlines {
-    new_vlines = range(0, col_len + 1).filter(
-      x => vlines.filter(v => v.x == x).len() == 0,
-    ).map(x => vlinex(x: x))
+    new_vlines = range(
+      0,
+      col_len + 1,
+    ).filter(x => vlines.filter(v => v.x == x).len() == 0).map(x => vlinex(x: x))
   }
   
   (new_hlines: new_hlines, new_vlines: new_vlines)
@@ -2896,9 +2842,7 @@ input_file: tests/assets/tablex.typ
 // Accepts a map-X param, and verifies whether it's a function or none/auto.
 #let validate-map-func(map-func) = {
   if map-func not in (none, auto) and type(map-func) != _function-type {
-    panic(
-      "Tablex error: Map parameters, if specified (not 'none'), must be functions.",
-    )
+    panic("Tablex error: Map parameters, if specified (not 'none'), must be functions.")
   }
   
   map-func
@@ -2914,27 +2858,23 @@ input_file: tests/assets/tablex.typ
   map-cols: none,
 ) = {
   if type(map-vlines) == _function-type {
-    vlines = vlines.map(
-      vline => {
-        let vline = map-vlines(vline)
-        if not is-tablex-vline(vline) {
-          panic("'map-vlines' function returned a non-vline.")
-        }
-        vline
-      },
-    )
+    vlines = vlines.map(vline => {
+      let vline = map-vlines(vline)
+      if not is-tablex-vline(vline) {
+        panic("'map-vlines' function returned a non-vline.")
+      }
+      vline
+    })
   }
   
   if type(map-hlines) == _function-type {
-    hlines = hlines.map(
-      hline => {
-        let hline = map-hlines(hline)
-        if not is-tablex-hline(hline) {
-          panic("'map-hlines' function returned a non-hline.")
-        }
-        hline
-      },
-    )
+    hlines = hlines.map(hline => {
+      let hline = map-hlines(hline)
+      if not is-tablex-hline(hline) {
+        panic("'map-hlines' function returned a non-hline.")
+      }
+      hline
+    })
   }
   
   let should-map-rows = type(map-rows) == _function-type
@@ -2954,39 +2894,31 @@ input_file: tests/assets/tablex.typ
       // occupied cells = none for the outer user
       let cells = map-rows(
         row,
-        original-cells.map(
-          c => {
-            if is-tablex-occupied(c) {
-              none
-            } else {
-              c
-            }
-          },
-        ),
+        original-cells.map(c => {
+          if is-tablex-occupied(c) {
+            none
+          } else {
+            c
+          }
+        }),
       )
       
       if type(cells) != _array-type {
-        panic(
-          "Tablex error: 'map-rows' returned something that isn't an array.",
-        )
+        panic("Tablex error: 'map-rows' returned something that isn't an array.")
       }
       
       if cells.len() != original-cells.len() {
-        panic(
-          "Tablex error: 'map-rows' returned " + str(
-            cells.len(),
-          ) + " cells, when it should have returned exactly " + str(
-            original-cells.len(),
-          ) + ".",
-        )
+        panic("Tablex error: 'map-rows' returned " + str(
+          cells.len(),
+        ) + " cells, when it should have returned exactly " + str(
+          original-cells.len(),
+        ) + ".")
       }
       
       for (i,
       cell) in cells.enumerate() {
         let orig-cell = original-cells.at(i)
-        if not is-tablex-cell(
-          orig-cell,
-        ) {
+        if not is-tablex-cell(orig-cell) {
                     // only modify non-occupied cells
                     continue
                 }
@@ -2998,24 +2930,16 @@ input_file: tests/assets/tablex.typ
         let x = cell.x
         let y = cell.y
         
-        if type(x) != _int-type or type(
-          y,
-        ) != _int-type or x < 0 or y < 0 or x >= col-len or y >= row-len {
-          panic(
-            "Tablex error: 'map-rows' returned a cell with invalid coordinates.",
-          )
+        if type(x) != _int-type or type(y) != _int-type or x < 0 or y < 0 or x >= col-len or y >= row-len {
+          panic("Tablex error: 'map-rows' returned a cell with invalid coordinates.")
         }
         
         if y != row {
-          panic(
-            "Tablex error: 'map-rows' returned a cell in a different row (the 'y' must be kept the same).",
-          )
+          panic("Tablex error: 'map-rows' returned a cell in a different row (the 'y' must be kept the same).")
         }
         
         if cell.colspan != orig-cell.colspan or cell.rowspan != orig-cell.rowspan {
-          panic(
-            "Tablex error: Please do not change the colspan or rowspan of a cell in 'map-rows'.",
-          )
+          panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-rows'.")
         }
         
         cell.content = [#cell.content]
@@ -3031,39 +2955,31 @@ input_file: tests/assets/tablex.typ
       // occupied cells = none for the outer user
       let cells = map-cols(
         column,
-        original-cells.map(
-          c => {
-            if is-tablex-occupied(c) {
-              none
-            } else {
-              c
-            }
-          },
-        ),
+        original-cells.map(c => {
+          if is-tablex-occupied(c) {
+            none
+          } else {
+            c
+          }
+        }),
       )
       
       if type(cells) != _array-type {
-        panic(
-          "Tablex error: 'map-cols' returned something that isn't an array.",
-        )
+        panic("Tablex error: 'map-cols' returned something that isn't an array.")
       }
       
       if cells.len() != original-cells.len() {
-        panic(
-          "Tablex error: 'map-cols' returned " + str(
-            cells.len(),
-          ) + " cells, when it should have returned exactly " + str(
-            original-cells.len(),
-          ) + ".",
-        )
+        panic("Tablex error: 'map-cols' returned " + str(
+          cells.len(),
+        ) + " cells, when it should have returned exactly " + str(
+          original-cells.len(),
+        ) + ".")
       }
       
       for (i,
       cell) in cells.enumerate() {
         let orig-cell = original-cells.at(i)
-        if not is-tablex-cell(
-          orig-cell,
-        ) {
+        if not is-tablex-cell(orig-cell) {
                     // only modify non-occupied cells
                     continue
                 }
@@ -3075,22 +2991,14 @@ input_file: tests/assets/tablex.typ
         let x = cell.x
         let y = cell.y
         
-        if type(x) != _int-type or type(
-          y,
-        ) != _int-type or x < 0 or y < 0 or x >= col-len or y >= row-len {
-          panic(
-            "Tablex error: 'map-cols' returned a cell with invalid coordinates.",
-          )
+        if type(x) != _int-type or type(y) != _int-type or x < 0 or y < 0 or x >= col-len or y >= row-len {
+          panic("Tablex error: 'map-cols' returned a cell with invalid coordinates.")
         }
         if x != column {
-          panic(
-            "Tablex error: 'map-cols' returned a cell in a different column (the 'x' must be kept the same).",
-          )
+          panic("Tablex error: 'map-cols' returned a cell in a different column (the 'x' must be kept the same).")
         }
         if cell.colspan != orig-cell.colspan or cell.rowspan != orig-cell.rowspan {
-          panic(
-            "Tablex error: Please do not change the colspan or rowspan of a cell in 'map-cols'.",
-          )
+          panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-cols'.")
         }
         
         cell.content = [#cell.content]
@@ -3120,15 +3028,9 @@ input_file: tests/assets/tablex.typ
   repeat-header = default-if-auto(default-if-none(repeat-header, false), false)
   
   if type(repeat-header) not in (_bool-type, _int-type, _array-type) {
-    panic(
-      "Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).",
-    )
-  } else if type(repeat-header) == _array-type and repeat-header.any(
-    i => type(i) != _int-type,
-  ) {
-    panic(
-      "Tablex error: 'repeat-header' cannot be an array of anything other than integers!",
-    )
+    panic("Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).")
+  } else if type(repeat-header) == _array-type and repeat-header.any(i => type(i) != _int-type) {
+    panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
   }
   
   repeat-header
@@ -3141,9 +3043,7 @@ input_file: tests/assets/tablex.typ
   )
   
   if type(header-hlines-have-priority) != _bool-type {
-    panic(
-      "Tablex error: 'header-hlines-have-priority' option must be a boolean.",
-    )
+    panic("Tablex error: 'header-hlines-have-priority' option must be a boolean.")
   }
   
   header-hlines-have-priority
@@ -3297,9 +3197,7 @@ input_file: tests/assets/tablex.typ
     repeat-header,
     header-rows: header-rows,
   )
-  let header-hlines-have-priority = validate-header-hlines-priority(
-    header-hlines-have-priority,
-  )
+  let header-hlines-have-priority = validate-header-hlines-priority(header-hlines-have-priority)
   let map-cells = validate-map-func(map-cells)
   let map-hlines = validate-map-func(map-hlines)
   let map-vlines = validate-map-func(map-vlines)
@@ -3307,172 +3205,164 @@ input_file: tests/assets/tablex.typ
   let map-cols = validate-map-func(map-cols)
   let fit-spans = validate-fit-spans(fit-spans, default: (x: false, y: false))
   
-  layout(
-    size => locate(
-      t_loc => style(
-        styles => {
-          let table_id = _tablex-table-counter.at(t_loc)
-          let page_dimensions = get-page-dim-state(table_id)
-          let page_dim_at = page_dimensions.final(t_loc)
-          let t_pos = t_loc.position()
-          
-          // Subtract the max width/height from current width/height to disregard margin/etc.
-          let page_width = size.width
-          let page_height = size.height
-          
-          let max_pos = default-if-none(
-            page_dim_at.bottom_right,
-            (x: t_pos.x + page_width, y: t_pos.y + page_height),
-          )
-          let min_pos = default-if-none(page_dim_at.top_left, t_pos)
-          
-          let items = items.pos().map(table-item-convert)
-          
-          let gutter = parse-gutters(
-            col-gutter: column-gutter,
-            row-gutter: row-gutter,
-            gutter: gutter,
-            styles: styles,
-            page-width: page_width,
-            page-height: page_height,
-          )
-          
-          let validated_cols_rows = validate-cols-rows(
-            columns,
-            rows,
-            items: items.filter(is-tablex-cell),
-          )
-          
-          let columns = validated_cols_rows.columns
-          let rows = validated_cols_rows.rows
-          items += validated_cols_rows.items
-          
-          let col_len = columns.len()
-          let row_len = rows.len()
-          
-          // generate cell matrix and other things
-          let grid_info = generate-grid(
-            items,
-            x_limit: col_len,
-            y_limit: row_len,
-            map-cells: map-cells,
-            fit-spans: fit-spans,
-          )
-          
-          let table_grid = grid_info.grid
-          let hlines = grid_info.hlines
-          let vlines = grid_info.vlines
-          let items = grid_info.items
-          
-          // When there are more rows than the user specified, we ensure they have
-          // the same size as the last specified row.
-          let last-row-size = if rows.len() == 0 {
-            auto
-          } else {
-            rows.last()
-          }
-          for _ in range(
-            grid_info.new_row_count - row_len,
-          ) {
+  layout(size => locate(t_loc => style(styles => {
+    let table_id = _tablex-table-counter.at(t_loc)
+    let page_dimensions = get-page-dim-state(table_id)
+    let page_dim_at = page_dimensions.final(t_loc)
+    let t_pos = t_loc.position()
+    
+    // Subtract the max width/height from current width/height to disregard margin/etc.
+    let page_width = size.width
+    let page_height = size.height
+    
+    let max_pos = default-if-none(
+      page_dim_at.bottom_right,
+      (x: t_pos.x + page_width, y: t_pos.y + page_height),
+    )
+    let min_pos = default-if-none(page_dim_at.top_left, t_pos)
+    
+    let items = items.pos().map(table-item-convert)
+    
+    let gutter = parse-gutters(
+      col-gutter: column-gutter,
+      row-gutter: row-gutter,
+      gutter: gutter,
+      styles: styles,
+      page-width: page_width,
+      page-height: page_height,
+    )
+    
+    let validated_cols_rows = validate-cols-rows(
+      columns,
+      rows,
+      items: items.filter(is-tablex-cell),
+    )
+    
+    let columns = validated_cols_rows.columns
+    let rows = validated_cols_rows.rows
+    items += validated_cols_rows.items
+    
+    let col_len = columns.len()
+    let row_len = rows.len()
+    
+    // generate cell matrix and other things
+    let grid_info = generate-grid(
+      items,
+      x_limit: col_len,
+      y_limit: row_len,
+      map-cells: map-cells,
+      fit-spans: fit-spans,
+    )
+    
+    let table_grid = grid_info.grid
+    let hlines = grid_info.hlines
+    let vlines = grid_info.vlines
+    let items = grid_info.items
+    
+    // When there are more rows than the user specified, we ensure they have
+    // the same size as the last specified row.
+    let last-row-size = if rows.len() == 0 {
+      auto
+    } else {
+      rows.last()
+    }
+    for _ in range(grid_info.new_row_count - row_len) {
             rows.push(last-row-size)  // add new rows (due to extra cells)
         }
-          
-          let col_len = columns.len()
-          let row_len = rows.len()
-          
-          let auto_lines_res = generate-autolines(
-            auto-lines: auto-lines,
-            auto-hlines: auto-hlines,
-            auto-vlines: auto-vlines,
-            hlines: hlines,
-            vlines: vlines,
-            col_len: col_len,
-            row_len: row_len,
-          )
-          
-          hlines += auto_lines_res.new_hlines
-          vlines += auto_lines_res.new_vlines
-          
-          let parsed_lines = _parse-lines(
-            hlines,
-            vlines,
-            styles: styles,
-            page-width: page_width,
-            page-height: page_height,
-          )
-          hlines = parsed_lines.hlines
-          vlines = parsed_lines.vlines
-          
-          let mapped_grid = apply-maps(
-            grid: table_grid,
-            hlines: hlines,
-            vlines: vlines,
-            map-hlines: map-hlines,
-            map-vlines: map-vlines,
-            map-rows: map-rows,
-            map-cols: map-cols,
-          )
-          
-          table_grid = mapped_grid.grid
-          hlines = mapped_grid.hlines
-          vlines = mapped_grid.vlines
-          
-          // re-parse just in case
-          let parsed_lines = _parse-lines(
-            hlines,
-            vlines,
-            styles: styles,
-            page-width: page_width,
-            page-height: page_height,
-          )
-          hlines = parsed_lines.hlines
-          vlines = parsed_lines.vlines
-          
-          // convert auto to actual size
-          let updated_cols_rows = determine-auto-column-row-sizes(
-            grid: table_grid,
-            page_width: page_width,
-            page_height: page_height,
-            styles: styles,
-            columns: columns,
-            rows: rows,
-            inset: inset,
-            align: align,
-            gutter: gutter,
-            fit-spans: fit-spans,
-          )
-          
-          let columns = updated_cols_rows.columns
-          let rows = updated_cols_rows.rows
-          let gutter = updated_cols_rows.gutter
-          
-          let row_groups = generate-row-groups(
-            grid: table_grid,
-            columns: columns,
-            rows: rows,
-            stroke: stroke,
-            inset: inset,
-            gutter: gutter,
-            fill: fill,
-            align: align,
-            hlines: hlines,
-            vlines: vlines,
-            styles: styles,
-            repeat-header: repeat-header,
-            header-hlines-have-priority: header-hlines-have-priority,
-            header-rows: header-rows,
-            rtl: rtl,
-            min-pos: min_pos,
-            max-pos: max_pos,
-            table-loc: t_loc,
-            table-id: table_id,
-          )
-          
-          grid(columns: (auto,), rows: auto, ..row_groups)
-        },
-      ),
-    ),
-  )
+    
+    let col_len = columns.len()
+    let row_len = rows.len()
+    
+    let auto_lines_res = generate-autolines(
+      auto-lines: auto-lines,
+      auto-hlines: auto-hlines,
+      auto-vlines: auto-vlines,
+      hlines: hlines,
+      vlines: vlines,
+      col_len: col_len,
+      row_len: row_len,
+    )
+    
+    hlines += auto_lines_res.new_hlines
+    vlines += auto_lines_res.new_vlines
+    
+    let parsed_lines = _parse-lines(
+      hlines,
+      vlines,
+      styles: styles,
+      page-width: page_width,
+      page-height: page_height,
+    )
+    hlines = parsed_lines.hlines
+    vlines = parsed_lines.vlines
+    
+    let mapped_grid = apply-maps(
+      grid: table_grid,
+      hlines: hlines,
+      vlines: vlines,
+      map-hlines: map-hlines,
+      map-vlines: map-vlines,
+      map-rows: map-rows,
+      map-cols: map-cols,
+    )
+    
+    table_grid = mapped_grid.grid
+    hlines = mapped_grid.hlines
+    vlines = mapped_grid.vlines
+    
+    // re-parse just in case
+    let parsed_lines = _parse-lines(
+      hlines,
+      vlines,
+      styles: styles,
+      page-width: page_width,
+      page-height: page_height,
+    )
+    hlines = parsed_lines.hlines
+    vlines = parsed_lines.vlines
+    
+    // convert auto to actual size
+    let updated_cols_rows = determine-auto-column-row-sizes(
+      grid: table_grid,
+      page_width: page_width,
+      page_height: page_height,
+      styles: styles,
+      columns: columns,
+      rows: rows,
+      inset: inset,
+      align: align,
+      gutter: gutter,
+      fit-spans: fit-spans,
+    )
+    
+    let columns = updated_cols_rows.columns
+    let rows = updated_cols_rows.rows
+    let gutter = updated_cols_rows.gutter
+    
+    let row_groups = generate-row-groups(
+      grid: table_grid,
+      columns: columns,
+      rows: rows,
+      stroke: stroke,
+      inset: inset,
+      gutter: gutter,
+      fill: fill,
+      align: align,
+      hlines: hlines,
+      vlines: vlines,
+      styles: styles,
+      repeat-header: repeat-header,
+      header-hlines-have-priority: header-hlines-have-priority,
+      header-rows: header-rows,
+      rtl: rtl,
+      min-pos: min_pos,
+      max-pos: max_pos,
+      table-loc: t_loc,
+      table-id: table_id,
+    )
+    
+    grid(columns: (auto,), rows: auto, ..row_groups)
+  })))
 }
 
 // Same as table but defaults to lines off

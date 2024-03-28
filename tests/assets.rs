@@ -98,6 +98,14 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
     Ok(tests)
 }
 
+fn remove_crlf(content: String) -> String {
+    if cfg!(windows) {
+        content.replace("\r\n", "\n")
+    } else {
+        content
+    }
+}
+
 /// Performs a couple of tidy tests.
 fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
@@ -105,6 +113,7 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     // Check that the file is valid UTF-8
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
+    let content = remove_crlf(content);
     let rel_path = pathdiff::diff_paths(
         path,
         env::current_dir().unwrap().join("tests").join("assets"),
@@ -130,6 +139,7 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
     // Check that the file is valid UTF-8
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
+    let content = remove_crlf(content);
     let first_pass = pretty_print(&content, width);
     let second_pass = pretty_print(&first_pass, width);
     pretty_assertions::assert_str_eq!(
@@ -165,6 +175,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     // Check that the file is valid UTF-8
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
+    let content = remove_crlf(content);
     let formatted_src = pretty_print(&content, width);
     let doc = compile_typst_src(&content);
     let formatted_doc = compile_typst_src(&formatted_src);

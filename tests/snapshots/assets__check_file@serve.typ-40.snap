@@ -5,9 +5,7 @@ input_file: tests/assets/serve.typ
 ---
 #import "/github-pages/docs/book.typ": book-page
 
-#show: book-page.with(
-  title: "CLI Serve Command",
-)
+#show: book-page.with(title: "CLI Serve Command")
 
 = The serve command
 

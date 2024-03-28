@@ -38,24 +38,20 @@ input_file: tests/assets/undergraduate-math.typ
 )
 
 // LaTeX and TeX logos
-#let TeX = style(
-  styles => {
-    let e = measure(text(normalsize, "E"), styles)
-    let T = "T"
-    let E = text(normalsize, baseline: e.height / 2, "E")
-    let X = "X"
-    box(T + kern(-0.1667em) + E + kern(-0.125em) + X)
-  },
-)
-#let LaTeX = style(
-  styles => {
-    let l = measure(text(10pt, "L"), styles)
-    let a = measure(text(7pt, "A"), styles)
-    let L = "L"
-    let A = text(7pt, baseline: a.height - l.height, "A")
-    box(L + kern(-0.36em) + A + kern(-0.15em) + TeX)
-  },
-)
+#let TeX = style(styles => {
+  let e = measure(text(normalsize, "E"), styles)
+  let T = "T"
+  let E = text(normalsize, baseline: e.height / 2, "E")
+  let X = "X"
+  box(T + kern(-0.1667em) + E + kern(-0.125em) + X)
+})
+#let LaTeX = style(styles => {
+  let l = measure(text(10pt, "L"), styles)
+  let a = measure(text(7pt, "A"), styles)
+  let L = "L"
+  let A = text(7pt, baseline: a.height - l.height, "A")
+  box(L + kern(-0.36em) + A + kern(-0.15em) + TeX)
+})
 
 // Update date
 #let date = datetime.today().display()
