@@ -576,7 +576,7 @@ impl PrettyPrinter {
         if has_parenthesized_args {
             let (args, prefer_tighter) = self.convert_parenthesized_args(func_call.args());
 
-            doc = if prefer_tighter && args.len() <= 1 {
+            doc = if prefer_tighter {
                 doc.append(BoxDoc::text("("))
                     .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
                     .append(BoxDoc::text(")"))
@@ -606,13 +606,16 @@ impl PrettyPrinter {
                 self.convert_arg(arg)
             })
             .collect();
+        // We prefer tighter style if...
+        // 1. There are no arguments
+        // 2. There is only one argument and it is not a function call
         let prefer_tighter = args.is_empty()
             || (args.len() == 1 && {
                 let arg = last_arg.unwrap();
                 let rhs = match arg {
                     Arg::Pos(p) => p,
                     Arg::Named(n) => n.expr(),
-                    Arg::Spread(s) => s.sink_expr().unwrap(),
+                    Arg::Spread(s) => s.expr(),
                 };
                 !matches!(rhs, Expr::FuncCall(..))
             });
