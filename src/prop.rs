@@ -31,9 +31,10 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>, sta
                 no_format = true;
                 map.insert(child.clone());
             }
-            if node.kind() != SyntaxKind::ContentBlock
-                || node.kind() != SyntaxKind::CodeBlock
-                || node.kind() != SyntaxKind::Code
+            if child.kind() == SyntaxKind::BlockComment
+                || (node.kind() != SyntaxKind::ContentBlock
+                    && node.kind() != SyntaxKind::CodeBlock
+                    && node.kind() != SyntaxKind::Code)
             {
                 map.insert(node.clone());
             }
