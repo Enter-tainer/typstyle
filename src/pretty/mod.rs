@@ -725,14 +725,18 @@ impl PrettyPrinter {
     }
 
     fn convert_destructuring<'a>(&'a self, destructuring: Destructuring<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::text("(")
-            .append(BoxDoc::intersperse(
-                destructuring
-                    .items()
-                    .map(|item| self.convert_destructuring_item(item)),
-                BoxDoc::text(",").append(BoxDoc::line()),
-            ))
-            .append(BoxDoc::text(")"))
+        let items: Vec<_> = destructuring
+            .items()
+            .map(|item| self.convert_destructuring_item(item))
+            .collect();
+        pretty_items(
+            &items,
+            BoxDoc::text(",").append(BoxDoc::space()),
+            BoxDoc::text(","),
+            (BoxDoc::text("("), BoxDoc::text(")")),
+            false,
+            util::FoldStyle::Fit,
+        )
     }
 
     fn convert_destructuring_item<'a>(
