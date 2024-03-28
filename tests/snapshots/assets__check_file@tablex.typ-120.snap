@@ -1054,8 +1054,7 @@ input_file: tests/assets/tablex.typ
   }
   
   // for missing cell positions: add empty cell
-  for (index,
-  item) in grid.items.enumerate() {
+  for (index, item) in grid.items.enumerate() {
     if item == none {
       grid.items.at(index) = new_empty_cell(grid, index: index)
     }
@@ -1209,8 +1208,7 @@ input_file: tests/assets/tablex.typ
     gutter = frac-width * (gutter / 1fr)
   }
   
-  for (i,
-  size) in frac-tracks {
+  for (i, size) in frac-tracks {
     tracks.at(i) = frac-width * (size / 1fr)
   }
   
@@ -1223,8 +1221,7 @@ input_file: tests/assets/tablex.typ
   let cell-cols = range(cell.x, cell.x + cell.colspan)
   let last_auto_col = none
   
-  for (i,
-  col) in columns.enumerate() {
+  for (i, col) in columns.enumerate() {
     if i in cell-cols and col == auto {
       last_auto_col = max-if-not-none(last_auto_col, i)
     }
@@ -1239,8 +1236,7 @@ input_file: tests/assets/tablex.typ
   let cell-rows = range(cell.y, cell.y + cell.rowspan)
   let last_auto_row = none
   
-  for (i,
-  row) in rows.enumerate() {
+  for (i, row) in rows.enumerate() {
     if i in cell-rows and row == auto {
       last_auto_row = max-if-not-none(last_auto_row, i)
     }
@@ -1257,8 +1253,7 @@ input_file: tests/assets/tablex.typ
   let cell-cols = range(cell.x, cell.x + cell.colspan)
   let size = 0pt
   
-  for (i,
-  col) in columns.enumerate() {
+  for (i, col) in columns.enumerate() {
     if i in cell-cols and type(col) == _length-type {
       size += col
     }
@@ -1274,8 +1269,7 @@ input_file: tests/assets/tablex.typ
   let cell-rows = range(cell.y, cell.y + cell.rowspan)
   let size = 0pt
   
-  for (i,
-  row) in rows.enumerate() {
+  for (i, row) in rows.enumerate() {
     if i in cell-rows and type(row) == _length-type {
       size += row
     }
@@ -1301,8 +1295,7 @@ input_file: tests/assets/tablex.typ
   let all-frac-columns = columns.enumerate().filter(i-col => type(
     i-col.at(1),
   ) == _fraction-type).map(i-col => i-col.at(0))
-  for (i,
-  col) in columns.enumerate() {
+  for (i, col) in columns.enumerate() {
     if col == auto {
       // max cell width
       let col_size = grid-get-column(grid, i).fold(
@@ -1432,8 +1425,7 @@ input_file: tests/assets/tablex.typ
     fair-share = remaining / auto-cols-to-resize
     fair-share-should-change = false
     
-    for (_,
-    col) in auto-cols {
+    for (_, col) in auto-cols {
       // 1. If it is smaller than the fair share,
       // then it can keep its size, and we should
       // update the fair share.
@@ -1449,8 +1441,7 @@ input_file: tests/assets/tablex.typ
   }
   
   // 2. Resize any columns larger than the calculated fair share to the fair share.
-  for (i,
-  col) in auto-cols {
+  for (i, col) in auto-cols {
     if col > fair-share {
       columns.at(i) = fair-share
     }
@@ -1564,8 +1555,7 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_rows = rows
   
-  for (i,
-  row) in rows.enumerate() {
+  for (i, row) in rows.enumerate() {
     if row == auto {
       // max cell height
       let row_size = grid-get-row(grid, i).fold(
@@ -2739,8 +2729,7 @@ input_file: tests/assets/tablex.typ
         ) + " cells, when it should have returned exactly " + str(original-cells.len()) + ".")
       }
       
-      for (i,
-      cell) in cells.enumerate() {
+      for (i, cell) in cells.enumerate() {
         let orig-cell = original-cells.at(i)
         if not is-tablex-cell(orig-cell) {
           // only modify non-occupied cells
@@ -2798,8 +2787,7 @@ input_file: tests/assets/tablex.typ
         ) + " cells, when it should have returned exactly " + str(original-cells.len()) + ".")
       }
       
-      for (i,
-      cell) in cells.enumerate() {
+      for (i, cell) in cells.enumerate() {
         let orig-cell = original-cells.at(i)
         if not is-tablex-cell(orig-cell) {
           // only modify non-occupied cells
