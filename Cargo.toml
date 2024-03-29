@@ -79,6 +79,6 @@ default = ["cli", "wasm"]
 cli = ["clap", "once_cell"]
 wasm = ["wasm-bindgen"]
 
-
-[profile.release]
+[profile.ci]
+inherits = "release"
 debug = true

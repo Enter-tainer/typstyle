@@ -33,7 +33,6 @@ jobs:
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "v0.12.1"
-      - uses: mozilla-actions/sccache-action@v0.0.3
       - uses: actions/setup-node@v4
         with:
           node-version: 18
