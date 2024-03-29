@@ -229,13 +229,23 @@ impl PrettyPrinter {
         let is_block = raw.block();
         let has_lang = raw.lang().is_some();
         let mut is_opening = true;
+        let mut is_first_text = true;
+        let mut last_text: Option<Text> = None;
         for child in raw.to_untyped().children() {
             if let Some(delim) = child.cast::<RawDelim>() {
+                // deal with single line raw that ends with `
+                if !is_block && !is_opening {
+                    if let Some(last_text) = last_text {
+                        if last_text.get().ends_with('`') {
+                            doc = doc.append(BoxDoc::space());
+                        }
+                    }
+                }
                 doc = doc.append(trivia(delim.to_untyped()));
                 if is_block && !has_lang && is_opening {
                     doc = doc.append(BoxDoc::hardline());
-                    is_opening = false;
                 }
+                is_opening = false;
             }
             if let Some(lang) = child.cast::<RawLang>() {
                 doc = doc.append(trivia(lang.to_untyped()));
@@ -246,6 +256,12 @@ impl PrettyPrinter {
                 });
             }
             if let Some(line) = child.cast::<Text>() {
+                // deal with single line raw that starts with `
+                if is_first_text && line.get().starts_with('`') && !is_block && !has_lang {
+                    doc = doc.append(BoxDoc::space());
+                }
+                is_first_text = false;
+                last_text = Some(line);
                 doc = doc.append(trivia(line.to_untyped()));
                 if is_block {
                     doc = doc.append(BoxDoc::hardline());
