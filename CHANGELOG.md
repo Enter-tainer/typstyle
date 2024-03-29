@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.6 - [2024-03-29]
+
+- Fix raw block that starts/ends with backtick is wrongly formatted
+- Add version string in `--version` output
+
 ## v0.11.5 - [2024-03-28]
 
 - Fix long import item being spread across multiple lines
