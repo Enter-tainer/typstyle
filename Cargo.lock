@@ -3440,8 +3440,7 @@ dependencies = [
 [[package]]
 name = "typst-syntax"
 version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "367d86bf18f0363146bea1ea76fad19b54458695fdfad5e74ead3ede574b75fe"
+source = "git+https://github.com/Myriad-Dreamin/typst?rev=d2afbb9a62436a20b507e833d70a2ddc77a00b74#d2afbb9a62436a20b507e833d70a2ddc77a00b74"
 dependencies = [
  "comemo",
  "ecow",

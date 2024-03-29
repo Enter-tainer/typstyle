@@ -40,6 +40,10 @@ once_cell = { version = "1.19.0", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 clap = { version = "4.5.4", features = ["derive", "env"], optional = true }
 
+[patch.crates-io]
+# https://github.com/typst/typst/issues/3820
+typst-syntax = { git = "https://github.com/Myriad-Dreamin/typst", rev = "d2afbb9a62436a20b507e833d70a2ddc77a00b74"}
+
 [dev-dependencies]
 insta = { version = "1.37.0" }
 libtest-mimic = "0.7.0"
