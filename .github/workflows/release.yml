@@ -170,7 +170,7 @@ jobs:
           path: typstyle-${{ env.target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
 
   build_alpine:
-    needs: [pre_build, test]
+    needs: [pre_build]
     name: build (x86_64-unknown-linux-musl)
     runs-on: ubuntu-latest
     container:
