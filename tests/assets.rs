@@ -1,5 +1,3 @@
-extern crate libtest_mimic;
-
 use libtest_mimic::{Arguments, Failed, Trial};
 use std::{
     borrow::Cow,
@@ -92,7 +90,9 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
     // We recursively look for `.typ` files, starting from the current
     // directory.
     let mut tests = Vec::new();
-    let current_dir = env::current_dir()?;
+    let current_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests")
+        .join("assets");
     visit_dir(&current_dir, &mut tests)?;
 
     Ok(tests)
@@ -179,7 +179,14 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     let formatted_src = pretty_print(&content, width);
     let doc = compile_typst_src(&content);
     let formatted_doc = compile_typst_src(&formatted_src);
+    compare_docs(doc, formatted_doc)?;
+    Ok(())
+}
 
+fn compare_docs(
+    doc: Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>>,
+    formatted_doc: Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>>,
+) -> Result<(), Failed> {
     match (doc, formatted_doc) {
         (Ok(doc), Ok(formatted_doc)) => {
             pretty_assertions::assert_eq!(

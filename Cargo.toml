@@ -45,10 +45,12 @@ clap = { version = "4.5.4", features = ["derive", "env"], optional = true }
 typst-syntax = { git = "https://github.com/Myriad-Dreamin/typst", rev = "d2afbb9a62436a20b507e833d70a2ddc77a00b74"}
 
 [dev-dependencies]
-insta = { version = "1.37.0" }
+anyhow = "1"
+insta = { version = "1.38.0" }
 libtest-mimic = "0.7.0"
 pathdiff = "0.2.1"
 pretty_assertions = "1.4.0"
+walkdir = "2"
 typst-ts-core = { version = "0.5.0-rc2", default-features = false, features = [
   "no-content-hint",
 ] }
@@ -60,7 +62,7 @@ typst-assets = { version = "0.11.0", features = ["fonts"] }
 typst-svg = "0.11.0"
 
 [build-dependencies]
-anyhow = "1.0.81"
+anyhow = "1"
 vergen = { version = "8.3.1", features = [
   "build",
   "cargo",
@@ -77,11 +79,18 @@ similar.opt-level = 3
 name = "assets"
 harness = false
 
+[[test]]
+name = "repo-e2e"
+harness = false
+
 [features]
 
 default = ["cli", "wasm"]
 cli = ["clap", "once_cell"]
 wasm = ["wasm-bindgen"]
+
+[profile.test]
+opt-level = 3
 
 [profile.ci]
 inherits = "release"
