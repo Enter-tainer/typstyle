@@ -17,7 +17,7 @@ input_file: tests/assets/unit/destruction.typ
   Austen: "Persuasion",
 )
 
-#let (Austen) = books
+#let (Austen,) = books
 Austen wrote #Austen.
 
 #let (Homer: h) = books
