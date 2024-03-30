@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.7 - [2024-03-30]
+
+- Fix import rename being wrongly formatted
+
 ## v0.11.6 - [2024-03-29]
 
 - Fix raw block that starts/ends with backtick is wrongly formatted

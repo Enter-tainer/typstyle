@@ -23,7 +23,7 @@ use typst_ts_core::{
 use typstyle_core::pretty_print;
 
 fn main() -> anyhow::Result<()> {
-    // let args = Arguments::from_args();
+    let _args = Arguments::from_args();
     // let tests = collect_tests()?;
     // libtest_mimic::run(&args, tests).exit();
     Ok(())
