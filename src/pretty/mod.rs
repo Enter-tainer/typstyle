@@ -967,6 +967,12 @@ impl PrettyPrinter {
         let mut doc = BoxDoc::nil().append(BoxDoc::text("import"));
         doc = doc.append(BoxDoc::space());
         doc = doc.append(self.convert_expr(import.source()));
+        if let Some(new_name) = import.new_name() {
+            doc = doc.append(BoxDoc::space());
+            doc = doc.append(BoxDoc::text("as"));
+            doc = doc.append(BoxDoc::space());
+            doc = doc.append(self.convert_ident(new_name));
+        }
         if let Some(imports) = import.imports() {
             doc = doc.append(BoxDoc::text(":"));
             doc = doc.append(BoxDoc::space());
@@ -978,12 +984,6 @@ impl PrettyPrinter {
                 ),
             };
             doc = doc.append(imports.group());
-        }
-        if let Some(new_name) = import.new_name() {
-            doc = doc.append(BoxDoc::space());
-            doc = doc.append(BoxDoc::text("as"));
-            doc = doc.append(BoxDoc::space());
-            doc = doc.append(self.convert_ident(new_name));
         }
         doc
     }
