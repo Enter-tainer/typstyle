@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use typst_syntax::{
-    ast::{Args, AstNode, Math},
+    ast::{Args, AstNode, Math, Raw},
     SyntaxKind, SyntaxNode,
 };
 
@@ -39,6 +39,15 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>, sta
                 map.insert(node.clone());
             }
             continue;
+        }
+        if let Some(raw) = child.cast::<Raw>() {
+            if !raw.block() {
+                if let Some(line) = raw.lines().next() {
+                    if line.get().contains('\n') {
+                        map.insert(child.clone());
+                    }
+                }
+            }
         }
         if child.cast::<Args>().is_some() && state.is_math {
             map.insert(child.clone());
