@@ -745,14 +745,25 @@ impl PrettyPrinter {
             .items()
             .map(|item| self.convert_destructuring_item(item))
             .collect();
-        pretty_items(
-            &items,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            util::FoldStyle::Fit,
-        )
+        if items.len() == 1
+            && matches!(
+                destructuring.items().next().unwrap(),
+                DestructuringItem::Pattern(_)
+            )
+        {
+            BoxDoc::text("(")
+                .append(items.into_iter().next().unwrap())
+                .append(BoxDoc::text(",)"))
+        } else {
+            pretty_items(
+                &items,
+                BoxDoc::text(",").append(BoxDoc::space()),
+                BoxDoc::text(","),
+                (BoxDoc::text("("), BoxDoc::text(")")),
+                false,
+                util::FoldStyle::Fit,
+            )
+        }
     }
 
     fn convert_destructuring_item<'a>(
