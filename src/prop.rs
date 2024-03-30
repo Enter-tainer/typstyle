@@ -53,6 +53,10 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>, sta
             map.insert(child.clone());
             continue;
         }
+        if child.kind() == SyntaxKind::Hash && state.is_math {
+            map.insert(node.clone());
+            break;
+        }
         if child.children().count() == 0 {
             continue;
         }
