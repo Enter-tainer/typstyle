@@ -50,6 +50,7 @@ We have set up multiple tests:
 1. Convergence tests: format result must be the same when applied twice
 2. Snapshot tests: format result are stored in the `snapshots` directory and are compared to the current result when running the tests
 3. Correctness test: We compare the rendered output of the code before and after formatting and ensure they are the same
+4. E2E Correctness test: We collect a bunch of typst code repo including tablex, cetz, fletcher... and format them to ensure (a) the format result converges and (b) the rendered output is the same.
 
 ## Known issues
 
