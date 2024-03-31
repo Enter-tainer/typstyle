@@ -213,14 +213,28 @@ fn compare_docs(
             for (i, (doc, formatted_doc)) in
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
-                let svg = typst_svg::svg(&doc.frame);
-                let formatted_svg = typst_svg::svg(&formatted_doc.frame);
-                pretty_assertions::assert_eq!(
-                    svg,
-                    formatted_svg,
-                    "The output are not consistent for page {}",
-                    i
+                let png = typst_render::render(
+                    &doc.frame,
+                    2.0,
+                    typst::visualize::Color::from_u8(255, 255, 255, 255),
                 );
+                let formatted_png = typst_render::render(
+                    &formatted_doc.frame,
+                    2.0,
+                    typst::visualize::Color::from_u8(255, 255, 255, 255),
+                );
+                if png != formatted_png {
+                    // save both to tmp path and report error
+                    let tmp_dir = env::temp_dir();
+                    let png_path = tmp_dir.join(format!("{}-{}.png", i, "original"));
+                    let formatted_png_path = tmp_dir.join(format!("{}-{}.png", i, "formatted"));
+                    png.save_png(&png_path).unwrap();
+                    formatted_png.save_png(&formatted_png_path).unwrap();
+                    return Err(Failed::from(format!(
+                        "The output are not consistent for page {}, original png path: {}, formatted png path: {}",
+                        i, png_path.display(), formatted_png_path.display()
+                    )));
+                }
             }
         }
         (Err(e1), Err(e2)) => {
