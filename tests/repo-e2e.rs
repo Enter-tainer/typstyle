@@ -288,7 +288,7 @@ fn compare_docs(
             std::fs::write(&pdf_path, pdf).context("failed to write pdf")?;
             std::fs::write(&formatted_pdf_path, formatted_pdf)
                 .context("failed to write formatted pdf")?;
-            println!(
+            let message = format!(
                 "The pdfs are written to \"{}\" and \"{}\"",
                 pdf_path.display(),
                 formatted_pdf_path.display()
@@ -296,22 +296,22 @@ fn compare_docs(
             pretty_assertions::assert_eq!(
                 doc.pages.len(),
                 formatted_doc.pages.len(),
-                "The page counts are not consistent"
+                "The page counts are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
                 doc.title,
                 formatted_doc.title,
-                "The titles are not consistent"
+                "The titles are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
                 doc.author,
                 formatted_doc.author,
-                "The authors are not consistent"
+                "The authors are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
                 doc.keywords,
                 formatted_doc.keywords,
-                "The keywords are not consistent"
+                "The keywords are not consistent. {message}"
             );
 
             for (i, (doc, formatted_doc)) in
