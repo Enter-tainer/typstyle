@@ -61,6 +61,7 @@ typst-ts-compiler = { version = "0.5.0-rc2", default-features = false, features 
 ] }
 typst-assets = { version = "0.11.0", features = ["fonts"] }
 typst-render = "0.11.0"
+typst-pdf = "0.11.0"
 typst = "0.11.0"
 
 [build-dependencies]

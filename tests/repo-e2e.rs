@@ -17,6 +17,7 @@ use typst_ts_core::{
     config::{compiler::EntryOpts, CompileOpts},
     diag::SourceDiagnostic,
     error::diag_from_std,
+    foundations::Smart,
     typst::prelude::EcoVec,
     TypstDocument, TypstWorld,
 };
@@ -127,6 +128,25 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "https://github.com/andreasKroepelin/lovelace",
             "a83b64662b1a6f78593b8e028e9a8162f1793d4c",
             "examples/doc.typ",
+        ),
+        Testcase::new(
+            "quill",
+            "https://github.com/Mc-Zen/quill",
+            "1816c38be530e1e63fa24cb37cf365a2425e90a5",
+            "docs/guide/quill-guide.typ",
+        )
+        .with_blacklist(
+            [
+                "shor-nine-qubit-code.typ",
+                "teleportation.typ",
+                "phase-estimation.typ",
+                "qft.typ",
+                "fault-tolerant-measurement.typ",
+                "fault-tolerant-pi8.typ",
+                "fault-tolerant-toffoli1.typ",
+                "fault-tolerant-toffoli2.typ",
+            ]
+            .into_iter(),
         ),
     ];
     Ok(cases
@@ -259,6 +279,20 @@ fn compare_docs(
 ) -> anyhow::Result<()> {
     match (doc, formatted_doc) {
         (Ok(doc), Ok(formatted_doc)) => {
+            let pdf = typst_pdf::pdf(&doc, Smart::Custom("original"), None);
+            let formatted_pdf = typst_pdf::pdf(&formatted_doc, Smart::Custom("formatted"), None);
+            // write both pdf to tmp path
+            let tmp_dir = env::temp_dir();
+            let pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "original"));
+            let formatted_pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "formatted"));
+            std::fs::write(&pdf_path, pdf).context("failed to write pdf")?;
+            std::fs::write(&formatted_pdf_path, formatted_pdf)
+                .context("failed to write formatted pdf")?;
+            println!(
+                "The pdfs are written to \"{}\" and \"{}\"",
+                pdf_path.display(),
+                formatted_pdf_path.display()
+            );
             pretty_assertions::assert_eq!(
                 doc.pages.len(),
                 formatted_doc.pages.len(),
