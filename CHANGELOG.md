@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.8 - [2024-03-31]
+
+- Fix multiline string/single-backtick-raw-block being wrongly formatted
+- Fix missing trailing comma single element array destruct
+- Fix `#` is missing in some math environments
+
 ## v0.11.7 - [2024-03-30]
 
 - Fix import rename being wrongly formatted
