@@ -2,7 +2,7 @@ use std::{io::Read, path::PathBuf};
 
 use clap::Parser;
 use typst_syntax::parse;
-use typstyle_core::{prop::get_no_format_nodes, PrettyPrinter};
+use typstyle_core::{attr::calculate_attributes, PrettyPrinter};
 
 use crate::cli::CliArguments;
 
@@ -29,12 +29,12 @@ fn main() {
     } = CliArguments::parse();
     let content = get_input(&input);
     let root = parse(&content);
-    let disabled_nodes = get_no_format_nodes(root.clone());
+    let attr_map = calculate_attributes(root.clone());
     if ast {
         println!("{:#?}", root);
     }
     let markup = root.cast().unwrap();
-    let printer = PrettyPrinter::new(disabled_nodes);
+    let printer = PrettyPrinter::new(attr_map);
     let doc = printer.convert_markup(markup);
     if pretty_doc {
         println!("{:#?}", doc);

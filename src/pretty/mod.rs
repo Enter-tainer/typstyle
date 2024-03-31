@@ -1,21 +1,22 @@
 use std::borrow::Cow;
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 use itertools::Itertools;
 use pretty::BoxDoc;
 use typst_syntax::{ast, SyntaxNode};
 use typst_syntax::{ast::*, SyntaxKind};
 
+use crate::attr::Attributes;
 use crate::util::{self, pretty_items};
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
-    disabled_nodes: HashSet<SyntaxNode>,
+    attr_map: HashMap<SyntaxNode, Attributes>,
 }
 
 impl PrettyPrinter {
-    pub fn new(disabled_nodes: HashSet<SyntaxNode>) -> Self {
-        Self { disabled_nodes }
+    pub fn new(attr_map: HashMap<SyntaxNode, Attributes>) -> Self {
+        Self { attr_map }
     }
 }
 
@@ -99,10 +100,9 @@ impl PrettyPrinter {
     }
 
     fn check_disabled<'a>(&'a self, node: &'a SyntaxNode) -> Option<BoxDoc<'a, ()>> {
-        if self.disabled_nodes.contains(node) {
-            Some(self.format_disabled(node))
-        } else {
-            None
+        match self.attr_map.get(node) {
+            Some(attr) if attr.no_format() => Some(self.format_disabled(node)),
+            _ => None,
         }
     }
 

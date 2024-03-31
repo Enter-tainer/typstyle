@@ -1,17 +1,17 @@
+pub mod attr;
 pub mod pretty;
-pub mod prop;
 pub mod util;
 
+pub use attr::calculate_attributes;
 pub use pretty::PrettyPrinter;
-pub use prop::get_no_format_nodes;
 
 pub fn pretty_print(content: &str, width: usize) -> String {
     let root = typst_syntax::parse(content);
     if root.erroneous() {
         return content.to_string();
     }
-    let disabled_nodes = get_no_format_nodes(root.clone());
-    let printer = PrettyPrinter::new(disabled_nodes);
+    let attr_map = calculate_attributes(root.clone());
+    let printer = PrettyPrinter::new(attr_map);
     let markup = root.cast().unwrap();
     let doc = printer.convert_markup(markup);
     doc.pretty(width).to_string()
