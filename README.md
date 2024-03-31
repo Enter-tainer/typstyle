@@ -60,7 +60,7 @@ We've set up comprehensive test suites to ensure the correctness of the formatte
 
 ## Why another formatter?
 
-Why there is a need for another formatter? We already have [typstfmt](https://github.com/astrale-sharp/typstfmt) and [typstfmt](https://github.com/jeffa5/typstfmt). Why another one?
+Why there is a need for another formatter? We already have [typstfmt](https://github.com/astrale-sharp/typstfmt), [typstfmt](https://github.com/jeffa5/typstfmt), [prettypst](https://github.com/antonWetzel/prettypst). Why another one?
 
 typstyle started because I had a bunch of ideas on how to improve typst source code formatting but kept finding typstfmt wasn't a good codebase to explore them with. Namely:
 
