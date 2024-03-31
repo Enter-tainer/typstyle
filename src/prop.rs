@@ -49,6 +49,10 @@ fn get_no_format_nodes_impl(node: SyntaxNode, map: &mut HashSet<SyntaxNode>, sta
                 }
             }
         }
+        if child.kind() == SyntaxKind::Hash && state.is_math {
+            map.insert(node.clone());
+            break;
+        }
         if child.cast::<Args>().is_some() && state.is_math {
             map.insert(child.clone());
             continue;

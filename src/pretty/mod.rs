@@ -339,6 +339,9 @@ impl PrettyPrinter {
     }
 
     fn convert_math<'a>(&'a self, math: Math<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(math.to_untyped()) {
+            return res;
+        }
         let mut doc: BoxDoc<()> = BoxDoc::nil();
         for node in math.to_untyped().children() {
             if let Some(expr) = node.cast::<Expr>() {
