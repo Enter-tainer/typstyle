@@ -1,5 +1,40 @@
 # Changelog
 
+## v0.11.9 - [2024-04-01]
+
+- Trailing spaces are now trimmed.
+- Spread args/array/dict into multiple lines if the first space in it contains a newline. This enables flexible control over the formatting of spread args.
+  This is called flavor detection.
+
+For example, this code:
+```typ
+#let my-f(arg1, arg2,
+  args: none) = {
+  arg1 + arg2
+}
+
+#let my-f(arg1,
+ arg2, args: none) = {
+  arg1 + arg2
+}
+
+```
+
+After formatting, it will become:
+```typ
+#let my-f(arg1, arg2, args: none) = {
+  arg1 + arg2
+}
+
+#let my-f(
+  arg1,
+  arg2,
+  args: none,
+) = {
+  arg1 + arg2
+}
+```
+
 ## v0.11.8 - [2024-03-31]
 
 - Fix multiline string/single-backtick-raw-block being wrongly formatted

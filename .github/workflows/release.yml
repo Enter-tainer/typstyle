@@ -244,3 +244,4 @@ jobs:
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
+          bodyFile: "CHANGELOG.md"
