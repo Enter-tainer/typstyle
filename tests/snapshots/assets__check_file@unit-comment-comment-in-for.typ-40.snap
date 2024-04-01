@@ -5,15 +5,15 @@ input_file: tests/assets/unit/comment/comment-in-for.typ
 ---
 #{
   for /* test */ i in "123" {
-    
+
   }
   for i /* test */ in "123" {
-    
+
   }
   for i in /* test */ "123" {
-    
+
   }
   for i in "123" /* test */ {
-    
+
   }
 }

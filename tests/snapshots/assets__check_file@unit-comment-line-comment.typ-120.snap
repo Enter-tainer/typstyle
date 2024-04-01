@@ -5,7 +5,7 @@ input_file: tests/assets/unit/comment/line-comment.typ
 ---
 #{
   // test
-  
+
   /*
   if direction == "bottom" {
     draw.line(a, (rel: (0, -grow/3)), ((), "-|", b), b)

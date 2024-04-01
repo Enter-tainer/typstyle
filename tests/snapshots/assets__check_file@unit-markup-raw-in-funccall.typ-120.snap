@@ -8,7 +8,7 @@ input_file: tests/assets/unit/markup/raw-in-funccall.typ
          &= pause (x + 1)^2  \
   `))
 
-#block(box(`   
+#block(box(`
       f(x) &= pause x^2 + 2x + 1  \
              &= pause (x + 1)^2  \
       `))

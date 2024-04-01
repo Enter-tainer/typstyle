@@ -6,7 +6,7 @@ input_file: tests/assets/unit/code/multiline-string.typ
 #{
   assert(
     true,
-    message: "Target 
+    message: "Target
               qubit for multi qubit gate does not exist aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   )
 }

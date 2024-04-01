@@ -14,7 +14,22 @@ pub fn pretty_print(content: &str, width: usize) -> String {
     let printer = PrettyPrinter::new(attr_map);
     let markup = root.cast().unwrap();
     let doc = printer.convert_markup(markup);
-    doc.pretty(width).to_string()
+    strip_trailing_whitespace(&doc.pretty(width).to_string())
+}
+
+/// Strip trailing whitespace in each line of the input string.
+fn strip_trailing_whitespace(s: &str) -> String {
+    let has_trailing_newline = s.ends_with('\n');
+    let res = s
+        .lines()
+        .map(|line| line.trim_end())
+        .collect::<Vec<_>>()
+        .join("\n");
+    if has_trailing_newline {
+        res + "\n"
+    } else {
+        res
+    }
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "wasm"))]
