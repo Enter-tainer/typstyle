@@ -157,7 +157,17 @@ input_file: tests/assets/tablex.typ
   parent: none,
 )
 
-#let cellx(content, x: auto, y: auto, rowspan: 1, colspan: 1, fill: auto, align: auto, inset: auto, fit-spans: auto) = (
+#let cellx(
+  content,
+  x: auto,
+  y: auto,
+  rowspan: 1,
+  colspan: 1,
+  fill: auto,
+  align: auto,
+  inset: auto,
+  fit-spans: auto,
+) = (
   tablex-dict-type: "cell",
   content: content,
   rowspan: rowspan,
@@ -210,7 +220,11 @@ input_file: tests/assets/tablex.typ
   if is-tablex-cell(content) {
     (..content, rowspan: length, ..cell_options.named())
   } else {
-    cellx(content, rowspan: length, ..cell_options.named())
+    cellx(
+      content,
+      rowspan: length,
+      ..cell_options.named(),
+    )
   }
 }
 
@@ -218,7 +232,11 @@ input_file: tests/assets/tablex.typ
   if is-tablex-cell(content) {
     (..content, colspan: length, ..cell_options.named())
   } else {
-    cellx(content, colspan: length, ..cell_options.named())
+    cellx(
+      content,
+      colspan: length,
+      ..cell_options.named(),
+    )
   }
 }
 
@@ -299,7 +317,12 @@ input_file: tests/assets/tablex.typ
 
   let col_row_is_valid(col_row) = (
     (not is-infinite-len(col_row)) and (
-      col_row == auto or type(col_row) in (_fraction-type, _length-type, _rel-len-type, _ratio-type)
+      col_row == auto or type(col_row) in (
+        _fraction-type,
+        _length-type,
+        _rel-len-type,
+        _ratio-type,
+      )
     )
   )
 
@@ -501,7 +524,10 @@ input_file: tests/assets/tablex.typ
 //
 // page-size: equivalent to 100%
 #let convert-ratio-type-to-pt(len, page-size) = {
-  assert(is-purely-pt-len(page-size), message: "'page-size' should be a purely pt length")
+  assert(
+    is-purely-pt-len(page-size),
+    message: "'page-size' should be a purely pt length",
+  )
 
   if page-size == none {
     panic("Cannot convert ratio to pt ('page-size' not specified).")
@@ -521,7 +547,10 @@ input_file: tests/assets/tablex.typ
 // frac-amount: amount of 'fr' specified
 // frac-total: total space shared by fractions
 #let convert-fraction-type-to-pt(len, frac-amount, frac-total) = {
-  assert(is-purely-pt-len(frac-total), message: "'frac-total' should be a purely pt length")
+  assert(
+    is-purely-pt-len(frac-total),
+    message: "'frac-total' should be a purely pt length",
+  )
 
   if frac-amount == none {
     panic("Cannot convert fraction to pt ('frac-amount' not specified).")
@@ -602,7 +631,13 @@ input_file: tests/assets/tablex.typ
 // page-size: equivalent to 100%
 // frac-amount: amount of 'fr' specified
 // frac-total: total space shared by fractions
-#let convert-length-to-pt(len, styles: none, page-size: none, frac-amount: none, frac-total: none) = {
+#let convert-length-to-pt(
+  len,
+  styles: none,
+  page-size: none,
+  frac-amount: none,
+  frac-total: none,
+) = {
   page-size = 0pt + page-size
 
   if is-infinite-len(len) {
@@ -789,7 +824,13 @@ input_file: tests/assets/tablex.typ
 }
 
 // Return the next position available on the grid
-#let next-available-position(grid, x: 0, y: 0, x_limit: 0, y_limit: 0) = {
+#let next-available-position(
+  grid,
+  x: 0,
+  y: 0,
+  x_limit: 0,
+  y_limit: 0,
+) = {
   let cell = (x, y)
   let there_is_next(cell_pos) = {
     let grid_cell = grid-at(grid, ..cell_pos)
@@ -1065,7 +1106,13 @@ input_file: tests/assets/tablex.typ
     grid.items.push(new_empty_cell(grid))
   }
 
-  (grid: grid, items: grid.items, hlines: hlines, vlines: vlines, new_row_count: grid-count-rows(grid))
+  (
+    grid: grid,
+    items: grid.items,
+    hlines: hlines,
+    vlines: vlines,
+    new_row_count: grid-count-rows(grid),
+  )
 }
 
 // -- end: grid functions --
@@ -1078,7 +1125,14 @@ input_file: tests/assets/tablex.typ
 // inset - The table's inset
 // align_default - The default alignment if the cell doesn't specify one
 // fill_default - The default fill color / etc if the cell doesn't specify one
-#let make-cell-box(cell, width: 0pt, height: 0pt, inset: 5pt, align_default: left, fill_default: none) = {
+#let make-cell-box(
+  cell,
+  width: 0pt,
+  height: 0pt,
+  inset: 5pt,
+  align_default: left,
+  fill_default: none,
+) = {
   let align_default = if type(align_default) == _function-type {
     align_default(cell.x, cell.y)
     // column, row
@@ -1348,7 +1402,13 @@ input_file: tests/assets/tablex.typ
             // simulate wrapping this cell in the final box,
             // but with unlimited width and height available
             // so we can measure its width.
-            let cell-box = make-cell-box(pcell, width: auto, height: auto, inset: cell_inset, align_default: auto)
+            let cell-box = make-cell-box(
+              pcell,
+              width: auto,
+              height: auto,
+              inset: cell_inset,
+              align_default: auto,
+            )
 
             let width = measure(cell-box, styles).width
             // + 2*cell_inset // the box already considers inset
@@ -1500,14 +1560,22 @@ input_file: tests/assets/tablex.typ
 
     let remaining_size = available_size - total_auto_size
     if remaining_size >= 0pt {
-      let frac_res = determine-frac-tracks(columns, remaining: remaining_size, gutter: col-gutter)
+      let frac_res = determine-frac-tracks(
+        columns,
+        remaining: remaining_size,
+        gutter: col-gutter,
+      )
 
       columns = frac_res.tracks
       fixed-size-gutter = frac_res.gutter
     } else {
       // don't shrink on width 'auto'
       if page_width != 0pt {
-        columns = fit-auto-columns(available: available_size, auto-cols: auto_sizes, columns: columns)
+        columns = fit-auto-columns(
+          available: available_size,
+          auto-cols: auto_sizes,
+          columns: columns,
+        )
       }
 
       columns = columns.map(c => {
@@ -1588,7 +1656,13 @@ input_file: tests/assets/tablex.typ
             // take extra inset as extra width or height on 'auto'
             let cell_inset = default-if-auto(pcell.inset, inset)
 
-            let cell-box = make-cell-box(pcell, width: width, height: auto, inset: cell_inset, align_default: align)
+            let cell-box = make-cell-box(
+              pcell,
+              width: width,
+              height: auto,
+              inset: cell_inset,
+              align_default: align,
+            )
 
             // measure the cell's actual height,
             // with its calculated width
@@ -1664,7 +1738,10 @@ input_file: tests/assets/tablex.typ
   if remaining >= 0pt {
     // split fractions in one page
     let frac_res = determine-frac-tracks(rows, remaining: remaining, gutter: row-gutter)
-    (rows: frac_res.tracks, gutter: frac_res.gutter)
+    (
+      rows: frac_res.tracks,
+      gutter: frac_res.gutter,
+    )
   } else {
     (
       rows: rows.map(r => {
@@ -1723,7 +1800,11 @@ input_file: tests/assets/tablex.typ
   rows = rows_res.rows
   gutter.row = rows_res.gutter
 
-  (columns: columns, rows: rows, gutter: gutter)
+  (
+    columns: columns,
+    rows: rows,
+    gutter: gutter,
+  )
 }
 
 // -- end: col/row size functions --
@@ -1822,7 +1903,10 @@ input_file: tests/assets/tablex.typ
 #let v-and-hline-spans-for-cell(cell, hlines: (), vlines: (), x_limit: 0, y_limit: 0, grid: ()) = {
   // only draw lines from the parent cell
   if is-tablex-occupied(cell) {
-    return (hlines: (), vlines: ())
+    return (
+      hlines: (),
+      vlines: (),
+    )
   }
 
   let hlines = hlines.filter(h => {
@@ -1871,7 +1955,10 @@ input_file: tests/assets/tablex.typ
     }
   }).filter(x => x != none)
 
-  (hlines: hlines, vlines: vlines)
+  (
+    hlines: hlines,
+    vlines: vlines,
+  )
 }
 
 // Are two hlines the same?
@@ -2018,8 +2105,14 @@ input_file: tests/assets/tablex.typ
     end_x = rightmost_x - end_x
   }
 
-  let start = (start_x, y)
-  let end = (end_x, y)
+  let start = (
+    start_x,
+    y,
+  )
+  let end = (
+    end_x,
+    y,
+  )
 
   if stroke != auto {
     if stroke != none {
@@ -2097,8 +2190,14 @@ input_file: tests/assets/tablex.typ
     x = rightmost_x - x
   }
 
-  let start = (x, start_y)
-  let end = (x, end_y)
+  let start = (
+    x,
+    start_y,
+  )
+  let end = (
+    x,
+    end_y,
+  )
 
   if stroke != auto {
     if stroke != none {
@@ -2292,7 +2391,12 @@ input_file: tests/assets/tablex.typ
             }
 
             // place the cell!
-            place(top + left, dx: dx, dy: height-between(start: first_y, end: y) + added_header_height, cell_box.box)
+            place(
+              top + left,
+              dx: dx,
+              dy: height-between(start: first_y, end: y) + added_header_height,
+              cell_box.box,
+            )
             // let box_h = measure(cell_box.box, styles).height
             // tallest_box_h = calc.max(tallest_box_h, box_h)
           }
@@ -2570,7 +2674,13 @@ input_file: tests/assets/tablex.typ
 
 // option parsing functions
 
-#let _parse-lines(hlines, vlines, page-width: none, page-height: none, styles: none) = {
+#let _parse-lines(
+  hlines,
+  vlines,
+  page-width: none,
+  page-height: none,
+  styles: none,
+) = {
   let parse-func(line, page-size: none) = {
     line.stroke-expand = line.stroke-expand == true
     line.expand = default-if-auto(line.expand, none)
@@ -2847,7 +2957,9 @@ input_file: tests/assets/tablex.typ
   repeat-header
 }
 
-#let validate-header-hlines-priority(header-hlines-have-priority) = {
+#let validate-header-hlines-priority(
+  header-hlines-have-priority,
+) = {
   header-hlines-have-priority = default-if-auto(default-if-none(header-hlines-have-priority, true), true)
 
   if type(header-hlines-have-priority) != _bool-type {
@@ -3034,7 +3146,11 @@ input_file: tests/assets/tablex.typ
       page-height: page_height,
     )
 
-    let validated_cols_rows = validate-cols-rows(columns, rows, items: items.filter(is-tablex-cell))
+    let validated_cols_rows = validate-cols-rows(
+      columns,
+      rows,
+      items: items.filter(is-tablex-cell),
+    )
 
     let columns = validated_cols_rows.columns
     let rows = validated_cols_rows.rows
@@ -3044,7 +3160,13 @@ input_file: tests/assets/tablex.typ
     let row_len = rows.len()
 
     // generate cell matrix and other things
-    let grid_info = generate-grid(items, x_limit: col_len, y_limit: row_len, map-cells: map-cells, fit-spans: fit-spans)
+    let grid_info = generate-grid(
+      items,
+      x_limit: col_len,
+      y_limit: row_len,
+      map-cells: map-cells,
+      fit-spans: fit-spans,
+    )
 
     let table_grid = grid_info.grid
     let hlines = grid_info.hlines

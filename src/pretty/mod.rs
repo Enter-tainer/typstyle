@@ -7,7 +7,7 @@ use typst_syntax::{ast, SyntaxNode};
 use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::attr::Attributes;
-use crate::util::{self, pretty_items};
+use crate::util::{pretty_items, FoldStyle};
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
@@ -412,7 +412,7 @@ impl PrettyPrinter {
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
             true,
-            util::FoldStyle::Never,
+            FoldStyle::Never,
         );
         doc
     }
@@ -479,13 +479,15 @@ impl PrettyPrinter {
                 .group();
             multiline.flat_alt(singleline)
         } else {
+            let style = FoldStyle::from_attr(self.attr_map.get(array.to_untyped()));
+
             pretty_items(
                 &array_items,
                 BoxDoc::text(",").append(BoxDoc::space()),
                 BoxDoc::text(","),
                 (BoxDoc::text("("), BoxDoc::text(")")),
                 false,
-                util::FoldStyle::Fit,
+                style,
             )
         }
     }
@@ -506,13 +508,14 @@ impl PrettyPrinter {
             .items()
             .map(|item| self.convert_dict_item(item))
             .collect_vec();
+        let style = FoldStyle::from_attr(self.attr_map.get(dict.to_untyped()));
         pretty_items(
             &dict_items,
             BoxDoc::text(",").append(BoxDoc::space()),
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
-            util::FoldStyle::Fit,
+            style,
         )
     }
 
@@ -593,7 +596,8 @@ impl PrettyPrinter {
             .children()
             .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
         if has_parenthesized_args {
-            let (args, prefer_tighter) = self.convert_parenthesized_args(func_call.args());
+            let (args, prefer_tighter, is_multiline) =
+                self.convert_parenthesized_args(func_call.args());
 
             doc = if prefer_tighter {
                 doc.append(BoxDoc::text("("))
@@ -606,22 +610,43 @@ impl PrettyPrinter {
                     BoxDoc::text(","),
                     (BoxDoc::text("("), BoxDoc::text(")")),
                     false,
-                    util::FoldStyle::Fit,
+                    if is_multiline {
+                        FoldStyle::Never
+                    } else {
+                        FoldStyle::Fit
+                    },
                 ))
             }
         };
         doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args))
     }
 
-    fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> (Vec<BoxDoc<'a, ()>>, bool) {
+    fn convert_parenthesized_args<'a>(
+        &'a self,
+        args: Args<'a>,
+    ) -> (Vec<BoxDoc<'a, ()>>, bool, bool) {
         let node = args.to_untyped();
         let mut last_arg = None;
+        let mut is_multiline = false;
+        for node in node
+            .children()
+            .take_while(|node| node.kind() != SyntaxKind::RightParen)
+        {
+            if let Some(space) = node.cast::<Space>() {
+                is_multiline = is_multiline || space.to_untyped().text().contains('\n');
+            }
+        }
         let args: Vec<BoxDoc<'a, ()>> = node
             .children()
             .take_while(|node| node.kind() != SyntaxKind::RightParen)
             .filter_map(|node| node.cast::<'_, Arg>())
             .map(|arg| {
                 last_arg = Some(arg);
+                is_multiline = is_multiline
+                    || self
+                        .attr_map
+                        .get(arg.to_untyped())
+                        .map_or(false, |attr| attr.is_multiline_flavor());
                 self.convert_arg(arg)
             })
             .collect();
@@ -638,7 +663,7 @@ impl PrettyPrinter {
                 };
                 !matches!(rhs, Expr::FuncCall(..))
             });
-        (args, prefer_tighter)
+        (args, prefer_tighter, is_multiline)
     }
 
     fn convert_additional_args<'a>(&'a self, args: Args<'a>, has_paren: bool) -> BoxDoc<'a, ()> {
@@ -667,13 +692,14 @@ impl PrettyPrinter {
     fn convert_closure<'a>(&'a self, closure: Closure<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::nil();
         let params = self.convert_params(closure.params());
+        let style = FoldStyle::from_attr(self.attr_map.get(closure.params().to_untyped()));
         let arg_list = pretty_items(
             &params,
             BoxDoc::text(",").append(BoxDoc::space()),
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
-            util::FoldStyle::Fit,
+            style,
         );
         if let Some(name) = closure.name() {
             doc = doc.append(self.convert_ident(name));
@@ -764,7 +790,7 @@ impl PrettyPrinter {
                 BoxDoc::text(","),
                 (BoxDoc::text("("), BoxDoc::text(")")),
                 false,
-                util::FoldStyle::Fit,
+                FoldStyle::Fit,
             )
         }
     }
@@ -819,14 +845,14 @@ impl PrettyPrinter {
             .append(BoxDoc::text("set"))
             .append(BoxDoc::space());
         doc = doc.append(self.convert_expr(set_rule.target()));
-        let (args, _) = self.convert_parenthesized_args(set_rule.args());
+        let (args, _, _) = self.convert_parenthesized_args(set_rule.args());
         doc = doc.append(pretty_items(
             &args,
             BoxDoc::text(",").append(BoxDoc::space()),
             BoxDoc::text(","),
             (BoxDoc::text("("), BoxDoc::text(")")),
             false,
-            util::FoldStyle::Single,
+            FoldStyle::Single,
         ));
         if let Some(condition) = set_rule.condition() {
             doc = doc.append(BoxDoc::space());
