@@ -43,21 +43,21 @@ input_file: tests/assets/cetz-tree.typ
   ))
   assert(grow > 0)
   assert(spread > 0)
-  
+
   if direction == "down" {
     direction = "bottom"
   }
   if direction == "up" {
     direction = "top"
   }
-  
+
   let opposite-dir = (
     left: "right",
     right: "left",
     bottom: "top",
     top: "bottom",
   )
-  
+
   if draw-edge == auto {
     draw-edge = (
       source-name,
@@ -83,7 +83,7 @@ input_file: tests/assets/cetz-tree.typ
   } else if draw-edge == none {
     draw-edge = (..) => { }
   }
-  
+
   if draw-node == auto or draw-node in (
     "rect",
   ) {
@@ -101,7 +101,7 @@ input_file: tests/assets/cetz-tree.typ
       } else if type(content) != typst-content {
         panic("Unsupported content type " + type(content) + "! " + "Provide your own `draw-node` implementation.")
       }
-      
+
       if content != none {
         draw.content(
           (),
@@ -133,7 +133,7 @@ input_file: tests/assets/cetz-tree.typ
     draw-node != none,
     message: "Node draw callback must be set!",
   )
-  
+
   let build-node(
     tree,
     depth: 0,
@@ -153,7 +153,7 @@ input_file: tests/assets/cetz-tree.typ
     } else {
       cnt = tree
     }
-    
+
     return (
       x: 0,
       y: depth * grow,
@@ -163,7 +163,7 @@ input_file: tests/assets/cetz-tree.typ
       content: cnt,
     )
   }
-  
+
   // Layout node recursive
   //
   // return:
@@ -179,7 +179,7 @@ input_file: tests/assets/cetz-tree.typ
     } else {
       let (min-x, max-x) = (none, none)
       let (left, right) = (none, none)
-      
+
       let n-children = node.children.len()
       for i in range(0, n-children) {
         let child = node.children.at(i)
@@ -187,7 +187,7 @@ input_file: tests/assets/cetz-tree.typ
           child-min-x,
           child-max-x,
         ) = (none, none)
-        
+
         (
           child,
           child-min-x,
@@ -198,10 +198,10 @@ input_file: tests/assets/cetz-tree.typ
           ctx,
         )
         node.children.at(i) = child
-        
+
         left = util.min(child.x, left)
         right = util.max(child.x, right)
-        
+
         min-x = util.min(
           min-x,
           child-min-x,
@@ -210,13 +210,13 @@ input_file: tests/assets/cetz-tree.typ
           max-x,
           child-max-x,
         )
-        
+
         if child-max-x > right {
           shift-x = child-max-x
         }
         shift-x += spread
       }
-      
+
       if parent-position == "begin" {
         node.x = left
       } else {
@@ -224,16 +224,16 @@ input_file: tests/assets/cetz-tree.typ
           right - left
         ) / 2
       }
-      
+
       node.direct-min-x = left
       node.direct-max-x = right
       node.min-x = min-x
       node.max-x = max-x
-      
+
       return (node, min-x, max-x)
     }
   }
-  
+
   let layout(node, ctx) = {
     let (n, ..) = layout-node(
       node,
@@ -242,7 +242,7 @@ input_file: tests/assets/cetz-tree.typ
     )
     return n
   }
-  
+
   let node-position(node) = {
     if direction == "bottom" {
       return (node.x, -node.y)
@@ -256,14 +256,14 @@ input_file: tests/assets/cetz-tree.typ
       panic(message: "Invalid tree direction.")
     }
   }
-  
+
   let anchors(node, parent-path) = {
     if parent-path != none {
       parent-path += "-"
     } else {
       parent-path = ""
     }
-    
+
     let d = (:)
     d.insert(
       parent-path + str(node.n),
@@ -277,10 +277,10 @@ input_file: tests/assets/cetz-tree.typ
     }
     return d
   }
-  
+
   let render(node, parent-name) = {
     let name = "node-" + str(node.depth) + "-" + str(node.n)
-    
+
     let cmds = ()
     cmds += draw.group(
       name: name,
@@ -292,7 +292,7 @@ input_file: tests/assets/cetz-tree.typ
         draw-node(node, parent-name)
       },
     )
-    
+
     if parent-name != none {
       cmds += draw-edge(
         parent-name,
@@ -300,16 +300,16 @@ input_file: tests/assets/cetz-tree.typ
         node,
       )
     }
-    
+
     for child in node.children {
       cmds += render(child, name)
     }
-    
+
     return cmds
   }
-  
+
   let root = build-node(root)
-  
+
   (
     (
       name: name,

@@ -19,7 +19,7 @@ input_file: tests/assets/simple-paper.typ
   let strong-font = hei
   let emph-font = kai
   let raw-font = code
-  
+
   set document(
     author: authors,
     title: title,
@@ -39,7 +39,7 @@ input_file: tests/assets/simple-paper.typ
     region: "cn",
   )
   set bibliography(style: "gb-7114-2015-numeric")
-  
+
   show heading: it => box(width: 100%)[
     #v(0.50em)
     #set text(font: heading-font)
@@ -49,7 +49,7 @@ input_file: tests/assets/simple-paper.typ
     #h(0.75em)
     #it.body
   ]
-  
+
   show heading.where(level: 1): it => box(width: 100%)[
     #v(0.5em)
     #set align(center)
@@ -57,13 +57,13 @@ input_file: tests/assets/simple-paper.typ
     #it
     #v(0.75em)
   ]
-  
+
   // Title
   align(center)[
     #block(text(font: title-font, weight: 700, 1.75em, title))
     #v(0.5em)
   ]
-  
+
   // Author information.
   pad(
     top: 0.5em,
@@ -75,12 +75,12 @@ input_file: tests/assets/simple-paper.typ
       ..authors.map(author => align(center, text(font: author-font, author))),
     ),
   )
-  
+
   // Main body
   set par(first-line-indent: 2em)
   set enum(indent: 2em)
   set figure(gap: 0.8cm)
-  
+
   show figure: it => [
     #v(12pt)
     #set text(font: caption-font)
@@ -88,12 +88,12 @@ input_file: tests/assets/simple-paper.typ
     #par()[#text(size: 0.0em)[#h(0.0em)]]
     #v(12pt)
   ]
-  
+
   show image: it => [
     #it
     #par()[#text(size: 0.0em)[#h(0.0em)]]
   ]
-  
+
   show table: it => [
     #set text(font: body-font)
     #it
@@ -106,24 +106,24 @@ input_file: tests/assets/simple-paper.typ
     fill: luma(240),
     inset: 10pt,
   )
-  
+
   show raw: set text(
     font: (raw-font, hei),
     size: 10pt,
   )
   show link: underline
   show link: set text(blue)
-  
+
   if abstract != none [
     #v(2pt)
     #h(2em) *摘要：* #abstract
-    
+
     #if keywords != () [
       *关键字：* #keywords.join("；")
     ]
     #v(2pt)
   ]
-  
+
   body
 }
 #let problem-counter = counter("problem")
