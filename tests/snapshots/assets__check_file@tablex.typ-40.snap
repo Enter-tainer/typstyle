@@ -2519,7 +2519,10 @@ input_file: tests/assets/tablex.typ
 ) = {
   // only draw lines from the parent cell
   if is-tablex-occupied(cell) {
-    return (hlines: (), vlines: ())
+    return (
+      hlines: (),
+      vlines: (),
+    )
   }
 
   let hlines = hlines.filter(h => {
@@ -2598,7 +2601,10 @@ input_file: tests/assets/tablex.typ
     }
   }).filter(x => x != none)
 
-  (hlines: hlines, vlines: vlines)
+  (
+    hlines: hlines,
+    vlines: vlines,
+  )
 }
 
 // Are two hlines the same?
@@ -2844,8 +2850,14 @@ input_file: tests/assets/tablex.typ
     end_x = rightmost_x - end_x
   }
 
-  let start = (start_x, y)
-  let end = (end_x, y)
+  let start = (
+    start_x,
+    y,
+  )
+  let end = (
+    end_x,
+    y,
+  )
 
   if stroke != auto {
     if stroke != none {
@@ -2970,8 +2982,14 @@ input_file: tests/assets/tablex.typ
     x = rightmost_x - x
   }
 
-  let start = (x, start_y)
-  let end = (x, end_y)
+  let start = (
+    x,
+    start_y,
+  )
+  let end = (
+    x,
+    end_y,
+  )
 
   if stroke != auto {
     if stroke != none {

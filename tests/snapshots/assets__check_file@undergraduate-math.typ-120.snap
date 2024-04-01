@@ -78,7 +78,12 @@ input_file: tests/assets/undergraduate-math.typ
 #let headcolor = rgb("004225")
 
 // Run-in sections, like LaTeX \paragraph
-#show heading.where(level: 1): it => text(size: normalsize, weight: "bold", fill: headcolor, it.body + h(0.67em))
+#show heading.where(level: 1): it => text(
+  size: normalsize,
+  weight: "bold",
+  fill: headcolor,
+  it.body + h(0.67em),
+)
 
 // Black raw code
 #show raw.where(block: false): it => {
@@ -109,7 +114,13 @@ The original version is available at #link("https://gitlab.com/jim.hefferon/unde
 //    [??], [Unavailable until typst #sys.version.],
 //  )
 // ) <unavailable>
-#figure(table(columns: (1fr, 2fr), [!!], [Tricky. A simpler method is needed.])) <tricky>
+#figure(
+  table(
+    columns: (1fr, 2fr),
+    [!!],
+    [Tricky. A simpler method is needed.],
+  ),
+) <tricky>
 // #figure(
 //   table(
 //     columns: (1fr, 2fr),
@@ -910,4 +921,8 @@ See also the Typst Documentation at #link("https://typst.app/docs").
 
 #v(1fr)
 
-#block(inset: 4pt, stroke: (top: headcolor), text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #date])
+#block(
+  inset: 4pt,
+  stroke: (top: headcolor),
+  text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #date],
+)

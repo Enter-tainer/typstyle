@@ -1,5 +1,7 @@
 use pretty::BoxDoc;
 
+use crate::attr::Attributes;
+
 /// A style for formatting items
 pub enum FoldStyle {
     /// Fold items if them can fit in a single line
@@ -8,6 +10,21 @@ pub enum FoldStyle {
     Single,
     /// Never fold items
     Never,
+}
+
+impl FoldStyle {
+    pub fn from_attr(attr: Option<&Attributes>) -> FoldStyle {
+        match attr {
+            Some(attr) => {
+                if attr.is_multiline_flavor() {
+                    FoldStyle::Never
+                } else {
+                    FoldStyle::Fit
+                }
+            }
+            None => FoldStyle::Fit,
+        }
+    }
 }
 
 pub fn pretty_items<'a>(

@@ -226,7 +226,11 @@ input_file: tests/assets/tablex.typ
   if is-tablex-cell(content) {
     (..content, rowspan: length, ..cell_options.named())
   } else {
-    cellx(content, rowspan: length, ..cell_options.named())
+    cellx(
+      content,
+      rowspan: length,
+      ..cell_options.named(),
+    )
   }
 }
 
@@ -234,7 +238,11 @@ input_file: tests/assets/tablex.typ
   if is-tablex-cell(content) {
     (..content, colspan: length, ..cell_options.named())
   } else {
-    cellx(content, colspan: length, ..cell_options.named())
+    cellx(
+      content,
+      colspan: length,
+      ..cell_options.named(),
+    )
   }
 }
 
@@ -848,7 +856,13 @@ input_file: tests/assets/tablex.typ
 }
 
 // Return the next position available on the grid
-#let next-available-position(grid, x: 0, y: 0, x_limit: 0, y_limit: 0) = {
+#let next-available-position(
+  grid,
+  x: 0,
+  y: 0,
+  x_limit: 0,
+  y_limit: 0,
+) = {
   let cell = (x, y)
   let there_is_next(cell_pos) = {
     let grid_cell = grid-at(grid, ..cell_pos)
@@ -1813,7 +1827,10 @@ input_file: tests/assets/tablex.typ
       remaining: remaining,
       gutter: row-gutter,
     )
-    (rows: frac_res.tracks, gutter: frac_res.gutter)
+    (
+      rows: frac_res.tracks,
+      gutter: frac_res.gutter,
+    )
   } else {
     (
       rows: rows.map(r => {
@@ -1872,7 +1889,11 @@ input_file: tests/assets/tablex.typ
   rows = rows_res.rows
   gutter.row = rows_res.gutter
 
-  (columns: columns, rows: rows, gutter: gutter)
+  (
+    columns: columns,
+    rows: rows,
+    gutter: gutter,
+  )
 }
 
 // -- end: col/row size functions --
@@ -2002,7 +2023,10 @@ input_file: tests/assets/tablex.typ
 ) = {
   // only draw lines from the parent cell
   if is-tablex-occupied(cell) {
-    return (hlines: (), vlines: ())
+    return (
+      hlines: (),
+      vlines: (),
+    )
   }
 
   let hlines = hlines.filter(h => {
@@ -2063,7 +2087,10 @@ input_file: tests/assets/tablex.typ
     }
   }).filter(x => x != none)
 
-  (hlines: hlines, vlines: vlines)
+  (
+    hlines: hlines,
+    vlines: vlines,
+  )
 }
 
 // Are two hlines the same?
@@ -2251,8 +2278,14 @@ input_file: tests/assets/tablex.typ
     end_x = rightmost_x - end_x
   }
 
-  let start = (start_x, y)
-  let end = (end_x, y)
+  let start = (
+    start_x,
+    y,
+  )
+  let end = (
+    end_x,
+    y,
+  )
 
   if stroke != auto {
     if stroke != none {
@@ -2348,8 +2381,14 @@ input_file: tests/assets/tablex.typ
     x = rightmost_x - x
   }
 
-  let start = (x, start_y)
-  let end = (x, end_y)
+  let start = (
+    x,
+    start_y,
+  )
+  let end = (
+    x,
+    end_y,
+  )
 
   if stroke != auto {
     if stroke != none {
@@ -3182,7 +3221,9 @@ input_file: tests/assets/tablex.typ
   repeat-header
 }
 
-#let validate-header-hlines-priority(header-hlines-have-priority) = {
+#let validate-header-hlines-priority(
+  header-hlines-have-priority,
+) = {
   header-hlines-have-priority = default-if-auto(
     default-if-none(header-hlines-have-priority, true),
     true,

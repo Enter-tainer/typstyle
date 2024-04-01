@@ -11,7 +11,11 @@ input_file: tests/assets/unit/destruction.typ
   ..authors.map(author => align(center, text(font: author-font, author))),
 )
 
-#let books = (Shakespeare: "Hamlet", Homer: ("The Odyssey", "The Iliad"), Austen: "Persuasion")
+#let books = (
+  Shakespeare: "Hamlet",
+  Homer: ("The Odyssey", "The Iliad"),
+  Austen: "Persuasion",
+)
 
 #let (Austen,) = books
 Austen wrote #Austen.

@@ -1,0 +1,16 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/code/arg-flavor.typ
+---
+#let my-f(arg1, arg2, args: none) = {
+  arg1 + arg2
+}
+
+#let my-f(
+  arg1,
+  arg2,
+  args: none,
+) = {
+  arg1 + arg2
+}
