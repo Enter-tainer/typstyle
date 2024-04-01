@@ -145,6 +145,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
                 "fault-tolerant-pi8.typ",
                 "fault-tolerant-toffoli1.typ",
                 "fault-tolerant-toffoli2.typ",
+                "quill-guide.typ",
             ]
             .into_iter(),
         ),
