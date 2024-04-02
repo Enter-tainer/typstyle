@@ -6,4 +6,6 @@ input_file: tests/assets/unit/math/frac.typ
 $ (x+1) / 2 $
 $ ((x+1)) / 2 $
 $ (x+1) / ((2)) $
-$ (x+1) / ((2)) $
+$
+(x+1) / ((2))
+$

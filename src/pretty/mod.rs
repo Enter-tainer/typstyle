@@ -327,12 +327,21 @@ impl PrettyPrinter {
 
     fn convert_equation<'a>(&'a self, equation: Equation<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("$");
+        let is_multi_line = self
+            .attr_map
+            .get(equation.to_untyped())
+            .map_or(false, |attr| attr.is_multiline_flavor());
+        let block_sep = if is_multi_line {
+            BoxDoc::hardline()
+        } else {
+            BoxDoc::line()
+        };
         if equation.block() {
-            doc = doc.append(BoxDoc::line());
+            doc = doc.append(block_sep.clone());
         }
         doc = doc.append(self.convert_math(equation.body()));
         if equation.block() {
-            doc = doc.append(BoxDoc::line());
+            doc = doc.append(block_sep);
         }
         doc = doc.append(BoxDoc::text("$"));
         doc
