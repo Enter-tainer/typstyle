@@ -196,7 +196,7 @@ Your document should contain at least this.
 Use as in `$cal(A)$`.
 
 $
-  cal(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
+cal(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
 $
 
 #show math.equation: set text(
@@ -698,7 +698,7 @@ The right arrows in the first column have matching left arrows, such as `arrow.l
 The summation $sum_(j = 0)^3 j^2$ `sum_(j = 0)^3 j^2` and the integral $integral_(x = 0)^3 x^2 dif x$ `integral_(x = 0)^3 x^2 dif x` expand when displayed.
 
 $
-  sum_(j = 0)^3 j^2 wide integral_(x = 0)^3 x^2 dif x
+sum_(j = 0)^3 j^2 wide integral_(x = 0)^3 x^2 dif x
 $
 
 These do the same.
@@ -773,7 +773,7 @@ Fix the size with the `lr` function.
     columns: 2,
     column-gutter: 1em,
     [$
-        lr([sum_(k = 0)^n e^(k^2)], size: #50%)
+      lr([sum_(k = 0)^n e^(k^2)], size: #50%)
       $],
     [
       ```
@@ -790,7 +790,8 @@ To have them grow with the enclosed formula, also use the `lr` function.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ lr(angle.l i, 2^(2^i) angle.r)
+    [$
+      lr(angle.l i, 2^(2^i) angle.r)
       $],
     [
       ```
@@ -833,7 +834,8 @@ The `lr` function also allows to scale unmatched delimiters and one-side fences.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ lr(frac(dif f, dif x) |)_(x_0)
+    [$
+      lr(frac(dif f, dif x) |)_(x_0)
       $],
     [
       ```
@@ -874,7 +876,7 @@ Definition by cases can be easily obtained with the `cases` function.
     column-gutter: 1em,
     [
       $
-        f_n = cases(
+      f_n = cases(
       a &"if" n = 0,
       r dot f_(n - 1) &"else"
     )
@@ -924,8 +926,8 @@ You can break into multiple lines.
     column-gutter: 1em,
     [
       $
-        sin(x) = x - x^3 / 3! \
-        + x^5 / 5! - dots.h.c
+      sin(x) = x - x^3 / 3! \
+      + x^5 / 5! - dots.h.c
       $
     ],
     [
@@ -946,8 +948,8 @@ Align equations using `&`
     column-gutter: 1em,
     [
       $
-        nabla dot bold(D) &= rho \
-        nabla dot bold(B) &= 0
+      nabla dot bold(D) &= rho \
+      nabla dot bold(B) &= 0
       $
     ],
     ```
@@ -982,7 +984,8 @@ The last three here are display style.
       lim_(h -> 0) (f(x + h) - f(x)) / h
       ```
     ],
-    [$ integral x^2 dif x = x^3 \/ 3 + C
+    [$
+      integral x^2 dif x = x^3 \/ 3 + C
       $],
     [
       ```
@@ -990,7 +993,7 @@ The last three here are display style.
       ```
     ],
     [$
-        nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
+      nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
       $],
     [
       ```
@@ -1015,14 +1018,15 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
     columns: 2,
     column-gutter: 1em,
     [$
-        sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
+      sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
       $],
     [
       ```
       sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
       ```
     ],
-    [$ E(X) = mu_X = sum(x_i - P(x_i))
+    [$
+      E(X) = mu_X = sum(x_i - P(x_i))
       $],
     [
       ```
@@ -1030,9 +1034,9 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
       ```
     ],
     [$
-        1 / sqrt(2 sigma^2 pi) e^(- (
-          x - mu
-        )^2 / (2 sigma^2))
+      1 / sqrt(2 sigma^2 pi) e^(- (
+        x - mu
+      )^2 / (2 sigma^2))
       $],
     [
       ```
