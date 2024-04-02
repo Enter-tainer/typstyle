@@ -3649,7 +3649,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle"
-version = "0.11.9"
+version = "0.11.10"
 dependencies = [
  "anyhow",
  "clap",

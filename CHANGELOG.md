@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.11.10 - [2024-04-02]
+
+- Block math equations are no longer indented.
+- We now support flavor detection for block equations. 
+
+For example, this code:
+```typ
+$
+  F(x) = integral_0^x f(t) dif t
+$
+
+$ F(x) = integral_0^x f(t) dif t
+$
+
+```
+
+After formatting, it will become:
+```typ
+$
+F(x) = integral_0^x f(t) dif t
+$
+
+$ F(x) = integral_0^x f(t) dif t $
+```
+
 ## v0.11.9 - [2024-04-01]
 
 - Trailing spaces are now trimmed.
