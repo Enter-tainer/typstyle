@@ -809,7 +809,7 @@ You can break into multiple lines.
     [
       $
       sin(x) = x - x^3 / 3! \
-        + x^5 / 5! - dots.h.c
+      + x^5 / 5! - dots.h.c
       $
     ],
     [
@@ -831,7 +831,7 @@ Align equations using `&`
     [
       $
       nabla dot bold(D) &= rho \
-        nabla dot bold(B) &= 0
+      nabla dot bold(B) &= 0
       $
     ],
     ```

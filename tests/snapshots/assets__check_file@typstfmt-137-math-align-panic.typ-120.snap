@@ -5,11 +5,11 @@ input_file: tests/assets/typstfmt/137-math-align-panic.typ
 ---
 $
 a
-  &= b\
-  &= c & d
+&= b\
+&= c & d
 $
 
 $
 x &= a + b + c \
-  &= a & (c = -b)
+&= a & (c = -b)
 $
