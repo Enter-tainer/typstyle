@@ -330,7 +330,10 @@ impl PrettyPrinter {
         if equation.block() {
             doc = doc.append(BoxDoc::line());
         }
-        doc = doc.append(self.convert_math(equation.body()).nest(2));
+        doc = doc
+            .append(self.convert_math(equation.body()))
+            .group()
+            .nest(2);
         if equation.block() {
             doc = doc.append(BoxDoc::line());
         }

@@ -92,6 +92,8 @@ default = ["cli", "wasm"]
 cli = ["clap", "once_cell"]
 wasm = ["wasm-bindgen"]
 
+[profile.release]
+strip = false
 [profile.test]
 opt-level = 3
 
