@@ -2,6 +2,9 @@
 
 [![codecov](https://codecov.io/gh/Enter-tainer/typstyle/graph/badge.svg?token=Y2SuYfwd7y)](https://codecov.io/gh/Enter-tainer/typstyle)
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/typstyle.svg)](https://repology.org/project/typstyle/versions)
+
+
 Usage: 
 ```
 A typst source code formatter
