@@ -1,0 +1,31 @@
+# Maintainer: Wenzhuo Liu <mgt@oi-wiki.org>
+pkgname=typstyle
+pkgver=0.11.11
+pkgrel=1
+pkgdesc="A typst source code formatter"
+arch=('x86_64')
+url="https://github.com/Enter-tainer/typstyle"
+license=('Apache-2.0')
+depends=('gcc-libs')
+makedepends=(cargo)
+source=("$pkgname-$pkgver.tar.gz::https://static.crates.io/crates/$pkgname/$pkgname-$pkgver.crate")
+sha512sums=('32ba02a3b3e71b317106ab6c287940525a254b54ee84c33122cb928b694083b8e984b48257874018461a75f27b99252951dc87c4c26fdf2890aa8cf9e8e136d9')
+
+build() {
+  cd "$pkgname-$pkgver"
+
+  cargo build --release --locked
+}
+
+check() {
+  true
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+
+  install -Dm755 "target/release/typstyle" "$pkgdir/usr/bin/typstyle"
+
+  install -Dm644 "README.md" "$pkgdir/usr/share/doc/${pkgname}/README.md"
+  install -Dm644 "LICENSE" "$pkgdir/usr/share/licenses/${pkgname}/LICENSE"
+}

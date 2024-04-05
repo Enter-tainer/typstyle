@@ -1,0 +1,44 @@
+# Ignore build artifacts
+*.pkg.tar.*
+*.src.tar.*
+*.tar.gz
+*.tar.xz
+*.tar.bz2
+*.tar.lz
+*.tar.lzma
+*.tar.lzo
+*.tar.zst
+*.deb
+*.rpm
+
+# Ignore generated files
+*.o
+*.so
+*.a
+*.dll
+*.exe
+
+# Ignore editor and IDE files
+.vscode/
+.idea/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.cache
+*.pid
+
+# Ignore user-specific files
+*.local
+*.config
+*.env
+*.env.local
+pkg/
+src/
