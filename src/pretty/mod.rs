@@ -646,6 +646,7 @@ impl PrettyPrinter {
         {
             if let Some(space) = node.cast::<Space>() {
                 is_multiline = is_multiline || space.to_untyped().text().contains('\n');
+                break;
             }
         }
         let args: Vec<BoxDoc<'a, ()>> = node
