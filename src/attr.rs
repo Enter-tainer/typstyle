@@ -138,12 +138,6 @@ fn get_no_format_nodes_impl(
                 }
             }
         }
-        // no format multiline string
-        if let Some(str) = child.cast::<typst_syntax::ast::Str>() {
-            if str.to_untyped().text().contains('\n') {
-                set_no_format(child.clone(), attr_map);
-            }
-        }
         // no format hash related nodes in math blocks
         if child.kind() == SyntaxKind::Hash && state.is_math {
             set_no_format(node.clone(), attr_map);

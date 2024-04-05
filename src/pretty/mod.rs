@@ -400,7 +400,11 @@ impl PrettyPrinter {
 
     fn convert_str<'a>(&'a self, str: Str<'a>) -> BoxDoc<'a, ()> {
         let node = str.to_untyped();
-        trivia(node)
+        if node.text().contains('\n') {
+            BoxDoc::text(node.text().to_string())
+        } else {
+            trivia(node)
+        }
     }
 
     fn convert_code_block<'a>(&'a self, code_block: CodeBlock<'a>) -> BoxDoc<'a, ()> {
