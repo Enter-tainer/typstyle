@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.11.11 - [2024-04-05]
+
+- Fix set rules args are always spread into multiple lines. It now behaves like function call args.
+
+For example, this code:
+```typ
+#set text(  font: body-font,
+  lang: "zh",  region: "cn",
+)
+```
+
+After formatting, it will become:
+```typ
+#set text(font: body-font, lang: "zh", region: "cn")
+```
+
+- Fix flavor detection for function call args. It now works correctly when the first space in the args contains a newline.
+
 ## v0.11.10 - [2024-04-02]
 
 - Block math equations are no longer indented.

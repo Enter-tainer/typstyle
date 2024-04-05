@@ -1,6 +1,6 @@
 [package]
 name = "typstyle"
-version = "0.11.10"
+version = "0.11.11"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
 license-file = "LICENSE"
