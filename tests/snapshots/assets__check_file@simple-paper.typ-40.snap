@@ -44,9 +44,7 @@ input_file: tests/assets/simple-paper.typ
     lang: "zh",
     region: "cn",
   )
-  set bibliography(
-    style: "gb-7114-2015-numeric",
-  )
+  set bibliography(style: "gb-7114-2015-numeric")
 
   show heading: it => box(width: 100%)[
     #v(0.50em)
@@ -119,9 +117,7 @@ input_file: tests/assets/simple-paper.typ
     #set text(font: body-font)
     #it
   ]
-  show strong: set text(
-    font: strong-font,
-  )
+  show strong: set text(font: strong-font)
   show emph: set text(font: emph-font)
   show ref: set text(red)
   show raw.where(block: true): block.with(

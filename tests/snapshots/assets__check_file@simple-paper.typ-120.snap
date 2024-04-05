@@ -26,10 +26,7 @@ input_file: tests/assets/simple-paper.typ
   let emph-font = kai
   let raw-font = code
 
-  set document(
-    author: authors,
-    title: title,
-  )
+  set document(author: authors, title: title)
   set page(
     numbering: "1",
     number-align: center,
@@ -39,11 +36,7 @@ input_file: tests/assets/simple-paper.typ
     ],
   )
   set heading(numbering: "1.1")
-  set text(
-    font: body-font,
-    lang: "zh",
-    region: "cn",
-  )
+  set text(font: body-font, lang: "zh", region: "cn")
   set bibliography(style: "gb-7114-2015-numeric")
 
   show heading: it => box(width: 100%)[
@@ -113,10 +106,7 @@ input_file: tests/assets/simple-paper.typ
     inset: 10pt,
   )
 
-  show raw: set text(
-    font: (raw-font, hei),
-    size: 10pt,
-  )
+  show raw: set text(font: (raw-font, hei), size: 10pt)
   show link: underline
   show link: set text(blue)
 
