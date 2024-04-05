@@ -4,10 +4,7 @@ expression: doc_string
 input_file: tests/assets/undergraduate-math.typ
 ---
 // Meta data
-#set document(
-  title: "Typst Math for Undergrads",
-  author: "johanvx",
-)
+#set document(title: "Typst Math for Undergrads", author: "johanvx")
 
 // Margin
 #set page(margin: 0.5in)
@@ -16,10 +13,7 @@ input_file: tests/assets/undergraduate-math.typ
 #let scriptsize = 7pt
 #let normalsize = 10pt
 #let large = 12pt
-#set text(
-  size: normalsize,
-  lang: "en",
-)
+#set text(size: normalsize, lang: "en")
 
 // Some horizontal spacing
 #let kern(length) = h(length, weak: true)
@@ -30,12 +24,7 @@ input_file: tests/assets/undergraduate-math.typ
 // Grid for code blocks
 #set grid(columns: (2em, auto))
 // Table for math-code listing
-#set table(
-  stroke: none,
-  align: horizon + left,
-  inset: 0pt,
-  row-gutter: 0.45em,
-)
+#set table(stroke: none, align: horizon + left, inset: 0pt, row-gutter: 0.45em)
 
 // LaTeX and TeX logos
 #let TeX = style(styles => {
@@ -63,11 +52,9 @@ input_file: tests/assets/undergraduate-math.typ
 // No idea
 #show "?!": box(text(orange, [No idea #emoji.face.unhappy]))
 // Tricky figure numbering
-#set figure(
-  numbering: n => {
-    ([??], [!!], [?!]).at(n)
-  },
-)
+#set figure(numbering: n => {
+  ([??], [!!], [?!]).at(n)
+})
 // No prefix
 #set ref(supplement: "")
 

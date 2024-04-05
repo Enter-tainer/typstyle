@@ -605,32 +605,35 @@ impl PrettyPrinter {
             .children()
             .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
         if has_parenthesized_args {
-            let (args, prefer_tighter, is_multiline) =
-                self.convert_parenthesized_args(func_call.args());
-
-            doc = if prefer_tighter {
-                doc.append(BoxDoc::text("("))
-                    .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
-                    .append(BoxDoc::text(")"))
-            } else {
-                doc.append(pretty_items(
-                    &args,
-                    BoxDoc::text(",").append(BoxDoc::space()),
-                    BoxDoc::text(","),
-                    (BoxDoc::text("("), BoxDoc::text(")")),
-                    false,
-                    if is_multiline {
-                        FoldStyle::Never
-                    } else {
-                        FoldStyle::Fit
-                    },
-                ))
-            }
+            doc = doc.append(self.convert_parenthesized_args(func_call.args()));
         };
         doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args))
     }
 
-    fn convert_parenthesized_args<'a>(
+    fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+        let (args, prefer_tighter, is_multiline) = self.convert_parenthesized_args_impl(args);
+        let doc = if prefer_tighter {
+            BoxDoc::text("(")
+                .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
+                .append(BoxDoc::text(")"))
+        } else {
+            pretty_items(
+                &args,
+                BoxDoc::text(",").append(BoxDoc::space()),
+                BoxDoc::text(","),
+                (BoxDoc::text("("), BoxDoc::text(")")),
+                false,
+                if is_multiline {
+                    FoldStyle::Never
+                } else {
+                    FoldStyle::Fit
+                },
+            )
+        };
+        doc
+    }
+
+    fn convert_parenthesized_args_impl<'a>(
         &'a self,
         args: Args<'a>,
     ) -> (Vec<BoxDoc<'a, ()>>, bool, bool) {
@@ -854,15 +857,7 @@ impl PrettyPrinter {
             .append(BoxDoc::text("set"))
             .append(BoxDoc::space());
         doc = doc.append(self.convert_expr(set_rule.target()));
-        let (args, _, _) = self.convert_parenthesized_args(set_rule.args());
-        doc = doc.append(pretty_items(
-            &args,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            FoldStyle::Single,
-        ));
+        doc = doc.append(self.convert_parenthesized_args(set_rule.args()));
         if let Some(condition) = set_rule.condition() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("if"));
