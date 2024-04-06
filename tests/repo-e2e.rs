@@ -77,7 +77,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "cetz-manual",
             "https://github.com/cetz-package/cetz",
-            "ca9c9eea5d4ade9b4d256742a583d8c2e8546e78",
+            "7c17f3720cf2c57a6562c18f74d5ce89556a0431",
             "manual.typ",
         ),
         Testcase::new(
@@ -96,7 +96,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "touying-example",
             "https://github.com/touying-typ/touying",
-            "3c06ca1000bdd712bf49958a64dac78ef988cf14",
+            "545b89a32d7f90c8f21fdf983f954ec2bc94412d",
             "examples/example.typ",
         ),
         Testcase::new(
@@ -108,19 +108,21 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "fletcher-manual",
             "https://github.com/Jollywatt/typst-fletcher",
-            "6abc0b9c4d90c94182943ba779b015ed3df848db",
+            "bb7a4ecc1effdfa987a908b340baf985eb665c5e",
             "docs/manual.typ",
-        ),
+        )
+        // tidy has weird behavior when parsing typ source code
+        .with_blacklist(["main.typ"].into_iter()),
         Testcase::new(
             "nju-thesis-typst",
             "https://github.com/nju-lug/nju-thesis-typst",
-            "01ffb4e35deba45163f68918305a16578029ed4c",
+            "969ab5e99df81ce0ff6454b452fba13ee0692028",
             "thesis.typ",
         ),
         Testcase::new(
             "physica",
             "https://github.com/Leedehai/typst-physics",
-            "c02a761a2504447524efa91a0697f666d1ee2889",
+            "1d683a041d2361fc4078e419d17cb9ada60dadd7",
             "physica-manual.typ",
         ),
         Testcase::new(
@@ -135,6 +137,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "1816c38be530e1e63fa24cb37cf365a2425e90a5",
             "docs/guide/quill-guide.typ",
         )
+        // these files are included as-is and should not be formatted
         .with_blacklist(
             [
                 "shor-nine-qubit-code.typ",
@@ -148,6 +151,12 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
                 "quill-guide.typ",
             ]
             .into_iter(),
+        ),
+        Testcase::new(
+            "curryst",
+            "https://github.com/pauladam94/curryst",
+            "d7c4021d5cfa2131dc0b14603d24d2b1978ad43f",
+            "examples/natural-deduction.typ",
         ),
     ];
     Ok(cases
