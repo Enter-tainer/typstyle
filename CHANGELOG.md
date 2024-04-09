@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.11.12 - [2024-04-09]
+
+- Improve performance when formatting nested structures.
+
+Previously it takes infinite time to format this code:
+```typ
+#let f(..arg) = arg
+
+#f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(1,2,3))))))))))))))))))))))
+```
+
+Now it is done in instant.
+
 ## v0.11.11 - [2024-04-05]
 
 - Fix set rules args are always spread into multiple lines. It now behaves like function call args.
