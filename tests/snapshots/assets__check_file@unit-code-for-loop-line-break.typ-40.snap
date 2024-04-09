@@ -18,24 +18,21 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
   ) {
     line(
       vector.add(
-        p,
-        (0, 0, neg(p.at(2))),
+        p, (0, 0, neg(p.at(2)))
       ),
       p,
       stroke: c,
     )
     line(
       vector.add(
-        p,
-        (0, neg(p.at(1)), 0),
+        p, (0, neg(p.at(1)), 0)
       ),
       p,
       stroke: c,
     )
     line(
       vector.add(
-        p,
-        (neg(p.at(0)), 0, 0),
+        p, (neg(p.at(0)), 0, 0)
       ),
       p,
       stroke: c,

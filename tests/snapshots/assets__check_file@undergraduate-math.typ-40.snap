@@ -20,15 +20,13 @@ input_file: tests/assets/undergraduate-math.typ
 
 // Some horizontal spacing
 #let kern(length) = h(
-  length,
-  weak: true,
+  length, weak: true
 )
 #let enspace = kern(0.5em)
 
 // For table/grid, something like "lhs \enspace rhs"
 #let cell(
-  lhs,
-  rhs,
+  lhs, rhs
 ) = box(lhs + enspace + rhs)
 // Grid for code blocks
 #set grid(columns: (2em, auto))
@@ -43,8 +41,7 @@ input_file: tests/assets/undergraduate-math.typ
 // LaTeX and TeX logos
 #let TeX = style(styles => {
   let e = measure(
-    text(normalsize, "E"),
-    styles,
+    text(normalsize, "E"), styles
   )
   let T = "T"
   let E = text(
@@ -57,12 +54,10 @@ input_file: tests/assets/undergraduate-math.typ
 })
 #let LaTeX = style(styles => {
   let l = measure(
-    text(10pt, "L"),
-    styles,
+    text(10pt, "L"), styles
   )
   let a = measure(
-    text(7pt, "A"),
-    styles,
+    text(7pt, "A"), styles
   )
   let L = "L"
   let A = text(
@@ -129,8 +124,7 @@ input_file: tests/assets/undergraduate-math.typ
   center,
   link("https://github.com/johanvx/typst-undergradmath")[
     #text(
-      large,
-      headcolor,
+      large, headcolor
     )[*Typst Math for Undergrads*]
   ],
 )
@@ -281,11 +275,7 @@ Get script letters, such as $cal(P)$ from `$cal(P)$`, by changing the `stylistic
       left,
     ),
     column-gutter: (
-      1em,
-      1.5em,
-      1em,
-      1.5em,
-      1em,
+      1em, 1.5em, 1em, 1.5em, 1em
     ),
     [$union$],
     [`union`],
@@ -377,11 +367,7 @@ Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ wit
       left,
     ),
     column-gutter: (
-      1em,
-      1.5em,
-      1em,
-      1.5em,
-      1em,
+      1em, 1.5em, 1em, 1.5em, 1em
     ),
     [$f'$],
     [`f'`, `f prime`],
@@ -445,11 +431,7 @@ Just type them!
       left,
     ),
     column-gutter: (
-      1em,
-      1.5em,
-      1em,
-      1.5em,
-      1em,
+      1em, 1.5em, 1em, 1.5em, 1em
     ),
     [$sin$],
     [`sin`],
@@ -539,11 +521,7 @@ $ cosec x = 1 / (sin x) $
       left,
     ),
     column-gutter: (
-      0.5em,
-      1em,
-      0.5em,
-      1em,
-      0.5em,
+      0.5em, 1em, 0.5em, 1em, 0.5em
     ),
     [$<$],
     [`<`, `lt`],
@@ -732,11 +710,7 @@ These do the same.
       left,
     ),
     column-gutter: (
-      1em,
-      1.5em,
-      1em,
-      1.5em,
-      1em,
+      1em, 1.5em, 1em, 1.5em, 1em
     ),
     row-gutter: 0.5em,
     [$()$],
@@ -801,8 +775,7 @@ Fences scale by default if entered directly as codepoints, and don't scale autom
   table(
     columns: 2,
     align: (
-      right + horizon,
-      left + horizon,
+      right + horizon, left + horizon
     ),
     column-gutter: 1em,
     [$ (1 / n^(alpha)) $],

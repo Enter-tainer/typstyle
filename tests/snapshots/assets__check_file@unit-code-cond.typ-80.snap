@@ -9,8 +9,7 @@ input_file: tests/assets/unit/code/cond.typ
 
 #if (
   is-tablex-cell(cell) and type(cell.y) in (
-    _int-type,
-    _float-type,
+    _int-type, _float-type
   ) and cell.y > acc
 ) {
   cell.y

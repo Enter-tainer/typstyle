@@ -26,21 +26,17 @@ input_file: tests/assets/book.typ
         section: "2",
       )[Get Started]
     - #chapter(
-        "guide/faq.typ",
-        section: "3",
+        "guide/faq.typ", section: "3"
       )[Frequently Asked Questions]
     - #chapter(
-        none,
-        section: "4",
+        none, section: "4"
       )[Further reading]
     = Reference Guide
     - #chapter(
-        "cli/main.typ",
-        section: "5",
+        "cli/main.typ", section: "5"
       )[Command Line Tool]
       - #chapter(
-          "cli/init.typ",
-          section: "5.1",
+          "cli/init.typ", section: "5.1"
         )[init]
       - #chapter(
           "cli/build.typ",
@@ -59,8 +55,7 @@ input_file: tests/assets/book.typ
           section: "5.5",
         )[completions]
     - #chapter(
-        "format/main.typ",
-        section: "6",
+        "format/main.typ", section: "6"
       )[Format]
       - #chapter(
           "format/book.typ",
@@ -71,8 +66,7 @@ input_file: tests/assets/book.typ
             section: "6.1.1",
           )[Book Metadata]
           - #chapter(
-              none,
-              section: "6.1.1.1",
+              none, section: "6.1.1.1"
             )[Draft chapter]
           // - #chapter(none, section: "6.1.1.2")[chapter with - markers]
           // - #chapter(none, "= Introduction", section: "6.1.1.2")
@@ -86,24 +80,19 @@ input_file: tests/assets/book.typ
           section: "6.2",
         )[Theme]
       - #chapter(
-          none,
-          section: "6.3",
+          none, section: "6.3"
         )[Typst Support]
     - #chapter(
-        none,
-        section: "7",
+        none, section: "7"
       )[For developers]
       - #chapter(
-          none,
-          section: "7.1",
+          none, section: "7.1"
         )[Typst-side APIs]
       - #chapter(
-          none,
-          section: "7.2",
+          none, section: "7.2"
         )[typst-book CLI Internals]
       - #chapter(
-          none,
-          section: "7.3",
+          none, section: "7.3"
         )[Alternative Backends]
     // end of summary
   ],

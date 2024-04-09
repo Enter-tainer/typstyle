@@ -75,9 +75,7 @@ input_file: tests/assets/tablex.typ
 // Optionally use a default dictionary to fill missing arguments with.
 // This is in the common section as it is needed by the grid section as well.
 #let validate-fit-spans(
-  fit-spans,
-  default: (x: false, y: false),
-  error-prefix: none,
+  fit-spans, default: (x: false, y: false), error-prefix: none
 ) = {
   if type(error-prefix) == _str-type {
     error-prefix = " " + error-prefix
@@ -107,7 +105,7 @@ input_file: tests/assets/tablex.typ
     }
   } else {
     panic("Tablex error:" + error-prefix + " Expected 'fit-spans' to be either a boolean or dictionary, found '" + str(
-      type(fit-spans),
+      type(fit-spans)
     ) + "'")
   }
   fit-spans
@@ -257,8 +255,7 @@ input_file: tests/assets/tablex.typ
     (acc, cell) => {
       if (
         is-tablex-cell(cell) and type(cell.y) in (
-          _int-type,
-          _float-type,
+          _int-type, _float-type
         ) and cell.y > acc
       ) {
         cell.y
@@ -289,10 +286,7 @@ input_file: tests/assets/tablex.typ
 // Check if this length is infinite.
 #let is-infinite-len(len) = {
   type(len) in (
-    _ratio-type,
-    _fraction-type,
-    _rel-len-type,
-    _length-type,
+    _ratio-type, _fraction-type, _rel-len-type, _length-type
   ) and "inf" in repr(len)
 }
 
@@ -304,8 +298,7 @@ input_file: tests/assets/tablex.typ
 #let validate-cols-rows(columns, rows, items: ()) = {
   if type(columns) == _int-type {
     assert(
-      columns >= 0,
-      message: "Error: Cannot have a negative amount of columns.",
+      columns >= 0, message: "Error: Cannot have a negative amount of columns."
     )
 
     columns = (auto,) * columns
@@ -498,8 +491,7 @@ input_file: tests/assets/tablex.typ
     // Measure with abs (and later multiply by the sign) so negative em works.
     // Otherwise it would return 0pt, and we would need to measure again with abs.
     let measured-em = calc-sign(em) * measure(
-      box(width: calc.abs(em) * 1em),
-      styles,
+      box(width: calc.abs(em) * 1em), styles
     ).width
 
     return pt + measured-em
@@ -600,8 +592,7 @@ input_file: tests/assets/tablex.typ
     // em repr changed in 0.11.0 => need to use fields here
     // or use fields if they're supported anyway
     return convert-ratio-type-to-pt(
-      len.ratio,
-      page-size,
+      len.ratio, page-size
     ) + convert-length-type-to-pt(len.length, styles: styles)
   }
 
@@ -646,8 +637,7 @@ input_file: tests/assets/tablex.typ
   // Note: we cannot use `len - ratio-part` as that returns a `_rel-len-type` value,
   // not a `_length-type` value.
   let length-part-pt = convert-length-type-to-pt(
-    pt-part + em-part,
-    styles: styles,
+    pt-part + em-part, styles: styles
   )
 
   ratio-part-pt + length-part-pt
@@ -891,11 +881,7 @@ input_file: tests/assets/tablex.typ
 // Organize cells in a grid from the given items,
 // and also get all given lines
 #let generate-grid(
-  items,
-  x_limit: 0,
-  y_limit: 0,
-  map-cells: none,
-  fit-spans: none,
+  items, x_limit: 0, y_limit: 0, map-cells: none, fit-spans: none
 ) = {
   // init grid as a matrix
   // y_limit  x   x_limit
@@ -992,8 +978,7 @@ input_file: tests/assets/tablex.typ
     let cell = item
 
     assert(
-      is-tablex-cell(cell),
-      message: "All table items must be cells or lines.",
+      is-tablex-cell(cell), message: "All table items must be cells or lines."
     )
 
     first_cell_reached = true
@@ -1007,8 +992,7 @@ input_file: tests/assets/tablex.typ
 
     if this_x == none or this_y == none {
       panic("Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: " + repr((
-        prev_x,
-        prev_y,
+        prev_x, prev_y
       )) + ", new cell: " + repr(cell) + ")")
     }
 
@@ -1049,8 +1033,7 @@ input_file: tests/assets/tablex.typ
 
     if type(this_x) != _int-type or type(this_y) != _int-type {
       panic("Error: Cell coordinates must be integers. Invalid pair: " + repr((
-        this_x,
-        this_y,
+        this_x, this_y
       )))
     }
 
@@ -1073,24 +1056,18 @@ input_file: tests/assets/tablex.typ
 
     if this_x >= x_limit {
       panic("Error: Cell at " + repr((
-        this_x,
-        this_y,
+        this_x, this_y
       )) + " is placed at an inexistent column.")
     }
 
     if max_x >= x_limit {
       panic("Error: Cell at " + repr((
-        this_x,
-        this_y,
+        this_x, this_y
       )) + " has a colspan of " + repr(cell.colspan) + ", which would exceed the available columns.")
     }
 
     let cell_positions = positions-spanned-by(
-      cell,
-      x: this_x,
-      y: this_y,
-      x_limit: x_limit,
-      y_limit: none,
+      cell, x: this_x, y: this_y, x_limit: x_limit, y_limit: none
     )
 
     for position in cell_positions {
@@ -1101,11 +1078,9 @@ input_file: tests/assets/tablex.typ
         let parent_cell = get-parent-cell(currently_there, grid: grid)
 
         panic("Error: Multiple cells attempted to occupy the cell position at " + repr((
-          px,
-          py,
+          px, py
         )) + ": one starting at " + repr((
-          this_x,
-          this_y,
+          this_x, this_y
         )) + ", and one starting at " + repr((parent_cell.x, parent_cell.y)))
       }
 
@@ -1124,8 +1099,7 @@ input_file: tests/assets/tablex.typ
 
         if index > grid.items.len() {
           panic("Internal tablex error: Could not expand grid to include cell at " + repr((
-            this_x,
-            this_y,
+            this_x, this_y
           )))
         }
         grid.items.at(index) = cell
@@ -1135,21 +1109,14 @@ input_file: tests/assets/tablex.typ
         let index = grid-index-at(px, py)
 
         grid.items.at(index) = occupied(
-          x: px,
-          y: py,
-          parent_x: this_x,
-          parent_y: this_y,
+          x: px, y: py, parent_x: this_x, parent_y: this_y
         )
         // indicate this position's parent cell (to join them later)
       }
     }
 
     let next_pos = next-available-position(
-      grid,
-      x: this_x,
-      y: this_y,
-      x_limit: x_limit,
-      y_limit: y_limit,
+      grid, x: this_x, y: this_y, x_limit: x_limit, y_limit: y_limit
     )
 
     prev_x = this_x
@@ -1274,8 +1241,7 @@ input_file: tests/assets/tablex.typ
   }
 
   if cell_align != auto and type(cell_align) not in (
-    _align-type,
-    _2d-align-type,
+    _align-type, _2d-align-type
   ) {
     panic("Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').")
   }
@@ -1318,7 +1284,7 @@ input_file: tests/assets/tablex.typ
 // based on the remaining sizes (after fixed-size and auto columns)
 #let determine-frac-tracks(tracks, remaining: 0pt, gutter: none) = {
   let frac-tracks = tracks.enumerate().filter(t => type(
-    t.at(1),
+    t.at(1)
   ) == _fraction-type)
 
   let amount-frac = frac-tracks.fold(0, (acc, el) => acc + (el.at(1) / 1fr))
@@ -1422,7 +1388,7 @@ input_file: tests/assets/tablex.typ
   let new_columns = columns
 
   let all-frac-columns = columns.enumerate().filter(i-col => type(
-    i-col.at(1),
+    i-col.at(1)
   ) == _fraction-type).map(i-col => i-col.at(0))
   for (i, col) in columns.enumerate() {
     if col == auto {
@@ -1494,8 +1460,7 @@ input_file: tests/assets/tablex.typ
             // instead of 'columns' as the previous auto columns
             // also have a fixed size now (we know their width).
             let fixed_size = get-colspan-fixed-size-covered(
-              pcell,
-              columns: new_columns,
+              pcell, columns: new_columns
             )
 
             calc.max(max, width - fixed_size, 0pt)
@@ -1756,8 +1721,7 @@ input_file: tests/assets/tablex.typ
             // of 'rows' as the previous auto rows also have a fixed
             // size now (we know their height).
             let fixed_size = get-rowspan-fixed-size-covered(
-              pcell,
-              rows: new_rows,
+              pcell, rows: new_rows
             )
 
             calc.max(max, height - fixed_size, 0pt)
@@ -1823,9 +1787,7 @@ input_file: tests/assets/tablex.typ
   if remaining >= 0pt {
     // split fractions in one page
     let frac_res = determine-frac-tracks(
-      rows,
-      remaining: remaining,
-      gutter: row-gutter,
+      rows, remaining: remaining, gutter: row-gutter
     )
     (
       rows: frac_res.tracks,
@@ -1901,11 +1863,7 @@ input_file: tests/assets/tablex.typ
 // -- width/height utilities --
 
 #let width-between(
-  start: 0,
-  end: none,
-  columns: (),
-  gutter: none,
-  pre-gutter: false,
+  start: 0, end: none, columns: (), gutter: none, pre-gutter: false
 ) = {
   let col-gutter = default-if-none(default-if-none(gutter, (col: 0pt)).col, 0pt)
   end = default-if-none(end, columns.len())
@@ -1928,11 +1886,7 @@ input_file: tests/assets/tablex.typ
 }
 
 #let height-between(
-  start: 0,
-  end: none,
-  rows: (),
-  gutter: none,
-  pre-gutter: false,
+  start: 0, end: none, rows: (), gutter: none, pre-gutter: false
 ) = {
   let row-gutter = default-if-none(default-if-none(gutter, (row: 0pt)).row, 0pt)
   end = default-if-none(end, rows.len())
@@ -1966,11 +1920,7 @@ input_file: tests/assets/tablex.typ
 
 #let cell-height(y, rowspan: 1, rows: (), gutter: none) = {
   height-between(
-    start: y,
-    end: y + rowspan,
-    rows: rows,
-    gutter: gutter,
-    pre-gutter: true,
+    start: y, end: y + rowspan, rows: rows, gutter: gutter, pre-gutter: true
   )
 }
 
@@ -2014,12 +1964,7 @@ input_file: tests/assets/tablex.typ
 //             |  ||
 //             ----   <--- sample cell
 #let v-and-hline-spans-for-cell(
-  cell,
-  hlines: (),
-  vlines: (),
-  x_limit: 0,
-  y_limit: 0,
-  grid: (),
+  cell, hlines: (), vlines: (), x_limit: 0, y_limit: 0, grid: ()
 ) = {
   // only draw lines from the parent cell
   if is-tablex-occupied(cell) {
@@ -2043,11 +1988,7 @@ input_file: tests/assets/tablex.typ
   }).map(h => {
     // get the intersection between the hline and the cell's x-span.
     let span = get-included-span(
-      h.start,
-      h.end,
-      start: cell.x,
-      end: cell.x + cell.colspan,
-      limit: x_limit,
+      h.start, h.end, start: cell.x, end: cell.x + cell.colspan, limit: x_limit
     )
 
     if span == none {
@@ -2072,11 +2013,7 @@ input_file: tests/assets/tablex.typ
   }).map(v => {
     // get the intersection between the hline and the cell's x-span.
     let span = get-included-span(
-      v.start,
-      v.end,
-      start: cell.y,
-      end: cell.y + cell.rowspan,
-      limit: y_limit,
+      v.start, v.end, start: cell.y, end: cell.y + cell.rowspan, limit: y_limit
     )
 
     if span == none {
@@ -2103,36 +2040,24 @@ input_file: tests/assets/tablex.typ
   calc.max(
     0pt,
     ..lines.map(l => stroke-len(
-      l.stroke,
-      stroke-auto: stroke-auto,
-      styles: styles,
+      l.stroke, stroke-auto: stroke-auto, styles: styles
     )),
   )
 )
 
 #let _largest-stroke-among-hlines-at-y(
-  y,
-  hlines: none,
-  stroke-auto: 1pt,
-  styles: none,
+  y, hlines: none, stroke-auto: 1pt, styles: none
 ) = {
   _largest-stroke-among-lines(
-    hlines.filter(h => h.y == y),
-    stroke-auto: stroke-auto,
-    styles: styles,
+    hlines.filter(h => h.y == y), stroke-auto: stroke-auto, styles: styles
   )
 }
 
 #let _largest-stroke-among-vlines-at-x(
-  x,
-  vlines: none,
-  stroke-auto: 1pt,
-  styles: none,
+  x, vlines: none, stroke-auto: 1pt, styles: none
 ) = {
   _largest-stroke-among-lines(
-    vlines.filter(v => v.x == x),
-    stroke-auto: stroke-auto,
-    styles: styles,
+    vlines.filter(v => v.x == x), stroke-auto: stroke-auto, styles: styles
   )
 }
 
@@ -2144,11 +2069,7 @@ input_file: tests/assets/tablex.typ
   if is-color(stroke) {
     stroke + 1pt
   } else if type(stroke) in (
-    _length-type,
-    _rel-len-type,
-    _ratio-type,
-    _stroke-type,
-    _dict-type,
+    _length-type, _rel-len-type, _ratio-type, _stroke-type, _dict-type
   ) or stroke in (none, auto) {
     stroke
   } else {
@@ -2213,8 +2134,7 @@ input_file: tests/assets/tablex.typ
   let stroke = parse-stroke(stroke)
 
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
-    end,
-    columns.len(),
+    end, columns.len()
   ) {
     return
   }
@@ -2233,14 +2153,12 @@ input_file: tests/assets/tablex.typ
 
   if default-if-auto(hline.stroke-expand, true) == true {
     let largest-stroke = _largest-stroke-among-vlines-at-x.with(
-      vlines: vlines,
-      stroke-auto: stroke-auto,
-      styles: styles,
+      vlines: vlines, stroke-auto: stroke-auto, styles: styles
     )
     left-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2
     // expand to the left to close stroke gap
     right-expand += largest-stroke(
-      default-if-auto-or-none(end, columns.len()),
+      default-if-auto-or-none(end, columns.len())
     ) / 2
     // close stroke gap to the right
   }
@@ -2318,8 +2236,7 @@ input_file: tests/assets/tablex.typ
   let stroke = parse-stroke(stroke)
 
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
-    end,
-    rows.len(),
+    end, rows.len()
   ) {
     return
   }
@@ -2338,14 +2255,12 @@ input_file: tests/assets/tablex.typ
 
   if default-if-auto(vline.stroke-expand, true) == true {
     let largest-stroke = _largest-stroke-among-hlines-at-y.with(
-      hlines: hlines,
-      stroke-auto: stroke-auto,
-      styles: styles,
+      hlines: hlines, stroke-auto: stroke-auto, styles: styles
     )
     top-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2
     // close stroke gap to the top
     bottom-expand += largest-stroke(
-      default-if-auto-or-none(end, rows.len()),
+      default-if-auto-or-none(end, rows.len())
     ) / 2
     // close stroke gap to the bottom
   }
@@ -2358,10 +2273,7 @@ input_file: tests/assets/tablex.typ
     pre-gutter: pre-gutter,
   )
   let start_y = height-between(
-    start: initial_y,
-    end: start,
-    rows: rows,
-    gutter: gutter,
+    start: initial_y, end: start, rows: rows, gutter: gutter
   ) - top-expand
   let end_y = height-between(
     start: initial_y,
@@ -2573,8 +2485,7 @@ input_file: tests/assets/tablex.typ
             first_x = default-if-none(first_x, x)
             first_y = default-if-none(first_y, y)
             rightmost_x = default-if-none(
-              rightmost_x,
-              width-between(start: first_x, end: none),
+              rightmost_x, width-between(start: first_x, end: none)
             )
 
             // where to place the cell (horizontally)
@@ -2637,14 +2548,10 @@ input_file: tests/assets/tablex.typ
 
         // ensure the lines are drawn absolutely, after the header
         let draw-hline = (..args) => place(
-          top + left,
-          dy: added_header_height,
-          draw-hline(..args),
+          top + left, dy: added_header_height, draw-hline(..args)
         )
         let draw-vline = (..args) => place(
-          top + left,
-          dy: added_header_height,
-          draw-vline(..args),
+          top + left, dy: added_header_height, draw-vline(..args)
         )
 
         let header_last_y = if first-row-group != none {
@@ -2739,18 +2646,14 @@ input_file: tests/assets/tablex.typ
 
         for vline in vlines {
           draw-vline(
-            vline,
-            pre-gutter: true,
-            stop-before-row-gutter: is_last_row,
+            vline, pre-gutter: true, stop-before-row-gutter: is_last_row
           )
 
           // don't draw the post-col gutter vline
           // if this is the last vline
           if gutter.col != none and vline.x < columns.len() {
             draw-vline(
-              vline,
-              pre-gutter: false,
-              stop-before-row-gutter: is_last_row,
+              vline, pre-gutter: false, stop-before-row-gutter: is_last_row
             )
           }
         }
@@ -2788,10 +2691,7 @@ input_file: tests/assets/tablex.typ
 
   // specialize some functions for the given grid, columns and rows
   let v-and-hline-spans-for-cell = v-and-hline-spans-for-cell.with(
-    vlines: vlines,
-    x_limit: col_len,
-    y_limit: row_len,
-    grid: grid,
+    vlines: vlines, x_limit: col_len, y_limit: row_len, grid: grid
   )
   let cell-width = cell-width.with(columns: columns, gutter: gutter)
   let cell-height = cell-height.with(rows: rows, gutter: gutter)
@@ -2804,8 +2704,7 @@ input_file: tests/assets/tablex.typ
   let first_row_group = none
 
   let header_pages = state(
-    "tablex_tablex_header_pages__" + repr(table-id),
-    (table-loc.page(),),
+    "tablex_tablex_header_pages__" + repr(table-id), (table-loc.page(),)
   )
   let this_row_group = (rows: ((),), hlines: (), vlines: (), y_span: (0, 0))
 
@@ -2845,7 +2744,7 @@ input_file: tests/assets/tablex.typ
         this_row_group.rows.last().push((cell: cell, box: cell_box))
 
         let hlines = hlines.filter(h => this_row_group.hlines.filter(
-          is-same-hline.with(h),
+          is-same-hline.with(h)
         ).len() == 0)
 
         let vlines = vlines.filter(v => v not in this_row_group.vlines)
@@ -2874,10 +2773,7 @@ input_file: tests/assets/tablex.typ
       let next_y = end_y + 1
 
       this_row_group = (
-        rows: ((),),
-        hlines: (),
-        vlines: (),
-        y_span: (next_y, next_y),
+        rows: ((),), hlines: (), vlines: (), y_span: (next_y, next_y)
       )
 
       let is_header = first_row_group == none
@@ -2977,15 +2873,13 @@ input_file: tests/assets/tablex.typ
 
   if auto-hlines {
     new_hlines = range(
-      0,
-      row_len + 1,
+      0, row_len + 1
     ).filter(y => hlines.filter(h => h.y == y).len() == 0).map(y => hlinex(y: y))
   }
 
   if auto-vlines {
     new_vlines = range(
-      0,
-      col_len + 1,
+      0, col_len + 1
     ).filter(x => vlines.filter(v => v.x == x).len() == 0).map(x => vlinex(x: x))
   }
 
@@ -3008,17 +2902,13 @@ input_file: tests/assets/tablex.typ
 
   if type(col-gutter) in (_length-type, _rel-len-type, _ratio-type) {
     col-gutter = convert-length-to-pt(
-      col-gutter,
-      styles: styles,
-      page-size: page-width,
+      col-gutter, styles: styles, page-size: page-width
     )
   }
 
   if type(row-gutter) in (_length-type, _rel-len-type, _ratio-type) {
     row-gutter = convert-length-to-pt(
-      row-gutter,
-      styles: styles,
-      page-size: page-width,
+      row-gutter, styles: styles, page-size: page-width
     )
   }
 
@@ -3095,9 +2985,9 @@ input_file: tests/assets/tablex.typ
 
       if cells.len() != original-cells.len() {
         panic("Tablex error: 'map-rows' returned " + str(
-          cells.len(),
+          cells.len()
         ) + " cells, when it should have returned exactly " + str(
-          original-cells.len(),
+          original-cells.len()
         ) + ".")
       }
 
@@ -3155,9 +3045,9 @@ input_file: tests/assets/tablex.typ
 
       if cells.len() != original-cells.len() {
         panic("Tablex error: 'map-cols' returned " + str(
-          cells.len(),
+          cells.len()
         ) + " cells, when it should have returned exactly " + str(
-          original-cells.len(),
+          original-cells.len()
         ) + ".")
       }
 
@@ -3225,8 +3115,7 @@ input_file: tests/assets/tablex.typ
   header-hlines-have-priority,
 ) = {
   header-hlines-have-priority = default-if-auto(
-    default-if-none(header-hlines-have-priority, true),
-    true,
+    default-if-none(header-hlines-have-priority, true), true
   )
 
   if type(header-hlines-have-priority) != _bool-type {
@@ -3381,8 +3270,7 @@ input_file: tests/assets/tablex.typ
 
   let header-rows = validate-header-rows(header-rows)
   let repeat-header = validate-repeat-header(
-    repeat-header,
-    header-rows: header-rows,
+    repeat-header, header-rows: header-rows
   )
   let header-hlines-have-priority = validate-header-hlines-priority(header-hlines-have-priority)
   let map-cells = validate-map-func(map-cells)

@@ -146,10 +146,7 @@ content((name: "line", anchor: 50pt), [50pt])
 You can style draw elements by passing the relevant named arguments to their draw functions. All elements that draw something have stroke and fill styling unless said otherwise.
 
 #doc-style.show-parameter-block(
-  "fill",
-  ("color", "none"),
-  default: none,
-  [How to fill the drawn element.],
+  "fill", ("color", "none"), default: none, [How to fill the drawn element.]
 )
 #doc-style.show-parameter-block(
   "stroke",
@@ -364,10 +361,7 @@ line(..c)
   default: false,
 )
 #doc-style.show-parameter-block(
-  "reverse",
-  "boolean",
-  [Reverses the direction of the mark.],
-  default: false,
+  "reverse", "boolean", [Reverses the direction of the mark.], default: false
 )
 #doc-style.show-parameter-block(
   "xy-up",
@@ -418,22 +412,13 @@ A _coordinate_ is a position on the canvas on which the picture is drawn. They t
 == XYZ <coordinate-xyz>
 Defines a point `x` units right, `y` units upward, and `z` units away.
 #doc-style.show-parameter-block(
-  "x",
-  "number",
-  default: 0,
-  [The number of units in the `x` direction.],
+  "x", "number", default: 0, [The number of units in the `x` direction.]
 )
 #doc-style.show-parameter-block(
-  "y",
-  "number",
-  default: 0,
-  [The number of units in the `y` direction.],
+  "y", "number", default: 0, [The number of units in the `y` direction.]
 )
 #doc-style.show-parameter-block(
-  "z",
-  "number",
-  default: 0,
-  [The number of units in the `z` direction.],
+  "z", "number", default: 0, [The number of units in the `z` direction.]
 )
 
 The implicit form can be given as an array of two or three `<number>`s, as in `(x,y)` and `(x,y,z)`.
@@ -670,16 +655,10 @@ Use this to linearly interpolate between two coordinates `a` and `b` with a give
 An angle can also be given for the general meaning: "First consider the line from `a` to `b`. Then rotate this line by `angle` around point `a`. Then the two endpoints of this line will be `a` and some point `c`. Use this point `c` for the subsequent computation."
 
 #doc-style.show-parameter-block(
-  show-default: false,
-  "a",
-  "coordinate",
-  [The coordinate to interpolate from.],
+  show-default: false, "a", "coordinate", [The coordinate to interpolate from.]
 )
 #doc-style.show-parameter-block(
-  show-default: false,
-  "b",
-  "coordinate",
-  [The coordinate to interpolate to.],
+  show-default: false, "b", "coordinate", [The coordinate to interpolate to.]
 )
 #doc-style.show-parameter-block(
   show-default: false,
@@ -1185,10 +1164,7 @@ All path decoration functions support the following style keys:
     the decorations start/end if the path is _not closed_.],
 )
 #def-arg(
-  "width",
-  [`<number>`],
-  default: 1,
-  [Width or thickness of the decoration.],
+  "width", [`<number>`], default: 1, [Width or thickness of the decoration.]
 )
 #def-arg(
   "segments",

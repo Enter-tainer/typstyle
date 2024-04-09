@@ -24,7 +24,7 @@ input_file: tests/assets/cetz-manual.typ
 #set terms(indent: 1em)
 #set par(justify: true)
 #set heading(numbering: (
-  ..num,
+  ..num
 ) => if num.pos().len() < 4 {
   numbering("1.1", ..num)
 })
@@ -34,8 +34,7 @@ input_file: tests/assets/cetz-manual.typ
 #{
   show heading: none
   columns(
-    2,
-    outline(indent: true, depth: 3),
+    2, outline(indent: true, depth: 3)
   )
   pagebreak(weak: true)
 }
@@ -66,7 +65,7 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 #show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") {
   set text(1.2em)
   doc-style.show-type(
-    it.text.slice(1, -1),
+    it.text.slice(1, -1)
   )
 } else {
   it
@@ -252,17 +251,14 @@ Marks are arrow tips that can be added to the end of path based elements that su
     [*Shape*],
     ..(
       for (
-        name,
-        item,
+        name, item
       ) in cetz.mark-shapes.marks {
         let name-to-mnemonic = (:)
         for (
-          name,
-          item,
+          name, item
         ) in cetz.mark-shapes.mnemonics {
           let list = name-to-mnemonic.at(
-            item.at(0),
-            default: (),
+            item.at(0), default: ()
           )
           list += (
             raw(name) + if item.at(1) {
@@ -270,15 +266,13 @@ Marks are arrow tips that can be added to the end of path based elements that su
             },
           )
           name-to-mnemonic.insert(
-            item.at(0),
-            list,
+            item.at(0), list
           )
         }
         (
           raw(name),
           name-to-mnemonic.at(
-            name,
-            default: ([],),
+            name, default: ([],)
           ).join([, ]),
           cetz.canvas(
             cetz.draw.line(
@@ -1075,12 +1069,12 @@ Axis names to be used for styling:
 
 ==== Default `scientific` Style
 #raw(
-  repr(axes.default-style-scientific),
+  repr(axes.default-style-scientific)
 )
 
 ==== Default `school-book` Style
 #raw(
-  repr(axes.default-style-schoolbook),
+  repr(axes.default-style-schoolbook)
 )
 
 == Chart
@@ -1148,12 +1142,12 @@ styled the same way, see @plot.style.
 
 ==== Default `columnchart` Style
 #raw(
-  repr(chart.columnchart-default-style),
+  repr(chart.columnchart-default-style)
 )
 
 ==== Default `boxwhisker` Style
 #raw(
-  repr(chart.boxwhisker-default-style),
+  repr(chart.boxwhisker-default-style)
 )
 
 ==== Default `piechart` Style
@@ -1312,8 +1306,7 @@ It contains all supported keys for all elements.
   #set text(size: 8pt)
   #columns(
     raw(
-      repr(styles.default),
-      lang: "typc",
+      repr(styles.default), lang: "typc"
     ),
   )
 ]

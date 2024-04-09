@@ -52,9 +52,7 @@ input_file: tests/assets/cetz-tree.typ
 
   if draw-edge == auto {
     draw-edge = (
-      source-name,
-      target-name,
-      target-node,
+      source-name, target-name, target-node
     ) => {
       let (a, b) = (source-name + "." + direction,
                     target-name + "." + opposite-dir.at(direction))

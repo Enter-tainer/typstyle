@@ -27,8 +27,7 @@ input_file: tests/assets/simple-paper.typ
   let raw-font = code
 
   set document(
-    author: authors,
-    title: title,
+    author: authors, title: title
   )
   set page(
     numbering: "1",
@@ -84,8 +83,7 @@ input_file: tests/assets/simple-paper.typ
     x: 2em,
     grid(
       columns: (1fr,) * calc.min(
-        3,
-        authors.len(),
+        3, authors.len()
       ),
       gutter: 1em,
       ..authors.map(author => align(
@@ -127,8 +125,7 @@ input_file: tests/assets/simple-paper.typ
   )
 
   show raw: set text(
-    font: (raw-font, hei),
-    size: 10pt,
+    font: (raw-font, hei), size: 10pt
   )
   show link: underline
   show link: set text(blue)

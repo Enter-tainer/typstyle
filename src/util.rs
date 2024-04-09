@@ -36,7 +36,7 @@ where
     match fold_style {
         FoldStyle::Fit => {
             let sep = BoxDoc::text(",").append(BoxDoc::line());
-            let inner = BoxDoc::intersperse(items, sep).append(comma_);
+            let inner = BoxDoc::intersperse(items, sep).append(comma_).group();
             BoxDoc::text("(")
                 .append(
                     BoxDoc::line_()

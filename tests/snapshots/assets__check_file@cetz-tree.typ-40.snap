@@ -38,8 +38,7 @@ input_file: tests/assets/cetz-tree.typ
   ..style,
 ) = {
   assert(parent-position in (
-    "begin",
-    "center",
+    "begin", "center"
   ))
   assert(grow > 0)
   assert(spread > 0)
@@ -92,8 +91,7 @@ input_file: tests/assets/cetz-tree.typ
       if type(content) == str {
         content = [#content]
       } else if type(content) in (
-        float,
-        int,
+        float, int
       ) {
         content = $#content$
       } else if type(content) == dictionary and "content" in content {
@@ -104,15 +102,11 @@ input_file: tests/assets/cetz-tree.typ
 
       if content != none {
         draw.content(
-          (),
-          content,
-          name: "content",
+          (), content, name: "content"
         )
       } else {
         draw.content(
-          (),
-          [?],
-          name: "content",
+          (), [?], name: "content"
         )
       }
       if draw-node == "rect" {
@@ -135,19 +129,15 @@ input_file: tests/assets/cetz-tree.typ
   )
 
   let build-node(
-    tree,
-    depth: 0,
-    sibling: 0,
+    tree, depth: 0, sibling: 0
   ) = {
     let children = ()
     let cnt = none
     if type(tree) == array {
       children = tree.slice(1).enumerate().map((
-        (n, c),
+        (n, c)
       ) => build-node(
-        c,
-        depth: depth + 1,
-        sibling: n,
+        c, depth: depth + 1, sibling: n
       ))
       cnt = tree.at(0)
     } else {
@@ -169,9 +159,7 @@ input_file: tests/assets/cetz-tree.typ
   // return:
   //   (node, left-x, right-x, shift-x)
   let layout-node(
-    node,
-    shift-x,
-    ctx,
+    node, shift-x, ctx
   ) = {
     if node.children.len() == 0 {
       node.x = shift-x
@@ -184,8 +172,7 @@ input_file: tests/assets/cetz-tree.typ
       for i in range(0, n-children) {
         let child = node.children.at(i)
         let (
-          child-min-x,
-          child-max-x,
+          child-min-x, child-max-x
         ) = (none, none)
 
         (
@@ -203,12 +190,10 @@ input_file: tests/assets/cetz-tree.typ
         right = util.max(child.x, right)
 
         min-x = util.min(
-          min-x,
-          child-min-x,
+          min-x, child-min-x
         )
         max-x = util.max(
-          max-x,
-          child-max-x,
+          max-x, child-max-x
         )
 
         if child-max-x > right {
@@ -236,9 +221,7 @@ input_file: tests/assets/cetz-tree.typ
 
   let layout(node, ctx) = {
     let (n, ..) = layout-node(
-      node,
-      0,
-      ctx,
+      node, 0, ctx
     )
     return n
   }
@@ -271,8 +254,7 @@ input_file: tests/assets/cetz-tree.typ
     )
     for child in node.children {
       d += anchors(
-        child,
-        parent-path + str(node.n),
+        child, parent-path + str(node.n)
       )
     }
     return d
@@ -286,7 +268,7 @@ input_file: tests/assets/cetz-tree.typ
       name: name,
       {
         draw.move-to(
-          node-position(node),
+          node-position(node)
         )
         draw.anchor("center", ())
         draw-node(node, parent-name)
@@ -295,9 +277,7 @@ input_file: tests/assets/cetz-tree.typ
 
     if parent-name != none {
       cmds += draw-edge(
-        parent-name,
-        name,
-        node,
+        parent-name, name, node
       )
     }
 
@@ -328,8 +308,7 @@ input_file: tests/assets/cetz-tree.typ
         ctx = self.ctx
         if name != none {
           ctx.nodes.insert(
-            name,
-            nodes.at(name),
+            name, nodes.at(name)
           )
         }
         return ctx
@@ -337,8 +316,7 @@ input_file: tests/assets/cetz-tree.typ
       custom-anchors-ctx: ctx => {
         let self = ctx.groups.last()
         return anchors(
-          self.tree-root,
-          none,
+          self.tree-root, none
         )
       },
       children: ctx => {

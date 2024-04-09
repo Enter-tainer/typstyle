@@ -49,17 +49,12 @@ input_file: tests/assets/cetz-tree.typ
   }
 
   let opposite-dir = (
-    left: "right",
-    right: "left",
-    bottom: "top",
-    top: "bottom",
+    left: "right", right: "left", bottom: "top", top: "bottom"
   )
 
   if draw-edge == auto {
     draw-edge = (
-      source-name,
-      target-name,
-      target-node,
+      source-name, target-name, target-node
     ) => {
       let (a, b) = (source-name + "." + direction,
                     target-name + "." + opposite-dir.at(direction))
@@ -114,9 +109,7 @@ input_file: tests/assets/cetz-tree.typ
     let cnt = none
     if type(tree) == array {
       children = tree.slice(1).enumerate().map(((n, c)) => build-node(
-        c,
-        depth: depth + 1,
-        sibling: n,
+        c, depth: depth + 1, sibling: n
       ))
       cnt = tree.at(0)
     } else {
