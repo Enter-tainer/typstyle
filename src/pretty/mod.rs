@@ -7,7 +7,7 @@ use typst_syntax::{ast, SyntaxNode};
 use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::attr::Attributes;
-use crate::util::{pretty_items, FoldStyle};
+use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
@@ -459,13 +459,12 @@ impl PrettyPrinter {
     fn convert_parenthesized<'a>(&'a self, parenthesized: Parenthesized<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("(");
         let inner = self.convert_expr(parenthesized.expr());
-        let multiline_expr = BoxDoc::line()
-            .append(inner.clone())
-            .append(BoxDoc::line())
+        let inner = BoxDoc::line_()
+            .append(inner)
+            .append(BoxDoc::line_())
             .nest(2)
             .group();
-        let singleline_expr = inner;
-        doc = doc.append(multiline_expr.flat_alt(singleline_expr));
+        doc = doc.append(inner);
         doc = doc.append(BoxDoc::text(")"));
         doc
     }
@@ -476,32 +475,20 @@ impl PrettyPrinter {
             .map(|item| self.convert_array_item(item))
             .collect_vec();
         if array_items.len() == 1 {
-            let singleline = BoxDoc::text("(")
-                .append(array_items[0].clone())
-                .append(BoxDoc::text(","))
-                .append(BoxDoc::text(")"));
-            let multiline = BoxDoc::text("(")
+            let res = BoxDoc::text("(")
                 .append(
-                    BoxDoc::hardline()
+                    BoxDoc::line_()
                         .append(array_items[0].clone())
                         .append(BoxDoc::text(","))
                         .nest(2),
                 )
-                .append(BoxDoc::hardline())
+                .append(BoxDoc::line_())
                 .append(BoxDoc::text(")"))
                 .group();
-            multiline.flat_alt(singleline)
+            res
         } else {
             let style = FoldStyle::from_attr(self.attr_map.get(array.to_untyped()));
-
-            pretty_items(
-                &array_items,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
-                style,
-            )
+            comma_seprated_items(array_items.into_iter(), style)
         }
     }
 
@@ -522,14 +509,7 @@ impl PrettyPrinter {
             .map(|item| self.convert_dict_item(item))
             .collect_vec();
         let style = FoldStyle::from_attr(self.attr_map.get(dict.to_untyped()));
-        pretty_items(
-            &dict_items,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            style,
-        )
+        comma_seprated_items(dict_items.into_iter(), style)
     }
 
     fn convert_dict_item<'a>(&'a self, dict_item: DictItem<'a>) -> BoxDoc<'a, ()> {
@@ -621,12 +601,8 @@ impl PrettyPrinter {
                 .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
                 .append(BoxDoc::text(")"))
         } else {
-            pretty_items(
-                &args,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
+            comma_seprated_items(
+                args.into_iter(),
                 if is_multiline {
                     FoldStyle::Never
                 } else {
@@ -710,14 +686,8 @@ impl PrettyPrinter {
         let mut doc = BoxDoc::nil();
         let params = self.convert_params(closure.params());
         let style = FoldStyle::from_attr(self.attr_map.get(closure.params().to_untyped()));
-        let arg_list = pretty_items(
-            &params,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            style,
-        );
+        let arg_list = comma_seprated_items(params.clone().into_iter(), style);
+
         if let Some(name) = closure.name() {
             doc = doc.append(self.convert_ident(name));
             doc = doc.append(arg_list);
@@ -801,14 +771,7 @@ impl PrettyPrinter {
                 .append(items.into_iter().next().unwrap())
                 .append(BoxDoc::text(",)"))
         } else {
-            pretty_items(
-                &items,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
-                FoldStyle::Fit,
-            )
+            comma_seprated_items(items.into_iter(), FoldStyle::Fit)
         }
     }
 
@@ -1078,14 +1041,13 @@ impl PrettyPrinter {
         let open = self.convert_expr(math_delimited.open());
         let close = self.convert_expr(math_delimited.close());
         let body = self.convert_math(math_delimited.body());
-        let singleline = open.clone().append(body.clone()).append(close.clone());
-        let multiline = open
-            .append(BoxDoc::hardline())
+        let doc = open
+            .append(BoxDoc::line_())
             .append(body)
-            .append(BoxDoc::hardline())
+            .append(BoxDoc::line_())
             .nest(2)
             .append(close);
-        multiline.flat_alt(singleline)
+        doc
     }
 
     fn convert_math_attach<'a>(&'a self, math_attach: MathAttach<'a>) -> BoxDoc<'a, ()> {

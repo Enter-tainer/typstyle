@@ -6,8 +6,6 @@ use crate::attr::Attributes;
 pub enum FoldStyle {
     /// Fold items if them can fit in a single line
     Fit,
-    /// Fold items if there is only one item and it fit in a single line, other wise put each item in a line
-    Single,
     /// Never fold items
     Never,
 }
@@ -23,6 +21,39 @@ impl FoldStyle {
                 }
             }
             None => FoldStyle::Fit,
+        }
+    }
+}
+
+pub fn comma_seprated_items<'a, I>(items: I, fold_style: FoldStyle) -> BoxDoc<'a, ()>
+where
+    I: IntoIterator<Item = BoxDoc<'a, ()>> + ExactSizeIterator,
+{
+    if items.len() == 0 {
+        return BoxDoc::text("()");
+    }
+    let comma_ = BoxDoc::text(",").flat_alt(BoxDoc::nil());
+    match fold_style {
+        FoldStyle::Fit => {
+            let sep = BoxDoc::text(",").append(BoxDoc::line());
+            let inner = BoxDoc::intersperse(items, sep).append(comma_);
+            BoxDoc::text("(")
+                .append(
+                    BoxDoc::line_()
+                        .append(inner)
+                        .nest(2)
+                        .append(BoxDoc::line_())
+                        .group(),
+                )
+                .append(")")
+        }
+        FoldStyle::Never => {
+            let sep = BoxDoc::text(",").append(BoxDoc::hardline());
+            let inner = BoxDoc::intersperse(items, sep).append(BoxDoc::text(","));
+            BoxDoc::text("(")
+                .append(BoxDoc::hardline().append(inner).nest(2))
+                .append(BoxDoc::hardline())
+                .append(")")
         }
     }
 }
@@ -86,13 +117,6 @@ fn pretty_items_impl<'a>(
     let auto_items = multi.clone().flat_alt(flat).group();
     match fold_style {
         FoldStyle::Fit => auto_items,
-        FoldStyle::Single => {
-            if items.len() == 1 {
-                auto_items
-            } else {
-                multi
-            }
-        }
         FoldStyle::Never => multi,
     }
 }
@@ -112,23 +136,6 @@ mod tests {
             (BoxDoc::text("["), BoxDoc::text("]")),
             false,
             FoldStyle::Fit,
-        );
-        insta::assert_debug_snapshot!(outer);
-        insta::assert_snapshot!(outer.pretty(10).to_string());
-        insta::assert_snapshot!(outer.pretty(80).to_string());
-    }
-
-    #[test]
-    fn test_pretty_items_single() {
-        let strs = ["let a = 1"];
-        let docs: Vec<_> = strs.iter().map(|s| BoxDoc::text(s.to_string())).collect();
-        let outer = pretty_items(
-            &docs,
-            BoxDoc::text(";").append(BoxDoc::space()),
-            BoxDoc::text(";"),
-            (BoxDoc::text("{"), BoxDoc::text("}")),
-            true,
-            FoldStyle::Single,
         );
         insta::assert_debug_snapshot!(outer);
         insta::assert_snapshot!(outer.pretty(10).to_string());

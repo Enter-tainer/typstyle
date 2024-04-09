@@ -1,0 +1,54 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/code/perf-nest.typ
+---
+#let f(..arg) = arg
+
+#f(
+  f(
+    f(
+      f(
+        f(
+          f(
+            f(
+              f(
+                f(
+                  f(
+                    f(
+                      f(
+                        f(
+                          f(
+                            f(
+                              f(
+                                f(
+                                  f(
+                                    f(
+                                      f(
+                                        f(
+                                          f(
+                                            1,
+                                            2,
+                                            3,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+)
