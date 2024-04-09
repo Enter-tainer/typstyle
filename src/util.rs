@@ -27,8 +27,11 @@ impl FoldStyle {
 
 pub fn comma_seprated_items<'a, I>(items: I, fold_style: FoldStyle) -> BoxDoc<'a, ()>
 where
-    I: IntoIterator<Item = BoxDoc<'a, ()>>,
+    I: IntoIterator<Item = BoxDoc<'a, ()>> + ExactSizeIterator,
 {
+    if items.len() == 0 {
+        return BoxDoc::text("()");
+    }
     let comma_ = BoxDoc::text(",").flat_alt(BoxDoc::nil());
     match fold_style {
         FoldStyle::Fit => {
