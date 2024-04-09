@@ -7,7 +7,7 @@ use typst_syntax::{ast, SyntaxNode};
 use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::attr::Attributes;
-use crate::util::{pretty_items, FoldStyle};
+use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
@@ -488,15 +488,7 @@ impl PrettyPrinter {
             res
         } else {
             let style = FoldStyle::from_attr(self.attr_map.get(array.to_untyped()));
-
-            pretty_items(
-                &array_items,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
-                style,
-            )
+            comma_seprated_items(array_items.into_iter(), style)
         }
     }
 
@@ -517,14 +509,7 @@ impl PrettyPrinter {
             .map(|item| self.convert_dict_item(item))
             .collect_vec();
         let style = FoldStyle::from_attr(self.attr_map.get(dict.to_untyped()));
-        pretty_items(
-            &dict_items,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            style,
-        )
+        comma_seprated_items(dict_items.into_iter(), style)
     }
 
     fn convert_dict_item<'a>(&'a self, dict_item: DictItem<'a>) -> BoxDoc<'a, ()> {
@@ -616,12 +601,8 @@ impl PrettyPrinter {
                 .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
                 .append(BoxDoc::text(")"))
         } else {
-            pretty_items(
-                &args,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
+            comma_seprated_items(
+                args.into_iter(),
                 if is_multiline {
                     FoldStyle::Never
                 } else {
@@ -705,14 +686,8 @@ impl PrettyPrinter {
         let mut doc = BoxDoc::nil();
         let params = self.convert_params(closure.params());
         let style = FoldStyle::from_attr(self.attr_map.get(closure.params().to_untyped()));
-        let arg_list = pretty_items(
-            &params,
-            BoxDoc::text(",").append(BoxDoc::space()),
-            BoxDoc::text(","),
-            (BoxDoc::text("("), BoxDoc::text(")")),
-            false,
-            style,
-        );
+        let arg_list = comma_seprated_items(params.clone().into_iter(), style);
+
         if let Some(name) = closure.name() {
             doc = doc.append(self.convert_ident(name));
             doc = doc.append(arg_list);
@@ -796,14 +771,7 @@ impl PrettyPrinter {
                 .append(items.into_iter().next().unwrap())
                 .append(BoxDoc::text(",)"))
         } else {
-            pretty_items(
-                &items,
-                BoxDoc::text(",").append(BoxDoc::space()),
-                BoxDoc::text(","),
-                (BoxDoc::text("("), BoxDoc::text(")")),
-                false,
-                FoldStyle::Fit,
-            )
+            comma_seprated_items(items.into_iter(), FoldStyle::Fit)
         }
     }
 
