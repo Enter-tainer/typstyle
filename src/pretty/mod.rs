@@ -459,13 +459,12 @@ impl PrettyPrinter {
     fn convert_parenthesized<'a>(&'a self, parenthesized: Parenthesized<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::text("(");
         let inner = self.convert_expr(parenthesized.expr());
-        let multiline_expr = BoxDoc::line()
-            .append(inner.clone())
-            .append(BoxDoc::line())
+        let inner = BoxDoc::line_()
+            .append(inner)
+            .append(BoxDoc::line_())
             .nest(2)
             .group();
-        let singleline_expr = inner;
-        doc = doc.append(multiline_expr.flat_alt(singleline_expr));
+        doc = doc.append(inner);
         doc = doc.append(BoxDoc::text(")"));
         doc
     }
@@ -476,21 +475,17 @@ impl PrettyPrinter {
             .map(|item| self.convert_array_item(item))
             .collect_vec();
         if array_items.len() == 1 {
-            let singleline = BoxDoc::text("(")
-                .append(array_items[0].clone())
-                .append(BoxDoc::text(","))
-                .append(BoxDoc::text(")"));
-            let multiline = BoxDoc::text("(")
+            let res = BoxDoc::text("(")
                 .append(
-                    BoxDoc::hardline()
+                    BoxDoc::line_()
                         .append(array_items[0].clone())
                         .append(BoxDoc::text(","))
                         .nest(2),
                 )
-                .append(BoxDoc::hardline())
+                .append(BoxDoc::line_())
                 .append(BoxDoc::text(")"))
                 .group();
-            multiline.flat_alt(singleline)
+            res
         } else {
             let style = FoldStyle::from_attr(self.attr_map.get(array.to_untyped()));
 
@@ -1078,14 +1073,13 @@ impl PrettyPrinter {
         let open = self.convert_expr(math_delimited.open());
         let close = self.convert_expr(math_delimited.close());
         let body = self.convert_math(math_delimited.body());
-        let singleline = open.clone().append(body.clone()).append(close.clone());
-        let multiline = open
-            .append(BoxDoc::hardline())
+        let doc = open
+            .append(BoxDoc::line_())
             .append(body)
-            .append(BoxDoc::hardline())
+            .append(BoxDoc::line_())
             .nest(2)
             .append(close);
-        multiline.flat_alt(singleline)
+        doc
     }
 
     fn convert_math_attach<'a>(&'a self, math_attach: MathAttach<'a>) -> BoxDoc<'a, ()> {
