@@ -4,7 +4,7 @@ version = "0.11.12"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
 license-file = "LICENSE"
-description = "A typst source code formatter"
+description = "Beautiful and reliable typst code formatter"
 repository = "https://github.com/Enter-tainer/typstyle"
 homepage = "https://enter-tainer.github.io/typstyle/"
 
