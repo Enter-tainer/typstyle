@@ -7,20 +7,20 @@
 
 Usage: 
 ```
-A typst source code formatter
+Beautiful and reliable typst code formatter
 
-Usage: typstyle [OPTIONS] [INPUT]
+Usage: typstyle [OPTIONS] [INPUT]...
 
 Arguments:
-  [INPUT]  Path to the input file, if not provided, read from stdin
+  [INPUT]...  Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
 
 Options:
-  -c, --column <COLUMN>  The width of the output [default: 80]
+  -c, --column <COLUMN>  The column width of the output [default: 80]
   -a, --ast              Print the AST of the input file
   -p, --pretty-doc       Print the pretty document
   -i, --inplace          Format the file in place
   -h, --help             Print help
-  -V, --version          Print version```
+  -V, --version          Print version
 ```
 
 ## Escape Route
@@ -54,6 +54,11 @@ We have set up multiple tests:
 2. Snapshot tests: format result are stored in the `snapshots` directory and are compared to the current result when running the tests
 3. Correctness test: We compare the rendered output of the code before and after formatting and ensure they are the same
 4. E2E Correctness test: We collect a bunch of typst code repo including tablex, cetz, fletcher... and format them to ensure (a) the format result converges and (b) the rendered output is the same.
+
+## Use as a library
+
+- npm: https://www.npmjs.com/package/typstyle
+- rust: https://crates.io/crates/typstyle
 
 ## Known issues
 
