@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.11.13 - [2024-04-12]
+
+- (#49) typstyle cli now support multiple input files. If multiple files are provided, they will be processed in order.
+  This is especially useful when you want to format multiple files inplace with a single command.
+
+  ```bash
+  typstyle -i **/*.typ
+  ```
+
 ## v0.11.12 - [2024-04-09]
 
 - Improve performance when formatting nested structures.
