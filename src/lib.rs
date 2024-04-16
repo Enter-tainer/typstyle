@@ -86,6 +86,6 @@ use wasm_bindgen::prelude::*;
 #[cfg(all(target_arch = "wasm32", feature = "wasm"))]
 #[wasm_bindgen]
 pub fn pretty_print_wasm(content: &str, width: usize) -> String {
-    let typstyle = Typstyle::with_content(content.to_string(), width);
+    let typstyle = Typstyle::new_with_content(content.to_string(), width);
     typstyle.pretty_print()
 }
