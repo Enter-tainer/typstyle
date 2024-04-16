@@ -57,8 +57,8 @@ We have set up multiple tests:
 
 ## Use as a library
 
-- npm: https://www.npmjs.com/package/typstyle
-- rust: https://crates.io/crates/typstyle
+- npm: <https://www.npmjs.com/package/typstyle>
+- rust: <https://crates.io/crates/typstyle>
 
 ## Known issues
 

@@ -18,7 +18,7 @@ use typst_ts_core::{
     typst::prelude::EcoVec,
     TypstDocument,
 };
-use typstyle_core::pretty_print;
+use typstyle_core::Typstyle;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Arguments::from_args();
@@ -119,7 +119,7 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
         env::current_dir().unwrap().join("tests").join("assets"),
     )
     .unwrap();
-    let doc_string = pretty_print(&content, width);
+    let doc_string = Typstyle::new_with_content(content, width).pretty_print();
     let replaced_path = rel_path
         .to_str()
         .unwrap()
@@ -140,8 +140,8 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
     let content = remove_crlf(content);
-    let first_pass = pretty_print(&content, width);
-    let second_pass = pretty_print(&first_pass, width);
+    let first_pass = Typstyle::new_with_content(content, width).pretty_print();
+    let second_pass = Typstyle::new_with_content(first_pass.clone(), width).pretty_print();
     pretty_assertions::assert_str_eq!(
         first_pass,
         second_pass,
@@ -176,7 +176,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
     let content = remove_crlf(content);
-    let formatted_src = pretty_print(&content, width);
+    let formatted_src = Typstyle::new_with_content(content.clone(), width).pretty_print();
     let doc = compile_typst_src(&content);
     let formatted_doc = compile_typst_src(&formatted_src);
     compare_docs(doc, formatted_doc)?;

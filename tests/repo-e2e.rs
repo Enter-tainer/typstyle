@@ -21,7 +21,7 @@ use typst_ts_core::{
     typst::prelude::EcoVec,
     TypstDocument, TypstWorld,
 };
-use typstyle_core::pretty_print;
+use typstyle_core::Typstyle;
 
 fn main() -> anyhow::Result<()> {
     let args = Arguments::from_args();
@@ -246,8 +246,8 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
                     )
                 {
                     let content = String::from_utf8(content)?;
-                    let doc = pretty_print(&content, 80);
-                    let second_format = pretty_print(&doc, 80);
+                    let doc = Typstyle::new_with_content(content, 80).pretty_print();
+                    let second_format = Typstyle::new_with_content(doc.clone(), 80).pretty_print();
                     pretty_assertions::assert_eq!(
                         doc,
                         second_format,
