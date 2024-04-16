@@ -1,3 +1,4 @@
+#[doc(hidden)]
 use std::{io::Read, path::PathBuf};
 
 use clap::Parser;
