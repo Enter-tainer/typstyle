@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.14 - [2024-04-19]
+
+- API Change: allow takes a `typst::Source` as input to avoid re-parsing
+
 ## v0.11.13 - [2024-04-12]
 
 - (#49) typstyle cli now support multiple input files. If multiple files are provided, they will be processed in order.
