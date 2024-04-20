@@ -6,7 +6,7 @@
 
 
 Usage: 
-```
+```txt
 Beautiful and reliable typst code formatter
 
 Usage: typstyle [OPTIONS] [INPUT]...

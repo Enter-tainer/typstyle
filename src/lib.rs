@@ -27,7 +27,7 @@ impl Typstyle {
     /// ```rust
     /// use typstyle_core::Typstyle;
     /// let content = "#{1+1}";
-    /// let res = Typstyle::with_content(content.to_string(), 80).pretty_print();
+    /// let res = Typstyle::new_with_content(content.to_string(), 80).pretty_print();
     /// assert_eq!(res, "#{\n  1 + 1\n}");
     /// ```
     pub fn new_with_content(content: String, width: usize) -> Self {

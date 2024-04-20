@@ -457,6 +457,9 @@ impl PrettyPrinter {
     }
 
     fn convert_parenthesized<'a>(&'a self, parenthesized: Parenthesized<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
+            return res;
+        }
         let mut doc = BoxDoc::text("(");
         let inner = self.convert_expr(parenthesized.expr());
         let inner = BoxDoc::line_()
@@ -540,6 +543,9 @@ impl PrettyPrinter {
     }
 
     fn convert_keyed<'a>(&'a self, keyed: Keyed<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(keyed.to_untyped()) {
+            return res;
+        }
         let mut doc = self.convert_expr(keyed.key());
         doc = doc.append(BoxDoc::text(":"));
         doc = doc.append(BoxDoc::space());
@@ -731,6 +737,9 @@ impl PrettyPrinter {
     }
 
     fn convert_spread<'a>(&'a self, spread: Spread<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(spread.to_untyped()) {
+            return res;
+        }
         let mut doc = BoxDoc::text("..");
         let ident = if let Some(id) = spread.sink_ident() {
             self.convert_ident(id)
@@ -757,6 +766,9 @@ impl PrettyPrinter {
     }
 
     fn convert_destructuring<'a>(&'a self, destructuring: Destructuring<'a>) -> BoxDoc<'a, ()> {
+        if let Some(res) = self.check_disabled(destructuring.to_untyped()) {
+            return res;
+        }
         let items: Vec<_> = destructuring
             .items()
             .map(|item| self.convert_destructuring_item(item))
