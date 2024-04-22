@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.11.15 - [2024-04-22]
+
+- Fix comment loss in destruction and set rules
+
+Previously for this code, the comment will be removed after formatting. Now it's kept.
+
+```typ
+#let (
+// abc
+a, b, c,
+) = (1, 2, 3)
+
+
+#set text(
+  size: 10pt,
+  fallback: false,
+  // lang: "de",
+)
+```
+
 ## v0.11.14 - [2024-04-19]
 
 - API Change: allow takes a `typst::Source` as input to avoid re-parsing
