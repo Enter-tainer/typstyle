@@ -7,3 +7,9 @@
 #f[a][b]
 
 #f(1, /* actually, b is ignored*/ 0, c: /* actually, c is ignored */ 0)
+
+#set text(
+  size: 10pt,
+  fallback: false,
+  // lang: "de",
+)

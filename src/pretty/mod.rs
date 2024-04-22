@@ -837,7 +837,11 @@ impl PrettyPrinter {
             .append(BoxDoc::text("set"))
             .append(BoxDoc::space());
         doc = doc.append(self.convert_expr(set_rule.target()));
-        doc = doc.append(self.convert_parenthesized_args(set_rule.args()));
+        if let Some(res) = self.check_disabled(set_rule.args().to_untyped()) {
+            doc = doc.append(res);
+        } else {
+            doc = doc.append(self.convert_parenthesized_args(set_rule.args()));
+        }
         if let Some(condition) = set_rule.condition() {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("if"));
