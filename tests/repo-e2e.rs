@@ -77,7 +77,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "cetz-manual",
             "https://github.com/cetz-package/cetz",
-            "7c17f3720cf2c57a6562c18f74d5ce89556a0431",
+            "2060bca049326c2c2a4e3005b4e65acd9cb5619e",
             "manual.typ",
         ),
         Testcase::new(
@@ -96,7 +96,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "touying-example",
             "https://github.com/touying-typ/touying",
-            "545b89a32d7f90c8f21fdf983f954ec2bc94412d",
+            "30dba1ed7bb3d413ca9e92a89d1635f6f7fdce42",
             "examples/example.typ",
         ),
         Testcase::new(
@@ -108,7 +108,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "fletcher-manual",
             "https://github.com/Jollywatt/typst-fletcher",
-            "bb7a4ecc1effdfa987a908b340baf985eb665c5e",
+            "c43d0d879b97a7ed0eecd265055ff25f33ebad0b",
             "docs/manual.typ",
         )
         // tidy has weird behavior when parsing typ source code
@@ -116,7 +116,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "nju-thesis-typst",
             "https://github.com/nju-lug/nju-thesis-typst",
-            "969ab5e99df81ce0ff6454b452fba13ee0692028",
+            "8b481bddd3bfa683a5af2e22922e222d8d5d0f81",
             "thesis.typ",
         ),
         Testcase::new(
@@ -134,7 +134,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "quill",
             "https://github.com/Mc-Zen/quill",
-            "1816c38be530e1e63fa24cb37cf365a2425e90a5",
+            "df8f60f1d8aef5c5d88ddb2160f50663c195c79e",
             "docs/guide/quill-guide.typ",
         )
         // these files are included as-is and should not be formatted
@@ -155,7 +155,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "curryst",
             "https://github.com/pauladam94/curryst",
-            "d7c4021d5cfa2131dc0b14603d24d2b1978ad43f",
+            "90374431f69aa0b044c57335bc27fcac4ce85705",
             "examples/natural-deduction.typ",
         ),
     ];
