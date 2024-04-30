@@ -692,7 +692,11 @@ impl PrettyPrinter {
         let mut doc = BoxDoc::nil();
         let params = self.convert_params(closure.params());
         let style = FoldStyle::from_attr(self.attr_map.get(closure.params().to_untyped()));
-        let arg_list = comma_seprated_items(params.clone().into_iter(), style);
+        let arg_list = if let Some(res) = self.check_disabled(closure.params().to_untyped()) {
+            res
+        } else {
+            comma_seprated_items(params.clone().into_iter(), style)
+        };
 
         if let Some(name) = closure.name() {
             doc = doc.append(self.convert_ident(name));
