@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.16 - [2024-05-01]
+
+- Fix comment loss in closure definition
+
 ## v0.11.15 - [2024-04-22]
 
 - Fix comment loss in destruction and set rules
