@@ -3,7 +3,7 @@ use std::{io::Read, path::PathBuf};
 
 use clap::Parser;
 use typst_syntax::parse;
-use typstyle_core::{attr::calculate_attributes, PrettyPrinter};
+use typstyle_core::{attr::calculate_attributes, strip_trailing_whitespace, PrettyPrinter};
 
 use crate::cli::CliArguments;
 
@@ -54,7 +54,7 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) {
     let res = if root.erroneous() {
         content
     } else {
-        doc.pretty(*line_width).to_string()
+        strip_trailing_whitespace(&doc.pretty(*line_width).to_string())
     };
     if *inplace {
         if let Some(input) = input {

@@ -65,8 +65,9 @@ impl Typstyle {
     }
 }
 
+#[doc(hidden)]
 /// Strip trailing whitespace in each line of the input string.
-fn strip_trailing_whitespace(s: &str) -> String {
+pub fn strip_trailing_whitespace(s: &str) -> String {
     let has_trailing_newline = s.ends_with('\n');
     let res = s
         .lines()
