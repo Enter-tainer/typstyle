@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.17 - [2024-05-03]
+
+- Fix typstyle cli not stripping trailing spaces.
+
 ## v0.11.16 - [2024-05-01]
 
 - Fix comment loss in closure definition
