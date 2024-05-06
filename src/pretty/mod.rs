@@ -431,15 +431,47 @@ impl PrettyPrinter {
     }
 
     fn convert_code<'a>(&'a self, code: Code<'a>) -> Vec<BoxDoc<'a, ()>> {
+        let children = code.to_untyped().children().collect_vec();
+        let is_attached_comment = |idx: usize| {
+            debug_assert!(idx < children.len());
+            if idx == 0 || idx == children.len() - 1 {
+                return false;
+            }
+            let prev = children[idx - 1];
+            let curr = children[idx];
+            let next = children[idx + 1];
+            let prev_cond = prev.cast::<Expr>().is_some()
+                || if let Some(space) = prev.cast::<Space>() {
+                    !space.to_untyped().text().contains('\n')
+                } else {
+                    false
+                };
+            let curr_cond =
+                curr.kind() == SyntaxKind::LineComment || curr.kind() == SyntaxKind::BlockComment;
+            let next_cond = if let Some(next) = next.cast::<Space>() {
+                next.to_untyped().text().contains('\n')
+            } else {
+                false
+            };
+            prev_cond && curr_cond && next_cond
+        };
         let mut codes: Vec<_> = vec![];
-        for node in code.to_untyped().children() {
+        for (i, node) in code.to_untyped().children().enumerate() {
             if let Some(expr) = node.cast::<Expr>() {
                 let expr_doc = self.convert_expr(expr);
                 codes.push(expr_doc);
             } else if node.kind() == SyntaxKind::LineComment
                 || node.kind() == SyntaxKind::BlockComment
             {
-                codes.push(to_doc(std::borrow::Cow::Borrowed(node.text()), true));
+                if is_attached_comment(i) {
+                    let last = codes.pop().unwrap();
+                    codes.push(
+                        last.append(BoxDoc::space())
+                            .append(to_doc(std::borrow::Cow::Borrowed(node.text()), true)),
+                    );
+                } else {
+                    codes.push(to_doc(std::borrow::Cow::Borrowed(node.text()), true));
+                }
             } else if node.kind() == SyntaxKind::Space {
                 let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
                 for _ in 0..newline_cnt.saturating_sub(1) {
