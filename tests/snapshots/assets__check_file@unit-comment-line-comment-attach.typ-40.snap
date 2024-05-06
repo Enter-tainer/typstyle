@@ -10,8 +10,7 @@ input_file: tests/assets/unit/comment/line-comment-attach.typ
     fill: luma(95%),
     stroke: blue,
     radius: .2em,
-  )
-  // 复选框
+  ) // 复选框
 }
 
 #{

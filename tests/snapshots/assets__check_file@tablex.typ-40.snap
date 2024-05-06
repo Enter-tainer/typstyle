@@ -688,12 +688,12 @@ input_file: tests/assets/tablex.typ
   }
 
   if is-infinite-len(page-size) {
-    return 0pt
-    // page has 'auto' size => % should return 0
+    return 0pt // page has 'auto' size => % should return 0
   }
 
-  ((len / 1%) / 100) * page-size + 0pt
-  // e.g. 100% / 1% = 100; / 100 = 1; 1 * page-size
+  (
+    (len / 1%) / 100
+  ) * page-size + 0pt // e.g. 100% / 1% = 100; / 100 = 1; 1 * page-size
 }
 
 // Convert a fraction type length to pt
@@ -823,8 +823,7 @@ input_file: tests/assets/tablex.typ
   page-size = 0pt + page-size
 
   if is-infinite-len(len) {
-    0pt
-    // avoid the destruction of the universe
+    0pt // avoid the destruction of the universe
   } else if type(len) == _length-type {
     convert-length-type-to-pt(
       len,
@@ -903,14 +902,12 @@ input_file: tests/assets/tablex.typ
       let r = regex("thickness: (" + len-regex + ")")
       s = repr(stroke).match(r)
       if s != none {
-        s = s.captures.first()
-        // get the first match (the thickness)
+        s = s.captures.first() // get the first match (the thickness)
       }
     }
 
     if s == none {
-      1pt
-      // okay it's probably just a color then
+      1pt // okay it's probably just a color then
     } else {
       let len = eval(s)
       if type(len) == _length-type {
@@ -924,8 +921,7 @@ input_file: tests/assets/tablex.typ
       ) {
         panic(no-ratio-error)
       } else {
-        1pt
-        // should be unreachable
+        1pt // should be unreachable
       }
     }
   } else if type(stroke) == _dict-type and "thickness" in stroke {
@@ -1211,8 +1207,7 @@ input_file: tests/assets/tablex.typ
         prev_x += 1
       }
 
-      continue
-      // ignore all '()'
+      continue // ignore all '()'
     }
 
     let item = table-item-convert(item)
@@ -1426,6 +1421,7 @@ input_file: tests/assets/tablex.typ
         }
         grid.items.at(index) = cell
         items.at(i) = cell
+
         // other secondary position (from colspan / rowspan)
       } else {
         let index = grid-index-at(
@@ -1438,8 +1434,7 @@ input_file: tests/assets/tablex.typ
           y: py,
           parent_x: this_x,
           parent_y: this_y,
-        )
-        // indicate this position's parent cell (to join them later)
+        ) // indicate this position's parent cell (to join them later)
       }
     }
 
@@ -1458,8 +1453,7 @@ input_file: tests/assets/tablex.typ
     y = next_pos.at(1)
 
     if prev_y != y {
-      row_wrapped = true
-      // we changed rows!
+      row_wrapped = true // we changed rows!
     }
   }
 
@@ -1513,16 +1507,21 @@ input_file: tests/assets/tablex.typ
   align_default: left,
   fill_default: none,
 ) = {
+
   let align_default = if type(align_default) == _function-type {
-    align_default(cell.x, cell.y)
-    // column, row
+    align_default(
+      cell.x,
+      cell.y,
+    ) // column, row
   } else {
     align_default
   }
 
   let fill_default = if type(fill_default) == _function-type {
-    fill_default(cell.x, cell.y)
-    // row, column
+    fill_default(
+      cell.x,
+      cell.y,
+    ) // row, column
   } else {
     fill_default
   }
@@ -2062,8 +2061,7 @@ input_file: tests/assets/tablex.typ
 
       columns = columns.map(c => {
         if type(c) == _fraction-type {
-          0pt
-          // no space left to be divided
+          0pt // no space left to be divided
         } else {
           c
         }
@@ -2072,8 +2070,7 @@ input_file: tests/assets/tablex.typ
   } else {
     columns = columns.map(c => {
       if c == auto or type(c) == _fraction-type {
-        0pt
-        // no space remaining!
+        0pt // no space remaining!
       } else {
         c
       }
@@ -2372,8 +2369,7 @@ input_file: tests/assets/tablex.typ
     sum = calc.max(
       0pt,
       sum - col-gutter,
-    )
-    // remove extra gutter from last col
+    ) // remove extra gutter from last col
   }
 
   sum
@@ -2411,8 +2407,7 @@ input_file: tests/assets/tablex.typ
     sum = calc.max(
       0pt,
       sum - row-gutter,
-    )
-    // remove extra gutter from last row
+    ) // remove extra gutter from last row
   }
 
   sum
@@ -2714,8 +2709,7 @@ input_file: tests/assets/tablex.typ
     expansion.at(0) = default-if-auto(
       line.expand.at(0),
       0pt,
-    )
-    // => expand to the left
+    ) // => expand to the left
   }
 
   if end == parent-end {
@@ -2723,8 +2717,7 @@ input_file: tests/assets/tablex.typ
     expansion.at(1) = default-if-auto(
       line.expand.at(1),
       0pt,
-    )
-    // => expand to the right
+    ) // => expand to the right
   }
 
   expansion
@@ -2803,8 +2796,7 @@ input_file: tests/assets/tablex.typ
         end,
         columns.len(),
       ),
-    ) / 2
-    // close stroke gap to the right
+    ) / 2 // close stroke gap to the right
   }
 
   let y = height-between(
@@ -2830,8 +2822,7 @@ input_file: tests/assets/tablex.typ
   ) + right-expand
 
   if end_x - start_x < 0pt {
-    return
-    // negative length
+    return  // negative length
   }
 
   if rtl {
@@ -2936,8 +2927,7 @@ input_file: tests/assets/tablex.typ
         end,
         rows.len(),
       ),
-    ) / 2
-    // close stroke gap to the bottom
+    ) / 2 // close stroke gap to the bottom
   }
 
   let x = width-between(
@@ -2962,8 +2952,7 @@ input_file: tests/assets/tablex.typ
   ) + bottom-expand
 
   if end_y - start_y < 0pt {
-    return
-    // negative length
+    return  // negative length
   }
 
   if rtl {
@@ -3127,6 +3116,7 @@ input_file: tests/assets/tablex.typ
   locate(loc => {
     // let old_page = latest-page-state.at(loc)
     // let this_page = loc.page()
+
     // let page_turned = not is-header and old_page not in (this_page, -1)
     let pos = loc.position()
     let page = pos.page
@@ -3245,6 +3235,7 @@ input_file: tests/assets/tablex.typ
               ) + added_header_height,
               cell_box.box,
             )
+
             // let box_h = measure(cell_box.box, styles).height
             // tallest_box_h = calc.max(tallest_box_h, box_h)
           }
@@ -3623,8 +3614,7 @@ input_file: tests/assets/tablex.typ
         first_row_group = (
           row_group: row-group,
           content: content,
-        )
-        // 'content' to repeat later
+        ) // 'content' to repeat later
       }
 
       (content,)
@@ -4018,8 +4008,7 @@ input_file: tests/assets/tablex.typ
   header-rows: none,
 ) = {
   if header-rows == none or header-rows < 0 {
-    return false
-    // cannot repeat an empty header
+    return false // cannot repeat an empty header
   }
 
   repeat-header = default-if-auto(
@@ -4287,8 +4276,7 @@ input_file: tests/assets/tablex.typ
       rows.last()
     }
     for _ in range(grid_info.new_row_count - row_len) {
-      rows.push(last-row-size)
-      // add new rows (due to extra cells)
+      rows.push(last-row-size) // add new rows (due to extra cells)
     }
 
     let col_len = columns.len()
