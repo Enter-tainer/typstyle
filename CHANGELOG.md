@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.11.18 - [2024-05-09]
+
+- Typstyle now can keep line comments attached to the end of the line when formatting code blocks.
+
+For example, this code:
+```typ
+#{
+  let c = 0 // my comment
+}
+```
+
+Previously, the comment will be moved to the next line after formatting. Now it's attached to the end of the line.
+
+```typ
+#{
+  let c = 0 // my comment
+}
+```
+
 ## v0.11.17 - [2024-05-03]
 
 - Fix typstyle cli not stripping trailing spaces.
