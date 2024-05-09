@@ -4,6 +4,8 @@
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/typstyle.svg)](https://repology.org/project/typstyle/versions)
 
+## Usage
+### Use as a CLI
 
 Usage: 
 ```txt
@@ -23,7 +25,15 @@ Options:
   -V, --version          Print version
 ```
 
-## Escape Route
+### Use in your editor
+
+typstyle has been integrated into [tinymist](https://github.com/Myriad-Dreamin/tinymist). You can use it in your editor by installing the tinymist plugin and set `tinymist.formatterMode` to `typstyle`.
+
+### Use as a web app
+
+There is an online version of the formatter at <https://enter-tainer.github.io/typstyle/> that you can see how it formats your code.
+
+## Escape Hatch
 
 If you find typstyle is not working as expected, you can use `// @typstyle off` or `/* @typstyle off */` to disable the formatter on the next node of code.
 
