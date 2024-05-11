@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.11.19 - [2024-05-11]
+
+- Typstyle now indent block math equations.
+
+For example, this code:
+```typ
+$
+E = mc^2
+$
+```
+
+Now it will be formatted as:
+```typ
+$
+  E = mc^2
+$
+```
+
 ## v0.11.18 - [2024-05-09]
 
 - Typstyle now can keep line comments attached to the end of the line when formatting code blocks.
