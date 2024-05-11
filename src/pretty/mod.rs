@@ -340,6 +340,7 @@ impl PrettyPrinter {
             doc = doc.append(block_sep.clone());
         }
         doc = doc.append(self.convert_math(equation.body()));
+        doc = doc.nest(2);
         if equation.block() {
             doc = doc.append(block_sep);
         }

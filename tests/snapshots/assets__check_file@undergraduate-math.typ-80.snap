@@ -747,7 +747,7 @@ Definition by cases can be easily obtained with the `cases` function.
     column-gutter: 1em,
     [
       $
-      f_n = cases(
+        f_n = cases(
       a &"if" n = 0,
       r dot f_(n - 1) &"else"
     )
@@ -797,8 +797,8 @@ You can break into multiple lines.
     column-gutter: 1em,
     [
       $
-      sin(x) = x - x^3 / 3! \
-      + x^5 / 5! - dots.h.c
+        sin(x) = x - x^3 / 3! \
+        + x^5 / 5! - dots.h.c
       $
     ],
     [
@@ -819,8 +819,8 @@ Align equations using `&`
     column-gutter: 1em,
     [
       $
-      nabla dot bold(D) &= rho \
-      nabla dot bold(B) &= 0
+        nabla dot bold(D) &= rho \
+        nabla dot bold(B) &= 0
       $
     ],
     ```
@@ -862,7 +862,7 @@ The last three here are display style.
       ```
     ],
     [$
-      nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
+        nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
       $],
     [
       ```
