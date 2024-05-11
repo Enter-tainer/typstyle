@@ -9,5 +9,5 @@ input_file: tests/assets/unit/math/long.typ
 $ aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb + CCCCCCCCCCCCCCCCCCCCCCCCC $
 $ [aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb] + CCCCCCCCCCCCCCCCCCCCCCCCC $
 $
-[aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb] + CCCCCCCCCCCCCCCCCCCCCCCCC
+  [aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb] + CCCCCCCCCCCCCCCCCCCCCCCCC
 $

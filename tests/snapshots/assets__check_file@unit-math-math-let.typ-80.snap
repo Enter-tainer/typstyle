@@ -5,6 +5,6 @@ input_file: tests/assets/unit/math/math-let.typ
 ---
 #let xmat(..arg) = [..#arg]
 $
-#let g = (i) => $g^#i$
+  #let g = (i) => $g^#i$
     xmat(2, 2, #g)
 $
