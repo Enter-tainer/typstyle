@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use once_cell::sync::Lazy;
 
 #[derive(Debug, Clone, Parser)]
@@ -20,6 +20,17 @@ pub struct CliArguments {
     /// Format the file in place
     #[clap(short, long, default_value = "false")]
     pub inplace: bool,
+    #[clap(subcommand)]
+    pub command: Option<Command>,
+}
+
+#[derive(Debug, Subcommand, Clone)]
+pub enum Command {
+    /// Format all files in-place in the given directory
+    FormatAll {
+        /// The directory to format. If not provided, the current directory is used
+        directory: Option<PathBuf>,
+    },
 }
 
 static NONE: &str = "None";

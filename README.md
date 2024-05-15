@@ -11,7 +11,11 @@ Usage:
 ```txt
 Beautiful and reliable typst code formatter
 
-Usage: typstyle [OPTIONS] [INPUT]...
+Usage: typstyle.exe [OPTIONS] [INPUT]... [COMMAND]
+
+Commands:
+  format-all  Format all files in-place in the given directory
+  help        Print this message or the help of the given subcommand(s)
 
 Arguments:
   [INPUT]...  Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
@@ -23,6 +27,33 @@ Options:
   -i, --inplace          Format the file in place
   -h, --help             Print help
   -V, --version          Print version
+```
+
+Typical usage:
+
+- Inplace format a file:
+```sh
+typstyle -i file.typ
+```
+
+- Format a file and print the result to stdout:
+```sh
+typstyle file.typ
+```
+
+- Inplace format file list:
+```sh
+typstyle -i file1.typ file2.typ file3.typ
+```
+
+- Format all files in a directory:
+```sh
+typstyle format-all dir
+```
+
+- Read from stdin and print the result to stdout:
+```sh
+cat file.typ | typstyle > file-formatted.typ
 ```
 
 ### Use in your editor
