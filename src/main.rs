@@ -3,7 +3,10 @@ use std::{io::Read, path::PathBuf};
 
 use clap::Parser;
 use typst_syntax::parse;
-use typstyle_core::{attr::calculate_attributes, strip_trailing_whitespace, PrettyPrinter};
+use typstyle_core::{
+    attr::calculate_attributes, strip_trailing_whitespace, PrettyPrinter, Typstyle,
+};
+use walkdir::{DirEntry, WalkDir};
 
 use crate::cli::CliArguments;
 
@@ -20,8 +23,45 @@ fn get_input(input: Option<&PathBuf>) -> String {
     }
 }
 
+fn is_hidden(entry: &DirEntry) -> bool {
+    entry
+        .file_name()
+        .to_str()
+        .map(|s| s.starts_with('.'))
+        .unwrap_or(false)
+}
+
 fn main() {
     let args = CliArguments::parse();
+    if let Some(command) = &args.command {
+        match command {
+            cli::Command::FormatAll { directory } => {
+                let width = args.column;
+                let directory = directory
+                    .clone()
+                    .unwrap_or_else(|| std::env::current_dir().unwrap());
+                let walker = WalkDir::new(directory).into_iter();
+                let mut format_count = 0;
+                for entry in walker.filter_entry(|e| !is_hidden(e)) {
+                    let Ok(entry) = entry else {
+                        continue;
+                    };
+                    if entry.file_type().is_file()
+                        && entry.path().extension() == Some("typ".as_ref())
+                    {
+                        let Ok(content) = std::fs::read_to_string(entry.path()) else {
+                            continue;
+                        };
+                        let res = Typstyle::new_with_content(content, width).pretty_print();
+                        std::fs::write(entry.path(), res).unwrap();
+                        format_count += 1;
+                    }
+                }
+                println!("Formatted {} files", format_count);
+            }
+        }
+        return;
+    }
     if args.input.is_empty() {
         format(None, &args);
     } else {
