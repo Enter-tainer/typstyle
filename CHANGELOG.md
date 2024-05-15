@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.20 - [2024-05-15]
+
+Typstyle cli now include a `format-all` subcommand to format all files in a directory in-place.
+
+```sh
+typstyle format-all dir
+# or omit the dir to format the current directory
+typstyle format-all
+```
+
 ## v0.11.19 - [2024-05-11]
 
 - Typstyle now indent block math equations.

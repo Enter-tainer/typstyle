@@ -46,7 +46,7 @@ typstyle file.typ
 typstyle -i file1.typ file2.typ file3.typ
 ```
 
-- Format all files in a directory:
+- Format all files in a directory. If the not provided, it will recursively format all files in the current directory:
 ```sh
 typstyle format-all dir
 ```
