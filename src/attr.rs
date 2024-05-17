@@ -130,12 +130,8 @@ fn get_no_format_nodes_impl(
         }
         // no format multiline single backtick raw block
         if let Some(raw) = child.cast::<Raw>() {
-            if !raw.block() {
-                if let Some(line) = raw.lines().next() {
-                    if line.get().contains('\n') {
-                        set_no_format(child.clone(), attr_map);
-                    }
-                }
+            if !raw.block() && raw.lines().count() > 1 {
+                set_no_format(child.clone(), attr_map);
             }
         }
         // no format hash related nodes in math blocks
