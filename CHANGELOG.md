@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.21 - [2024-05-16]
+
+Bump to typst v0.11.1
+
 ## v0.11.20 - [2024-05-15]
 
 Typstyle cli now include a `format-all` subcommand to format all files in a directory in-place.
