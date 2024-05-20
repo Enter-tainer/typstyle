@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.11.22 - [2024-05-20]
+
+- Typstyle now can format table and grid in a "column-aware" way. It now recognizes basic patterns and column numbers, and put a single row in a single line if possible.
+
+For example, this code:
+```typ
+#table(
+  columns: 3,
+    [Substance],
+    [Subcritical °C],
+    [Supercritical °C],
+  
+  [Hydrochloric Acid],
+  [12.0], [92.1],
+  [Sodium Myreth Sulfate],
+  [16.6], [104],
+  [Potassium Hydroxide],
+  [24.7],
+  [114.514]
+)
+```
+
+After formatting, it will become:
+```typ
+#table(
+  columns: 3,
+  [Substance], [Subcritical °C], [Supercritical °C],
+  [Hydrochloric Acid], [12.0], [92.1],
+  [Sodium Myreth Sulfate], [16.6], [104],
+  [Potassium Hydroxide], [24.7], [114.514],
+)
+```
+
 ## v0.11.21 - [2024-05-16]
 
 Bump to typst v0.11.1
