@@ -3,11 +3,13 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 use pretty::BoxDoc;
-use typst_syntax::{ast, SyntaxNode};
-use typst_syntax::{ast::*, SyntaxKind};
+use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
 use crate::attr::Attributes;
 use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
+
+mod table;
+mod util;
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
@@ -622,12 +624,10 @@ impl PrettyPrinter {
         if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
             return doc.append(res);
         }
-        let has_parenthesized_args = func_call
-            .args()
-            .to_untyped()
-            .children()
-            .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen));
-        if has_parenthesized_args {
+        let has_parenthesized_args = util::has_parenthesized_args(func_call);
+        if let Some(cols) = table::is_formatable_table(func_call) {
+            doc = doc.append(self.convert_table(func_call, cols));
+        } else if has_parenthesized_args {
             doc = doc.append(self.convert_parenthesized_args(func_call.args()));
         };
         doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args))

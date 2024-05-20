@@ -104,8 +104,7 @@ The original version is available at #link("https://gitlab.com/jim.hefferon/unde
 #figure(
   table(
     columns: (1fr, 2fr),
-    [!!],
-    [Tricky. A simpler method is needed.],
+    [!!], [Tricky. A simpler method is needed.],
   ),
 ) <tricky>
 // #figure(
@@ -158,66 +157,23 @@ Get script letters, such as $cal(P)$ from `$cal(P)$`, by changing the `stylistic
     columns: 4,
     align: (right, left, right, left),
     column-gutter: (1em, 1.5em, 1em),
-    [$alpha$],
-    [`alpha`],
-    [$xi$, $Xi$],
-    [`xi`, `Xi`],
-    [$beta$],
-    [`beta`],
-    [$omicron$],
-    [`omicron`],
-    [$gamma$, $Gamma$],
-    [`gamma`, `Gamma`],
-    [$pi$, $Pi$],
-    [`pi`, `Pi`],
-    [$delta$, $Delta$],
-    [`delta`, `Delta`],
-    [$pi.alt$],
-    [`pi.alt`],
-    [$epsilon.alt$],
-    [`epsilon.alt`],
-    [$rho$],
-    [`rho`],
-    [$epsilon$],
-    [`epsilon`],
-    [$rho.alt$],
-    [`rho.alt`],
-    [$zeta$],
-    [`zeta`],
-    [$sigma$, $Sigma$],
-    [`sigma`, `Sigma`],
-    [$eta$],
-    [`eta`],
-    [$sigma.alt$],
-    [`sigma.alt`],
-    [$theta$, $Theta$],
-    [`theta`, `Theta`],
-    [$tau$],
-    [`tau`],
-    [$theta.alt$],
-    [`theta.alt`],
-    [$upsilon$, $Upsilon$],
+    [$alpha$], [`alpha`], [$xi$, $Xi$], [`xi`, `Xi`],
+    [$beta$], [`beta`], [$omicron$], [`omicron`],
+    [$gamma$, $Gamma$], [`gamma`, `Gamma`], [$pi$, $Pi$], [`pi`, `Pi`],
+    [$delta$, $Delta$], [`delta`, `Delta`], [$pi.alt$], [`pi.alt`],
+    [$epsilon.alt$], [`epsilon.alt`], [$rho$], [`rho`],
+    [$epsilon$], [`epsilon`], [$rho.alt$], [`rho.alt`],
+    [$zeta$], [`zeta`], [$sigma$, $Sigma$], [`sigma`, `Sigma`],
+    [$eta$], [`eta`], [$sigma.alt$], [`sigma.alt`],
+    [$theta$, $Theta$], [`theta`, `Theta`], [$tau$], [`tau`],
+    [$theta.alt$], [`theta.alt`], [$upsilon$, $Upsilon$],
     [`upsilon`, `Upsilon`],
-    [$iota$],
-    [`iota`],
-    [$phi.alt$, $Phi$],
-    [`phi.alt`, `Phi`],
-    [$kappa$],
-    [`kappa`],
-    [$phi$],
-    [`phi`],
-    [$lambda$, $Lambda$],
-    [`lambda`, `Lambda`],
-    [$chi$],
-    [`chi`],
-    [$mu$],
-    [`mu`],
-    [$psi$, $Psi$],
-    [`psi`, `Psi`],
-    [$nu$],
-    [`nu`],
-    [$omega$, $Omega$],
-    [`omega`, `Omega`],
+
+    [$iota$], [`iota`], [$phi.alt$, $Phi$], [`phi.alt`, `Phi`],
+    [$kappa$], [`kappa`], [$phi$], [`phi`],
+    [$lambda$, $Lambda$], [`lambda`, `Lambda`], [$chi$], [`chi`],
+    [$mu$], [`mu`], [$psi$, $Psi$], [`psi`, `Psi`],
+    [$nu$], [`nu`], [$omega$, $Omega$], [`omega`, `Omega`],
   ),
 )
 
@@ -228,54 +184,16 @@ Get script letters, such as $cal(P)$ from `$cal(P)$`, by changing the `stylistic
     columns: 6,
     align: (right, left, right, left, right, left),
     column-gutter: (1em, 1.5em, 1em, 1.5em, 1em),
-    [$union$],
-    [`union`],
-    [$RR$],
-    [`RR`, `bb(R)`],
-    [$forall$],
-    [`forall`],
-    [$sect$],
-    [`sect`],
-    [$bb(Z)$],
-    [`ZZ`, `bb(Z)`],
-    [$exists$],
-    [`exists`],
-    [$subset$],
-    [`subset`],
-    [$bb(Q)$],
-    [`QQ`, `bb(Q)`],
-    [$not$],
-    [`not`],
-    [$subset.eq$],
-    [`subset.eq`],
-    [$bb(N)$],
-    [`NN`, `bb(N)`],
-    [$or$],
-    [`or`],
-    [$supset$],
-    [`supset`],
-    [$bb(C)$],
-    [`CC`, `bb(C)`],
-    [$and$],
-    [`and`],
-    [$supset.eq$],
-    [`supset.eq`],
-    [$diameter$],
-    [`diameter`],
-    [$tack.r$],
+    [$union$], [`union`], [$RR$], [`RR`, `bb(R)`], [$forall$], [`forall`],
+    [$sect$], [`sect`], [$bb(Z)$], [`ZZ`, `bb(Z)`], [$exists$], [`exists`],
+    [$subset$], [`subset`], [$bb(Q)$], [`QQ`, `bb(Q)`], [$not$], [`not`],
+    [$subset.eq$], [`subset.eq`], [$bb(N)$], [`NN`, `bb(N)`], [$or$], [`or`],
+    [$supset$], [`supset`], [$bb(C)$], [`CC`, `bb(C)`], [$and$], [`and`],
+    [$supset.eq$], [`supset.eq`], [$diameter$], [`diameter`], [$tack.r$],
     [`tack.r`],
-    [$in$],
-    [`in`],
-    [$nothing$],
-    [`nothing`],
-    [$models$],
-    [`models`],
-    [$in.not$],
-    [`in.not`],
-    [$alef$],
-    [`alef`],
-    [$without$],
-    [`without`],
+
+    [$in$], [`in`], [$nothing$], [`nothing`], [$models$], [`models`],
+    [$in.not$], [`in.not`], [$alef$], [`alef`], [$without$], [`without`],
   ),
 )
 
@@ -311,24 +229,15 @@ Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ wit
     columns: 6,
     align: (right, left, right, left, right, left),
     column-gutter: (1em, 1.5em, 1em, 1.5em, 1em),
-    [$f'$],
-    [`f'`, `f prime`],
-    [$dot(a)$],
-    [`dot(a)`],
-    [$tilde(a)$],
+    [$f'$], [`f'`, `f prime`], [$dot(a)$], [`dot(a)`], [$tilde(a)$],
     [`tilde(a)`],
-    [$f prime.double$],
-    [`f prime.double`],
-    [$diaer(a)$],
-    [`diaer(a)`],
-    [$macron(a)$],
-    [`macron(a)`],
-    [$Sigma^*$],
-    [`Sigma^*`],
-    [$hat(a)$],
-    [`hat(a)`],
-    [$arrow(a)$],
+
+    [$f prime.double$], [`f prime.double`], [$diaer(a)$], [`diaer(a)`],
+    [$macron(a)$], [`macron(a)`],
+
+    [$Sigma^*$], [`Sigma^*`], [$hat(a)$], [`hat(a)`], [$arrow(a)$],
     [`arrow(a)`],
+
   ),
 )
 
@@ -343,12 +252,12 @@ Comment on an expression as here (there is also `overbrace(..)`).
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ underbrace(x + y, |A|) $],
-    [
+    [$ underbrace(x + y, |A|) $], [
       ```
       underbrace(x + y, |A|)
       ```
     ],
+
   ),
 )
 
@@ -366,66 +275,16 @@ Just type them!
     columns: 6,
     align: (right, left, right, left, right, left),
     column-gutter: (1em, 1.5em, 1em, 1.5em, 1em),
-    [$sin$],
-    [`sin`],
-    [$sinh$],
-    [`sinh`],
-    [$arcsin$],
-    [`arcsin`],
-    [$cos$],
-    [`cos`],
-    [$cosh$],
-    [`cosh`],
-    [$arccos$],
-    [`arccos`],
-    [$tan$],
-    [`tan`],
-    [$tanh$],
-    [`tanh`],
-    [$arctan$],
-    [`arctan`],
-    [$sec$],
-    [`sec`],
-    [$coth$],
-    [`coth`],
-    [$min$],
-    [`min`],
-    [$csc$],
-    [`csc`],
-    [$det$],
-    [`det`],
-    [$max$],
-    [`max`],
-    [$cot$],
-    [`cot`],
-    [$dim$],
-    [`dim`],
-    [$inf$],
-    [`inf`],
-    [$exp$],
-    [`exp`],
-    [$ker$],
-    [`ker`],
-    [$sup$],
-    [`sup`],
-    [$log$],
-    [`log`],
-    [$deg$],
-    [`deg`],
-    [$liminf$],
-    [`liminf`],
-    [$ln$],
-    [`ln`],
-    [$arg$],
-    [`arg`],
-    [$limsup$],
-    [`limsup`],
-    [$lg$],
-    [`lg`],
-    [$gcd$],
-    [`gcd`],
-    [$lim$],
-    [`lim`],
+    [$sin$], [`sin`], [$sinh$], [`sinh`], [$arcsin$], [`arcsin`],
+    [$cos$], [`cos`], [$cosh$], [`cosh`], [$arccos$], [`arccos`],
+    [$tan$], [`tan`], [$tanh$], [`tanh`], [$arctan$], [`arctan`],
+    [$sec$], [`sec`], [$coth$], [`coth`], [$min$], [`min`],
+    [$csc$], [`csc`], [$det$], [`det`], [$max$], [`max`],
+    [$cot$], [`cot`], [$dim$], [`dim`], [$inf$], [`inf`],
+    [$exp$], [`exp`], [$ker$], [`ker`], [$sup$], [`sup`],
+    [$log$], [`log`], [$deg$], [`deg`], [$liminf$], [`liminf`],
+    [$ln$], [`ln`], [$arg$], [`arg`], [$limsup$], [`limsup`],
+    [$lg$], [`lg`], [$gcd$], [`gcd`], [$lim$], [`lim`],
   ),
 )
 
@@ -447,102 +306,42 @@ $ cosec x = 1 / (sin x) $
     columns: 6,
     align: (right, left, right, left, right, left),
     column-gutter: (0.5em, 1em, 0.5em, 1em, 0.5em),
-    [$<$],
-    [`<`, `lt`],
-    [$angle$],
-    [`angle`],
-    [$dot$],
-    [`dot`],
-    [$<=$],
-    [`<=`, `lt.eq`],
-    [$angle.arc$],
-    [`angle.arc`],
-    [$plus.minus$],
+    [$<$], [`<`, `lt`], [$angle$], [`angle`], [$dot$], [`dot`],
+    [$<=$], [`<=`, `lt.eq`], [$angle.arc$], [`angle.arc`], [$plus.minus$],
     [`plus.minus`],
-    [$>$],
-    [`>`, `gt`],
-    [$ell$],
-    [`ell`],
-    [$minus.plus$],
-    [`minus.plus`],
-    [$>=$],
-    [`>=`, `gt.eq`],
-    [$parallel$],
-    [`parallel`],
-    [$times$],
-    [`times`],
-    [$!=$],
-    [`!=`, `eq.not`],
-    [$45 degree$],
-    [`45 degree`],
-    [$div$],
-    [`div`],
-    [$<<$],
-    [`<<`, `lt.double`],
-    [$tilde.equiv$],
-    [`tilde.equiv`],
-    [$*$],
+
+    [$>$], [`>`, `gt`], [$ell$], [`ell`], [$minus.plus$], [`minus.plus`],
+    [$>=$], [`>=`, `gt.eq`], [$parallel$], [`parallel`], [$times$], [`times`],
+    [$!=$], [`!=`, `eq.not`], [$45 degree$], [`45 degree`], [$div$], [`div`],
+    [$<<$], [`<<`, `lt.double`], [$tilde.equiv$], [`tilde.equiv`], [$*$],
     [`*`, `ast`],
-    [$>>$],
-    [`>>`, `gt.double`],
-    [$tilde.nequiv$],
-    [`tilde.nequiv`],
-    [$divides$],
-    [`divides`],
-    [$approx$],
-    [`approx`],
-    [$tilde$],
-    [`tilde`],
-    [$divides.not$],
+
+    [$>>$], [`>>`, `gt.double`], [$tilde.nequiv$], [`tilde.nequiv`],
+    [$divides$], [`divides`],
+
+    [$approx$], [`approx`], [$tilde$], [`tilde`], [$divides.not$],
     [`divides.not`],
-    [$\u{224D}$],
-    [`\u{224D}` @tricky],
-    [$tilde.eq$],
-    [`tilde.eq`],
-    [$n!$],
+
+    [$\u{224D}$], [`\u{224D}` @tricky], [$tilde.eq$], [`tilde.eq`], [$n!$],
     [`n!`],
-    [$equiv$],
-    [`equiv`],
-    [$tilde.not$],
-    [`tilde.not`],
-    [$diff$],
-    [`diff`],
-    [$prec$],
-    [`prec`],
-    [$plus.circle$],
-    [`plus.circle`],
-    [$nabla$],
-    [`nabla`],
-    [$prec.eq$],
-    [`prec.eq`],
-    [$minus.circle$],
-    [`minus.cirle`],
-    [$planck.reduce$],
-    [`planck.reduce`],
-    [$succ$],
-    [`succ`],
-    [$dot.circle$],
-    [`dot.circle`],
-    [$compose$],
+
+    [$equiv$], [`equiv`], [$tilde.not$], [`tilde.not`], [$diff$], [`diff`],
+    [$prec$], [`prec`], [$plus.circle$], [`plus.circle`], [$nabla$], [`nabla`],
+    [$prec.eq$], [`prec.eq`], [$minus.circle$], [`minus.cirle`],
+    [$planck.reduce$], [`planck.reduce`],
+
+    [$succ$], [`succ`], [$dot.circle$], [`dot.circle`], [$compose$],
     [`compose`],
-    [$succ.eq$],
-    [`succ.eq`],
-    [$times.circle$],
-    [`times.circle`],
-    [$star$],
+
+    [$succ.eq$], [`succ.eq`], [$times.circle$], [`times.circle`], [$star$],
     [`star`],
-    [$prop$],
-    [`prop`],
-    [$\u{2298}$],
-    [`\u{2298}` @tricky],
-    [$sqrt("")$],
+
+    [$prop$], [`prop`], [$\u{2298}$], [`\u{2298}` @tricky], [$sqrt("")$],
     [`sqrt("")`],
-    [$\u{2250}$],
-    [`\u{2250}` @tricky],
-    [$harpoon.tr$],
-    [`harpoon.tr`],
-    [$checkmark$],
-    [`checkmark`],
+
+    [$\u{2250}$], [`\u{2250}` @tricky], [$harpoon.tr$], [`harpoon.tr`],
+    [$checkmark$], [`checkmark`],
+
   ),
 )
 
@@ -556,34 +355,15 @@ Use `|` to get set builder notation ${a in S | a "is odd"}$ with `{a in S | a "i
     columns: 4,
     align: (right, left, right, left),
     column-gutter: (1em, 1.5em, 1em),
-    [$->$],
-    [`->`, `arrow.r`],
-    [$|->$],
-    [`|->`, `arrow.r.bar`],
-    [$arrow.r.not$],
-    [`arrow.r.not`],
-    [$arrow.r.long.bar$],
+    [$->$], [`->`, `arrow.r`], [$|->$], [`|->`, `arrow.r.bar`],
+    [$arrow.r.not$], [`arrow.r.not`], [$arrow.r.long.bar$],
     [`arrow.r.long.bar`],
-    [$-->$],
-    [`-->`, `arrow.r.long`],
-    [$<-$],
-    [`<-`, `arrow.l`],
-    [$=>$],
-    [`=>`, `arrow.r.double`],
-    [$<->$],
-    [`<->`, `arrow.l.r`],
-    [$arrow.r.double.not$],
-    [`arrow.r.double.not`],
-    [$arrow.b$],
-    [`arrow.b`],
-    [$==>$],
-    [`==>`, `arrow.r.double.long`],
-    [$arrow.t$],
-    [`arrow.t`],
-    [$arrow.squiggly$],
-    [`arrow.squiggly`],
-    [$arrow.t.b$],
-    [`arrow.t.b`],
+
+    [$-->$], [`-->`, `arrow.r.long`], [$<-$], [`<-`, `arrow.l`],
+    [$=>$], [`=>`, `arrow.r.double`], [$<->$], [`<->`, `arrow.l.r`],
+    [$arrow.r.double.not$], [`arrow.r.double.not`], [$arrow.b$], [`arrow.b`],
+    [$==>$], [`==>`, `arrow.r.double.long`], [$arrow.t$], [`arrow.t`],
+    [$arrow.squiggly$], [`arrow.squiggly`], [$arrow.t.b$], [`arrow.t.b`],
   ),
 )
 
@@ -603,18 +383,11 @@ These do the same.
     align: (right, left, right, left),
     column-gutter: (1em, 1.5em, 1em),
     row-gutter: 0.5em,
-    [$integral$],
-    [`integral`],
-    [$integral.double$],
-    [`integral.double`],
-    [$integral.triple$],
-    [`integral.triple`],
-    [$integral.cont$],
+    [$integral$], [`integral`], [$integral.double$], [`integral.double`],
+    [$integral.triple$], [`integral.triple`], [$integral.cont$],
     [`integral.cont`],
-    [$union.big$],
-    [`union.big`],
-    [$sect.big$],
-    [`sect.big`],
+
+    [$union.big$], [`union.big`], [$sect.big$], [`sect.big`],
   ),
 )
 
@@ -626,22 +399,11 @@ These do the same.
     align: (right, left, right, left, right, left),
     column-gutter: (1em, 1.5em, 1em, 1.5em, 1em),
     row-gutter: 0.5em,
-    [$()$],
-    [`()`],
-    [$angle.l angle.r$],
-    [`angle.l angle.r`],
-    [$abs("")$],
+    [$()$], [`()`], [$angle.l angle.r$], [`angle.l angle.r`], [$abs("")$],
     [`abs("")`],
-    [$[]$],
-    [`[]`],
-    [$floor("")$],
-    [`floor("")`],
-    [$norm("")$],
-    [`norm("")`],
-    [${}$],
-    [`{}`],
-    [$ceil("")$],
-    [`ceil("")`],
+
+    [$[]$], [`[]`], [$floor("")$], [`floor("")`], [$norm("")$], [`norm("")`],
+    [${}$], [`{}`], [$ceil("")$], [`ceil("")`],
   ),
 )
 
@@ -652,12 +414,12 @@ Fix the size with the `lr` function.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ lr([sum_(k = 0)^n e^(k^2)], size: #50%) $],
-    [
+    [$ lr([sum_(k = 0)^n e^(k^2)], size: #50%) $], [
       ```
       lr([sum_(k = 0)^n e^(k^2)], size: #50%)
       ```
     ],
+
   ),
 )
 
@@ -668,12 +430,12 @@ To have them grow with the enclosed formula, also use the `lr` function.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ lr(angle.l i, 2^(2^i) angle.r) $],
-    [
+    [$ lr(angle.l i, 2^(2^i) angle.r) $], [
       ```
       lr(angle.l i, 2^(2^i) angle.r)
       ```
     ],
+
   ),
 )
 
@@ -685,18 +447,18 @@ Fences scale by default if entered directly as codepoints, and don't scale autom
     columns: 2,
     align: (right + horizon, left + horizon),
     column-gutter: 1em,
-    [$ (1 / n^(alpha)) $],
-    [
+    [$ (1 / n^(alpha)) $], [
       ```
       (1 / n^(alpha))
       ```
     ],
-    [$ paren.l 1 / n^(alpha) paren.r $],
-    [
+
+    [$ paren.l 1 / n^(alpha) paren.r $], [
       ```
       paren.l 1 / n^(alpha) paren.r
       ```
     ],
+
   ),
 )
 
@@ -707,12 +469,12 @@ The `lr` function also allows to scale unmatched delimiters and one-side fences.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ lr(frac(dif f, dif x) |)_(x_0) $],
-    [
+    [$ lr(frac(dif f, dif x) |)_(x_0) $], [
       ```
       lr(frac(dif f, dif x) |)_(x_0)
       ```
     ],
+
   ),
 )
 
@@ -724,12 +486,12 @@ Get a matrix with the `mat` function. You can pass an array to it.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ mat(a, b; c, d) $],
-    [
+    [$ mat(a, b; c, d) $], [
       ```
       $ mat(a, b; c, d) $
       ```
     ],
+
   ),
 )
 
@@ -752,8 +514,7 @@ Definition by cases can be easily obtained with the `cases` function.
       r dot f_(n - 1) &"else"
     )
       $
-    ],
-    [
+    ], [
       ```
       $ f_n = cases(
         a &"if" n = 0,
@@ -761,6 +522,7 @@ Definition by cases can be easily obtained with the `cases` function.
       ) $
       ```
     ],
+
   ),
 )
 
@@ -779,12 +541,12 @@ Display equations in a block level using `$ ... $` with at least one space separ
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ S = k dot lg W $],
-    [
+    [$ S = k dot lg W $], [
       ```
       $ S = k dot lg W $
       ```
     ],
+
   ),
 )
 
@@ -800,13 +562,13 @@ You can break into multiple lines.
         sin(x) = x - x^3 / 3! \
         + x^5 / 5! - dots.h.c
       $
-    ],
-    [
+    ], [
       ```
       $ sin(x) = x - x^3 / 3! \
           + x^5 / 5! - dots.h.c $
       ```
     ],
+
   ),
 )
 
@@ -822,11 +584,11 @@ Align equations using `&`
         nabla dot bold(D) &= rho \
         nabla dot bold(B) &= 0
       $
-    ],
-    ```
+    ], ```
     $ nabla dot bold(D) &= rho \
       nabla dot bold(B) &= 0 $
     ```,
+
   ),
 )
 
@@ -841,34 +603,33 @@ The last three here are display style.
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ f: RR -> RR $],
-    [
+    [$ f: RR -> RR $], [
       ```
       f: RR -> RR
       ```
     ],
-    [$ "9.8" "m/s"^2 $],
-    [`"9.8" "m/s"^2` @tricky],
-    [$ lim_(h->0) (f(x+h)-f(x)) / h $],
-    [
+
+    [$ "9.8" "m/s"^2 $], [`"9.8" "m/s"^2` @tricky],
+    [$ lim_(h->0) (f(x+h)-f(x)) / h $], [
       ```
       lim_(h -> 0) (f(x + h) - f(x)) / h
       ```
     ],
-    [$ integral x^2 dif x = x^3 \/ 3 + C $],
-    [
+
+    [$ integral x^2 dif x = x^3 \/ 3 + C $], [
       ```
       integral x^2 dif x = x^3 \/ 3 + C
       ```
     ],
+
     [$
         nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
-      $],
-    [
+      $], [
       ```
       nabla = bold(i) dif / (dif x) + bold(j) dif / (dif y) + bold(k) dif / (dif z)
       ```
     ],
+
   ),
 )
 
@@ -886,24 +647,24 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
   table(
     columns: 2,
     column-gutter: 1em,
-    [$ sigma^2 = sqrt(sum(x_i - mu)^2 \/ N) $],
-    [
+    [$ sigma^2 = sqrt(sum(x_i - mu)^2 \/ N) $], [
       ```
       sigma^2 = sqrt(sum(x_i - mu)^2 \/ N)
       ```
     ],
-    [$ E(X) = mu_X = sum(x_i - P(x_i)) $],
-    [
+
+    [$ E(X) = mu_X = sum(x_i - P(x_i)) $], [
       ```
       E(X) = mu_X = sum(x_i - P(x_i))
       ```
     ],
-    [$ 1 / sqrt(2 sigma^2 pi) e^(- (x - mu)^2 / (2 sigma^2)) $],
-    [
+
+    [$ 1 / sqrt(2 sigma^2 pi) e^(- (x - mu)^2 / (2 sigma^2)) $], [
       ```
       1 / sqrt(2 sigma^2 pi) e^(- (x - mu)^2 / (2 sigma^2))
       ```
     ],
+
   ),
 )
 
