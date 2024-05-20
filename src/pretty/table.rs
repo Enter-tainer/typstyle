@@ -65,7 +65,6 @@ fn is_formatable(node: FuncCall<'_>) -> bool {
     // 1. no comments
     // 2. no spread args
     // 3. no named args or named args first then unnamed args
-    // node.args()
     // 4. no table/grid.header/footer/vline/hline/cell
     for node in node.args().to_untyped().children() {
         if node.kind() == SyntaxKind::LineComment || node.kind() == SyntaxKind::BlockComment {
