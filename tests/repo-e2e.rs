@@ -112,7 +112,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "docs/manual.typ",
         )
         // tidy has weird behavior when parsing typ source code
-        .with_blacklist(["main.typ"].into_iter()),
+        .with_blacklist(["main.typ", "marks.typ"].into_iter()),
         Testcase::new(
             "nju-thesis-typst",
             "https://github.com/nju-lug/nju-thesis-typst",
