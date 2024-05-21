@@ -65,7 +65,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "tutorial",
             "https://github.com/typst-doc-cn/tutorial",
-            "5ddb7edd309e2d7fb90486b9885e93b267aa464c",
+            "06e69d94c6ecd42a9af76c252a0a0eb47d93b6b8",
             "src/ebook.typ",
         ),
         Testcase::new(
@@ -77,7 +77,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "cetz-manual",
             "https://github.com/cetz-package/cetz",
-            "2060bca049326c2c2a4e3005b4e65acd9cb5619e",
+            "f78e2a0382442ac45584d1bed39665db6fbebc5b",
             "manual.typ",
         ),
         Testcase::new(
@@ -96,7 +96,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "touying-example",
             "https://github.com/touying-typ/touying",
-            "30dba1ed7bb3d413ca9e92a89d1635f6f7fdce42",
+            "9b6dc9db5a15837696c5cbfdcc62b21f8d4f3f83",
             "examples/example.typ",
         ),
         Testcase::new(
@@ -108,11 +108,11 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "fletcher-manual",
             "https://github.com/Jollywatt/typst-fletcher",
-            "c43d0d879b97a7ed0eecd265055ff25f33ebad0b",
+            "1859ac08998a14083ac57b73ee684c9dfa3375f7",
             "docs/manual.typ",
         )
         // tidy has weird behavior when parsing typ source code
-        .with_blacklist(["main.typ"].into_iter()),
+        .with_blacklist(["main.typ", "marks.typ"].into_iter()),
         Testcase::new(
             "nju-thesis-typst",
             "https://github.com/nju-lug/nju-thesis-typst",
@@ -134,7 +134,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "quill",
             "https://github.com/Mc-Zen/quill",
-            "df8f60f1d8aef5c5d88ddb2160f50663c195c79e",
+            "3cd5f656c3c6845e267621d1d118d6c8f7731f37",
             "docs/guide/quill-guide.typ",
         )
         // these files are included as-is and should not be formatted
@@ -155,7 +155,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "curryst",
             "https://github.com/pauladam94/curryst",
-            "90374431f69aa0b044c57335bc27fcac4ce85705",
+            "0f8f1330d6a73acbf0f0d03f2e9073af0dcee173",
             "examples/natural-deduction.typ",
         ),
     ];
