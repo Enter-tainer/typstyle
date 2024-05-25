@@ -4,8 +4,15 @@
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/typstyle.svg)](https://repology.org/project/typstyle/versions)
 
+
 ## Usage
 ### Use as a CLI
+
+#### Installation
+
+1. Download the binary from the [release page](https://github.com/Enter-tainer/typstyle/releases/)
+2. Install it from your package manager: <https://repology.org/project/typstyle/versions>
+3. Install it using cargo: `cargo install typstyle --locked`
 
 Usage: 
 ```txt
