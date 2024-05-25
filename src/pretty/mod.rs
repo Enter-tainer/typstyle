@@ -574,7 +574,7 @@ impl PrettyPrinter {
             doc = doc.append(BoxDoc::text("#"));
         }
         doc = doc.append(self.convert_expr(named.expr()));
-        doc
+        doc.group()
     }
 
     fn convert_keyed<'a>(&'a self, keyed: Keyed<'a>) -> BoxDoc<'a, ()> {
@@ -786,7 +786,7 @@ impl PrettyPrinter {
             BoxDoc::nil()
         };
         doc = doc.append(ident);
-        doc
+        doc.group()
     }
 
     fn convert_pattern<'a>(&'a self, pattern: Pattern<'a>) -> BoxDoc<'a, ()> {

@@ -29,29 +29,33 @@ impl PrettyPrinter {
             .take_while(|node| node.kind() != SyntaxKind::RightParen)
             .filter_map(|node| node.cast::<Arg>())
             .filter(|node| matches!(node, Arg::Pos(_)));
+        let has_predecessor = |pos: &itertools::Position| {
+            matches!(
+                pos,
+                itertools::Position::Middle | itertools::Position::First
+            )
+        };
         for (row_pos, row) in cells.chunks(columns).into_iter().with_position() {
             let mut row_doc = BoxDoc::nil();
             for (pos, cell) in row.with_position() {
                 row_doc = row_doc
                     .append(self.convert_arg(cell))
                     .append(BoxDoc::text(","))
-                    .append(match pos {
-                        itertools::Position::First | itertools::Position::Middle => {
-                            BoxDoc::softline()
-                        }
-                        itertools::Position::Last | itertools::Position::Only => BoxDoc::line_(),
-                    })
+                    .append(if has_predecessor(&pos) {
+                        BoxDoc::line()
+                    } else if has_predecessor(&row_pos) {
+                        BoxDoc::line_()
+                    } else {
+                        BoxDoc::nil()
+                    });
             }
-            doc = doc.append(row_doc.group()).append(
-                if matches!(
-                    row_pos,
-                    itertools::Position::Last | itertools::Position::Only
-                ) {
-                    BoxDoc::nil()
-                } else {
+            doc = doc
+                .append(row_doc.group())
+                .append(if has_predecessor(&row_pos) {
                     BoxDoc::hardline()
-                },
-            );
+                } else {
+                    BoxDoc::nil()
+                });
         }
         doc.nest(2).append(BoxDoc::hardline()).append(")")
     }
