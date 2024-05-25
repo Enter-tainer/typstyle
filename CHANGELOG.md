@@ -1,5 +1,36 @@
 # Changelog
 
+## v0.11.23 - [2024-05-25]
+
+- Enhance table formatting. When a table row cannot fit in a single line, each cell will be put in a single line.
+
+For example, this code:
+```typ
+#figure(
+  grid(
+    columns: (auto, auto),
+    rows: (auto, auto),
+    gutter: 0em,
+    [ #image("assets/1.png", width: 59%) ], [ #image("assets/2.png",width: 55%) ],
+
+  ),
+  caption: [],
+)
+```
+
+After formatting, it will become:
+```typ
+#figure(
+  grid(
+    columns: (auto, auto),
+    rows: (auto, auto),
+    gutter: 0em,
+    [ #image("assets/1.png", width: 59%) ],
+    [ #image("assets/2.png", width: 55%) ],
+  ),
+  caption: [],
+)
+```
 ## v0.11.22 - [2024-05-20]
 
 - Typstyle now can format table and grid in a "column-aware" way. It now recognizes basic patterns and column numbers, and put a single row in a single line if possible.
