@@ -16,7 +16,8 @@ input_file: tests/assets/unit/grid/basic.typ
   columns: 3,
   gutter: 3pt,
   [Name], [Age], [Strength],
-  [Hannes], [36],
+  [Hannes],
+  [36],
   [GraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGraceGrace],
 
   [Irma],
