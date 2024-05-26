@@ -86,9 +86,7 @@ input_file: tests/assets/tablex.typ
 ) = {
   if type(error-prefix) == _str-type {
     error-prefix = " " + error-prefix
-  } else {
-    error-prefix = ""
-  }
+  } else { error-prefix = "" }
   if type(fit-spans) == _bool-type {
     fit-spans = (
       x: fit-spans,
@@ -258,9 +256,7 @@ input_file: tests/assets/tablex.typ
     item
   } else if type(item) != _dict-type or "tablex-dict-type" not in item {
     cellx[#item]
-  } else {
-    item
-  }
+  } else { item }
 }
 
 #let rowspanx(
@@ -320,11 +316,7 @@ input_file: tests/assets/tablex.typ
           _int-type,
           _float-type,
         ) and cell.y > acc
-      ) {
-        cell.y
-      } else {
-        acc
-      }
+      ) { cell.y } else { acc }
     },
   )
 
@@ -401,9 +393,7 @@ input_file: tests/assets/tablex.typ
   }
 
   // default empty row to a single auto row
-  if rows.len() == 0 {
-    rows = (auto,)
-  }
+  if rows.len() == 0 { rows = (auto,) }
 
   let col_row_is_valid(col_row) = (
     (not is-infinite-len(col_row)) and (
@@ -466,14 +456,10 @@ input_file: tests/assets/tablex.typ
   let result = ()
   let rowspan = if "rowspan" in cell {
     cell.rowspan
-  } else {
-    1
-  }
+  } else { 1 }
   let colspan = if "colspan" in cell {
     cell.colspan
-  } else {
-    1
-  }
+  } else { 1 }
 
   if rowspan < 1 {
     panic("Cell rowspan must be 1 or greater (bad cell: " + repr((
@@ -529,11 +515,7 @@ input_file: tests/assets/tablex.typ
   default,
   if_isnt: none,
 ) = {
-  if x == if_isnt {
-    default
-  } else {
-    x
-  }
+  if x == if_isnt { default } else { x }
 }
 
 // Default 'x' to a certain value if it is none
@@ -562,21 +544,15 @@ input_file: tests/assets/tablex.typ
   default,
 ) = if x in (auto, none) {
   default
-} else {
-  x
-}
+} else { x }
 
 // The max between a, b, or the other one if either is 'none'.
 #let max-if-not-none(a, b) = if a in (
   none,
   auto,
-) {
-  b
-} else if b in (none, auto) {
+) { b } else if b in (none, auto) {
   a
-} else {
-  calc.max(a, b)
-}
+} else { calc.max(a, b) }
 
 // Gets the topmost parent of a line.
 #let get-top-parent(line) = {
@@ -918,9 +894,7 @@ input_file: tests/assets/tablex.typ
       } else if type(len) in (
         _rel-len-type,
         _ratio-type,
-      ) {
-        panic(no-ratio-error)
-      } else {
+      ) { panic(no-ratio-error) } else {
         1pt // should be unreachable
       }
     }
@@ -934,14 +908,10 @@ input_file: tests/assets/tablex.typ
     } else if type(thickness) in (
       _rel-len-type,
       _ratio-type,
-    ) {
-      panic(no-ratio-error)
-    } else {
+    ) { panic(no-ratio-error) } else {
       1pt
     }
-  } else {
-    1pt
-  }
+  } else { 1pt }
 }
 
 // --- end: utility functions ---
@@ -989,9 +959,7 @@ input_file: tests/assets/tablex.typ
 
   if index < grid.items.len() {
     grid.items.at(index)
-  } else {
-    none
-  }
+  } else { none }
 }
 
 // Returns 'true' if the cell at (x, y)
@@ -1219,9 +1187,7 @@ input_file: tests/assets/tablex.typ
       if is-tablex-hline(item) {
         let this_y = if first_cell_reached {
           prev_y + 1
-        } else {
-          prev_y
-        }
+        } else { prev_y }
 
         item.y = default-if-auto(
           item.y,
@@ -1243,9 +1209,7 @@ input_file: tests/assets/tablex.typ
           } else if row_wrapped {
             item.x = x_limit // allow v_line at the last column
             row_wrapped = false
-          } else {
-            item.x = x
-          }
+          } else { item.x = x }
         }
 
         vlines.push(item)
@@ -1311,12 +1275,8 @@ input_file: tests/assets/tablex.typ
         this_x = cell.x
         this_y = cell.y
         [#res.content]
-      } else {
-        [#res]
-      }
-    } else {
-      [#content]
-    }
+      } else { [#res] }
+    } else { [#content] }
 
     if this_x == none or this_y == none {
       panic("Error: Cell with function as content returned another cell with 'none' as x or y!")
@@ -1514,18 +1474,14 @@ input_file: tests/assets/tablex.typ
       cell.x,
       cell.y,
     ) // column, row
-  } else {
-    align_default
-  }
+  } else { align_default }
 
   let fill_default = if type(fill_default) == _function-type {
     fill_default(
       cell.x,
       cell.y,
     ) // row, column
-  } else {
-    fill_default
-  }
+  } else { fill_default }
 
   let content = cell.content
 
@@ -1605,9 +1561,7 @@ input_file: tests/assets/tablex.typ
 
   let aligned_cell_content = if cell_align == auto {
     [#content]
-  } else {
-    align(cell_align)[#content]
-  }
+  } else { align(cell_align)[#content] }
 
   if is-infinite-len(inset) {
     panic("Tablex error: inset must not be infinite")
@@ -1630,9 +1584,7 @@ input_file: tests/assets/tablex.typ
     (acc, el) => {
       if type(el) == _length-type {
         acc + el
-      } else {
-        acc
-      }
+      } else { acc }
     },
   )
 }
@@ -1661,9 +1613,7 @@ input_file: tests/assets/tablex.typ
 
   let frac-width = if amount-frac > 0 and not is-infinite-len(remaining) {
     remaining / amount-frac
-  } else {
-    0pt
-  }
+  } else { 0pt }
 
   if type(gutter) == _fraction-type {
     gutter = frac-width * (gutter / 1fr)
@@ -1815,9 +1765,7 @@ input_file: tests/assets/tablex.typ
 
           let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
             pcell.fit-spans.x
-          } else {
-            fit-spans.x
-          }
+          } else { fit-spans.x }
           let this-cell-can-expand-columns = pcell.colspan == 1 or not fit-this-span
 
           // only expand the last auto column of a colspan,
@@ -1883,9 +1831,7 @@ input_file: tests/assets/tablex.typ
               width - fixed_size,
               0pt,
             )
-          } else {
-            max
-          }
+          } else { max }
         },
       )
 
@@ -2003,9 +1949,7 @@ input_file: tests/assets/tablex.typ
         styles: styles,
         page-size: page_width,
       )
-    } else if c == none {
-      0pt
-    } else {
+    } else if c == none { 0pt } else {
       c
     }
   })
@@ -2014,9 +1958,7 @@ input_file: tests/assets/tablex.typ
   // (calculate it later if it's fractional)
   let fixed-size-gutter = if type(col-gutter) == _length-type {
     col-gutter
-  } else {
-    0pt
-  }
+  } else { 0pt }
 
   let total_fixed_size = sum-fixed-size-tracks(columns) + fixed-size-gutter * (
     columns.len() - 1
@@ -2063,18 +2005,14 @@ input_file: tests/assets/tablex.typ
       columns = columns.map(c => {
         if type(c) == _fraction-type {
           0pt // no space left to be divided
-        } else {
-          c
-        }
+        } else { c }
       })
     }
   } else {
     columns = columns.map(c => {
       if c == auto or type(c) == _fraction-type {
         0pt // no space remaining!
-      } else {
-        c
-      }
+      } else { c }
     })
   }
 
@@ -2082,9 +2020,7 @@ input_file: tests/assets/tablex.typ
     columns: columns,
     gutter: if col-gutter == none {
       none
-    } else {
-      fixed-size-gutter
-    },
+    } else { fixed-size-gutter },
   )
 }
 
@@ -2130,9 +2066,7 @@ input_file: tests/assets/tablex.typ
 
           let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
             pcell.fit-spans.y
-          } else {
-            fit-spans.y
-          }
+          } else { fit-spans.y }
           let this-cell-can-expand-rows = pcell.rowspan == 1 or not fit-this-span
 
           // only expand the last auto row of a rowspan,
@@ -2184,9 +2118,7 @@ input_file: tests/assets/tablex.typ
               height - fixed_size,
               0pt,
             )
-          } else {
-            max
-          }
+          } else { max }
         },
       )
 
@@ -2225,9 +2157,7 @@ input_file: tests/assets/tablex.typ
         styles: styles,
         page-size: page_height,
       )
-    } else {
-      r
-    }
+    } else { r }
   })
 
   let auto_rows_res = determine-auto-rows(
@@ -2247,9 +2177,7 @@ input_file: tests/assets/tablex.typ
   // (calculate it later if it's fractional)
   let fixed-size-gutter = if type(row-gutter) == _length-type {
     row-gutter
-  } else {
-    0pt
-  }
+  } else { 0pt }
 
   let remaining = page_height - sum-fixed-size-tracks(rows) - auto_size - fixed-size-gutter * (
     rows.len() - 1
@@ -2272,15 +2200,11 @@ input_file: tests/assets/tablex.typ
         if type(r) == _fraction-type {
           // no space remaining in this page or box
           0pt
-        } else {
-          r
-        }
+        } else { r }
       }),
       gutter: if row-gutter == none {
         none
-      } else {
-        fixed-size-gutter
-      },
+      } else { fixed-size-gutter },
     )
   }
 }
@@ -2674,9 +2598,7 @@ input_file: tests/assets/tablex.typ
     (none, none),
     auto,
     (auto, auto),
-  ) {
-    return (none, none)
-  }
+  ) { return (none, none) }
   if type(line.expand) != _array-type {
     line.expand = (
       line.expand,
@@ -2753,9 +2675,7 @@ input_file: tests/assets/tablex.typ
   ) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) {
-    return
-  }
+  ) { return  }
 
   if gutter != none and gutter.row != none and (
     (
@@ -2763,9 +2683,7 @@ input_file: tests/assets/tablex.typ
     ) or (
       not pre-gutter and hline.gutter-restrict == top
     )
-  ) {
-    return
-  }
+  ) { return  }
 
   let expand = get-actual-expansion(
     hline,
@@ -2884,9 +2802,7 @@ input_file: tests/assets/tablex.typ
   ) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) {
-    return
-  }
+  ) { return  }
 
   if gutter != none and gutter.col != none and (
     (
@@ -2894,9 +2810,7 @@ input_file: tests/assets/tablex.typ
     ) or (
       not pre-gutter and vline.gutter-restrict == left
     )
-  ) {
-    return
-  }
+  ) { return  }
 
   let expand = get-actual-expansion(
     vline,
@@ -3292,9 +3206,7 @@ input_file: tests/assets/tablex.typ
 
         let header_last_y = if first-row-group != none {
           first-row-group.row_group.y_span.at(1)
-        } else {
-          none
-        }
+        } else { none }
         // if this is the second row, and the header's hlines
         // do not have priority (thus are not drawn by them,
         // otherwise they'd repeat on every page), then
@@ -3303,9 +3215,7 @@ input_file: tests/assets/tablex.typ
           let hlines_below_header = first-row-group.row_group.hlines.filter(h => h.y == header_last_y + 1)
 
           hlines + hlines_below_header
-        } else {
-          hlines
-        }
+        } else { hlines }
 
         for hline in hlines {
           // only draw the top hline
@@ -3313,9 +3223,7 @@ input_file: tests/assets/tablex.typ
           if hline.y == start-y {
             let header_last_y = if first-row-group != none {
               first-row-group.row_group.y_span.at(1)
-            } else {
-              none
-            }
+            } else { none }
             // pre-gutter is always false here, as we assume
             // hlines at the top of this row are handled
             // at pre-gutter by the preceding row,
@@ -3656,9 +3564,7 @@ input_file: tests/assets/tablex.typ
       none
     } else {
       line.expand.slice(0, 2).map(e => {
-        if e == none {
-          e
-        } else {
+        if e == none { e } else {
           e = default-if-auto(e, 0pt)
           if type(e) not in (
             _length-type,
@@ -3853,9 +3759,7 @@ input_file: tests/assets/tablex.typ
         original-cells.map(c => {
           if is-tablex-occupied(c) {
             none
-          } else {
-            c
-          }
+          } else { c }
         }),
       )
 
@@ -3925,9 +3829,7 @@ input_file: tests/assets/tablex.typ
         original-cells.map(c => {
           if is-tablex-occupied(c) {
             none
-          } else {
-            c
-          }
+          } else { c }
         }),
       )
 
@@ -4273,9 +4175,7 @@ input_file: tests/assets/tablex.typ
     // the same size as the last specified row.
     let last-row-size = if rows.len() == 0 {
       auto
-    } else {
-      rows.last()
-    }
+    } else { rows.last() }
     for _ in range(grid_info.new_row_count - row_len) {
       rows.push(last-row-size) // add new rows (due to extra cells)
     }

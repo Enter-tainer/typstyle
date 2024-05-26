@@ -5,9 +5,7 @@ input_file: tests/assets/unit/comment/line-comment-attach.typ
 ---
 #import "@preview/cheq:0.1.0": checklist
 
-#{
-  show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em) // 复选框
-}
+#{ show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em) // 复选框 }
 
 #{
   show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em) // 复选框

@@ -11,6 +11,4 @@ input_file: tests/assets/unit/code/arg-flavor.typ
   arg1,
   arg2,
   args: none,
-) = {
-  arg1 + arg2
-}
+) = { arg1 + arg2 }

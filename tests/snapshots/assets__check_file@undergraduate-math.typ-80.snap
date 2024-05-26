@@ -52,9 +52,7 @@ input_file: tests/assets/undergraduate-math.typ
 // No idea
 #show "?!": box(text(orange, [No idea #emoji.face.unhappy]))
 // Tricky figure numbering
-#set figure(numbering: n => {
-  ([??], [!!], [?!]).at(n)
-})
+#set figure(numbering: n => { ([??], [!!], [?!]).at(n) })
 // No prefix
 #set ref(supplement: "")
 
@@ -73,9 +71,7 @@ input_file: tests/assets/undergraduate-math.typ
 )
 
 // Black raw code
-#show raw.where(block: false): it => {
-  it.text
-}
+#show raw.where(block: false): it => { it.text }
 
 // Put this here to avoid affecting the title
 #show link: underline

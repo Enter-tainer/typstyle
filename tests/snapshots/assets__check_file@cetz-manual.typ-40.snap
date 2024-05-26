@@ -72,9 +72,7 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
   doc-style.show-type(
     it.text.slice(1, -1),
   )
-} else {
-  it
-}
+} else { it }
 
 == CeTZ Unique Argument Types
 Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.

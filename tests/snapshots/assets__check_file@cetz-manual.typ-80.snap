@@ -62,9 +62,7 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 #show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") {
   set text(1.2em)
   doc-style.show-type(it.text.slice(1, -1))
-} else {
-  it
-}
+} else { it }
 
 == CeTZ Unique Argument Types
 Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.
@@ -241,11 +239,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
         let name-to-mnemonic = (:)
         for (name, item) in cetz.mark-shapes.mnemonics {
           let list = name-to-mnemonic.at(item.at(0), default: ())
-          list += (
-            raw(name) + if item.at(1) {
-              " (reversed)"
-            },
-          )
+          list += (raw(name) + if item.at(1) { " (reversed)" },)
           name-to-mnemonic.insert(item.at(0), list)
         }
         (
@@ -1118,9 +1112,7 @@ The palette library provides some predefined palettes.
     {
       import cetz.draw: *
       for i in range(0, p("len")) {
-        if calc.rem(i, 10) == 0 {
-          move-to((rel: (0, -.5)))
-        }
+        if calc.rem(i, 10) == 0 { move-to((rel: (0, -.5))) }
         rect((), (rel: (1, .5)), name: "r", ..p(i))
         move-to("r.south-east")
       }

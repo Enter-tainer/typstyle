@@ -11,6 +11,4 @@ input_file: tests/assets/unit/code/array-flavor.typ
   )
 }
 
-#{
-  (11, 22, 33)
-}
+#{ (11, 22, 33) }

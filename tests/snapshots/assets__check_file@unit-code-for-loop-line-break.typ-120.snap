@@ -5,11 +5,7 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
 ---
 #let 六面体 = {
   import draw: *
-  let neg(u) = if u == 0 {
-    1
-  } else {
-    -1
-  }
+  let neg(u) = if u == 0 { 1 } else { -1 }
   for (p, c) in (
     ((0, 0, 0), black),
     ((1, 1, 0), red),

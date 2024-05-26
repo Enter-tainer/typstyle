@@ -440,7 +440,7 @@ impl PrettyPrinter {
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
             true,
-            FoldStyle::Never,
+            FoldStyle::Single,
         );
         doc
     }

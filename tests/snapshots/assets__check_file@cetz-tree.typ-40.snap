@@ -150,9 +150,7 @@ input_file: tests/assets/cetz-tree.typ
         sibling: n,
       ))
       cnt = tree.at(0)
-    } else {
-      cnt = tree
-    }
+    } else { cnt = tree }
 
     return (
       x: 0,
@@ -260,9 +258,7 @@ input_file: tests/assets/cetz-tree.typ
   let anchors(node, parent-path) = {
     if parent-path != none {
       parent-path += "-"
-    } else {
-      parent-path = ""
-    }
+    } else { parent-path = "" }
 
     let d = (:)
     d.insert(
