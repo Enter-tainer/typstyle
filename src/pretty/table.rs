@@ -4,7 +4,18 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::PrettyPrinter;
 
-use super::util::func_name;
+use super::util::{func_name, indent_func_name};
+
+const BLACK_LIST: [&str; 6] = [
+    "table.cell",
+    "table.vline",
+    "table.hline",
+    "grid.cell",
+    "grid.vline",
+    "grid.hline",
+];
+
+const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header", "grid.footer"];
 
 impl PrettyPrinter {
     pub(super) fn convert_table<'a>(
@@ -22,7 +33,12 @@ impl PrettyPrinter {
                 .append(BoxDoc::text(","))
                 .append(BoxDoc::hardline());
         }
-        let cells = table
+        #[derive(Debug)]
+        struct Row<'a> {
+            cells: Vec<Arg<'a>>,
+        }
+
+        let pos_args = table
             .args()
             .to_untyped()
             .children()
@@ -35,9 +51,36 @@ impl PrettyPrinter {
                 itertools::Position::Middle | itertools::Position::First
             )
         };
-        for (row_pos, row) in cells.chunks(columns).into_iter().with_position() {
+        let table: Vec<Row> = {
+            let mut table = Vec::new();
+            let mut row = Row {
+                cells: Vec::with_capacity(columns),
+            };
+            for arg in pos_args {
+                row.cells.push(arg);
+                if row.cells.len() == columns {
+                    table.push(row);
+                    row = Row {
+                        cells: Vec::with_capacity(columns),
+                    };
+                }
+                if let Some(func_call) = arg.to_untyped().cast::<FuncCall>() {
+                    if HEADER_FOOTER.contains(&func_name(func_call).as_str()) {
+                        table.push(row);
+                        row = Row {
+                            cells: Vec::with_capacity(columns),
+                        };
+                    }
+                }
+            }
+            if !row.cells.is_empty() {
+                table.push(row);
+            }
+            table
+        };
+        for (row_pos, row) in table.into_iter().with_position() {
             let mut row_doc = BoxDoc::nil();
-            for (pos, cell) in row.with_position() {
+            for (pos, cell) in row.cells.into_iter().with_position() {
                 row_doc = row_doc
                     .append(self.convert_arg(cell))
                     .append(BoxDoc::text(","))
@@ -62,14 +105,15 @@ impl PrettyPrinter {
 }
 
 fn is_table(node: FuncCall<'_>) -> bool {
-    func_name(node) == Some("table") || func_name(node) == Some("grid")
+    indent_func_name(node) == Some("table") || indent_func_name(node) == Some("grid")
 }
 
 fn is_formatable(node: FuncCall<'_>) -> bool {
     // 1. no comments
     // 2. no spread args
     // 3. no named args or named args first then unnamed args
-    // 4. no table/grid.header/footer/vline/hline/cell
+    // 4. no table/grid.vline/hline/cell
+    // 5. if table/grid.header/footer present, they should appear before/after any unnamed args
     for node in node.args().to_untyped().children() {
         if node.kind() == SyntaxKind::LineComment || node.kind() == SyntaxKind::BlockComment {
             return false;
@@ -80,9 +124,10 @@ fn is_formatable(node: FuncCall<'_>) -> bool {
         match node {
             Arg::Pos(_) => {
                 pos_arg_index = Some(i);
-                if let Some(_func_call) = node.to_untyped().cast::<FuncCall>() {
-                    // TODO: further detect table/grid.header/footer/vline/hline/cell
-                    return false;
+                if let Some(func_call) = node.to_untyped().cast::<FuncCall>() {
+                    if BLACK_LIST.contains(&func_name(func_call).as_str()) {
+                        return false;
+                    }
                 }
             }
             Arg::Named(_) => {

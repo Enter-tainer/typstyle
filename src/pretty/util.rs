@@ -1,10 +1,14 @@
 use typst_syntax::{ast::*, SyntaxKind};
 
-pub(super) fn func_name(node: FuncCall<'_>) -> Option<&str> {
+pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
     node.callee()
         .to_untyped()
         .cast::<Ident>()
         .map(|ident| ident.as_str())
+}
+
+pub(super) fn func_name(node: FuncCall<'_>) -> String {
+    node.callee().to_untyped().clone().into_text().to_string()
 }
 
 pub(super) fn has_parenthesized_args(node: FuncCall<'_>) -> bool {
