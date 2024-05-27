@@ -1,5 +1,48 @@
 # Changelog
 
+## v0.11.24 - [2024-05-27]
+
+- Now typstyle can format table with `table.header` and `table.footer` attributes. The header and footer will be put in a single line if possible.
+  For what it cannot do, see https://github.com/Enter-tainer/typstyle/issues/59#issuecomment-2132252514.
+
+```typ
+#table(
+  columns: 3,
+  table.header(
+    [Substance],
+    [Subcritical °C],
+    [Supercritical °C],
+    repeat: true,
+  ),
+  [Hydrochloric Acid],
+  [12.0],
+      [92.1],
+  [Sodium Myreth Sulfate],
+  [16.6],
+  [104],
+        [Potassium Hydroxide],
+  [24.7],
+  [114.514],
+)
+```
+
+After formatting, it will become:
+```typ
+#table(
+  columns: 3,
+  table.header(
+    [Substance],
+    [Subcritical °C],
+    [Supercritical °C],
+    repeat: true,
+  ),
+
+  [Hydrochloric Acid], [12.0], [92.1],
+  [Sodium Myreth Sulfate], [16.6], [104],
+  [Potassium Hydroxide], [24.7], [114.514],
+)
+```
+
 ## v0.11.23 - [2024-05-25]
 
 - Enhance table formatting. When a table row cannot fit in a single line, each cell will be put in a single line.
