@@ -10,6 +10,7 @@ input_file: tests/assets/unit/grid/array.typ
   rect[Fixed width, auto height],
   rect[1/3 of the remains],
   rect[2/3 of the remains],
+
   rect(height: 100%)[Fixed height],
   [image],
   [image],
