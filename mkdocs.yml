@@ -48,7 +48,6 @@ theme:
   features:
     - content.action.edit
     - navigation.instant
-    - navigation.indexes
     - navigation.path
     - navigation.sections
     - navigation.expand
