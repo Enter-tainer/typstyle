@@ -5,7 +5,7 @@
 - Now typstyle can format table with `table.header` and `table.footer` attributes. The header and footer will be put in a single line if possible.
   For what it cannot do, see https://github.com/Enter-tainer/typstyle/issues/59#issuecomment-2132252514.
 
-```typ
+```typst
 #table(
   columns: 3,
   table.header(
@@ -27,7 +27,7 @@
 ```
 
 After formatting, it will become:
-```typ
+```typst
 #table(
   columns: 3,
   table.header(
@@ -48,7 +48,7 @@ After formatting, it will become:
 - Enhance table formatting. When a table row cannot fit in a single line, each cell will be put in a single line.
 
 For example, this code:
-```typ
+```typst
 #figure(
   grid(
     columns: (auto, auto),
@@ -62,7 +62,7 @@ For example, this code:
 ```
 
 After formatting, it will become:
-```typ
+```typst
 #figure(
   grid(
     columns: (auto, auto),
@@ -79,7 +79,7 @@ After formatting, it will become:
 - Typstyle now can format table and grid in a "column-aware" way. It now recognizes basic patterns and column numbers, and put a single row in a single line if possible.
 
 For example, this code:
-```typ
+```typst
 #table(
   columns: 3,
     [Substance],
@@ -97,7 +97,7 @@ For example, this code:
 ```
 
 After formatting, it will become:
-```typ
+```typst
 #table(
   columns: 3,
   [Substance], [Subcritical °C], [Supercritical °C],
@@ -126,14 +126,14 @@ typstyle format-all
 - Typstyle now indent block math equations.
 
 For example, this code:
-```typ
+```typst
 $
 E = mc^2
 $
 ```
 
 Now it will be formatted as:
-```typ
+```typst
 $
   E = mc^2
 $
@@ -144,7 +144,7 @@ $
 - Typstyle now can keep line comments attached to the end of the line when formatting code blocks.
 
 For example, this code:
-```typ
+```typst
 #{
   let c = 0 // my comment
 }
@@ -152,7 +152,7 @@ For example, this code:
 
 Previously, the comment will be moved to the next line after formatting. Now it's attached to the end of the line.
 
-```typ
+```typst
 #{
   let c = 0 // my comment
 }
@@ -172,7 +172,7 @@ Previously, the comment will be moved to the next line after formatting. Now it'
 
 Previously for this code, the comment will be removed after formatting. Now it's kept.
 
-```typ
+```typst
 #let (
 // abc
 a, b, c,
@@ -204,7 +204,7 @@ a, b, c,
 - Improve performance when formatting nested structures.
 
 Previously it takes infinite time to format this code:
-```typ
+```typst
 #let f(..arg) = arg
 
 #f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(1,2,3))))))))))))))))))))))
@@ -217,14 +217,14 @@ Now it is done in instant.
 - Fix set rules args are always spread into multiple lines. It now behaves like function call args.
 
 For example, this code:
-```typ
+```typst
 #set text(  font: body-font,
   lang: "zh",  region: "cn",
 )
 ```
 
 After formatting, it will become:
-```typ
+```typst
 #set text(font: body-font, lang: "zh", region: "cn")
 ```
 
@@ -236,7 +236,7 @@ After formatting, it will become:
 - We now support flavor detection for block equations. 
 
 For example, this code:
-```typ
+```typst
 $
   F(x) = integral_0^x f(t) dif t
 $
@@ -247,7 +247,7 @@ $
 ```
 
 After formatting, it will become:
-```typ
+```typst
 $
 F(x) = integral_0^x f(t) dif t
 $
@@ -262,7 +262,7 @@ $ F(x) = integral_0^x f(t) dif t $
   This is called flavor detection.
 
 For example, this code:
-```typ
+```typst
 #let my-f(arg1, arg2,
   args: none) = {
   arg1 + arg2
@@ -276,7 +276,7 @@ For example, this code:
 ```
 
 After formatting, it will become:
-```typ
+```typst
 #let my-f(arg1, arg2, args: none) = {
   arg1 + arg2
 }
