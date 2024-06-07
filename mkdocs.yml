@@ -1,0 +1,96 @@
+# Project Information
+site_name: Typstyle Docs
+site_description: Typstyle aims to be a beautiful and reliable typst code formatter
+site_author: Wenzhuo Liu
+site_url: https://enter-tainer.github.io/typstyle
+strict: false
+
+# Repository
+repo_name: 'Enter-tainer/typstyle'
+repo_url: 'https://github.com/Enter-tainer/typstyle'
+
+# Copyright
+copyright: 'Copyright &copy; 2023 - 2024 Typstyle Contributors'
+
+# Contents
+nav:
+  - WebApp: demo/index.html
+  - User Guide:
+    - Introduction: index.md
+    - Explanation:
+      - Architecture: architecture.md
+      - Limitations: limitations.md
+    - Changelog: changelog.md
+# Theme
+theme:
+  name: material
+  language: 'en'
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: pink
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  include_search_page: false
+  search_index_only: true
+  features:
+    - content.action.edit
+    - navigation.instant
+    - navigation.indexes
+    - navigation.path
+    - navigation.sections
+    - navigation.expand
+  font:
+    text: 'Fira Sans'
+    code: 'Fira Mono'
+
+plugins:
+  - search
+  - markdown-exec
+
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - def_list
+  - footnotes
+  - meta
+  - toc:
+      permalink: ""
+      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.highlight:
+      linenums: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.progressbar
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - pymdownx.tabbed:
+      alternate_style: true

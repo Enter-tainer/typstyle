@@ -11,6 +11,7 @@
   "devDependencies": {
     "typescript": "^5.2.2",
     "vite": "^5.1.6",
+    "vite-plugin-singlefile": "^2.0.1",
     "vite-plugin-wasm": "^3.3.0"
   },
   "dependencies": {
