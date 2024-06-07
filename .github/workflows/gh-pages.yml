@@ -55,7 +55,7 @@ jobs:
         run: |
           cd web
           yarn
-          yarn build --outDir ..\docs\demo
+          yarn build --outDir ../docs/demo
       - name: Build docs site
         run: |
           rye sync
