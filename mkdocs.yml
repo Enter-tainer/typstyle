@@ -57,7 +57,10 @@ theme:
 
 plugins:
   - search
+  # - social
   - markdown-exec
+  - meta-descriptions
+
 
 
 # Extensions
