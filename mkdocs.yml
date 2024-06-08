@@ -24,6 +24,7 @@ nav:
 # Theme
 theme:
   name: material
+  custom_dir: overrides
   language: 'en'
   palette:
     # Palette toggle for light mode
@@ -96,3 +97,8 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.tabbed:
       alternate_style: true
+
+extra:
+  analytics:
+    provider: cf
+    property: 60fa9272b43847a38e3f09c5cd245af4
