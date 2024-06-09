@@ -11,6 +11,7 @@ input_file: tests/assets/unit/comment/comment-in-destruct.typ
   )
 }
 
+
 #let (
 // abc
 a, b, c,

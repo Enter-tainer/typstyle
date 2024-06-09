@@ -12,12 +12,16 @@ input_file: tests/assets/cetz-manual.typ
 #import "src/anchor.typ" as anchor_
 #import "@preview/tidy:0.2.0"
 
+
 // Usage:
 //   ```example
 //   /* canvas drawing code */
 //   ```
 #show raw.where(lang: "example"): example
 #show raw.where(lang: "example-vertical"): example.with(vertical: true)
+
+
+
 
 #make-title()
 
@@ -135,6 +139,7 @@ content("line.end", [100%, "end"], anchor: "west")
 content((name: "line", anchor: 75%), [75%])
 content((name: "line", anchor: 50pt), [50pt])
 ```
+
 
 = Draw Function Reference
 
@@ -395,6 +400,7 @@ line(..c)
   default: true,
 )
 
+
 #pagebreak()
 == Shapes
 #doc-style.parse-show-module("/src/draw/shapes.typ")
@@ -584,6 +590,7 @@ rect("line.start", "circle.east")
 
 Note, that not all elements provide border or path anchors!
 
+
 ```example
 circle((0,0), name: "circle")
 // Anchor at 30 degree
@@ -593,6 +600,7 @@ content((name: "circle", anchor: 30%), box(fill: white, $ 30 % $))
 // Anchor at 3.14 of the path
 content((name: "circle", anchor: 3.14), box(fill: white, $ p = 3.14 $))
 ```
+
 
 == Tangent
 This system allows you to compute the point that lies tangent to a shape. In detail, consider an element and a point. Now draw a straight line from the point so that it "touches" the element (more formally, so that it is _tangent_ to this element). The point where the line touches the shape is the point referred to by this coordinate system.
@@ -954,6 +962,7 @@ plot.plot(
   ],
 )
 
+
 #doc-style.parse-show-module("/src/lib/plot/line.typ")
 #doc-style.parse-show-module("/src/lib/plot/contour.typ")
 #doc-style.parse-show-module("/src/lib/plot/boxwhisker.typ")
@@ -1231,6 +1240,7 @@ All path decoration functions support the following style keys:
 
 #doc-style.parse-show-module("/src/styles.typ")
 
+
 === Default Style <default-style>
 
 This is a dump of the style dictionary every canvas gets initialized with.
@@ -1278,6 +1288,7 @@ my-star((0,3), n: 10)
 set-style(star: (fill: yellow)) // set-style works, too!
 my-star((0,6), inner-radius: .3)
 ```
+
 
 = Internals
 == Context

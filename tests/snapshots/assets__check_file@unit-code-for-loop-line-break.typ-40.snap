@@ -43,6 +43,7 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
   }
 }
 
+
 #let 六面体 = {
   for (
     pppppppppppppppppppppppppppppppppppppppppp,
@@ -52,6 +53,7 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
     "111111111111111111111111111111111"
   }
 }
+
 
 #{
   for (i, n) in arr.enumerate() {

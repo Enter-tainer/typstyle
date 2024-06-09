@@ -20,6 +20,7 @@ input_file: tests/assets/unit/grid/cell.typ
   table.cell(colspan: 2)[24.7],
 )
 
+
 #import table: cell, header
 
 #table(
