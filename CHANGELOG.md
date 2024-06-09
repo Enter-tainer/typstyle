@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.11.25 - [2024-06-09]
+
+- Typstyle now keeps extra newlines in markup mode. Multiple newlines are sometimes used to separate different sections in a document or act as a paragraph placeholder. Typstyle now keeps them as they are.
+
+```typst
+== Unfinished Title
+
+
+
+=== Section 1
+
+
+
+=== Section 2
+```
+
+Previously, it will be formatted as:
+```typst
+== Unfinished Title
+
+== Section 1
+
+== Section 2
+```
+
+Now it is kept as it is.
+
 ## v0.11.24 - [2024-05-27]
 
 - Now typstyle can format table with `table.header` and `table.footer` attributes. The header and footer will be put in a single line if possible.
