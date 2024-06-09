@@ -197,8 +197,18 @@ impl PrettyPrinter {
         trivia(node)
     }
 
-    fn convert_parbreak<'a>(&'a self, _parbreak: Parbreak<'a>) -> BoxDoc<'a, ()> {
-        BoxDoc::hardline().append(BoxDoc::hardline())
+    fn convert_parbreak<'a>(&'a self, parbreak: Parbreak<'a>) -> BoxDoc<'a, ()> {
+        let newline_count = parbreak
+            .to_untyped()
+            .text()
+            .chars()
+            .filter(|c| *c == '\n')
+            .count();
+        let mut res = BoxDoc::nil();
+        for _ in 0..newline_count {
+            res = res.append(BoxDoc::hardline());
+        }
+        res
     }
 
     fn convert_escape<'a>(&'a self, escape: Escape<'a>) -> BoxDoc<'a, ()> {

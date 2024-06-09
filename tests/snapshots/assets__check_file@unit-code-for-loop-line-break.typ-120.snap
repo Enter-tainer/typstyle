@@ -22,11 +22,13 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
   }
 }
 
+
 #let 六面体 = {
   for (pppppppppppppppppppppppppppppppppppppppppp, cccccccccccccccccccccccccccccccc, b) in ((111111, 111111111, 1),) {
     "111111111111111111111111111111111"
   }
 }
+
 
 #{
   for (i, n) in arr.enumerate() {
