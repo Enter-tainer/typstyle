@@ -18,6 +18,15 @@ pub(super) fn has_parenthesized_args(node: FuncCall<'_>) -> bool {
         .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen))
 }
 
+pub(super) fn get_parenthesized_args(node: Args<'_>) -> impl Iterator<Item = Arg<'_>> {
+    node
+        .to_untyped()
+        .children()
+        .skip_while(|node| node.kind() != SyntaxKind::LeftParen)
+        .take_while(|node| node.kind() != SyntaxKind::RightParen)
+        .filter_map(|node| node.cast::<Arg>())
+}
+
 #[allow(unused)]
 pub(super) fn has_additional_args(node: FuncCall<'_>) -> bool {
     let has_paren_args = has_parenthesized_args(node);
