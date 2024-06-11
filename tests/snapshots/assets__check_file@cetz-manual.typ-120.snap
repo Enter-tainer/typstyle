@@ -230,9 +230,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
 #figure(
   table(
     columns: 3,
-    [*Name*],
-    [*Shorthand*],
-    [*Shape*],
+    [*Name*], [*Shorthand*], [*Shape*],
     ..(
       for (name, item) in cetz.mark-shapes.marks {
         let name-to-mnemonic = (:)
@@ -251,7 +249,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
           cetz.canvas(cetz.draw.line((), (1, 0), mark: (end: name))),
         )
       }
-    ),
+    )
   ),
   caption: [Mark symbols],
 )

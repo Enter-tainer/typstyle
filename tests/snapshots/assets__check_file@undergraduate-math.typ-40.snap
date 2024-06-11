@@ -170,7 +170,7 @@ Your document should contain at least this.
   "",
   ```
   -- document body here --
-  ```,
+  ```
 )
 
 = Common constructs

@@ -1,15 +1,26 @@
 use pretty::BoxDoc;
-use typst_syntax::{ast::*, SyntaxKind};
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
+    pretty::trivia,
     util::{comma_seprated_items, FoldStyle},
     PrettyPrinter,
 };
 
 use super::{
     table,
-    util::{self, get_parenthesized_args},
+    util::{self, get_parenthesized_args, get_parenthesized_args_untyped},
 };
+
+#[derive(Debug)]
+pub(super) enum ParenthesizedFuncCallArg<'a> {
+    Argument(Arg<'a>),
+    Comma,
+    Space,
+    Newline(usize),
+    LineComment(&'a SyntaxNode),
+    BlockComment(&'a SyntaxNode),
+}
 
 impl PrettyPrinter {
     pub(super) fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
@@ -18,8 +29,12 @@ impl PrettyPrinter {
             return doc.append(res);
         }
         let has_parenthesized_args = util::has_parenthesized_args(func_call);
-        if let Some(cols) = table::is_formatable_table(func_call) {
-            doc = doc.append(self.convert_table(func_call, cols));
+        if table::is_table(func_call) {
+            if let Some(cols) = table::is_formatable_table(func_call) {
+                doc = doc.append(self.convert_table(func_call, cols));
+            } else if has_parenthesized_args {
+                doc = doc.append(self.convert_parenthesized_args_as_is(func_call.args()));
+            }
         } else if has_parenthesized_args {
             doc = doc.append(self.convert_parenthesized_args(func_call.args()));
         };
@@ -43,6 +58,36 @@ impl PrettyPrinter {
             )
         };
         doc
+    }
+
+    pub(super) fn convert_parenthesized_args_as_is<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+        let args = parse_args(args);
+        let mut inner = BoxDoc::nil();
+        for arg in args {
+            match arg {
+                ParenthesizedFuncCallArg::Argument(arg) => {
+                    inner = inner.append(self.convert_arg(arg));
+                }
+                ParenthesizedFuncCallArg::Comma => {
+                    inner = inner.append(BoxDoc::text(","));
+                }
+                ParenthesizedFuncCallArg::Space => {
+                    inner = inner.append(BoxDoc::space());
+                }
+                ParenthesizedFuncCallArg::Newline(count) => {
+                    for _ in 0..count {
+                        inner = inner.append(BoxDoc::hardline());
+                    }
+                }
+                ParenthesizedFuncCallArg::LineComment(comment)
+                | ParenthesizedFuncCallArg::BlockComment(comment) => {
+                    inner = inner.append(trivia(comment));
+                }
+            }
+        }
+        BoxDoc::text("(")
+            .append(inner.nest(2))
+            .append(BoxDoc::text(")"))
     }
 
     fn convert_parenthesized_args_impl<'a>(
@@ -110,4 +155,36 @@ impl PrettyPrinter {
             Arg::Spread(s) => self.convert_spread(s),
         }
     }
+}
+
+fn parse_args(args: Args<'_>) -> Vec<ParenthesizedFuncCallArg<'_>> {
+    let mut res = Vec::new();
+    for node in get_parenthesized_args_untyped(args) {
+        match node.kind() {
+            SyntaxKind::Comma => {
+                res.push(ParenthesizedFuncCallArg::Comma);
+            }
+            SyntaxKind::Space => {
+                let text = node.text();
+                let newline_count = text.chars().filter(|&c| c == '\n').count();
+                if newline_count > 0 {
+                    res.push(ParenthesizedFuncCallArg::Newline(newline_count));
+                } else {
+                    res.push(ParenthesizedFuncCallArg::Space);
+                }
+            }
+            SyntaxKind::LineComment => {
+                res.push(ParenthesizedFuncCallArg::LineComment(node));
+            }
+            SyntaxKind::BlockComment => {
+                res.push(ParenthesizedFuncCallArg::BlockComment(node));
+            }
+            _ => {
+                res.push(ParenthesizedFuncCallArg::Argument(
+                    node.cast::<Arg>().unwrap(),
+                ));
+            }
+        }
+    }
+    res
 }

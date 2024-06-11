@@ -1,4 +1,4 @@
-use typst_syntax::{ast::*, SyntaxKind};
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
     node.callee()
@@ -18,13 +18,16 @@ pub(super) fn has_parenthesized_args(node: FuncCall<'_>) -> bool {
         .any(|node| matches!(node.kind(), SyntaxKind::LeftParen | SyntaxKind::RightParen))
 }
 
-pub(super) fn get_parenthesized_args(node: Args<'_>) -> impl Iterator<Item = Arg<'_>> {
-    node
-        .to_untyped()
+pub(super) fn get_parenthesized_args_untyped(node: Args<'_>) -> impl Iterator<Item = &SyntaxNode> {
+    node.to_untyped()
         .children()
         .skip_while(|node| node.kind() != SyntaxKind::LeftParen)
+        .skip(1)
         .take_while(|node| node.kind() != SyntaxKind::RightParen)
-        .filter_map(|node| node.cast::<Arg>())
+}
+
+pub(super) fn get_parenthesized_args(node: Args<'_>) -> impl Iterator<Item = Arg<'_>> {
+    get_parenthesized_args_untyped(node).filter_map(|node| node.cast::<Arg>())
 }
 
 #[allow(unused)]
