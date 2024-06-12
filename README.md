@@ -71,6 +71,17 @@ typstyle has been integrated into [tinymist](https://github.com/Myriad-Dreamin/t
 
 There is an online version of the formatter at <https://enter-tainer.github.io/typstyle/> that you can see how it formats your code.
 
+### Use with [pre-commit](https://github.com/pre-commit/pre-commit)
+
+Add this to your `.pre-commit-config.yaml`:
+
+```yaml
+  - repo: https://github.com/Enter-tainer/typstyle
+    rev: ''  # The the revision or tag you want to use
+    hooks:
+      - id: typstyle
+```
+
 ## Escape Hatch
 
 If you find typstyle is not working as expected, you can use `// @typstyle off` or `/* @typstyle off */` to disable the formatter on the next node of code.
