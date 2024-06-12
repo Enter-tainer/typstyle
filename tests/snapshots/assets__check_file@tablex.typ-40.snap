@@ -4371,11 +4371,9 @@ input_file: tests/assets/tablex.typ
       table-id: table_id,
     )
 
-    grid(
-      columns: (auto,),
-      rows: auto,
-      ..row_groups,
-    )
+    grid(columns: (
+        auto,
+      ), rows: auto, ..row_groups)
   })))
 }
 

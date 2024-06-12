@@ -104,7 +104,7 @@ impl PrettyPrinter {
     }
 }
 
-fn is_table(node: FuncCall<'_>) -> bool {
+pub fn is_table(node: FuncCall<'_>) -> bool {
     indent_func_name(node) == Some("table") || indent_func_name(node) == Some("grid")
 }
 
