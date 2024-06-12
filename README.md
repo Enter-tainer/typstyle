@@ -77,7 +77,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```yaml
   - repo: https://github.com/Enter-tainer/typstyle
-    rev: ''  # Use the sha / tag you want to point at
+    rev: ''  # The the revision or tag you want to use
     hooks:
       - id: typstyle
 ```
