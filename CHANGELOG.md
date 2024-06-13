@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT
+## v0.11.26 - [2024-06-13]
 
 - Typstyle now keeps newlines in function call args. Multiple newlines in function call args are common in fletcher diagrams. Before this release, typstyle removes all extra newlines in function call args. Now it keeps them as they are.
 
@@ -48,6 +48,37 @@ After formatting, it will become this. Notice the extra newlines are kept.
   edge(`close()`, "-|>"),
   edge((0, 0), (0, 0), `read()`, "--|>", bend: 130deg),
   edge((0, 0), (2, 0), `close()`, "-|>", bend: -40deg),
+)
+```
+</details>
+
+
+- For tables, if typstyle is [unable to format it in a column-aware way](https://enter-tainer.github.io/typstyle/limitations/#table), it will now format each arg, but do not reflow them. That is, the relative position of each arg is kept. If you put something in a single line, it will stay in a single line. Newlines are also kept.
+
+<details><summary>Example</summary>
+
+```typst
+#table(
+  columns: 4 * (1fr,),
+  
+  [a], [b], [c], [d],
+  fill: (_, y) => if y == 0 { black },
+  table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],
+  [b], table.cell(colspan: 2)[cd],
+)
+```
+
+After formatting, it will become this. Notice the relative position of each arg is kept.
+```typst
+#table(
+  columns: 4 * (1fr,),
+
+  [a], [b], [c], [d],
+  fill: (_, y) => if y == 0 {
+    black
+  },
+  table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],
+  [b], table.cell(colspan: 2)[cd],
 )
 ```
 
