@@ -1,15 +1,12 @@
+use itertools::Itertools;
 use pretty::BoxDoc;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::{
-    pretty::trivia,
-    util::{comma_seprated_items, FoldStyle},
-    PrettyPrinter,
-};
+use crate::{pretty::trivia, util::FoldStyle, PrettyPrinter};
 
 use super::{
     table,
-    util::{self, get_parenthesized_args, get_parenthesized_args_untyped},
+    util::{self, get_parenthesized_args_untyped},
 };
 
 #[derive(Debug)]
@@ -20,6 +17,68 @@ pub(super) enum ParenthesizedFuncCallArg<'a> {
     Newline(usize),
     LineComment(&'a SyntaxNode),
     BlockComment(&'a SyntaxNode),
+}
+
+impl ParenthesizedFuncCallArg<'_> {
+    #[allow(unused)]
+    pub fn is_comment(&self) -> bool {
+        matches!(
+            self,
+            ParenthesizedFuncCallArg::LineComment(_) | ParenthesizedFuncCallArg::BlockComment(_)
+        )
+    }
+
+    pub fn is_function_call(&self) -> bool {
+        if let ParenthesizedFuncCallArg::Argument(arg) = self {
+            let inner = match arg {
+                Arg::Pos(p) => *p,
+                Arg::Named(n) => n.expr(),
+                Arg::Spread(s) => s.expr(),
+            };
+            matches!(inner, Expr::FuncCall(_))
+        } else {
+            false
+        }
+    }
+
+    #[allow(unused)]
+    pub fn is_newline(&self) -> Option<usize> {
+        if let ParenthesizedFuncCallArg::Newline(count) = self {
+            Some(*count)
+        } else {
+            None
+        }
+    }
+
+    pub fn is_trivial(&self) -> bool {
+        matches!(
+            self,
+            ParenthesizedFuncCallArg::Space | ParenthesizedFuncCallArg::Comma
+        )
+    }
+}
+
+impl<'a> ParenthesizedFuncCallArg<'a> {
+    pub fn into_doc(
+        self,
+        printer: &'a PrettyPrinter,
+        reduce_newline: Option<usize>,
+    ) -> BoxDoc<'a, ()> {
+        match self {
+            ParenthesizedFuncCallArg::Argument(arg) => printer.convert_arg(arg),
+            ParenthesizedFuncCallArg::Comma => BoxDoc::text(","),
+            ParenthesizedFuncCallArg::Space => BoxDoc::space(),
+            ParenthesizedFuncCallArg::Newline(count) => {
+                let mut inner = BoxDoc::nil();
+                for _ in reduce_newline.unwrap_or(0)..count {
+                    inner = inner.append(BoxDoc::hardline());
+                }
+                inner
+            }
+            ParenthesizedFuncCallArg::LineComment(comment)
+            | ParenthesizedFuncCallArg::BlockComment(comment) => trivia(comment),
+        }
+    }
 }
 
 impl PrettyPrinter {
@@ -42,19 +101,52 @@ impl PrettyPrinter {
     }
 
     pub(super) fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
-        let (args, prefer_tighter, is_multiline) = self.convert_parenthesized_args_impl(args);
+        let args = parse_args(args).collect_vec();
+        let is_multiline = {
+            let mut is_multiline = false;
+            for arg in &args {
+                if let ParenthesizedFuncCallArg::Space = arg {
+                    break;
+                }
+                if let ParenthesizedFuncCallArg::Newline(_) = arg {
+                    is_multiline = true;
+                    break;
+                }
+            }
+            is_multiline
+        };
+        let prefer_tighter = {
+            let real_args = args
+                .iter()
+                .filter(|x| matches!(x, ParenthesizedFuncCallArg::Argument(_)))
+                .collect_vec();
+            real_args.is_empty() || (real_args.len() == 1 && !real_args[0].is_function_call())
+        };
+        let non_trivial_args = args.into_iter().filter(|x| !x.is_trivial());
         let doc = if prefer_tighter {
             BoxDoc::text("(")
-                .append(args.into_iter().next().unwrap_or_else(BoxDoc::nil))
+                .append(
+                    non_trivial_args
+                        .into_iter()
+                        .find(|x| matches!(x, ParenthesizedFuncCallArg::Argument(_)))
+                        .map(|x| x.into_doc(self, None))
+                        .unwrap_or_else(BoxDoc::nil),
+                )
                 .append(BoxDoc::text(")"))
         } else {
-            comma_seprated_items(
+            // remove trailing newlines
+            let mut args = non_trivial_args.collect_vec();
+            while let Some(ParenthesizedFuncCallArg::Newline(_)) = args.last() {
+                args.pop();
+            }
+            comma_seprated_args(
                 args.into_iter(),
                 if is_multiline {
                     FoldStyle::Never
                 } else {
                     FoldStyle::Fit
                 },
+                self,
             )
         };
         doc
@@ -64,73 +156,11 @@ impl PrettyPrinter {
         let args = parse_args(args);
         let mut inner = BoxDoc::nil();
         for arg in args {
-            match arg {
-                ParenthesizedFuncCallArg::Argument(arg) => {
-                    inner = inner.append(self.convert_arg(arg));
-                }
-                ParenthesizedFuncCallArg::Comma => {
-                    inner = inner.append(BoxDoc::text(","));
-                }
-                ParenthesizedFuncCallArg::Space => {
-                    inner = inner.append(BoxDoc::space());
-                }
-                ParenthesizedFuncCallArg::Newline(count) => {
-                    for _ in 0..count {
-                        inner = inner.append(BoxDoc::hardline());
-                    }
-                }
-                ParenthesizedFuncCallArg::LineComment(comment)
-                | ParenthesizedFuncCallArg::BlockComment(comment) => {
-                    inner = inner.append(trivia(comment));
-                }
-            }
+            inner = inner.append(arg.into_doc(self, None));
         }
         BoxDoc::text("(")
             .append(inner.nest(2))
             .append(BoxDoc::text(")"))
-    }
-
-    fn convert_parenthesized_args_impl<'a>(
-        &'a self,
-        args: Args<'a>,
-    ) -> (Vec<BoxDoc<'a, ()>>, bool, bool) {
-        let node = args.to_untyped();
-        let mut last_arg = None;
-        let mut is_multiline = false;
-        for node in node
-            .children()
-            .take_while(|node| node.kind() != SyntaxKind::RightParen)
-        {
-            if let Some(space) = node.cast::<Space>() {
-                is_multiline = is_multiline || space.to_untyped().text().contains('\n');
-                break;
-            }
-        }
-        let args: Vec<BoxDoc<'a, ()>> = get_parenthesized_args(args)
-            .map(|arg| {
-                last_arg = Some(arg);
-                is_multiline = is_multiline
-                    || self
-                        .attr_map
-                        .get(arg.to_untyped())
-                        .map_or(false, |attr| attr.is_multiline_flavor());
-                self.convert_arg(arg)
-            })
-            .collect();
-        // We prefer tighter style if...
-        // 1. There are no arguments
-        // 2. There is only one argument and it is not a function call
-        let prefer_tighter = args.is_empty()
-            || (args.len() == 1 && {
-                let arg = last_arg.unwrap();
-                let rhs = match arg {
-                    Arg::Pos(p) => p,
-                    Arg::Named(n) => n.expr(),
-                    Arg::Spread(s) => s.expr(),
-                };
-                !matches!(rhs, Expr::FuncCall(..))
-            });
-        (args, prefer_tighter, is_multiline)
     }
 
     fn convert_additional_args<'a>(&'a self, args: Args<'a>, has_paren: bool) -> BoxDoc<'a, ()> {
@@ -157,34 +187,72 @@ impl PrettyPrinter {
     }
 }
 
-fn parse_args(args: Args<'_>) -> Vec<ParenthesizedFuncCallArg<'_>> {
-    let mut res = Vec::new();
-    for node in get_parenthesized_args_untyped(args) {
-        match node.kind() {
-            SyntaxKind::Comma => {
-                res.push(ParenthesizedFuncCallArg::Comma);
-            }
-            SyntaxKind::Space => {
-                let text = node.text();
-                let newline_count = text.chars().filter(|&c| c == '\n').count();
-                if newline_count > 0 {
-                    res.push(ParenthesizedFuncCallArg::Newline(newline_count));
-                } else {
-                    res.push(ParenthesizedFuncCallArg::Space);
-                }
-            }
-            SyntaxKind::LineComment => {
-                res.push(ParenthesizedFuncCallArg::LineComment(node));
-            }
-            SyntaxKind::BlockComment => {
-                res.push(ParenthesizedFuncCallArg::BlockComment(node));
-            }
-            _ => {
-                res.push(ParenthesizedFuncCallArg::Argument(
-                    node.cast::<Arg>().unwrap(),
-                ));
+fn parse_args(args: Args<'_>) -> impl Iterator<Item = ParenthesizedFuncCallArg<'_>> {
+    get_parenthesized_args_untyped(args).map(|node| match node.kind() {
+        SyntaxKind::Comma => ParenthesizedFuncCallArg::Comma,
+        SyntaxKind::Space => {
+            let newline_count = node.text().chars().filter(|&c| c == '\n').count();
+            if newline_count > 0 {
+                ParenthesizedFuncCallArg::Newline(newline_count)
+            } else {
+                ParenthesizedFuncCallArg::Space
             }
         }
+        SyntaxKind::LineComment => ParenthesizedFuncCallArg::LineComment(node),
+        SyntaxKind::BlockComment => ParenthesizedFuncCallArg::BlockComment(node),
+        _ => ParenthesizedFuncCallArg::Argument(node.cast::<Arg>().unwrap()),
+    })
+}
+
+fn comma_seprated_args<'a, I>(
+    args: I,
+    fold_style: FoldStyle,
+    pp: &'a PrettyPrinter,
+) -> BoxDoc<'a, ()>
+where
+    I: Iterator<Item = ParenthesizedFuncCallArg<'a>> + ExactSizeIterator,
+{
+    if args.len() == 0 {
+        return BoxDoc::text("()");
     }
-    res
+    let format_inner = |sep: BoxDoc<'a, ()>, comma_: BoxDoc<'a, ()>| {
+        let mut inner = BoxDoc::nil();
+        for (pos, arg) in args.with_position() {
+            let need_sep = matches!(arg, ParenthesizedFuncCallArg::Argument(_));
+            inner = inner.append(arg.into_doc(pp, Some(1)));
+            if matches!(
+                pos,
+                itertools::Position::First | itertools::Position::Middle
+            ) && need_sep
+            {
+                inner = inner.append(sep.clone());
+            }
+        }
+        inner.append(comma_)
+    };
+    match fold_style {
+        FoldStyle::Fit => {
+            let comma_ = BoxDoc::text(",").flat_alt(BoxDoc::nil());
+            let sep = BoxDoc::text(",").append(BoxDoc::line());
+            let inner = format_inner(sep, comma_);
+            BoxDoc::text("(")
+                .append(
+                    BoxDoc::line_()
+                        .append(inner)
+                        .nest(2)
+                        .append(BoxDoc::line_())
+                        .group(),
+                )
+                .append(")")
+        }
+        FoldStyle::Never => {
+            let sep = BoxDoc::text(",").append(BoxDoc::hardline());
+            let comma_ = BoxDoc::text(",");
+            let inner = format_inner(sep, comma_);
+            BoxDoc::text("(")
+                .append(BoxDoc::hardline().append(inner).nest(2))
+                .append(BoxDoc::hardline())
+                .append(")")
+        }
+    }
 }

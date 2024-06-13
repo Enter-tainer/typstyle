@@ -26,6 +26,7 @@ pub(super) fn get_parenthesized_args_untyped(node: Args<'_>) -> impl Iterator<It
         .take_while(|node| node.kind() != SyntaxKind::RightParen)
 }
 
+#[allow(unused)]
 pub(super) fn get_parenthesized_args(node: Args<'_>) -> impl Iterator<Item = Arg<'_>> {
     get_parenthesized_args_untyped(node).filter_map(|node| node.cast::<Arg>())
 }
