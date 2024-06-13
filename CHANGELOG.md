@@ -1,5 +1,58 @@
 # Changelog
 
+## NEXT
+
+- Typstyle now keeps newlines in function call args. Multiple newlines in function call args are common in fletcher diagrams. Before this release, typstyle removes all extra newlines in function call args. Now it keeps them as they are.
+
+<details><summary>Example</summary>
+
+```typst
+#set text(10pt)
+#diagram(
+  node-stroke: .1em,
+  node-fill: gradient.radial(blue.lighten(80%), blue, center: (30%, 20%), radius: 80%),
+  spacing: 4em,
+
+  node((0,0), `reading`, radius: 2em),
+  node((1,0), `eof`, radius: 2em),
+  node((2,0), `closed`, radius: 2em, extrude: (-2.5, 0)),
+
+  edge((-1,0), "r", "-|>", `open(path)`, label-pos: 0, label-side: center),
+  edge(`read()`, "-|>"),
+  edge(`close()`, "-|>"),
+  edge((0,0), (0,0), `read()`, "--|>", bend: 130deg),
+  edge((0,0), (2,0), `close()`, "-|>", bend: -40deg),
+)
+
+```
+
+After formatting, it will become this. Notice the extra newlines are kept.
+```typst
+#set text(10pt)
+#diagram(
+  node-stroke: .1em,
+  node-fill: gradient.radial(
+    blue.lighten(80%),
+    blue,
+    center: (30%, 20%),
+    radius: 80%,
+  ),
+  spacing: 4em,
+
+  node((0, 0), `reading`, radius: 2em),
+  node((1, 0), `eof`, radius: 2em),
+  node((2, 0), `closed`, radius: 2em, extrude: (-2.5, 0)),
+
+  edge((-1, 0), "r", "-|>", `open(path)`, label-pos: 0, label-side: center),
+  edge(`read()`, "-|>"),
+  edge(`close()`, "-|>"),
+  edge((0, 0), (0, 0), `read()`, "--|>", bend: 130deg),
+  edge((0, 0), (2, 0), `close()`, "-|>", bend: -40deg),
+)
+```
+
+</details>
+
 ## v0.11.25 - [2024-06-09]
 
 - Typstyle now keeps extra newlines in markup mode. Multiple newlines are sometimes used to separate different sections in a document or act as a paragraph placeholder. Typstyle now keeps them as they are.
