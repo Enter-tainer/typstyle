@@ -1,6 +1,7 @@
 #[doc(hidden)]
 use std::{io::Read, path::PathBuf};
 
+use anyhow::{bail, Context, Result};
 use clap::Parser;
 use typst_syntax::parse;
 use typstyle_core::{
@@ -12,13 +13,16 @@ use crate::cli::CliArguments;
 
 mod cli;
 
-fn get_input(input: Option<&PathBuf>) -> String {
+fn get_input(input: Option<&PathBuf>) -> Result<String> {
     match input {
-        Some(path) => std::fs::read_to_string(path).unwrap(),
+        Some(path) => std::fs::read_to_string(path)
+            .with_context(|| format!("Failed to read the file {:#?} into string", path)),
         None => {
             let mut buffer = String::new();
-            std::io::stdin().read_to_string(&mut buffer).unwrap();
-            buffer
+            std::io::stdin()
+                .read_to_string(&mut buffer)
+                .with_context(|| "Failed to read from stdin")?;
+            Ok(buffer)
         }
     }
 }
@@ -31,7 +35,7 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = CliArguments::parse();
     if let Some(command) = &args.command {
         match command {
@@ -42,6 +46,7 @@ fn main() {
                     .unwrap_or_else(|| std::env::current_dir().unwrap());
                 let walker = WalkDir::new(directory).into_iter();
                 let mut format_count = 0;
+                let mut err_files = Vec::new();
                 for entry in walker.filter_entry(|e| !is_hidden(e)) {
                     let Ok(entry) = entry else {
                         continue;
@@ -53,25 +58,51 @@ fn main() {
                             continue;
                         };
                         let res = Typstyle::new_with_content(content, width).pretty_print();
-                        std::fs::write(entry.path(), res).unwrap();
-                        format_count += 1;
+
+                        // `FormatAll` must be done in place without failing in the middle
+                        match std::fs::write(entry.path(), res).with_context(|| {
+                            format!("Failed to write to the file {:#?}", entry.path())
+                        }) {
+                            Ok(_) => format_count += 1,
+                            Err(e) => {
+                                eprintln!("{}", e);
+                                err_files.push(entry.path().to_path_buf());
+                            }
+                        }
                     }
                 }
-                println!("Formatted {} files", format_count);
+
+                println!("Successfully formatted {} files", format_count);
+                if !err_files.is_empty() {
+                    bail!("Failed to process the following file(s): {:#?}", err_files);
+                }
             }
         }
-        return;
+
+        return Ok(());
     }
+
     if args.input.is_empty() {
-        format(None, &args);
+        format(None, &args)?;
     } else {
+        // In case of multiple files, process them in order without failing
+        let mut err_files = Vec::new();
         for file in &args.input {
-            format(Some(file), &args);
+            if let Err(e) = format(Some(file), &args) {
+                eprintln!("{}", e);
+                err_files.push(file.clone());
+            }
+        }
+
+        if !err_files.is_empty() {
+            bail!("Failed to process the following file(s): {:#?}", err_files);
         }
     }
+
+    Ok(())
 }
 
-fn format(input: Option<&PathBuf>, args: &CliArguments) {
+fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
     let CliArguments {
         column: line_width,
         ast,
@@ -79,7 +110,10 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) {
         inplace,
         ..
     } = args;
-    let content = get_input(input);
+    if *inplace && input.is_none() {
+        bail!("Cannot use inplace format with only stdin");
+    }
+    let content = get_input(input)?;
     let root = parse(&content);
     let attr_map = calculate_attributes(root.clone());
     if *ast {
@@ -98,11 +132,14 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) {
     };
     if *inplace {
         if let Some(input) = input {
-            std::fs::write(input, res).unwrap();
+            std::fs::write(input, res)
+                .with_context(|| format!("Failed to write to the file {:#?}", input))?;
         } else {
-            panic!("Cannot use inplace formatting with stdin");
+            panic!("Cannot perform in-place formatting without at least a file presented");
         }
     } else {
         print!("{}", res);
     }
+
+    Ok(())
 }
