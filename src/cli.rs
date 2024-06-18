@@ -1,4 +1,7 @@
-use std::path::PathBuf;
+use std::{
+    path::PathBuf,
+    process::{ExitCode, Termination},
+};
 
 use clap::{Parser, Subcommand};
 use once_cell::sync::Lazy;
@@ -31,6 +34,20 @@ pub enum Command {
         /// The directory to format. If not provided, the current directory is used
         directory: Option<PathBuf>,
     },
+}
+
+pub enum CliResults {
+    Good,
+    Bad,
+}
+
+impl Termination for CliResults {
+    fn report(self) -> ExitCode {
+        match self {
+            CliResults::Good => ExitCode::SUCCESS,
+            _ => ExitCode::FAILURE,
+        }
+    }
 }
 
 static NONE: &str = "None";
