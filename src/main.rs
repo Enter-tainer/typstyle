@@ -16,7 +16,7 @@ mod cli;
 fn get_input(input: Option<&PathBuf>) -> Result<String> {
     match input {
         Some(path) => std::fs::read_to_string(path)
-            .with_context(|| format!("failed to read the file {:#?} into string", path)),
+            .with_context(|| format!("failed to read {:#?}", path)),
         None => {
             let mut buffer = String::new();
             std::io::stdin()
@@ -71,7 +71,7 @@ fn execute(args: CliArguments) -> Result<()> {
                         // `FormatAll` must be done in place without failing in the middle
                         match std::fs::write(entry.path(), res).with_context(|| {
                             format!(
-                                "failed to write to the file {path}",
+                                "failed to overwrite {path}",
                                 path = entry.path().display().to_string()
                             )
                         }) {
@@ -123,7 +123,7 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
         ..
     } = args;
     if *inplace && input.is_none() {
-        bail!("cannot use inplace format with only stdin");
+        bail!("cannot perform in-place formatting without at least one file being presented");
     }
     let content = get_input(input)?;
     let root = parse(&content);
@@ -152,7 +152,7 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
             })?;
         } else {
             // This branch should never be reached
-            panic!("cannot perform in-place formatting without at least one file being presented");
+            unreachable!("cannot perform in-place formatting without at least one file being presented");
         }
     } else {
         print!("{}", res);
