@@ -15,8 +15,9 @@ mod cli;
 
 fn get_input(input: Option<&PathBuf>) -> Result<String> {
     match input {
-        Some(path) => std::fs::read_to_string(path)
-            .with_context(|| format!("failed to read {:#?}", path)),
+        Some(path) => {
+            std::fs::read_to_string(path).with_context(|| format!("failed to read {:#?}", path))
+        }
         None => {
             let mut buffer = String::new();
             std::io::stdin()
@@ -70,10 +71,7 @@ fn execute(args: CliArguments) -> Result<()> {
 
                         // `FormatAll` must be done in place without failing in the middle
                         match std::fs::write(entry.path(), res).with_context(|| {
-                            format!(
-                                "failed to overwrite {path}",
-                                path = entry.path().display().to_string()
-                            )
+                            format!("failed to overwrite {path}", path = entry.path().display())
                         }) {
                             Ok(_) => format_count += 1,
                             Err(e) => {
@@ -145,14 +143,13 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
     if *inplace {
         if let Some(input) = input {
             std::fs::write(input, res).with_context(|| {
-                format!(
-                    "failed to write to the file {file}",
-                    file = input.display().to_string()
-                )
+                format!("failed to write to the file {file}", file = input.display())
             })?;
         } else {
             // This branch should never be reached
-            unreachable!("cannot perform in-place formatting without at least one file being presented");
+            unreachable!(
+                "cannot perform in-place formatting without at least one file being presented"
+            );
         }
     } else {
         print!("{}", res);
