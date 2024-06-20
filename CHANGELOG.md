@@ -1,5 +1,10 @@
 # Changelog
 
+## Next
+
+- Fix #97. Typstyle previously add an extra newline for `table` and `grid` when there is no positional argument and there are extra arguments. Now it doesn't add an extra newline.
+- Typstyle cli now returns non-zero exit code when there are formatting errors.
+
 ## v0.11.26 - [2024-06-13]
 
 - Typstyle now keeps newlines in function call args. Multiple newlines in function call args are common in fletcher diagrams. Before this release, typstyle removes all extra newlines in function call args. Now it keeps them as they are.
