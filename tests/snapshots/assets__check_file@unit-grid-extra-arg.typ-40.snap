@@ -3,6 +3,14 @@ source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/grid/extra-arg.typ
 ---
+#grid(
+  columns: 2,
+)[
+  abc
+][
+  def
+]
+
 #table(
   columns: (auto, 1fr, auto),
   gutter: 3pt,
