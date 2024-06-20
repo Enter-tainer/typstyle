@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## v0.11.27 - [2024-06-20]
 
 - Fix #97. Typstyle previously add an extra newline for `table` and `grid` when there is no positional argument and there are extra arguments. Now it doesn't add an extra newline.
 - Typstyle cli now returns non-zero exit code when there are formatting errors.
