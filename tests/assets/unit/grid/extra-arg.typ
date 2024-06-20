@@ -1,3 +1,11 @@
+#grid(
+  columns: 2,
+)[
+  abc
+][
+  def
+]
+
 #table(
   columns: (auto, 1fr, auto),
   gutter: 3pt,

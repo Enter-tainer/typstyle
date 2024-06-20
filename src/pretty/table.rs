@@ -2,7 +2,7 @@ use itertools::Itertools;
 use pretty::BoxDoc;
 use typst_syntax::{ast::*, SyntaxKind};
 
-use crate::PrettyPrinter;
+use crate::{pretty::util::get_parenthesized_args, PrettyPrinter};
 
 use super::util::{func_name, indent_func_name};
 
@@ -112,15 +112,16 @@ fn is_formatable(node: FuncCall<'_>) -> bool {
     // 1. no comments
     // 2. no spread args
     // 3. no named args or named args first then unnamed args
-    // 4. no table/grid.vline/hline/cell
-    // 5. if table/grid.header/footer present, they should appear before/after any unnamed args
+    // 4. has at least one pos arg
+    // 5. no table/grid.vline/hline/cell
+    // 6. if table/grid.header/footer present, they should appear before/after any unnamed args
     for node in node.args().to_untyped().children() {
         if node.kind() == SyntaxKind::LineComment || node.kind() == SyntaxKind::BlockComment {
             return false;
         }
     }
     let mut pos_arg_index = None;
-    for (i, node) in node.args().items().enumerate() {
+    for (i, node) in get_parenthesized_args(node.args()).enumerate() {
         match node {
             Arg::Pos(_) => {
                 pos_arg_index = Some(i);
@@ -137,6 +138,9 @@ fn is_formatable(node: FuncCall<'_>) -> bool {
             }
             Arg::Spread(_) => return false,
         }
+    }
+    if pos_arg_index.is_none() {
+        return false;
     }
     true
 }
