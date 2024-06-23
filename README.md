@@ -32,6 +32,7 @@ Options:
   -a, --ast              Print the AST of the input file
   -p, --pretty-doc       Print the pretty document
   -i, --inplace          Format the file in place
+      --check            Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required
   -h, --help             Print help
   -V, --version          Print version
 ```
