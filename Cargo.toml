@@ -66,8 +66,6 @@ anyhow = "1"
 vergen = { version = "8.3.1", features = [
   "build",
   "cargo",
-  "git",
-  "git2",
   "rustc",
 ] }
 
@@ -85,9 +83,10 @@ harness = false
 
 [features]
 
-default = ["cli", "wasm"]
+default = ["cli", "wasm", "git-info"]
 cli = ["clap", "once_cell", "walkdir"]
 wasm = ["wasm-bindgen"]
+git-info = ["vergen/git", "vergen/git2"]
 
 [profile.test]
 opt-level = 3
