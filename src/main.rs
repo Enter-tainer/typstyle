@@ -36,17 +36,38 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
-fn main() -> CliResults {
-    let args = CliArguments::parse();
-    if let Err(e) = execute(args) {
-        eprintln!("{e}");
-        return CliResults::Bad;
-    }
-
-    CliResults::Good
+enum FormatStatus {
+    Changed,
+    Unchanged,
 }
 
-fn execute(args: CliArguments) -> Result<()> {
+impl From<bool> for FormatStatus {
+    fn from(value: bool) -> Self {
+        if value {
+            FormatStatus::Changed
+        } else {
+            FormatStatus::Unchanged
+        }
+    }
+}
+
+fn main() -> CliResults {
+    let args = CliArguments::parse();
+
+    // Should put the formatter into check mode
+    let check = args.check;
+    match execute(args) {
+        Ok(FormatStatus::Changed) if check => CliResults::Bad,
+        Ok(_) => CliResults::Good,
+        Err(e) => {
+            eprintln!("{e}");
+            CliResults::Bad
+        }
+    }
+}
+
+fn execute(args: CliArguments) -> Result<FormatStatus> {
+    let mut changed = false;
     if let Some(command) = &args.command {
         match command {
             cli::Command::FormatAll { directory } => {
@@ -67,7 +88,10 @@ fn execute(args: CliArguments) -> Result<()> {
                         let Ok(content) = std::fs::read_to_string(entry.path()) else {
                             continue;
                         };
-                        let res = Typstyle::new_with_content(content, width).pretty_print();
+                        let res = Typstyle::new_with_content(content.clone(), width).pretty_print();
+
+                        // Check if the file is changed.
+                        changed |= res != content;
 
                         // `FormatAll` must be done in place without failing in the middle
                         match std::fs::write(entry.path(), res).with_context(|| {
@@ -89,18 +113,19 @@ fn execute(args: CliArguments) -> Result<()> {
             }
         }
 
-        return Ok(());
+        return Ok(changed.into());
     }
 
     if args.input.is_empty() {
-        format(None, &args)?;
+        changed = format(None, &args)?;
     } else {
         // In case of multiple files, process them in order without failing
         let mut error_count = 0;
         for file in &args.input {
-            format(Some(file), &args).unwrap_or_else(|e| {
+            changed |= format(Some(file), &args).unwrap_or_else(|e| {
                 eprintln!("{e}");
                 error_count += 1;
+                false
             });
         }
 
@@ -109,10 +134,10 @@ fn execute(args: CliArguments) -> Result<()> {
         }
     }
 
-    Ok(())
+    Ok(changed.into())
 }
 
-fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
+fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<bool> {
     let CliArguments {
         column: line_width,
         ast,
@@ -135,11 +160,15 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
     if *pretty_doc {
         println!("{:#?}", doc);
     }
+
     let res = if root.erroneous() {
-        content
+        content.clone()
     } else {
         strip_trailing_whitespace(&doc.pretty(*line_width).to_string())
     };
+
+    // Compare `res` with `content` to perform CI checks
+    let changed = res != content;
     if *inplace {
         if let Some(input) = input {
             std::fs::write(input, res).with_context(|| {
@@ -155,5 +184,5 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<()> {
         print!("{}", res);
     }
 
-    Ok(())
+    Ok(changed)
 }

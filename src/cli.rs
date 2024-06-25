@@ -25,6 +25,9 @@ pub struct CliArguments {
     pub inplace: bool,
     #[clap(subcommand)]
     pub command: Option<Command>,
+    /// Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required.
+    #[clap(long, default_value = "false")]
+    pub check: bool,
 }
 
 #[derive(Debug, Subcommand, Clone)]
