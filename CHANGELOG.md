@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.28 - [2024-06-25]
+
+- typstyle cli now has a `--check` flag to check if the input is formatted. If it's not formatted, it will return a non-zero exit code.
+- Allow disabling git info collection in build time.
+
 ## v0.11.27 - [2024-06-20]
 
 - Fix #97. Typstyle previously add an extra newline for `table` and `grid` when there is no positional argument and there are extra arguments. Now it doesn't add an extra newline.
