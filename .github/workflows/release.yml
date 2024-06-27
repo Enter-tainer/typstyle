@@ -96,8 +96,6 @@ jobs:
 
     name: build (${{ matrix.platform }}-${{ matrix.arch }})
     runs-on: ${{ matrix.os }}
-    env:
-      target: ${{ matrix.platform }}-${{ matrix.arch }}
 
     steps:
       - uses: actions/checkout@v4
@@ -132,46 +130,46 @@ jobs:
         if: matrix.platform == 'win32'
         run: |
           cd target/${{ matrix.rust-target }}/ci
-          cp typstyle.pdb typstyle-${{ env.target }}.pdb
+          cp typstyle.pdb typstyle-${{ matrix.rust-target }}.pdb
       - name: Upload split debug symbols for windows
         if: matrix.platform == 'win32'
         uses: actions/upload-artifact@v4
         with:
-          name: typstyle-${{ env.target }}.pdb
-          path: target/${{ matrix.rust-target }}/ci/typstyle-${{ env.target }}.pdb
+          name: typstyle-${{ matrix.rust-target }}.pdb
+          path: target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.pdb
       - name: Split debug symbols for linux
         if: matrix.platform == 'linux'
         run: |
           cd target/${{ matrix.rust-target }}/ci
-          llvm-objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ env.target }}.debug"
-          llvm-objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ env.target }}.debug" "typstyle"
+          llvm-objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ matrix.rust-target }}.debug"
+          llvm-objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ matrix.rust-target }}.debug" "typstyle"
       - name: Upload split debug symbols for linux
         if: matrix.platform == 'linux'
         uses: actions/upload-artifact@v4
         with:
-          name: typstyle-${{ env.target }}.debug
-          path: target/${{ matrix.rust-target }}/ci/typstyle-${{ env.target }}.debug
+          name: typstyle-${{ matrix.rust-target }}.debug
+          path: target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.debug
           compression-level: 0
       - name: Collect debug symbols for mac
         if: matrix.platform == 'darwin'
         run: |
           dsymutil -f "target/${{ matrix.rust-target }}/ci/typstyle"
-          mv "target/${{ matrix.rust-target }}/ci/typstyle.dwarf" "target/${{ matrix.rust-target }}/ci/typstyle-${{ env.target }}.dwarf"
+          mv "target/${{ matrix.rust-target }}/ci/typstyle.dwarf" "target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.dwarf"
       - name: Upload split debug symbols for mac
         if: matrix.platform == 'darwin'
         uses: actions/upload-artifact@v4
         with:
-          name: typstyle-${{ env.target }}.dwarf
-          path: target/${{ matrix.rust-target }}/ci/typstyle-${{ env.target }}.dwarf
+          name: typstyle-${{ matrix.rust-target }}.dwarf
+          path: target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.dwarf
       - name: Copy binary to output directory
         shell: pwsh
         run: |
-          cp "target/${{ matrix.rust-target }}/ci/typstyle$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )" "typstyle-${{ env.target }}$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )"
+          cp "target/${{ matrix.rust-target }}/ci/typstyle$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )" "typstyle-${{ matrix.rust-target }}$(If ('${{ matrix.platform }}' -eq 'win32') { '.exe' } else { '' } )"
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: typstyle-${{ env.target }}
-          path: typstyle-${{ env.target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
+          name: typstyle-${{ matrix.rust-target }}
+          path: typstyle-${{ matrix.rust-target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
 
   build_alpine:
     needs: [pre_build]
@@ -182,7 +180,6 @@ jobs:
       volumes:
         - /usr/local/cargo/registry:/usr/local/cargo/registry
     env:
-      target: alpine-x64
       RUST_TARGET: x86_64-unknown-linux-musl
       RUSTFLAGS: "-C link-arg=-fuse-ld=lld -C target-feature=-crt-static"
     steps:
@@ -200,21 +197,21 @@ jobs:
       - name: Split debug symbols
         run: |
           cd target/$RUST_TARGET/ci
-          objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ env.target }}.debug"
-          objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ env.target }}.debug" "typstyle"
+          objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ env.RUST_TARGET }}.debug"
+          objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ env.RUST_TARGET }}.debug" "typstyle"
       - name: Upload split debug symbols
         uses: actions/upload-artifact@v4
         with:
-          name: typstyle-${{ env.target }}.debug
-          path: target/${{ env.RUST_TARGET }}/ci/typstyle-${{ env.target }}.debug
+          name: typstyle-${{ env.RUST_TARGET }}.debug
+          path: target/${{ env.RUST_TARGET }}/ci/typstyle-${{ env.RUST_TARGET }}.debug
       - name: Copy binary to output directory
         run: |
-          cp "target/${{ env.RUST_TARGET }}/ci/typstyle" "typstyle-${{ env.target }}"
+          cp "target/${{ env.RUST_TARGET }}/ci/typstyle" "typstyle-${{ env.RUST_TARGET }}"
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: typstyle-${{ env.target }}
-          path: typstyle-${{ env.target }}
+          name: typstyle-${{ env.RUST_TARGET }}
+          path: typstyle-${{ env.RUST_TARGET }}
 
   release:
     runs-on: ubuntu-latest
