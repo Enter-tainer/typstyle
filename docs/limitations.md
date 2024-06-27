@@ -10,7 +10,7 @@ Typstyle only formats the code, it does not format the markup lines. It will kee
 
 Overall there is very few formatting in math mode. It is not well implemented.
 
-### @typstype off
+### @typstyle off
 
 Why: It is a directive to turn off formatting.
 
