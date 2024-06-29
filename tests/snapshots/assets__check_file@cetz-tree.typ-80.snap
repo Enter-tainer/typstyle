@@ -77,9 +77,7 @@ input_file: tests/assets/cetz-tree.typ
       }
       */
     }
-  } else if draw-edge == none {
-    draw-edge = (..) => { }
-  }
+  } else if draw-edge == none { draw-edge = (..) => { } }
 
   if draw-node == auto or draw-node in ("rect",) {
     draw-node = (node, parent-name) => {
@@ -196,9 +194,7 @@ input_file: tests/assets/cetz-tree.typ
       return (node.x, node.y)
     } else if direction == "left" {
       return (-node.y, node.x)
-    } else if direction == "right" {
-      return (node.y, node.x)
-    } else {
+    } else if direction == "right" { return (node.y, node.x) } else {
       panic(message: "Invalid tree direction.")
     }
   }

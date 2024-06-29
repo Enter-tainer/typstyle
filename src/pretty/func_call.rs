@@ -7,6 +7,7 @@ use crate::{pretty::trivia, util::FoldStyle, PrettyPrinter};
 use super::{
     table,
     util::{self, get_parenthesized_args_untyped},
+    ExprScope, ExprScopeGuard,
 };
 
 #[derive(Debug)]
@@ -83,6 +84,7 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
 
 impl PrettyPrinter {
     pub(super) fn convert_func_call<'a>(&'a self, func_call: FuncCall<'a>) -> BoxDoc<'a, ()> {
+        let _guard = ExprScopeGuard::new(self, ExprScope::FuncCall);
         let mut doc = BoxDoc::nil().append(self.convert_expr(func_call.callee()));
         if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
             return doc.append(res);

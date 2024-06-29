@@ -49,9 +49,7 @@ input_file: tests/assets/tablex.typ
 #let typst-calc-rem-supported = using-typst-v030-or-later
 
 // Remainder operation.
-#let calc-mod = if typst-calc-rem-supported {
-  calc.rem
-} else {
+#let calc-mod = if typst-calc-rem-supported { calc.rem } else {
   (a, b) => calc.floor(a) - calc.floor(b * calc.floor(a / b))
 }
 
@@ -217,9 +215,7 @@ input_file: tests/assets/tablex.typ
     item
   } else if type(item) != _dict-type or "tablex-dict-type" not in item {
     cellx[#item]
-  } else {
-    item
-  }
+  } else { item }
 }
 
 #let rowspanx(length, content, ..cell_options) = {
@@ -272,9 +268,7 @@ input_file: tests/assets/tablex.typ
     if is-tablex-cell(item) and item.x == auto and item.y == auto {
       // cell occupies (colspan * rowspan) spaces
       len += item.colspan * item.rowspan
-    } else if type(item) == _content-type {
-      len += 1
-    }
+    } else if type(item) == _content-type { len += 1 }
   }
 
   let rows(len) = calc.ceil(len / col_len)
@@ -378,16 +372,8 @@ input_file: tests/assets/tablex.typ
 // is greater than 1)
 #let positions-spanned-by(cell, x: 0, y: 0, x_limit: 0, y_limit: none) = {
   let result = ()
-  let rowspan = if "rowspan" in cell {
-    cell.rowspan
-  } else {
-    1
-  }
-  let colspan = if "colspan" in cell {
-    cell.colspan
-  } else {
-    1
-  }
+  let rowspan = if "rowspan" in cell { cell.rowspan } else { 1 }
+  let colspan = if "colspan" in cell { cell.colspan } else { 1 }
 
   if rowspan < 1 {
     panic("Cell rowspan must be 1 or greater (bad cell: " + repr((x, y)) + ")")
@@ -445,18 +431,13 @@ input_file: tests/assets/tablex.typ
 // Default 'x' to a certain value if it is auto or none
 #let default-if-auto-or-none(x, default) = if x in (auto, none) {
   default
-} else {
-  x
-}
+} else { x }
 
 // The max between a, b, or the other one if either is 'none'.
-#let max-if-not-none(a, b) = if a in (none, auto) {
-  b
-} else if b in (none, auto) {
-  a
-} else {
-  calc.max(a, b)
-}
+#let max-if-not-none(a, b) = if a in (none, auto) { b } else if b in (
+  none,
+  auto,
+) { a } else { calc.max(a, b) }
 
 // Gets the topmost parent of a line.
 #let get-top-parent(line) = {
@@ -619,9 +600,7 @@ input_file: tests/assets/tablex.typ
 
   // Calculate the length minus its em component.
   // E.g., 1% + 1pt + 1em -> 1% + 1pt
-  let (em-part, len-minus-em) = if em-part-repr == none {
-    (0em, len)
-  } else {
+  let (em-part, len-minus-em) = if em-part-repr == none { (0em, len) } else {
     // SAFETY: guaranteed to be a purely em length by regex
     let em-part = eval(em-part-repr)
     (em-part, len - em-part)
@@ -638,9 +617,7 @@ input_file: tests/assets/tablex.typ
   let ratio-part-pt = if ratio-part == 0% {
     // No point doing `convert-ratio-type-to-pt` if there's no ratio component.
     0pt
-  } else {
-    convert-ratio-type-to-pt(ratio-part, page-size)
-  }
+  } else { convert-ratio-type-to-pt(ratio-part, page-size) }
 
   // The length part is the pt part + em part.
   // Note: we cannot use `len - ratio-part` as that returns a `_rel-len-type` value,
@@ -678,9 +655,7 @@ input_file: tests/assets/tablex.typ
     convert-fraction-type-to-pt(len, frac-amount, frac-total)
   } else if type(len) == _rel-len-type {
     convert-relative-type-to-pt(len, styles, page-size: page-size)
-  } else {
-    panic("Cannot convert '" + type(len) + "' to length.")
-  }
+  } else { panic("Cannot convert '" + type(len) + "' to length.") }
 }
 
 // Convert a stroke to its thickness
@@ -691,9 +666,7 @@ input_file: tests/assets/tablex.typ
     convert-length-to-pt(stroke, styles: styles)
   } else if type(stroke) in (_rel-len-type, _ratio-type) {
     panic(no-ratio-error)
-  } else if is-color(stroke) {
-    1pt
-  } else if type(stroke) == _stroke-type {
+  } else if is-color(stroke) { 1pt } else if type(stroke) == _stroke-type {
     if typst-fields-supported {
       // No need for any repr() parsing, just use the thickness field.
       let thickness = default-if-auto(stroke.thickness, 1pt)
@@ -727,9 +700,7 @@ input_file: tests/assets/tablex.typ
         convert-length-to-pt(len, styles: styles)
       } else if type(len) in (_rel-len-type, _ratio-type) {
         panic(no-ratio-error)
-      } else {
-        1pt // should be unreachable
-      }
+      } else { 1pt // should be unreachable }
     }
   } else if type(stroke) == _dict-type and "thickness" in stroke {
     let thickness = stroke.thickness
@@ -737,12 +708,8 @@ input_file: tests/assets/tablex.typ
       convert-length-to-pt(thickness, styles: styles)
     } else if type(thickness) in (_rel-len-type, _ratio-type) {
       panic(no-ratio-error)
-    } else {
-      1pt
-    }
-  } else {
-    1pt
-  }
+    } else { 1pt }
+  } else { 1pt }
 }
 
 // --- end: utility functions ---
@@ -845,9 +812,7 @@ input_file: tests/assets/tablex.typ
 #let get-parent-cell(cell, grid: none) = {
   if is-tablex-occupied(cell) {
     grid-at(grid, cell.parent_x, cell.parent_y)
-  } else if is-tablex-cell(cell) {
-    cell
-  } else {
+  } else if is-tablex-cell(cell) { cell } else {
     panic("Cannot get parent table cell of a non-cell object: " + repr(cell))
   }
 }
@@ -944,11 +909,7 @@ input_file: tests/assets/tablex.typ
     if is-some-tablex-line(item) {
       // detect lines' x, y
       if is-tablex-hline(item) {
-        let this_y = if first_cell_reached {
-          prev_y + 1
-        } else {
-          prev_y
-        }
+        let this_y = if first_cell_reached { prev_y + 1 } else { prev_y }
 
         item.y = default-if-auto(item.y, this_y)
 
@@ -967,15 +928,11 @@ input_file: tests/assets/tablex.typ
           } else if row_wrapped {
             item.x = x_limit // allow v_line at the last column
             row_wrapped = false
-          } else {
-            item.x = x
-          }
+          } else { item.x = x }
         }
 
         vlines.push(item)
-      } else {
-        panic("Invalid line received (must be hline or vline).")
-      }
+      } else { panic("Invalid line received (must be hline or vline).") }
       items.at(i) = item // override item with the new x / y coord set
       continue
     }
@@ -1030,9 +987,7 @@ input_file: tests/assets/tablex.typ
       } else {
         [#res]
       }
-    } else {
-      [#content]
-    }
+    } else { [#content] }
 
     if this_x == none or this_y == none {
       panic("Error: Cell with function as content returned another cell with 'none' as x or y!")
@@ -1196,15 +1151,11 @@ input_file: tests/assets/tablex.typ
 
   let align_default = if type(align_default) == _function-type {
     align_default(cell.x, cell.y) // column, row
-  } else {
-    align_default
-  }
+  } else { align_default }
 
   let fill_default = if type(fill_default) == _function-type {
     fill_default(cell.x, cell.y) // row, column
-  } else {
-    fill_default
-  }
+  } else { fill_default }
 
   let content = cell.content
 
@@ -1269,9 +1220,7 @@ input_file: tests/assets/tablex.typ
     panic("Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').")
   }
 
-  let aligned_cell_content = if cell_align == auto {
-    [#content]
-  } else {
+  let aligned_cell_content = if cell_align == auto { [#content] } else {
     align(cell_align)[#content]
   }
 
@@ -1318,9 +1267,7 @@ input_file: tests/assets/tablex.typ
 
   let frac-width = if amount-frac > 0 and not is-infinite-len(remaining) {
     remaining / amount-frac
-  } else {
-    0pt
-  }
+  } else { 0pt }
 
   if type(gutter) == _fraction-type {
     gutter = frac-width * (gutter / 1fr)
@@ -1431,9 +1378,7 @@ input_file: tests/assets/tablex.typ
 
           let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
             pcell.fit-spans.x
-          } else {
-            fit-spans.x
-          }
+          } else { fit-spans.x }
           let this-cell-can-expand-columns = pcell.colspan == 1 or not fit-this-span
 
           // only expand the last auto column of a colspan,
@@ -1594,20 +1539,14 @@ input_file: tests/assets/tablex.typ
   let columns = columns.map(c => {
     if type(c) in (_length-type, _rel-len-type, _ratio-type) {
       convert-length-to-pt(c, styles: styles, page-size: page_width)
-    } else if c == none {
-      0pt
-    } else {
-      c
-    }
+    } else if c == none { 0pt } else { c }
   })
 
   // what is the fixed size of the gutter?
   // (calculate it later if it's fractional)
   let fixed-size-gutter = if type(col-gutter) == _length-type {
     col-gutter
-  } else {
-    0pt
-  }
+  } else { 0pt }
 
   let total_fixed_size = sum-fixed-size-tracks(columns) + fixed-size-gutter * (
     columns.len() - 1
@@ -1671,11 +1610,7 @@ input_file: tests/assets/tablex.typ
 
   (
     columns: columns,
-    gutter: if col-gutter == none {
-      none
-    } else {
-      fixed-size-gutter
-    },
+    gutter: if col-gutter == none { none } else { fixed-size-gutter },
   )
 }
 
@@ -1712,9 +1647,7 @@ input_file: tests/assets/tablex.typ
 
           let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
             pcell.fit-spans.y
-          } else {
-            fit-spans.y
-          }
+          } else { fit-spans.y }
           let this-cell-can-expand-rows = pcell.rowspan == 1 or not fit-this-span
 
           // only expand the last auto row of a rowspan,
@@ -1807,9 +1740,7 @@ input_file: tests/assets/tablex.typ
   // (calculate it later if it's fractional)
   let fixed-size-gutter = if type(row-gutter) == _length-type {
     row-gutter
-  } else {
-    0pt
-  }
+  } else { 0pt }
 
   let remaining = page_height - sum-fixed-size-tracks(rows) - auto_size - fixed-size-gutter * (
     rows.len() - 1
@@ -1836,11 +1767,7 @@ input_file: tests/assets/tablex.typ
           r
         }
       }),
-      gutter: if row-gutter == none {
-        none
-      } else {
-        fixed-size-gutter
-      },
+      gutter: if row-gutter == none { none } else { fixed-size-gutter },
     )
   }
 }
@@ -2142,9 +2069,7 @@ input_file: tests/assets/tablex.typ
     _ratio-type,
     _stroke-type,
     _dict-type,
-  ) or stroke in (none, auto) {
-    stroke
-  } else {
+  ) or stroke in (none, auto) { stroke } else {
     panic("Invalid stroke '" + repr(stroke) + "'.")
   }
 }
@@ -2643,9 +2568,7 @@ input_file: tests/assets/tablex.typ
 
         let header_last_y = if first-row-group != none {
           first-row-group.row_group.y_span.at(1)
-        } else {
-          none
-        }
+        } else { none }
         // if this is the second row, and the header's hlines
         // do not have priority (thus are not drawn by them,
         // otherwise they'd repeat on every page), then
@@ -2654,9 +2577,7 @@ input_file: tests/assets/tablex.typ
           let hlines_below_header = first-row-group.row_group.hlines.filter(h => h.y == header_last_y + 1)
 
           hlines + hlines_below_header
-        } else {
-          hlines
-        }
+        } else { hlines }
 
         for hline in hlines {
           // only draw the top hline
@@ -2664,9 +2585,7 @@ input_file: tests/assets/tablex.typ
           if hline.y == start-y {
             let header_last_y = if first-row-group != none {
               first-row-group.row_group.y_span.at(1)
-            } else {
-              none
-            }
+            } else { none }
             // pre-gutter is always false here, as we assume
             // hlines at the top of this row are handled
             // at pre-gutter by the preceding row,
@@ -2932,9 +2851,7 @@ input_file: tests/assets/tablex.typ
     if type(line.expand) != _array-type and line.expand != none {
       line.expand = (line.expand, line.expand)
     }
-    line.expand = if line.expand == none {
-      none
-    } else {
+    line.expand = if line.expand == none { none } else {
       line.expand.slice(0, 2).map(e => {
         if e == none {
           e
@@ -3445,11 +3362,7 @@ input_file: tests/assets/tablex.typ
 
     // When there are more rows than the user specified, we ensure they have
     // the same size as the last specified row.
-    let last-row-size = if rows.len() == 0 {
-      auto
-    } else {
-      rows.last()
-    }
+    let last-row-size = if rows.len() == 0 { auto } else { rows.last() }
     for _ in range(grid_info.new_row_count - row_len) {
       rows.push(last-row-size) // add new rows (due to extra cells)
     }
