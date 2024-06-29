@@ -24,7 +24,9 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
     pppppppppppppppppppppppppppppppppppppppppp,
     cccccccccccccccccccccccccccccccc,
     b,
-  ) in ((111111, 111111111, 1),) { "111111111111111111111111111111111" }
+  ) in ((111111, 111111111, 1),) {
+    "111111111111111111111111111111111"
+  }
 }
 
 

@@ -9,9 +9,6 @@ pub enum FoldStyle {
     Fit,
     /// Never fold items
     Never,
-    /// Fold items if there is only one item
-    /// Behaves like `Fit` if there is only one item, otherwise `Never`
-    Single,
 }
 
 impl FoldStyle {
@@ -29,19 +26,12 @@ impl FoldStyle {
     }
 }
 
-pub fn comma_seprated_items<'a, I>(items: I, mut fold_style: FoldStyle) -> BoxDoc<'a, ()>
+pub fn comma_seprated_items<'a, I>(items: I, fold_style: FoldStyle) -> BoxDoc<'a, ()>
 where
     I: IntoIterator<Item = BoxDoc<'a, ()>> + ExactSizeIterator,
 {
     if items.len() == 0 {
         return BoxDoc::text("()");
-    }
-    if fold_style == FoldStyle::Single {
-        fold_style = if items.len() == 1 {
-            FoldStyle::Fit
-        } else {
-            FoldStyle::Never
-        };
     }
     let comma_ = BoxDoc::text(",").flat_alt(BoxDoc::nil());
     match fold_style {
@@ -66,9 +56,6 @@ where
                 .append(BoxDoc::hardline())
                 .append(")")
         }
-        FoldStyle::Single => {
-            unreachable!();
-        }
     }
 }
 
@@ -78,7 +65,7 @@ pub fn pretty_items<'a>(
     multi_line_separator: BoxDoc<'a, ()>,
     bracket: (BoxDoc<'a, ()>, BoxDoc<'a, ()>),
     bracket_space: bool,
-    mut fold_style: FoldStyle,
+    fold_style: FoldStyle,
 ) -> BoxDoc<'a, ()> {
     if items.is_empty() {
         return bracket.0.append(if bracket_space {
@@ -86,13 +73,6 @@ pub fn pretty_items<'a>(
         } else {
             bracket.1
         });
-    }
-    if fold_style == FoldStyle::Single {
-        fold_style = if items.len() == 1 {
-            FoldStyle::Fit
-        } else {
-            FoldStyle::Never
-        };
     }
     pretty_items_impl(
         items,
@@ -139,7 +119,6 @@ fn pretty_items_impl<'a>(
     match fold_style {
         FoldStyle::Fit => auto_items,
         FoldStyle::Never => multi,
-        FoldStyle::Single => unreachable!(),
     }
 }
 

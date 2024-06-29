@@ -4,3 +4,19 @@
   [Hi],
   [there],
 )
+
+#if true {
+  [a]
+} else [
+  bbb
+]
+
+#let a = if true { 0 } else { 1 }
+
+#{
+  if true {
+    [a]
+  } else [
+    bbb
+  ]
+}

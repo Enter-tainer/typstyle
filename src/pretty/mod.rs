@@ -1,30 +1,70 @@
 use std::borrow::Cow;
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::num::NonZeroUsize;
 
 use itertools::Itertools;
 use pretty::BoxDoc;
+use scope::{ExprScope, ExprScopeGuard, UntypedScopeGuard};
 use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
 use crate::attr::Attributes;
 use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
 
 mod func_call;
+mod scope;
 mod table;
 mod util;
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
     attr_map: HashMap<SyntaxNode, Attributes>,
+    scope: RefCell<Vec<Option<ExprScope>>>,
 }
 
 impl PrettyPrinter {
     pub fn new(attr_map: HashMap<SyntaxNode, Attributes>) -> Self {
-        Self { attr_map }
+        Self {
+            attr_map,
+            scope: vec![].into(),
+        }
+    }
+
+    fn push_untyped_scope(&self) {
+        self.scope.borrow_mut().push(None);
+    }
+
+    fn replace_last_untyped_scope(&self, scope: ExprScope) {
+        assert!(
+            self.scope.borrow().last().map_or(false, |s| s.is_none()),
+            "last scope is not None: {:?}",
+            self.scope.borrow()
+        );
+        if let Some(last) = self.scope.borrow_mut().last_mut() {
+            *last = Some(scope);
+        }
+    }
+
+    fn pop_scope(&self) {
+        self.scope.borrow_mut().pop();
+    }
+
+    fn predecessor_scope(&self, level: Option<NonZeroUsize>) -> Option<ExprScope> {
+        let level = level?.get();
+        let idx = self
+            .scope
+            .borrow()
+            .len()
+            .saturating_sub(level)
+            .saturating_sub(1);
+        self.scope.borrow().get(idx).copied().flatten()
     }
 }
 
 impl PrettyPrinter {
     pub fn convert_markup<'a>(&'a self, root: Markup<'a>) -> BoxDoc<'a, ()> {
+        let _guard = UntypedScopeGuard::new(self);
+        let _guard = ExprScopeGuard::new(self, ExprScope::Markup);
         let mut doc: BoxDoc<()> = BoxDoc::nil();
         #[derive(Debug, Default)]
         struct Line<'a> {
@@ -114,6 +154,7 @@ impl PrettyPrinter {
     }
 
     fn convert_expr<'a>(&'a self, expr: Expr<'a>) -> BoxDoc<'a, ()> {
+        let _guard = UntypedScopeGuard::new(self);
         if let Some(res) = self.check_disabled(expr.to_untyped()) {
             return res;
         }
@@ -434,18 +475,41 @@ impl PrettyPrinter {
             }
         }
         let codes = self.convert_code(code_nodes);
-        let doc = pretty_items(
-            &codes,
-            BoxDoc::text(";").append(BoxDoc::space()),
-            BoxDoc::nil(),
-            (BoxDoc::text("{"), BoxDoc::text("}")),
-            true,
-            FoldStyle::Single,
-        );
-        doc
+        if codes.is_empty() {
+            return BoxDoc::text("{ }");
+        }
+        if codes.len() == 1
+            && self.predecessor_scope(NonZeroUsize::new(1)) == Some(ExprScope::If)
+            && !matches!(
+                self.predecessor_scope(NonZeroUsize::new(2)),
+                Some(ExprScope::Statement) | Some(ExprScope::Markup)
+            )
+        {
+            let mut codes = codes;
+            let inner = codes.pop().unwrap();
+            BoxDoc::text("{")
+                .append(
+                    BoxDoc::line()
+                        .append(inner)
+                        .nest(2)
+                        .append(BoxDoc::line())
+                        .group(),
+                )
+                .append("}")
+        } else {
+            pretty_items(
+                &codes,
+                BoxDoc::text(";").append(BoxDoc::space()),
+                BoxDoc::nil(),
+                (BoxDoc::text("{"), BoxDoc::text("}")),
+                true,
+                FoldStyle::Never,
+            )
+        }
     }
 
     fn convert_code<'a>(&'a self, code: Vec<&'a SyntaxNode>) -> Vec<BoxDoc<'a, ()>> {
+        let _guard = ExprScopeGuard::new(self, ExprScope::Statement);
         let is_attached_comment = |idx: usize| {
             debug_assert!(idx < code.len());
             if idx == 0 || idx == code.len() - 1 {
@@ -810,6 +874,7 @@ impl PrettyPrinter {
     }
 
     fn convert_conditional<'a>(&'a self, conditional: Conditional<'a>) -> BoxDoc<'a, ()> {
+        let _guard = ExprScopeGuard::new(self, ExprScope::If);
         let mut doc = BoxDoc::nil();
         enum CastType {
             Condition,

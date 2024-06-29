@@ -63,7 +63,9 @@ input_file: tests/assets/tablex.typ
 }
 
 // Polyfill for array sum (.sum() is Typst 0.3.0+).
-#let array-sum(arr, zero: 0) = { arr.fold(zero, (a, x) => a + x) }
+#let array-sum(arr, zero: 0) = {
+  arr.fold(zero, (a, x) => a + x)
+}
 
 // -- common validators --
 
@@ -77,8 +79,12 @@ input_file: tests/assets/tablex.typ
 ) = {
   if type(error-prefix) == _str-type {
     error-prefix = " " + error-prefix
-  } else { error-prefix = "" }
-  if type(fit-spans) == _bool-type { fit-spans = (x: fit-spans, y: fit-spans) }
+  } else {
+    error-prefix = ""
+  }
+  if type(fit-spans) == _bool-type {
+    fit-spans = (x: fit-spans, y: fit-spans)
+  }
   if type(fit-spans) == _dict-type {
     assert(
       fit-spans.len() > 0,
@@ -250,7 +256,11 @@ input_file: tests/assets/tablex.typ
           _int-type,
           _float-type,
         ) and cell.y > acc
-      ) { cell.y } else { acc }
+      ) {
+        cell.y
+      } else {
+        acc
+      }
     },
   )
 
@@ -263,7 +273,9 @@ input_file: tests/assets/tablex.typ
 
   let rows(len) = calc.ceil(len / col_len)
 
-  while rows(len) < max_explicit_y { len += col_len }
+  while rows(len) < max_explicit_y {
+    len += col_len
+  }
 
   len
 }
@@ -298,15 +310,23 @@ input_file: tests/assets/tablex.typ
     rows = (auto,) * rows
   }
 
-  if type(columns) != _array-type { columns = (columns,) }
+  if type(columns) != _array-type {
+    columns = (columns,)
+  }
 
-  if type(rows) != _array-type { rows = (rows,) }
+  if type(rows) != _array-type {
+    rows = (rows,)
+  }
 
   // default empty column to a single auto column
-  if columns.len() == 0 { columns = (auto,) }
+  if columns.len() == 0 {
+    columns = (auto,)
+  }
 
   // default empty row to a single auto row
-  if rows.len() == 0 { rows = (auto,) }
+  if rows.len() == 0 {
+    rows = (auto,)
+  }
 
   let col_row_is_valid(col_row) = (
     (not is-infinite-len(col_row)) and (
@@ -364,11 +384,19 @@ input_file: tests/assets/tablex.typ
   let max_x = x + colspan
   let max_y = y + rowspan
 
-  if x_limit != none { max_x = calc.min(x_limit, max_x) }
+  if x_limit != none {
+    max_x = calc.min(x_limit, max_x)
+  }
 
-  if y_limit != none { max_y = calc.min(y_limit, max_y) }
+  if y_limit != none {
+    max_y = calc.min(y_limit, max_y)
+  }
 
-  for x in range(x, max_x) { for y in range(y, max_y) { result.push((x, y)) } }
+  for x in range(x, max_x) {
+    for y in range(y, max_y) {
+      result.push((x, y))
+    }
+  }
 
   result
 }
@@ -377,7 +405,9 @@ input_file: tests/assets/tablex.typ
 #let init-array(amount, element: none, init_function: none) = {
   let nones = ()
 
-  if init_function == none { init_function = () => element }
+  if init_function == none {
+    init_function = () => element
+  }
 
   range(amount).map(i => init_function())
 }
@@ -385,7 +415,11 @@ input_file: tests/assets/tablex.typ
 // Default 'x' to a certain value if it is equal to the forbidden value
 // ('none' by default)
 #let default-if-not(x, default, if_isnt: none) = {
-  if x == if_isnt { default } else { x }
+  if x == if_isnt {
+    default
+  } else {
+    x
+  }
 }
 
 // Default 'x' to a certain value if it is none
@@ -457,7 +491,9 @@ input_file: tests/assets/tablex.typ
 
   // If the measured length is positive, `len` must have overall been positive.
   // There's nothing else to be done, so return the measured length.
-  if measured-pt > 0pt { return measured-pt }
+  if measured-pt > 0pt {
+    return measured-pt
+  }
 
   // If we've reached this point, the previously measured length must have been `0pt`
   // (drawing a line with a negative length will draw nothing, so measuring it will return `0pt`).
@@ -527,7 +563,9 @@ input_file: tests/assets/tablex.typ
     panic("Cannot convert fraction to pt ('frac-total' not specified).")
   }
 
-  if frac-amount <= 0 or is-infinite-len(frac-total) { return 0pt }
+  if frac-amount <= 0 or is-infinite-len(frac-total) {
+    return 0pt
+  }
 
   let len-per-frac = frac-total / frac-amount
 
@@ -654,7 +692,9 @@ input_file: tests/assets/tablex.typ
       }
     }
 
-    if s == none { 1pt // okay it's probably just a color then } else {
+    if s == none {
+      1pt // okay it's probably just a color then
+    } else {
       let len = eval(s)
       if type(len) == _length-type {
         convert-length-to-pt(len, styles: styles)
@@ -698,7 +738,11 @@ input_file: tests/assets/tablex.typ
 #let grid-at(grid, x, y) = {
   let index = grid-index-at(x, y, width: grid.width)
 
-  if index < grid.items.len() { grid.items.at(index) } else { none }
+  if index < grid.items.len() {
+    grid.items.at(index)
+  } else {
+    none
+  }
 }
 
 // Returns 'true' if the cell at (x, y)
@@ -755,7 +799,9 @@ input_file: tests/assets/tablex.typ
 
   let now = grid-index-to-pos(grid, grid.items.len() - 1)
   // now columns and/or last missing row
-  while not grid-has-pos(grid, x, y) { grid.items.push(fill_with(grid)) }
+  while not grid-has-pos(grid, x, y) {
+    grid.items.push(fill_with(grid))
+  }
   let new = grid-index-to-pos(grid, grid.items.len() - 1)
 
   grid
@@ -926,7 +972,9 @@ input_file: tests/assets/tablex.typ
       message: "Tablex error: 'map-cells' returned something that isn't a valid cell.",
     )
 
-    if row_wrapped { row_wrapped = false }
+    if row_wrapped {
+      row_wrapped = false
+    }
 
     let content = cell.content
     let content = if type(content) == _function-type {
@@ -936,7 +984,9 @@ input_file: tests/assets/tablex.typ
         this_x = cell.x
         this_y = cell.y
         [#res.content]
-      } else { [#res] }
+      } else {
+        [#res]
+      }
     } else { [#content] }
 
     if this_x == none or this_y == none {
@@ -1054,7 +1104,9 @@ input_file: tests/assets/tablex.typ
     x = next_pos.at(0)
     y = next_pos.at(1)
 
-    if prev_y != y { row_wrapped = true // we changed rows! }
+    if prev_y != y {
+      row_wrapped = true // we changed rows!
+    }
   }
 
   // for missing cell positions: add empty cell
@@ -1190,7 +1242,13 @@ input_file: tests/assets/tablex.typ
 #let sum-fixed-size-tracks(tracks) = {
   tracks.fold(
     0pt,
-    (acc, el) => { if type(el) == _length-type { acc + el } else { acc } },
+    (acc, el) => {
+      if type(el) == _length-type {
+        acc + el
+      } else {
+        acc
+      }
+    },
   )
 }
 
@@ -1211,9 +1269,13 @@ input_file: tests/assets/tablex.typ
     remaining / amount-frac
   } else { 0pt }
 
-  if type(gutter) == _fraction-type { gutter = frac-width * (gutter / 1fr) }
+  if type(gutter) == _fraction-type {
+    gutter = frac-width * (gutter / 1fr)
+  }
 
-  for (i, size) in frac-tracks { tracks.at(i) = frac-width * (size / 1fr) }
+  for (i, size) in frac-tracks {
+    tracks.at(i) = frac-width * (size / 1fr)
+  }
 
   (tracks: tracks, gutter: gutter)
 }
@@ -1257,7 +1319,9 @@ input_file: tests/assets/tablex.typ
   let size = 0pt
 
   for (i, col) in columns.enumerate() {
-    if i in cell-cols and type(col) == _length-type { size += col }
+    if i in cell-cols and type(col) == _length-type {
+      size += col
+    }
   }
   size
 }
@@ -1271,7 +1335,9 @@ input_file: tests/assets/tablex.typ
   let size = 0pt
 
   for (i, row) in rows.enumerate() {
-    if i in cell-rows and type(row) == _length-type { size += row }
+    if i in cell-rows and type(row) == _length-type {
+      size += row
+    }
   }
   size
 }
@@ -1371,7 +1437,9 @@ input_file: tests/assets/tablex.typ
             )
 
             calc.max(max, width - fixed_size, 0pt)
-          } else { max }
+          } else {
+            max
+          }
         },
       )
 
@@ -1402,7 +1470,9 @@ input_file: tests/assets/tablex.typ
   let remaining = available
   let auto-cols-to-resize = auto-cols.len()
 
-  if auto-cols-to-resize <= 0 { return columns }
+  if auto-cols-to-resize <= 0 {
+    return columns
+  }
 
   // The fair-share must be the largest possible (to ensure maximum fairness)
   // such that we can shrink the minimum amount of columns possible and, at the
@@ -1448,7 +1518,9 @@ input_file: tests/assets/tablex.typ
 
   // 2. Resize any columns larger than the calculated fair share to the fair share.
   for (i, col) in auto-cols {
-    if col > fair-share { columns.at(i) = fair-share }
+    if col > fair-share {
+      columns.at(i) = fair-share
+    }
   }
 
   columns
@@ -1521,14 +1593,18 @@ input_file: tests/assets/tablex.typ
       columns = columns.map(c => {
         if type(c) == _fraction-type {
           0pt // no space left to be divided
-        } else { c }
+        } else {
+          c
+        }
       })
     }
   } else {
     columns = columns.map(c => {
       if c == auto or type(c) == _fraction-type {
         0pt // no space remaining!
-      } else { c }
+      } else {
+        c
+      }
     })
   }
 
@@ -1613,7 +1689,9 @@ input_file: tests/assets/tablex.typ
             )
 
             calc.max(max, height - fixed_size, 0pt)
-          } else { max }
+          } else {
+            max
+          }
         },
       )
 
@@ -1640,7 +1718,9 @@ input_file: tests/assets/tablex.typ
   let rows = rows.map(r => {
     if type(r) in (_length-type, _rel-len-type, _ratio-type) {
       convert-length-to-pt(r, styles: styles, page-size: page_height)
-    } else { r }
+    } else {
+      r
+    }
   })
 
   let auto_rows_res = determine-auto-rows(
@@ -1683,7 +1763,9 @@ input_file: tests/assets/tablex.typ
         if type(r) == _fraction-type {
           // no space remaining in this page or box
           0pt
-        } else { r }
+        } else {
+          r
+        }
       }),
       gutter: if row-gutter == none { none } else { fixed-size-gutter },
     )
@@ -1753,7 +1835,9 @@ input_file: tests/assets/tablex.typ
   let col_range = range(start, calc.min(columns.len() + 1, end))
 
   let sum = 0pt
-  for i in col_range { sum += columns.at(i) + col-gutter }
+  for i in col_range {
+    sum += columns.at(i) + col-gutter
+  }
 
   // if the end is after all columns, there is
   // no gutter at the end.
@@ -1777,7 +1861,9 @@ input_file: tests/assets/tablex.typ
   let row_range = range(start, calc.min(rows.len() + 1, end))
 
   let sum = 0pt
-  for i in row_range { sum += rows.at(i) + row-gutter }
+  for i in row_range {
+    sum += rows.at(i) + row-gutter
+  }
 
   // if the end is after all rows, there is
   // no gutter at the end.
@@ -1820,15 +1906,21 @@ input_file: tests/assets/tablex.typ
 
 // check the subspan a hline or vline goes through inside a larger span
 #let get-included-span(l_start, l_end, start: 0, end: 0, limit: 0) = {
-  if l_start in (none, auto) { l_start = 0 }
+  if l_start in (none, auto) {
+    l_start = 0
+  }
 
-  if l_end in (none, auto) { l_end = limit }
+  if l_end in (none, auto) {
+    l_end = limit
+  }
 
   l_start = calc.max(0, l_start)
   l_end = calc.min(end, limit)
 
   // ---- ====     or ==== ----
-  if l_end < start or l_start > end { return none }
+  if l_end < start or l_start > end {
+    return none
+  }
 
   // --##==   ;   ==##-- ;  #### ; ... : intersection.
   (calc.max(l_start, start), calc.min(l_end, end))
@@ -1881,7 +1973,9 @@ input_file: tests/assets/tablex.typ
     if span == none {
       // no intersection!
       none
-    } else { v-or-hline-with-span(h, start: span.at(0), end: span.at(1)) }
+    } else {
+      v-or-hline-with-span(h, start: span.at(0), end: span.at(1))
+    }
   }).filter(x => x != none)
 
   let vlines = vlines.filter(v => {
@@ -1908,7 +2002,9 @@ input_file: tests/assets/tablex.typ
     if span == none {
       // no intersection!
       none
-    } else { v-or-hline-with-span(v, start: span.at(0), end: span.at(1)) }
+    } else {
+      v-or-hline-with-span(v, start: span.at(0), end: span.at(1))
+    }
   }).filter(x => x != none)
 
   (
@@ -1965,7 +2061,9 @@ input_file: tests/assets/tablex.typ
 // -- drawing --
 
 #let parse-stroke(stroke) = {
-  if is-color(stroke) { stroke + 1pt } else if type(stroke) in (
+  if is-color(stroke) {
+    stroke + 1pt
+  } else if type(stroke) in (
     _length-type,
     _rel-len-type,
     _ratio-type,
@@ -2039,13 +2137,17 @@ input_file: tests/assets/tablex.typ
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) { return  }
+  ) {
+    return
+  }
 
   if gutter != none and gutter.row != none and (
     (pre-gutter and hline.gutter-restrict == bottom) or (
       not pre-gutter and hline.gutter-restrict == top
     )
-  ) { return  }
+  ) {
+    return
+  }
 
   let expand = get-actual-expansion(hline, spanned-tracks-len: columns.len())
   let left-expand = default-if-auto-or-none(expand.at(0), 0pt)
@@ -2087,7 +2189,9 @@ input_file: tests/assets/tablex.typ
     pre-gutter: hline.stop-pre-gutter == true,
   ) + right-expand
 
-  if end_x - start_x < 0pt { return  // negative length }
+  if end_x - start_x < 0pt {
+    return  // negative length
+  }
 
   if rtl {
     // invert the line (start from the right instead of from the left)
@@ -2105,8 +2209,12 @@ input_file: tests/assets/tablex.typ
   )
 
   if stroke != auto {
-    if stroke != none { line(start: start, end: end, stroke: stroke) }
-  } else { line(start: start, end: end) }
+    if stroke != none {
+      line(start: start, end: end, stroke: stroke)
+    }
+  } else {
+    line(start: start, end: end)
+  }
 }
 
 #let draw-vline(
@@ -2133,13 +2241,17 @@ input_file: tests/assets/tablex.typ
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) { return  }
+  ) {
+    return
+  }
 
   if gutter != none and gutter.col != none and (
     (pre-gutter and vline.gutter-restrict == right) or (
       not pre-gutter and vline.gutter-restrict == left
     )
-  ) { return  }
+  ) {
+    return
+  }
 
   let expand = get-actual-expansion(vline, spanned-tracks-len: rows.len())
   let top-expand = default-if-auto-or-none(expand.at(0), 0pt)
@@ -2180,7 +2292,9 @@ input_file: tests/assets/tablex.typ
     pre-gutter: stop-before-row-gutter or vline.stop-pre-gutter == true,
   ) + bottom-expand
 
-  if end_y - start_y < 0pt { return  // negative length }
+  if end_y - start_y < 0pt {
+    return  // negative length
+  }
 
   if rtl {
     // invert the vertical line's x pos (start from the right instead of from the left)
@@ -2197,8 +2311,12 @@ input_file: tests/assets/tablex.typ
   )
 
   if stroke != auto {
-    if stroke != none { line(start: start, end: end, stroke: stroke) }
-  } else { line(start: start, end: end) }
+    if stroke != none {
+      line(start: start, end: end, stroke: stroke)
+    }
+  } else {
+    line(start: start, end: end)
+  }
 }
 
 // -- end: drawing
@@ -2234,7 +2352,9 @@ input_file: tests/assets/tablex.typ
     top + left,
     locate(loc => {
       page_dim_state.update(s => {
-        if s.top_left != none { s } else {
+        if s.top_left != none {
+          s
+        } else {
           let pos = loc.position()
           let width = s.width - pos.x
           let height = s.width - pos.y
@@ -2253,7 +2373,9 @@ input_file: tests/assets/tablex.typ
     bottom + right,
     locate(loc => {
       page_dim_state.update(s => {
-        if s.bottom_right != none { s } else {
+        if s.bottom_right != none {
+          s
+        } else {
           let pos = loc.position()
           let width = s.width + pos.x
           let height = s.width + pos.y
@@ -2731,7 +2853,9 @@ input_file: tests/assets/tablex.typ
     }
     line.expand = if line.expand == none { none } else {
       line.expand.slice(0, 2).map(e => {
-        if e == none { e } else {
+        if e == none {
+          e
+        } else {
           e = default-if-auto(e, 0pt)
           if type(e) not in (_length-type, _rel-len-type, _ratio-type) {
             panic("'expand' argument to lines must be a pair (length, length).")
@@ -2873,7 +2997,11 @@ input_file: tests/assets/tablex.typ
       let cells = map-rows(
         row,
         original-cells.map(c => {
-          if is-tablex-occupied(c) { none } else { c }
+          if is-tablex-occupied(c) {
+            none
+          } else {
+            c
+          }
         }),
       )
 
@@ -2929,7 +3057,11 @@ input_file: tests/assets/tablex.typ
       let cells = map-cols(
         column,
         original-cells.map(c => {
-          if is-tablex-occupied(c) { none } else { c }
+          if is-tablex-occupied(c) {
+            none
+          } else {
+            c
+          }
         }),
       )
 
@@ -3331,4 +3463,6 @@ input_file: tests/assets/tablex.typ
 }
 
 // Same as table but defaults to lines off
-#let gridx(..options) = { tablex(auto-lines: false, ..options) }
+#let gridx(..options) = {
+  tablex(auto-lines: false, ..options)
+}

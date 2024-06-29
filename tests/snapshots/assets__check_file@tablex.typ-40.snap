@@ -86,7 +86,9 @@ input_file: tests/assets/tablex.typ
 ) = {
   if type(error-prefix) == _str-type {
     error-prefix = " " + error-prefix
-  } else { error-prefix = "" }
+  } else {
+    error-prefix = ""
+  }
   if type(fit-spans) == _bool-type {
     fit-spans = (
       x: fit-spans,
@@ -316,7 +318,11 @@ input_file: tests/assets/tablex.typ
           _int-type,
           _float-type,
         ) and cell.y > acc
-      ) { cell.y } else { acc }
+      ) {
+        cell.y
+      } else {
+        acc
+      }
     },
   )
 
@@ -393,7 +399,9 @@ input_file: tests/assets/tablex.typ
   }
 
   // default empty row to a single auto row
-  if rows.len() == 0 { rows = (auto,) }
+  if rows.len() == 0 {
+    rows = (auto,)
+  }
 
   let col_row_is_valid(col_row) = (
     (not is-infinite-len(col_row)) and (
@@ -515,7 +523,11 @@ input_file: tests/assets/tablex.typ
   default,
   if_isnt: none,
 ) = {
-  if x == if_isnt { default } else { x }
+  if x == if_isnt {
+    default
+  } else {
+    x
+  }
 }
 
 // Default 'x' to a certain value if it is none
@@ -959,7 +971,9 @@ input_file: tests/assets/tablex.typ
 
   if index < grid.items.len() {
     grid.items.at(index)
-  } else { none }
+  } else {
+    none
+  }
 }
 
 // Returns 'true' if the cell at (x, y)
@@ -1275,7 +1289,9 @@ input_file: tests/assets/tablex.typ
         this_x = cell.x
         this_y = cell.y
         [#res.content]
-      } else { [#res] }
+      } else {
+        [#res]
+      }
     } else { [#content] }
 
     if this_x == none or this_y == none {
@@ -1584,7 +1600,9 @@ input_file: tests/assets/tablex.typ
     (acc, el) => {
       if type(el) == _length-type {
         acc + el
-      } else { acc }
+      } else {
+        acc
+      }
     },
   )
 }
@@ -1831,7 +1849,9 @@ input_file: tests/assets/tablex.typ
               width - fixed_size,
               0pt,
             )
-          } else { max }
+          } else {
+            max
+          }
         },
       )
 
@@ -2005,14 +2025,18 @@ input_file: tests/assets/tablex.typ
       columns = columns.map(c => {
         if type(c) == _fraction-type {
           0pt // no space left to be divided
-        } else { c }
+        } else {
+          c
+        }
       })
     }
   } else {
     columns = columns.map(c => {
       if c == auto or type(c) == _fraction-type {
         0pt // no space remaining!
-      } else { c }
+      } else {
+        c
+      }
     })
   }
 
@@ -2118,7 +2142,9 @@ input_file: tests/assets/tablex.typ
               height - fixed_size,
               0pt,
             )
-          } else { max }
+          } else {
+            max
+          }
         },
       )
 
@@ -2157,7 +2183,9 @@ input_file: tests/assets/tablex.typ
         styles: styles,
         page-size: page_height,
       )
-    } else { r }
+    } else {
+      r
+    }
   })
 
   let auto_rows_res = determine-auto-rows(
@@ -2200,7 +2228,9 @@ input_file: tests/assets/tablex.typ
         if type(r) == _fraction-type {
           // no space remaining in this page or box
           0pt
-        } else { r }
+        } else {
+          r
+        }
       }),
       gutter: if row-gutter == none {
         none
@@ -2598,7 +2628,9 @@ input_file: tests/assets/tablex.typ
     (none, none),
     auto,
     (auto, auto),
-  ) { return (none, none) }
+  ) {
+    return (none, none)
+  }
   if type(line.expand) != _array-type {
     line.expand = (
       line.expand,
@@ -2675,7 +2707,9 @@ input_file: tests/assets/tablex.typ
   ) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) { return  }
+  ) {
+    return
+  }
 
   if gutter != none and gutter.row != none and (
     (
@@ -2683,7 +2717,9 @@ input_file: tests/assets/tablex.typ
     ) or (
       not pre-gutter and hline.gutter-restrict == top
     )
-  ) { return  }
+  ) {
+    return
+  }
 
   let expand = get-actual-expansion(
     hline,
@@ -2802,7 +2838,9 @@ input_file: tests/assets/tablex.typ
   ) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) { return  }
+  ) {
+    return
+  }
 
   if gutter != none and gutter.col != none and (
     (
@@ -2810,7 +2848,9 @@ input_file: tests/assets/tablex.typ
     ) or (
       not pre-gutter and vline.gutter-restrict == left
     )
-  ) { return  }
+  ) {
+    return
+  }
 
   let expand = get-actual-expansion(
     vline,
@@ -3564,7 +3604,9 @@ input_file: tests/assets/tablex.typ
       none
     } else {
       line.expand.slice(0, 2).map(e => {
-        if e == none { e } else {
+        if e == none {
+          e
+        } else {
           e = default-if-auto(e, 0pt)
           if type(e) not in (
             _length-type,
@@ -3759,7 +3801,9 @@ input_file: tests/assets/tablex.typ
         original-cells.map(c => {
           if is-tablex-occupied(c) {
             none
-          } else { c }
+          } else {
+            c
+          }
         }),
       )
 
@@ -3829,7 +3873,9 @@ input_file: tests/assets/tablex.typ
         original-cells.map(c => {
           if is-tablex-occupied(c) {
             none
-          } else { c }
+          } else {
+            c
+          }
         }),
       )
 
