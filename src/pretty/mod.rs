@@ -605,14 +605,12 @@ impl PrettyPrinter {
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
         let left = BoxDoc::nil().append(self.convert_expr(field_access.target()));
         let singleline_right = BoxDoc::text(".").append(self.convert_ident(field_access.field()));
-        let _multiline_right = BoxDoc::hardline()
+        let multiline_right = BoxDoc::hardline()
             .append(BoxDoc::text("."))
             .append(self.convert_ident(field_access.field()))
             .nest(2)
             .group();
-        // TODO: typst doesn't support this
-        // left.append(multiline_right.flat_alt(singleline_right))
-        left.append(singleline_right)
+        left.append(multiline_right.flat_alt(singleline_right))
     }
 
     fn convert_closure<'a>(&'a self, closure: Closure<'a>) -> BoxDoc<'a, ()> {
