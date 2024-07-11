@@ -8,6 +8,7 @@ use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 use crate::attr::Attributes;
 use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
 
+mod dot_chain;
 mod func_call;
 mod parened_expr;
 mod table;
@@ -603,14 +604,19 @@ impl PrettyPrinter {
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
-        let left = BoxDoc::nil().append(self.convert_expr(field_access.target()));
-        let singleline_right = BoxDoc::text(".").append(self.convert_ident(field_access.field()));
-        let multiline_right = BoxDoc::hardline()
-            .append(BoxDoc::text("."))
-            .append(self.convert_ident(field_access.field()))
-            .nest(2)
-            .group();
-        left.append(multiline_right.flat_alt(singleline_right))
+        let mut chain = self.resolve_dot_chain(field_access);
+        if chain.len() == 2 {
+            let last = chain.pop().unwrap();
+            let first = chain.pop().unwrap();
+            return first.append(BoxDoc::text(".")).append(last);
+        }
+        let first_doc = chain.remove(0);
+        let other_doc = BoxDoc::intersperse(chain, BoxDoc::line_().append(BoxDoc::text(".")));
+        first_doc.append(
+            (BoxDoc::line_().append(BoxDoc::text(".")).append(other_doc))
+                .nest(2)
+                .group(),
+        )
     }
 
     fn convert_closure<'a>(&'a self, closure: Closure<'a>) -> BoxDoc<'a, ()> {

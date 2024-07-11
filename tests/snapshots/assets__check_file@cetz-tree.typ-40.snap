@@ -142,9 +142,10 @@ input_file: tests/assets/cetz-tree.typ
     let children = ()
     let cnt = none
     if type(tree) == array {
-      children = tree.slice(1).enumerate().map((
-        (n, c),
-      ) => build-node(
+      children = tree
+        .slice(1)
+        .enumerate()
+        .map(((n, c)) => build-node(
         c,
         depth: depth + 1,
         sibling: n,
@@ -180,7 +181,9 @@ input_file: tests/assets/cetz-tree.typ
       let (min-x, max-x) = (none, none)
       let (left, right) = (none, none)
 
-      let n-children = node.children.len()
+      let n-children = node
+        .children
+        .len()
       for i in range(0, n-children) {
         let child = node.children.at(i)
         let (
