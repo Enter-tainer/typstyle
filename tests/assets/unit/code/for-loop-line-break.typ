@@ -1,5 +1,8 @@
+#import "@preview/cetz:0.2.2"
+
 #let 六面体 = {
-  import draw: *
+  import cetz.draw: *
+  import cetz: *
   let neg(u) = if u == 0 { 1 } else { -1 }
   for (p, c) in (
     ((0, 0, 0), black), ((1, 1, 0), red),
@@ -22,6 +25,7 @@
 
 
 #{
+  let arr = (1,)
   for (i, n) in arr.enumerate() {
     11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
   }

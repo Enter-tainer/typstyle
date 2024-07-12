@@ -1459,10 +1459,8 @@ input_file: tests/assets/tablex.typ
   }
 
   // for missing cell positions: add empty cell
-  for (
-    index,
-    item,
-  ) in grid.items.enumerate() {
+  for (index, item) in
+    grid.items.enumerate() {
     if item == none {
       grid.items.at(index) = new_empty_cell(
         grid,
@@ -3871,10 +3869,8 @@ input_file: tests/assets/tablex.typ
         ) + ".")
       }
 
-      for (
-        i,
-        cell,
-      ) in cells.enumerate() {
+      for (i, cell) in
+        cells.enumerate() {
         let orig-cell = original-cells.at(i)
         if not is-tablex-cell(orig-cell) {
           // only modify non-occupied cells
@@ -3943,10 +3939,8 @@ input_file: tests/assets/tablex.typ
         ) + ".")
       }
 
-      for (
-        i,
-        cell,
-      ) in cells.enumerate() {
+      for (i, cell) in
+        cells.enumerate() {
         let orig-cell = original-cells.at(i)
         if not is-tablex-cell(orig-cell) {
           // only modify non-occupied cells
@@ -4276,7 +4270,8 @@ input_file: tests/assets/tablex.typ
     } else {
       rows.last()
     }
-    for _ in range(grid_info.new_row_count - row_len) {
+    for _ in
+      range(grid_info.new_row_count - row_len) {
       rows.push(last-row-size) // add new rows (due to extra cells)
     }
 
