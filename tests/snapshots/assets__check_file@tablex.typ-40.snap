@@ -1458,6 +1458,7 @@ input_file: tests/assets/tablex.typ
 
   // for missing cell positions: add empty cell
 <<<<<<< HEAD
+<<<<<<< HEAD
   for (
     index,
     item,
@@ -1467,6 +1468,10 @@ input_file: tests/assets/tablex.typ
       .items
       .enumerate() {
 >>>>>>> 8d8d157 (feat: correctly parse dot chain)
+=======
+  for (index, item) in
+    grid.items.enumerate() {
+>>>>>>> cceb9b9 (fix: break for loop iter and target into separate lines)
     if item == none {
       grid
         .items

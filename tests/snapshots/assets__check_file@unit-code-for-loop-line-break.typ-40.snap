@@ -13,12 +13,22 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
   } else {
     -1
   }
+<<<<<<< HEAD
   for (p, c) in (
     ((0, 0, 0), black),
     ((1, 1, 0), red),
     ((1, 0, 1), blue),
     ((0, 1, 1), green),
   ) {
+=======
+  for (p, c) in
+    (
+      ((0, 0, 0), black),
+      ((1, 1, 0), red),
+      ((1, 0, 1), blue),
+      ((0, 1, 1), green),
+    ) {
+>>>>>>> cceb9b9 (fix: break for loop iter and target into separate lines)
     line(
       vector.add(
         p,
@@ -52,7 +62,8 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
     pppppppppppppppppppppppppppppppppppppppppp,
     cccccccccccccccccccccccccccccccc,
     b,
-  ) in ((111111, 111111111, 1),) {
+  ) in
+    ((111111, 111111111, 1),) {
     "111111111111111111111111111111111"
   }
 }

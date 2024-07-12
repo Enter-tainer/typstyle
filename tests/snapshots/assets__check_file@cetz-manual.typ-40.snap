@@ -255,6 +255,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
     [*Name*], [*Shorthand*], [*Shape*],
     ..(
 <<<<<<< HEAD
+<<<<<<< HEAD
       for (name, item) in (
         cetz.mark-shapes.marks
       ) {
@@ -271,6 +272,13 @@ Marks are arrow tips that can be added to the end of path based elements that su
             .mark-shapes
             .mnemonics {
 >>>>>>> 8d8d157 (feat: correctly parse dot chain)
+=======
+      for (name, item) in
+        cetz.mark-shapes.marks {
+        let name-to-mnemonic = (:)
+        for (name, item) in
+          cetz.mark-shapes.mnemonics {
+>>>>>>> cceb9b9 (fix: break for loop iter and target into separate lines)
           let list = name-to-mnemonic.at(
             item.at(0),
             default: (),
