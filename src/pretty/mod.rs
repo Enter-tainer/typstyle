@@ -661,8 +661,30 @@ impl PrettyPrinter {
             }
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("=>"));
-            doc = doc.append(BoxDoc::space());
-            doc = doc.append(self.convert_expr(closure.body()));
+            let body_expr = self.convert_expr(closure.body());
+            let body_node = closure.body().to_untyped();
+            if body_node.cast::<CodeBlock>().is_some()
+                || body_node.cast::<Parenthesized>().is_some()
+                || body_node.cast::<FuncCall>().is_some()
+                || body_node.cast::<ContentBlock>().is_some()
+            {
+                doc = doc.append(BoxDoc::space()).append(body_expr);
+            } else {
+                let left_paren_or_nil = BoxDoc::text("(")
+                    .append(BoxDoc::line())
+                    .flat_alt(BoxDoc::nil());
+                let right_paren_or_nil = BoxDoc::line()
+                    .append(BoxDoc::text(")"))
+                    .flat_alt(BoxDoc::nil());
+                doc = doc.append(
+                    BoxDoc::space()
+                        .append(left_paren_or_nil)
+                        .append(body_expr)
+                        .nest(2)
+                        .append(right_paren_or_nil)
+                        .group(),
+                )
+            }
         }
         doc
     }

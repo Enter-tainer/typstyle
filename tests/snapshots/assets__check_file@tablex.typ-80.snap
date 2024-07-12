@@ -1306,9 +1306,9 @@ input_file: tests/assets/tablex.typ
 // Calculate the size of fraction tracks (cols/rows) (1fr, 2fr, ...),
 // based on the remaining sizes (after fixed-size and auto columns)
 #let determine-frac-tracks(tracks, remaining: 0pt, gutter: none) = {
-  let frac-tracks = tracks.enumerate().filter(t => type(
-    t.at(1),
-  ) == _fraction-type)
+  let frac-tracks = tracks.enumerate().filter(t => (
+    type(t.at(1)) == _fraction-type
+  ))
 
   let amount-frac = frac-tracks.fold(0, (acc, el) => acc + (el.at(1) / 1fr))
 
@@ -1410,9 +1410,9 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_columns = columns
 
-  let all-frac-columns = columns.enumerate().filter(i-col => type(
-    i-col.at(1),
-  ) == _fraction-type).map(i-col => i-col.at(0))
+  let all-frac-columns = columns.enumerate().filter(i-col => (
+    type(i-col.at(1)) == _fraction-type
+  )).map(i-col => i-col.at(0))
   for (i, col) in columns.enumerate() {
     if col == auto {
       // max cell width
@@ -1443,8 +1443,8 @@ input_file: tests/assets/tablex.typ
           // `fit-spans.x == true` (it requests to not expand
           // columns).
           if last-auto-col == i and this-cell-can-expand-columns {
-            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => pcell.x <= i and i < (
-              pcell.x + pcell.colspan
+            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => (
+              pcell.x <= i and i < (pcell.x + pcell.colspan)
             ))
             if cell-spans-all-frac-columns and page-width != 0pt and not is-infinite-len(page-width) {
               // HEURISTIC (only effective when the page width isn't 'auto' / infinite):
@@ -2651,7 +2651,9 @@ input_file: tests/assets/tablex.typ
         // otherwise they'd repeat on every page), then
         // we draw its hlines for the header, below it.
         let hlines = if not header-hlines-have-priority and not is-header and start-y == header_last_y + 1 {
-          let hlines_below_header = first-row-group.row_group.hlines.filter(h => h.y == header_last_y + 1)
+          let hlines_below_header = first-row-group.row_group.hlines.filter(h => (
+            h.y == header_last_y + 1
+          ))
 
           hlines + hlines_below_header
         } else {
@@ -2837,9 +2839,9 @@ input_file: tests/assets/tablex.typ
 
         this_row_group.rows.last().push((cell: cell, box: cell_box))
 
-        let hlines = hlines.filter(h => this_row_group.hlines.filter(
-          is-same-hline.with(h),
-        ).len() == 0)
+        let hlines = hlines.filter(h => (
+          this_row_group.hlines.filter(is-same-hline.with(h)).len() == 0
+        ))
 
         let vlines = vlines.filter(v => v not in this_row_group.vlines)
 
@@ -2975,17 +2977,15 @@ input_file: tests/assets/tablex.typ
   let new_vlines = ()
 
   if auto-hlines {
-    new_hlines = range(
-      0,
-      row_len + 1,
-    ).filter(y => hlines.filter(h => h.y == y).len() == 0).map(y => hlinex(y: y))
+    new_hlines = range(0, row_len + 1).filter(y => (
+      hlines.filter(h => h.y == y).len() == 0
+    )).map(y => hlinex(y: y))
   }
 
   if auto-vlines {
-    new_vlines = range(
-      0,
-      col_len + 1,
-    ).filter(x => vlines.filter(v => v.x == x).len() == 0).map(x => vlinex(x: x))
+    new_vlines = range(0, col_len + 1).filter(x => (
+      vlines.filter(v => v.x == x).len() == 0
+    )).map(x => vlinex(x: x))
   }
 
   (new_hlines: new_hlines, new_vlines: new_vlines)
@@ -3212,7 +3212,9 @@ input_file: tests/assets/tablex.typ
 
   if type(repeat-header) not in (_bool-type, _int-type, _array-type) {
     panic("Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).")
-  } else if type(repeat-header) == _array-type and repeat-header.any(i => type(i) != _int-type) {
+  } else if type(repeat-header) == _array-type and repeat-header.any(i => (
+    type(i) != _int-type
+  )) {
     panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
   }
 

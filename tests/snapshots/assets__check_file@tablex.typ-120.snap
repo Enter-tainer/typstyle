@@ -1338,9 +1338,9 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_columns = columns
 
-  let all-frac-columns = columns.enumerate().filter(i-col => type(
-    i-col.at(1),
-  ) == _fraction-type).map(i-col => i-col.at(0))
+  let all-frac-columns = columns.enumerate().filter(i-col => (
+    type(i-col.at(1)) == _fraction-type
+  )).map(i-col => i-col.at(0))
   for (i, col) in columns.enumerate() {
     if col == auto {
       // max cell width
@@ -1368,8 +1368,8 @@ input_file: tests/assets/tablex.typ
           // `fit-spans.x == true` (it requests to not expand
           // columns).
           if last-auto-col == i and this-cell-can-expand-columns {
-            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => pcell.x <= i and i < (
-              pcell.x + pcell.colspan
+            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => (
+              pcell.x <= i and i < (pcell.x + pcell.colspan)
             ))
             if cell-spans-all-frac-columns and page-width != 0pt and not is-infinite-len(page-width) {
               // HEURISTIC (only effective when the page width isn't 'auto' / infinite):
