@@ -890,51 +890,18 @@ impl PrettyPrinter {
     }
 
     fn convert_for<'a>(&'a self, for_loop: ForLoop<'a>) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::nil();
-        enum CastType {
-            Pattern,
-            Iter,
-            Body,
-        }
-        let mut expr_type = CastType::Pattern;
-        for child in for_loop.to_untyped().children() {
-            if child.kind() == SyntaxKind::For {
-                doc = doc.append(BoxDoc::text("for"));
-                doc = doc.append(BoxDoc::space());
-            } else if child.kind() == SyntaxKind::In {
-                doc = doc.append(BoxDoc::text("in"));
-                doc = doc.append(BoxDoc::space());
-            } else if child.kind() == SyntaxKind::BlockComment {
-                doc = doc.append(trivia(child));
-                doc = doc.append(BoxDoc::space());
-            } else if child.kind() == SyntaxKind::LineComment {
-                doc = doc.append(trivia(child));
-                doc = doc.append(BoxDoc::hardline());
-            } else {
-                match expr_type {
-                    CastType::Pattern => {
-                        if let Some(pattern) = child.cast() {
-                            doc = doc.append(self.convert_pattern(pattern));
-                            doc = doc.append(BoxDoc::space());
-                            expr_type = CastType::Iter;
-                        }
-                    }
-                    CastType::Iter => {
-                        if let Some(iter) = child.cast() {
-                            doc = doc.append(self.convert_expr(iter));
-                            doc = doc.append(BoxDoc::space());
-                            expr_type = CastType::Body;
-                        }
-                    }
-                    CastType::Body => {
-                        if let Some(body) = child.cast() {
-                            doc = doc.append(self.convert_expr(body));
-                        }
-                    }
-                }
-            }
-        }
-        doc
+        // let mut doc = BoxDoc::nil();
+        let for_pattern = BoxDoc::text("for")
+            .append(BoxDoc::space())
+            .append(self.convert_pattern(for_loop.pattern()))
+            .append(BoxDoc::space());
+        let in_iter = BoxDoc::text("in")
+            .append(BoxDoc::softline())
+            .append(self.convert_expr(for_loop.iterable()))
+            .nest(2)
+            .append(BoxDoc::space());
+        let body = self.convert_expr(for_loop.body());
+        for_pattern.append(in_iter).append(body)
     }
 
     fn convert_import<'a>(&'a self, import: ModuleImport<'a>) -> BoxDoc<'a, ()> {
