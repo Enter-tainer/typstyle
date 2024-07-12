@@ -887,13 +887,13 @@ impl PrettyPrinter {
     }
 
     fn convert_for<'a>(&'a self, for_loop: ForLoop<'a>) -> BoxDoc<'a, ()> {
-        // let mut doc = BoxDoc::nil();
         let for_pattern = BoxDoc::text("for")
             .append(BoxDoc::space())
             .append(self.convert_pattern(for_loop.pattern()))
             .append(BoxDoc::space());
         let in_iter = BoxDoc::text("in")
             .append(BoxDoc::space())
+            // .append(BoxDoc::softline()) // upstream issue: https://github.com/typst/typst/issues/4548
             .append(self.convert_expr_with_optional_paren(for_loop.iterable()))
             .append(BoxDoc::space());
         let body = self.convert_expr(for_loop.body());

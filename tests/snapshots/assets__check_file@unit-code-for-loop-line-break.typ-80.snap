@@ -13,22 +13,12 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
   } else {
     -1
   }
-<<<<<<< HEAD
   for (p, c) in (
     ((0, 0, 0), black),
     ((1, 1, 0), red),
     ((1, 0, 1), blue),
     ((0, 1, 1), green),
   ) {
-=======
-  for (p, c) in
-    (
-      ((0, 0, 0), black),
-      ((1, 1, 0), red),
-      ((1, 0, 1), blue),
-      ((0, 1, 1), green),
-    ) {
->>>>>>> cceb9b9 (fix: break for loop iter and target into separate lines)
     line(vector.add(p, (0, 0, neg(p.at(2)))), p, stroke: c)
     line(vector.add(p, (0, neg(p.at(1)), 0)), p, stroke: c)
     line(vector.add(p, (neg(p.at(0)), 0, 0)), p, stroke: c)
@@ -41,8 +31,7 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
     pppppppppppppppppppppppppppppppppppppppppp,
     cccccccccccccccccccccccccccccccc,
     b,
-  ) in
-    ((111111, 111111111, 1),) {
+  ) in ((111111, 111111111, 1),) {
     "111111111111111111111111111111111"
   }
 }
@@ -51,6 +40,22 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
 #{
   let arr = (1,)
   for (i, n) in arr.enumerate() {
+    11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+  }
+}
+
+#{
+  let arr = (1,)
+  for (i, n) in arr
+    .rev()
+    .rev()
+    .rev()
+    .rev()
+    .rev()
+    .rev()
+    .rev()
+    .rev()
+    .enumerate() {
     11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
   }
 }
