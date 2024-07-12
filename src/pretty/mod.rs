@@ -604,7 +604,14 @@ impl PrettyPrinter {
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
-        let mut chain = self.resolve_dot_chain(field_access);
+        let chain = self.resolve_dot_chain(field_access);
+        if chain.is_none() {
+            let left = BoxDoc::nil().append(self.convert_expr(field_access.target()));
+            let singleline_right =
+                BoxDoc::text(".").append(self.convert_ident(field_access.field()));
+            return left.append(singleline_right);
+        }
+        let mut chain = chain.unwrap();
         if chain.len() == 2 {
             let last = chain.pop().unwrap();
             let first = chain.pop().unwrap();

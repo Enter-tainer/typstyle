@@ -4,7 +4,10 @@ use typst_syntax::ast::*;
 use crate::PrettyPrinter;
 
 impl PrettyPrinter {
-    pub fn resolve_dot_chain<'a>(&'a self, field_access: FieldAccess<'a>) -> Vec<BoxDoc<'a, ()>> {
+    pub fn resolve_dot_chain<'a>(
+        &'a self,
+        field_access: FieldAccess<'a>,
+    ) -> Option<Vec<BoxDoc<'a, ()>>> {
         let mut nodes = vec![];
         let mut push_node = |node: BoxDoc<'a, ()>, last_is_field_access: bool| {
             if last_is_field_access {
@@ -36,6 +39,6 @@ impl PrettyPrinter {
             break;
         }
         nodes.reverse();
-        nodes
+        Some(nodes)
     }
 }
