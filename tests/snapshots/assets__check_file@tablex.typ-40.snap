@@ -54,10 +54,9 @@ input_file: tests/assets/tablex.typ
 #let calc-mod = if typst-calc-rem-supported {
   calc.rem
 } else {
-  (
-    a,
-    b,
-  ) => calc.floor(a) - calc.floor(b * calc.floor(a / b))
+  (a, b) => (
+    calc.floor(a) - calc.floor(b * calc.floor(a / b))
+  )
 }
 
 // Returns the sign of the operand.
@@ -101,14 +100,15 @@ input_file: tests/assets/tablex.typ
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must not be empty.",
     )
     assert(
-      fit-spans.keys().all(k => k in (
-        "x",
-        "y",
+      fit-spans.keys().all(k => (
+        k in ("x", "y")
       )),
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must only have the keys x and y.",
     )
     assert(
-      fit-spans.values().all(v => type(v) == _bool-type),
+      fit-spans.values().all(v => (
+        type(v) == _bool-type
+      )),
       message: "Tablex error:" + error-prefix + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
     )
     for key in ("x", "y") {
@@ -312,7 +312,9 @@ input_file: tests/assets/tablex.typ
   let len = 0
 
   // maximum explicit 'y' specified
-  let max_explicit_y = items.filter(c => c.y != auto).fold(
+  let max_explicit_y = items.filter(c => (
+    c.y != auto
+  )).fold(
     0,
     (acc, cell) => {
       if (
@@ -1642,9 +1644,9 @@ input_file: tests/assets/tablex.typ
   remaining: 0pt,
   gutter: none,
 ) = {
-  let frac-tracks = tracks.enumerate().filter(t => type(
-    t.at(1),
-  ) == _fraction-type)
+  let frac-tracks = tracks.enumerate().filter(t => (
+    type(t.at(1)) == _fraction-type
+  ))
 
   let amount-frac = frac-tracks.fold(
     0,
@@ -1786,9 +1788,9 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_columns = columns
 
-  let all-frac-columns = columns.enumerate().filter(i-col => type(
-    i-col.at(1),
-  ) == _fraction-type).map(i-col => i-col.at(0))
+  let all-frac-columns = columns.enumerate().filter(i-col => (
+    type(i-col.at(1)) == _fraction-type
+  )).map(i-col => i-col.at(0))
   for (i, col) in columns.enumerate() {
     if col == auto {
       // max cell width
@@ -1825,8 +1827,10 @@ input_file: tests/assets/tablex.typ
           // `fit-spans.x == true` (it requests to not expand
           // columns).
           if last-auto-col == i and this-cell-can-expand-columns {
-            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => pcell.x <= i and i < (
-              pcell.x + pcell.colspan
+            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => (
+              pcell.x <= i and i < (
+                pcell.x + pcell.colspan
+              )
             ))
             if cell-spans-all-frac-columns and page-width != 0pt and not is-infinite-len(page-width) {
               // HEURISTIC (only effective when the page width isn't 'auto' / infinite):
@@ -3138,8 +3142,8 @@ input_file: tests/assets/tablex.typ
         // page turned => add header
         if page_turned and at_top and not is-header {
           if repeat-header != false {
-            header-pages-state.update(l => l + (
-              page,
+            header-pages-state.update(l => (
+              l + (page,)
             ))
             if (
               repeat-header == true
@@ -3298,7 +3302,9 @@ input_file: tests/assets/tablex.typ
         // otherwise they'd repeat on every page), then
         // we draw its hlines for the header, below it.
         let hlines = if not header-hlines-have-priority and not is-header and start-y == header_last_y + 1 {
-          let hlines_below_header = first-row-group.row_group.hlines.filter(h => h.y == header_last_y + 1)
+          let hlines_below_header = first-row-group.row_group.hlines.filter(h => (
+            h.y == header_last_y + 1
+          ))
 
           hlines + hlines_below_header
         } else {
@@ -3543,11 +3549,15 @@ input_file: tests/assets/tablex.typ
           box: cell_box,
         ))
 
-        let hlines = hlines.filter(h => this_row_group.hlines.filter(
-          is-same-hline.with(h),
-        ).len() == 0)
+        let hlines = hlines.filter(h => (
+          this_row_group.hlines.filter(
+            is-same-hline.with(h),
+          ).len() == 0
+        ))
 
-        let vlines = vlines.filter(v => v not in this_row_group.vlines)
+        let vlines = vlines.filter(v => (
+          v not in this_row_group.vlines
+        ))
 
         this_row_group.hlines += hlines
         this_row_group.vlines += vlines
@@ -3714,14 +3724,22 @@ input_file: tests/assets/tablex.typ
     new_hlines = range(
       0,
       row_len + 1,
-    ).filter(y => hlines.filter(h => h.y == y).len() == 0).map(y => hlinex(y: y))
+    ).filter(y => (
+      hlines.filter(h => (
+        h.y == y
+      )).len() == 0
+    )).map(y => hlinex(y: y))
   }
 
   if auto-vlines {
     new_vlines = range(
       0,
       col_len + 1,
-    ).filter(x => vlines.filter(v => v.x == x).len() == 0).map(x => vlinex(x: x))
+    ).filter(x => (
+      vlines.filter(v => (
+        v.x == x
+      )).len() == 0
+    )).map(x => vlinex(x: x))
   }
 
   (
@@ -4020,7 +4038,9 @@ input_file: tests/assets/tablex.typ
     _array-type,
   ) {
     panic("Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).")
-  } else if type(repeat-header) == _array-type and repeat-header.any(i => type(i) != _int-type) {
+  } else if type(repeat-header) == _array-type and repeat-header.any(i => (
+    type(i) != _int-type
+  )) {
     panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
   }
 
