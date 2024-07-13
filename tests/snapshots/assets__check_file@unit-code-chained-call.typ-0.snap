@@ -24,10 +24,19 @@ input_file: tests/assets/unit/code/chained-call.typ
   ) = query(heading.where(level: 1))
     .map(e => (
         e.body,
-        e.location().page(),
+        e
+          .location()
+          .page(),
       ))
     .rev()
-    .find(((_, v)) => v <= page)
+    .find((
+    (
+      _,
+      v,
+    ),
+  ) => (
+    v <= page
+  ))
 }
 
 #a

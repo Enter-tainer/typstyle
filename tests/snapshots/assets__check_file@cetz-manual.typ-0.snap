@@ -35,6 +35,18 @@ input_file: tests/assets/cetz-manual.typ
     ..num,
   )
 })
+=======
+) => (
+  if num
+    .pos()
+    .len() < 4 {
+    numbering(
+      "1.1",
+      ..num,
+    )
+  }
+))
+>>>>>>> 285c07f (test: add 0 width test cases)
 #show link: set text(blue)
 
 // Outline
@@ -63,7 +75,6 @@ The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german 
 
 = Usage
 
-This is the minimal starting point:
 #pad(left: 1em)[```typ
   #import "@preview/cetz:0.2.1"
   #cetz.canvas({
@@ -84,6 +95,27 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 } else {
   it
 }
+=======
+#show raw.where(block: false): it => (
+  if it
+    .text
+    .starts-with("<") and it
+    .text
+    .ends-with(">") {
+    set text(1.2em)
+    doc-style.show-type(
+      it
+        .text
+        .slice(
+        1,
+        -1,
+      ),
+    )
+  } else {
+    it
+  }
+)
+>>>>>>> 285c07f (test: add 0 width test cases)
 
 == CeTZ Unique Argument Types
 Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.
@@ -270,14 +302,18 @@ Marks are arrow tips that can be added to the end of path based elements that su
         name,
         item,
       ) in (
-        cetz.mark-shapes.marks
+        cetz
+          .mark-shapes
+          .marks
       ) {
         let name-to-mnemonic = (:)
         for (
           name,
           item,
         ) in (
-          cetz.mark-shapes.mnemonics
+          cetz
+            .mark-shapes
+            .mnemonics
         ) {
           let list = name-to-mnemonic.at(
             item.at(0),
@@ -295,14 +331,15 @@ Marks are arrow tips that can be added to the end of path based elements that su
         }
         (
           raw(name),
-          name-to-mnemonic.at(
-            name,
-            default: (
-              [],
-            ),
-          ).join([, ]),
+          name-to-mnemonic
+            .at(name, default: (
+                [],
+              ))
+            .join([, ]),
           cetz.canvas(
-            cetz.draw.line(
+            cetz
+              .draw
+              .line(
               (),
               (
                 1,

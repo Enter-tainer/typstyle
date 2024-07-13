@@ -91,7 +91,9 @@ input_file: tests/assets/undergraduate-math.typ
 })
 
 // Update date
-#let date = datetime.today().display()
+#let date = datetime
+  .today()
+  .display()
 
 // Unavailable (last check date)
 #show "??": box(
@@ -760,9 +762,14 @@ Use `|` to get set builder notation ${a in S | a "is odd"}$ with `{a in S | a "i
     [$|->$],
     [`|->`, `arrow.r.bar`],
 
-    [$arrow.r.not$],
+    [$arrow
+          .r
+          .not$],
     [`arrow.r.not`],
-    [$arrow.r.long.bar$],
+    [$arrow
+          .r
+          .long
+          .bar$],
     [`arrow.r.long.bar`],
 
     [$-->$],
@@ -775,7 +782,10 @@ Use `|` to get set builder notation ${a in S | a "is odd"}$ with `{a in S | a "i
     [$<->$],
     [`<->`, `arrow.l.r`],
 
-    [$arrow.r.double.not$],
+    [$arrow
+          .r
+          .double
+          .not$],
     [`arrow.r.double.not`],
     [$arrow.b$],
     [`arrow.b`],
@@ -787,7 +797,9 @@ Use `|` to get set builder notation ${a in S | a "is odd"}$ with `{a in S | a "i
 
     [$arrow.squiggly$],
     [`arrow.squiggly`],
-    [$arrow.t.b$],
+    [$arrow
+          .t
+          .b$],
     [`arrow.t.b`],
   ),
 )
@@ -1057,7 +1069,9 @@ You can break into multiple lines.
     [
       $
         sin(x) = x - x^3 / 3! \
-        + x^5 / 5! - dots.h.c
+        + x^5 / 5! - dots
+          .h
+          .c
       $
     ],
     [
