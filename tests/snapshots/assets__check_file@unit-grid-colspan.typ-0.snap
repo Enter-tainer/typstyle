@@ -7,9 +7,7 @@ input_file: tests/assets/unit/grid/colspan.typ
 #let rem = [_Remote_]
 #let lea = [*On leave*]
 
-#show table
-  .cell
-  .where(y: 0): set text(
+#show table.cell.where(y: 0): set text(
   fill: white,
   weight: "bold",
 )

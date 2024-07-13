@@ -1,7 +1,9 @@
 use std::borrow::Cow;
+use std::cell::RefCell;
 use std::collections::HashMap;
 
 use itertools::Itertools;
+use mode::Mode;
 use pretty::BoxDoc;
 use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
@@ -10,6 +12,7 @@ use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
 
 mod dot_chain;
 mod func_call;
+mod mode;
 mod parened_expr;
 mod table;
 mod util;
@@ -17,16 +20,21 @@ mod util;
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
     attr_map: HashMap<SyntaxNode, Attributes>,
+    mode: RefCell<Vec<Mode>>,
 }
 
 impl PrettyPrinter {
     pub fn new(attr_map: HashMap<SyntaxNode, Attributes>) -> Self {
-        Self { attr_map }
+        Self {
+            attr_map,
+            mode: vec![].into(),
+        }
     }
 }
 
 impl PrettyPrinter {
     pub fn convert_markup<'a>(&'a self, root: Markup<'a>) -> BoxDoc<'a, ()> {
+        let _g = self.with_mode(Mode::Markup);
         let mut doc: BoxDoc<()> = BoxDoc::nil();
         #[derive(Debug, Default)]
         struct Line<'a> {
@@ -341,6 +349,7 @@ impl PrettyPrinter {
     }
 
     fn convert_equation<'a>(&'a self, equation: Equation<'a>) -> BoxDoc<'a, ()> {
+        let _g = self.with_mode(Mode::Math);
         let mut doc = BoxDoc::text("$");
         let is_multi_line = self
             .attr_map
@@ -424,6 +433,7 @@ impl PrettyPrinter {
     }
 
     fn convert_code_block<'a>(&'a self, code_block: CodeBlock<'a>) -> BoxDoc<'a, ()> {
+        let _g = self.with_mode(Mode::Code);
         let mut code_nodes = vec![];
         for node in code_block.to_untyped().children() {
             if let Some(code) = node.cast::<Code>() {
@@ -604,8 +614,8 @@ impl PrettyPrinter {
     }
 
     fn convert_field_access<'a>(&'a self, field_access: FieldAccess<'a>) -> BoxDoc<'a, ()> {
-        let chain = self.resolve_dot_chain(field_access);
-        if chain.is_none() {
+        let chain: Option<Vec<BoxDoc>> = self.resolve_dot_chain(field_access);
+        if chain.is_none() || matches!(self.current_mode(), Mode::Markup | Mode::Math) {
             let left = BoxDoc::nil().append(self.convert_expr(field_access.target()));
             let singleline_right =
                 BoxDoc::text(".").append(self.convert_ident(field_access.field()));
@@ -619,11 +629,17 @@ impl PrettyPrinter {
         }
         let first_doc = chain.remove(0);
         let other_doc = BoxDoc::intersperse(chain, BoxDoc::line_().append(BoxDoc::text(".")));
-        first_doc.append(
+        let chain = first_doc.append(
             (BoxDoc::line_().append(BoxDoc::text(".")).append(other_doc))
                 .nest(2)
                 .group(),
-        )
+        );
+        // if matches!(self.current_mode(), Mode::Markup | Mode::Math) {
+        //     optional_paren(chain)
+        // } else {
+        //     chain
+        // }
+        chain
     }
 
     fn convert_closure<'a>(&'a self, closure: Closure<'a>) -> BoxDoc<'a, ()> {

@@ -38,9 +38,7 @@ input_file: tests/assets/tablex.typ
 #let using-typst-v080-or-later = str(type(_str-type)) == "type"
 
 // Attachments use "t" and "b" instead of "top" and "bottom" since v0.3.0.
-#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$
-  .body
-  .has("t")
+#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$.body.has("t")
 
 // This is true if types have fields in the current Typst version.
 // This means we can use stroke.thickness, length.em, and so on.

@@ -45,13 +45,7 @@ input_file: tests/assets/unit/code/chained-call-compileable.typ
   ),
   2,
   3,
-)
-  .rev()
-  .rev()
-  .at(0)
-  .rev()
-  .rev()
-  .rev()
+).rev().rev().at(0).rev().rev().rev()
 
 
 #(
@@ -61,10 +55,4 @@ input_file: tests/assets/unit/code/chained-call-compileable.typ
       2,
     ),
   ),
-)
-  .a
-  .b
-  .rev()
-  .rev()
-  .rev()
-  .len()
+).a.b.rev().rev().rev().len()

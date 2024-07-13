@@ -72,9 +72,6 @@
 // Black raw code
 #show raw.where(block: false): it => { it.text }
 
-// Put this here to avoid affecting the title
-#show link: underline
-
 // Two-column layout
 #show: rest => columns(2, rest)
 
@@ -82,6 +79,9 @@
 #align(center, link("https://github.com/johanvx/typst-undergradmath")[
   #text(large, headcolor)[*Typst Math for Undergrads*]
 ])
+
+// Put this here to avoid affecting the title
+#show link: underline
 
 This is a Typst port with typst #sys.version of _#LaTeX Math for Undergrads_ by Jim Hefferon.
 The original version is available at #link("https://gitlab.com/jim.hefferon/undergradmath").
@@ -500,8 +500,8 @@ The last three here are display style.
     f: RR -> RR
     ```
   ],
-  [$ "9.8" "m/s"^2 $],
-  [`"9.8" "m/s"^2` @tricky],
+  [$ 9.8 thin "m/s"^2 $],
+  [`9.8 thin "m/s"^2` @tricky],
   [$ lim_(h->0) (f(x+h)-f(x))/h $],
   [
     ```
@@ -556,11 +556,3 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
 
 = For more
 See also the Typst Documentation at #link("https://typst.app/docs").
-
-#v(1fr)
-
-#block(
-  inset: 4pt,
-  stroke: (top: headcolor),
-  text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #date]
-)

@@ -40,9 +40,7 @@ input_file: tests/assets/tablex.typ
 ) == "type"
 
 // Attachments use "t" and "b" instead of "top" and "bottom" since v0.3.0.
-#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$
-  .body
-  .has("t")
+#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$.body.has("t")
 
 // This is true if types have fields in the current Typst version.
 // This means we can use stroke.thickness, length.em, and so on.
@@ -993,16 +991,16 @@ input_file: tests/assets/tablex.typ
 // Returns 'true' if the cell at (x, y)
 // exists in the grid.
 #let grid-has-pos(grid, x, y) = (
-  grid-index-at(x, y, grid: grid) < grid
-    .items
-    .len()
+  grid-index-at(
+    x,
+    y,
+    grid: grid,
+  ) < grid.items.len()
 )
 
 // How many rows are in this grid? (Given its width)
 #let grid-count-rows(grid) = (
-  calc.floor(grid
-    .items
-    .len() / grid.width)
+  calc.floor(grid.items.len() / grid.width)
 )
 
 // Converts a grid array index to (x, y)

@@ -35,18 +35,6 @@ input_file: tests/assets/cetz-manual.typ
     ..num,
   )
 })
-=======
-) => (
-  if num
-    .pos()
-    .len() < 4 {
-    numbering(
-      "1.1",
-      ..num,
-    )
-  }
-))
->>>>>>> 285c07f (test: add 0 width test cases)
 #show link: set text(blue)
 
 // Outline
@@ -95,27 +83,6 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 } else {
   it
 }
-=======
-#show raw.where(block: false): it => (
-  if it
-    .text
-    .starts-with("<") and it
-    .text
-    .ends-with(">") {
-    set text(1.2em)
-    doc-style.show-type(
-      it
-        .text
-        .slice(
-        1,
-        -1,
-      ),
-    )
-  } else {
-    it
-  }
-)
->>>>>>> 285c07f (test: add 0 width test cases)
 
 == CeTZ Unique Argument Types
 Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.
@@ -302,9 +269,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
         name,
         item,
       ) in (
-        cetz
-          .mark-shapes
-          .marks
+        cetz.mark-shapes.marks
       ) {
         let name-to-mnemonic = (:)
         for (

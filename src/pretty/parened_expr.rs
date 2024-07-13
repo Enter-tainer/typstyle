@@ -41,17 +41,22 @@ impl PrettyPrinter {
         ) {
             return self.convert_expr(expr);
         }
-        let left_paren_or_nil = BoxDoc::text("(")
-            .append(BoxDoc::line())
-            .flat_alt(BoxDoc::nil());
-        let right_paren_or_nil = BoxDoc::line()
-            .append(BoxDoc::text(")"))
-            .flat_alt(BoxDoc::nil());
         let body_expr = self.convert_expr(expr);
-        left_paren_or_nil
-            .append(body_expr)
-            .nest(2)
-            .append(right_paren_or_nil)
-            .group()
+        optional_paren(body_expr)
     }
+}
+
+/// Wrap the body with parentheses if the body is layouted on multiple lines.
+pub(super) fn optional_paren(body: BoxDoc<'_, ()>) -> BoxDoc<'_, ()> {
+    let left_paren_or_nil = BoxDoc::text("(")
+        .append(BoxDoc::line())
+        .flat_alt(BoxDoc::nil());
+    let right_paren_or_nil = BoxDoc::line()
+        .append(BoxDoc::text(")"))
+        .flat_alt(BoxDoc::nil());
+    left_paren_or_nil
+        .append(body)
+        .nest(2)
+        .append(right_paren_or_nil)
+        .group()
 }

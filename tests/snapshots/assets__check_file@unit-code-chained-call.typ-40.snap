@@ -30,7 +30,4 @@ input_file: tests/assets/unit/code/chained-call.typ
     .find(((_, v)) => v <= page)
 }
 
-#a
-  .b()[c][d]
-  .eeeeeeeeeeeeeee()
-  .fffffffff()
+#a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
