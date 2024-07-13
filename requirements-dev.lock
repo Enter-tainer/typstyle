@@ -26,8 +26,6 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via mkdocs
 colorama==0.4.6
-    # via click
-    # via mkdocs
     # via mkdocs-material
 cssselect2==0.7.0
     # via cairosvg
