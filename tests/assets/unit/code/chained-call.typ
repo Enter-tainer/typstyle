@@ -7,7 +7,16 @@
 }
 
 #{
+  a.bbbbbbbbbbbbbb()[c][d].eeeeeeeeee().f(123)[444][ccc]
+}
+
+#{
   let (title, _) = query(heading.where(level: 1)).map(e => (e.body, e.location().page())).rev().find(((_, v)) => v <= page)
 }
 
 #a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
+
+#{
+  (1,).rev().map(((n, c)) =>
+        f(n,c,1))
+}

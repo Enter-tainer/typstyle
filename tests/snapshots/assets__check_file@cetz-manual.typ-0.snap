@@ -63,6 +63,7 @@ The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german 
 
 = Usage
 
+This is the minimal starting point:
 #pad(left: 1em)[```typ
   #import "@preview/cetz:0.2.1"
   #cetz.canvas({
@@ -75,7 +76,9 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 #show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") {
   set text(1.2em)
   doc-style.show-type(
-    it.text.slice(
+    it
+      .text
+      .slice(
       1,
       -1,
     ),

@@ -18,6 +18,13 @@ input_file: tests/assets/unit/code/chained-call.typ
 }
 
 #{
+  a
+    .bbbbbbbbbbbbbb()[c][d]
+    .eeeeeeeeee()
+    .f(123)[444][ccc]
+}
+
+#{
   let (
     title,
     _,
@@ -31,3 +38,7 @@ input_file: tests/assets/unit/code/chained-call.typ
 }
 
 #a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
+
+#{
+  (1,).rev().map(((n, c)) => f(n, c, 1))
+}
