@@ -14,11 +14,11 @@ input_file: tests/assets/unit/code/for-loop-line-break.typ
     -1
   }
   for (p, c) in (
-      ((0, 0, 0), black),
-      ((1, 1, 0), red),
-      ((1, 0, 1), blue),
-      ((0, 1, 1), green),
-    ) {
+    ((0, 0, 0), black),
+    ((1, 1, 0), red),
+    ((1, 0, 1), blue),
+    ((0, 1, 1), green),
+  ) {
     line(
       vector.add(
         p,
