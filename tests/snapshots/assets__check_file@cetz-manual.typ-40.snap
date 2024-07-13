@@ -27,11 +27,11 @@ input_file: tests/assets/cetz-manual.typ
 
 #set terms(indent: 1em)
 #set par(justify: true)
-#set heading(numbering: (..num) => (
-  if num.pos().len() < 4 {
-    numbering("1.1", ..num)
-  }
-))
+#set heading(numbering: (
+  ..num,
+) => if num.pos().len() < 4 {
+  numbering("1.1", ..num)
+})
 #show link: set text(blue)
 
 // Outline
@@ -67,16 +67,14 @@ This is the minimal starting point:
   ```]
 Note that draw functions are imported inside the scope of the `canvas` block. This is recommended as some draw functions override Typst's function's such as `line`.
 
-#show raw.where(block: false): it => (
-  if it.text.starts-with("<") and it.text.ends-with(">") {
-    set text(1.2em)
-    doc-style.show-type(
-      it.text.slice(1, -1),
-    )
-  } else {
-    it
-  }
-)
+#show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") {
+  set text(1.2em)
+  doc-style.show-type(
+    it.text.slice(1, -1),
+  )
+} else {
+  it
+}
 
 == CeTZ Unique Argument Types
 Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.

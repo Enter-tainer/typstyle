@@ -36,6 +36,8 @@ impl PrettyPrinter {
                 | Expr::FuncCall(_)
                 | Expr::Array(_)
                 | Expr::Dict(_)
+                | Expr::Conditional(_)
+                | Expr::For(_)
         ) {
             return self.convert_expr(expr);
         }

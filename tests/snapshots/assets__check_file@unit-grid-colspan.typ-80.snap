@@ -14,13 +14,11 @@ input_file: tests/assets/unit/grid/colspan.typ
 
 #table(
   columns: 6 * (1fr,),
-  align: (x, y) => (
-    if x == 0 or y == 0 {
-      left
-    } else {
-      center
-    }
-  ),
+  align: (x, y) => if x == 0 or y == 0 {
+    left
+  } else {
+    center
+  },
   stroke: (
     x,
     y,
@@ -29,11 +27,9 @@ input_file: tests/assets/unit/grid/colspan.typ
     left: if y == 0 and x > 0 { white } else { black },
     rest: black,
   ),
-  fill: (_, y) => (
-    if y == 0 {
-      black
-    }
-  ),
+  fill: (_, y) => if y == 0 {
+    black
+  },
 
   table.header(
     [Team member],
@@ -60,11 +56,9 @@ input_file: tests/assets/unit/grid/colspan.typ
   columns: 4 * (1fr,),
 
   [a], [b], [c], [d],
-  fill: (_, y) => (
-    if y == 0 {
-      black
-    }
-  ),
+  fill: (_, y) => if y == 0 {
+    black
+  },
   table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],
   [b], table.cell(colspan: 2)[cd],
 )

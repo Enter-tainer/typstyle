@@ -631,7 +631,7 @@ impl PrettyPrinter {
             doc = doc.append(BoxDoc::space());
             doc = doc.append(BoxDoc::text("="));
             doc = doc.append(BoxDoc::space());
-            doc = doc.append(self.convert_expr(closure.body()));
+            doc = doc.append(self.convert_expr_with_optional_paren(closure.body()));
         } else {
             if params.len() == 1
                 && matches!(closure.params().children().next().unwrap(), Param::Pos(_))
