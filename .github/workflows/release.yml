@@ -42,14 +42,18 @@ jobs:
           sudo apt-get install fonts-noto-cjk fonts-noto-cjk-extra
       - name: rust toolchain
         uses: dtolnay/rust-toolchain@stable
+      - name: Install Cargo Nextest
+        uses: taiki-e/install-action@nextest
       - name: Run rust cache
         uses: Swatinem/rust-cache@v2
       - name: Cargo fmt and clippy
         run: |
           cargo fmt --all -- --check
           cargo clippy --all-targets --all-features -- -D warnings
-      - name: Run tests
-        run: cargo test --all --all-features
+      - name: Run Unit tests
+        run: cargo nextest run -E 'not test(~e2e)' --no-fail-fast
+      - name: Run E2E tests
+        run: cargo nextest run -E 'not test(~e2e)' --no-fail-fast
 
   build:
     needs: [pre_build]

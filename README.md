@@ -102,7 +102,7 @@ And please let us know the issue by creating an issue on the [GitHub repository]
 ## Test
 
 ```sh
-cargo test
+cargo nextest run -E 'not test(~e2e)' --no-fail-fast
 cargo insta review
 ```
 
