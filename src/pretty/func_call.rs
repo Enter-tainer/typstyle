@@ -87,7 +87,7 @@ impl PrettyPrinter {
         if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
             return doc.append(res);
         }
-        let has_parenthesized_args = util::has_parenthesized_args(func_call);
+        let has_parenthesized_args = util::has_parenthesized_args(func_call.args());
         if table::is_table(func_call) {
             if let Some(cols) = table::is_formatable_table(func_call) {
                 doc = doc.append(self.convert_table(func_call, cols));
@@ -98,6 +98,16 @@ impl PrettyPrinter {
             doc = doc.append(self.convert_parenthesized_args(func_call.args()));
         };
         doc.append(self.convert_additional_args(func_call.args(), has_parenthesized_args))
+    }
+
+    pub(super) fn convert_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
+        let has_parenthesized_args = util::has_parenthesized_args(args);
+        let mut doc = BoxDoc::nil();
+        if has_parenthesized_args {
+            doc = doc.append(self.convert_parenthesized_args_as_is(args));
+        }
+        doc = doc.append(self.convert_additional_args(args, has_parenthesized_args));
+        doc
     }
 
     pub(super) fn convert_parenthesized_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {

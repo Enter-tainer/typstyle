@@ -123,7 +123,9 @@ input_file: tests/assets/tablex.typ
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must not be empty.",
     )
     assert(
-      fit-spans.keys().all(k => (
+      fit-spans
+        .keys()
+        .all(k => (
         k in (
           "x",
           "y",
@@ -132,7 +134,9 @@ input_file: tests/assets/tablex.typ
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must only have the keys x and y.",
     )
     assert(
-      fit-spans.values().all(v => (
+      fit-spans
+        .values()
+        .all(v => (
         type(v) == _bool-type
       )),
       message: "Tablex error:" + error-prefix + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
@@ -355,9 +359,11 @@ input_file: tests/assets/tablex.typ
   let len = 0
 
   // maximum explicit 'y' specified
-  let max_explicit_y = items.filter(c => (
-    c.y != auto
-  )).fold(
+  let max_explicit_y = items
+    .filter(c => (
+        c.y != auto
+      ))
+    .fold(
     0,
     (
       acc,
@@ -726,19 +732,13 @@ input_file: tests/assets/tablex.typ
     let em = len.em
     // Measure with abs (and later multiply by the sign) so negative em works.
     // Otherwise it would return 0pt, and we would need to measure again with abs.
-    let measured-em = calc-sign(em) * measure(
-      box(width: calc.abs(em) * 1em),
-      styles,
-    ).width
+    let measured-em = calc-sign(em) * measure(box(width: calc.abs(em) * 1em), styles).width
 
     return pt + measured-em
   }
 
   // Fields not supported, so we have to measure twice when em can be negative.
-  let measured-pt = measure(
-    box(width: len),
-    styles,
-  ).width
+  let measured-pt = measure(box(width: len), styles).width
 
   // If the measured length is positive, `len` must have overall been positive.
   // There's nothing else to be done, so return the measured length.
@@ -751,10 +751,7 @@ input_file: tests/assets/tablex.typ
   // Hence, `len` must either be `0pt` or negative.
   // We multiply `len` by -1 to get a positive length, draw a line and measure it, then negate
   // the measured length. This nicely handles the `0pt` case as well.
-  measured-pt = -measure(
-    box(width: -len),
-    styles,
-  ).width
+  measured-pt = -measure(box(width: -len), styles).width
   return measured-pt
 }
 
@@ -1026,7 +1023,9 @@ input_file: tests/assets/tablex.typ
       let r = regex("thickness: (" + len-regex + ")")
       s = repr(stroke).match(r)
       if s != none {
-        s = s.captures.first() // get the first match (the thickness)
+        s = s
+          .captures
+          .first() // get the first match (the thickness)
       }
     }
 
@@ -1093,12 +1092,9 @@ input_file: tests/assets/tablex.typ
   grid: none,
   width: none,
 ) = {
-  width = default-if-none(
-    grid,
-    (
+  width = default-if-none(grid, (
       width: width,
-    ),
-  ).width
+    )).width
   width = calc.floor(width)
   (
     y * width
@@ -1122,8 +1118,12 @@ input_file: tests/assets/tablex.typ
     width: grid.width,
   )
 
-  if index < grid.items.len() {
-    grid.items.at(index)
+  if index < grid
+    .items
+    .len() {
+    grid
+      .items
+      .at(index)
   } else {
     none
   }
@@ -1169,7 +1169,9 @@ input_file: tests/assets/tablex.typ
   grid,
   y,
 ) = {
-  let len = grid.items.len()
+  let len = grid
+    .items
+    .len()
   // position of the first cell in that row.
   let first-row-pos = grid-index-at(
     0,
@@ -1184,7 +1186,9 @@ input_file: tests/assets/tablex.typ
   } else {
     // position right after the last cell in this row
     let next-row-pos = first-row-pos + grid.width
-    let cell-row = grid.items.slice(
+    let cell-row = grid
+      .items
+      .slice(
       first-row-pos,
       calc.min(
         len,
@@ -1210,9 +1214,7 @@ input_file: tests/assets/tablex.typ
   grid,
   x,
 ) = {
-  range(
-    grid-count-rows(grid),
-  ).map(y => grid-at(
+  range(grid-count-rows(grid)).map(y => grid-at(
     grid,
     x,
     y,
@@ -1241,7 +1243,9 @@ input_file: tests/assets/tablex.typ
 
   let now = grid-index-to-pos(
     grid,
-    grid.items.len() - 1,
+    grid
+      .items
+      .len() - 1,
   )
   // now columns and/or last missing row
   while not grid-has-pos(
@@ -1249,13 +1253,17 @@ input_file: tests/assets/tablex.typ
     x,
     y,
   ) {
-    grid.items.push(
+    grid
+      .items
+      .push(
       fill_with(grid),
     )
   }
   let new = grid-index-to-pos(
     grid,
-    grid.items.len() - 1,
+    grid
+      .items
+      .len() - 1,
   )
 
   grid
@@ -1365,7 +1373,9 @@ input_file: tests/assets/tablex.typ
     let empty_cell = cellx[]
     let index = default-if-auto(
       index,
-      grid.items.len(),
+      grid
+        .items
+        .len(),
     )
     let new_cell_pos = grid-index-to-pos(
       grid,
@@ -1607,13 +1617,17 @@ input_file: tests/assets/tablex.typ
           this_y,
         )
 
-        if index > grid.items.len() {
+        if index > grid
+          .items
+          .len() {
           panic("Internal tablex error: Could not expand grid to include cell at " + repr((
             this_x,
             this_y,
           )))
         }
-        grid.items.at(index) = cell
+        grid
+          .items
+          .at(index) = cell
         items.at(i) = cell
 
         // other secondary position (from colspan / rowspan)
@@ -1623,7 +1637,9 @@ input_file: tests/assets/tablex.typ
           py,
         )
 
-        grid.items.at(index) = occupied(
+        grid
+          .items
+          .at(index) = occupied(
           x: px,
           y: py,
           parent_x: this_x,
@@ -1655,9 +1671,13 @@ input_file: tests/assets/tablex.typ
   for (
     index,
     item,
-  ) in grid.items.enumerate() {
+  ) in grid
+    .items
+    .enumerate() {
     if item == none {
-      grid.items.at(index) = new_empty_cell(
+      grid
+        .items
+        .at(index) = new_empty_cell(
         grid,
         index: index,
       )
@@ -1666,10 +1686,14 @@ input_file: tests/assets/tablex.typ
 
   // while there are incomplete rows for some reason, add empty cells
   while calc-mod(
-    grid.items.len(),
+    grid
+      .items
+      .len(),
     grid.width,
   ) != 0 {
-    grid.items.push(
+    grid
+      .items
+      .push(
       new_empty_cell(grid),
     )
   }
@@ -1848,7 +1872,9 @@ input_file: tests/assets/tablex.typ
   remaining: 0pt,
   gutter: none,
 ) = {
-  let frac-tracks = tracks.enumerate().filter(t => (
+  let frac-tracks = tracks
+    .enumerate()
+    .filter(t => (
     type(
       t.at(1),
     ) == _fraction-type
@@ -2025,21 +2051,21 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_columns = columns
 
-  let all-frac-columns = columns.enumerate().filter(i-col => (
-    type(
-      i-col.at(1),
-    ) == _fraction-type
-  )).map(i-col => i-col.at(0))
+  let all-frac-columns = columns
+    .enumerate()
+    .filter(i-col => (
+        type(
+          i-col.at(1),
+        ) == _fraction-type
+      ))
+    .map(i-col => i-col.at(0))
   for (
     i,
     col,
   ) in columns.enumerate() {
     if col == auto {
       // max cell width
-      let col_size = grid-get-column(
-        grid,
-        i,
-      ).fold(
+      let col_size = grid-get-column(grid, i).fold(
         0pt,
         (
           max,
@@ -2059,7 +2085,9 @@ input_file: tests/assets/tablex.typ
           )
 
           let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
-            pcell.fit-spans.x
+            pcell
+              .fit-spans
+              .x
           } else {
             fit-spans.x
           }
@@ -2110,10 +2138,7 @@ input_file: tests/assets/tablex.typ
               align_default: auto,
             )
 
-            let width = measure(
-              cell-box,
-              styles,
-            ).width // + 2*cell_inset // the box already considers inset
+            let width = measure(cell-box, styles).width // + 2*cell_inset // the box already considers inset
 
             // here, we are excluding from the width of this cell
             // at this column all width that was already covered by
@@ -2372,10 +2397,7 @@ input_file: tests/assets/tablex.typ
   ) in rows.enumerate() {
     if row == auto {
       // max cell height
-      let row_size = grid-get-row(
-        grid,
-        i,
-      ).fold(
+      let row_size = grid-get-row(grid, i).fold(
         0pt,
         (
           max,
@@ -2395,7 +2417,9 @@ input_file: tests/assets/tablex.typ
           )
 
           let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
-            pcell.fit-spans.y
+            pcell
+              .fit-spans
+              .y
           } else {
             fit-spans.y
           }
@@ -2430,10 +2454,7 @@ input_file: tests/assets/tablex.typ
             // measure the cell's actual height,
             // with its calculated width
             // and with other constraints
-            let height = measure(
-              cell-box,
-              styles,
-            ).height // + 2*cell_inset (box already considers inset)
+            let height = measure(cell-box, styles).height // + 2*cell_inset (box already considers inset)
 
             // here, we are excluding from the height of this cell
             // at this row all height that was already covered by
@@ -2612,12 +2633,9 @@ input_file: tests/assets/tablex.typ
   pre-gutter: false,
 ) = {
   let col-gutter = default-if-none(
-    default-if-none(
-      gutter,
-      (
+    default-if-none(gutter, (
         col: 0pt,
-      ),
-    ).col,
+      )).col,
     0pt,
   )
   end = default-if-none(
@@ -2660,12 +2678,9 @@ input_file: tests/assets/tablex.typ
   pre-gutter: false,
 ) = {
   let row-gutter = default-if-none(
-    default-if-none(
-      gutter,
-      (
+    default-if-none(gutter, (
         row: 0pt,
-      ),
-    ).row,
+      )).row,
     0pt,
   )
   end = default-if-none(
@@ -2816,83 +2831,89 @@ input_file: tests/assets/tablex.typ
     )
   }
 
-  let hlines = hlines.filter(h => {
-    let y = h.y
+  let hlines = hlines
+    .filter(h => {
+        let y = h.y
 
-    let in_top_or_bottom = y in (
-      cell.y,
-      cell.y + cell.rowspan,
-    )
+        let in_top_or_bottom = y in (
+          cell.y,
+          cell.y + cell.rowspan,
+        )
 
-    let hline_hasnt_already_ended = (
+        let hline_hasnt_already_ended = (
                 h.end in (auto, none)  // always goes towards the right
                 or h.end >= cell.x + cell.colspan  // ends at or after this cell
             )
 
-    (
-      in_top_or_bottom and hline_hasnt_already_ended
-    )
-  }).map(h => {
-    // get the intersection between the hline and the cell's x-span.
-    let span = get-included-span(
-      h.start,
-      h.end,
-      start: cell.x,
-      end: cell.x + cell.colspan,
-      limit: x_limit,
-    )
+        (
+          in_top_or_bottom and hline_hasnt_already_ended
+        )
+      })
+    .map(h => {
+        // get the intersection between the hline and the cell's x-span.
+        let span = get-included-span(
+          h.start,
+          h.end,
+          start: cell.x,
+          end: cell.x + cell.colspan,
+          limit: x_limit,
+        )
 
-    if span == none {
-      // no intersection!
-      none
-    } else {
-      v-or-hline-with-span(
-        h,
-        start: span.at(0),
-        end: span.at(1),
-      )
-    }
-  }).filter(x => (
+        if span == none {
+          // no intersection!
+          none
+        } else {
+          v-or-hline-with-span(
+            h,
+            start: span.at(0),
+            end: span.at(1),
+          )
+        }
+      })
+    .filter(x => (
     x != none
   ))
 
-  let vlines = vlines.filter(v => {
-    let x = v.x
+  let vlines = vlines
+    .filter(v => {
+        let x = v.x
 
-    let at_left_or_right = x in (
-      cell.x,
-      cell.x + cell.colspan,
-    )
+        let at_left_or_right = x in (
+          cell.x,
+          cell.x + cell.colspan,
+        )
 
-    let vline_hasnt_already_ended = (
+        let vline_hasnt_already_ended = (
                 v.end in (auto, none)  // always goes towards the bottom
                 or v.end >= cell.y + cell.rowspan  // ends at or after this cell
             )
 
-    (
-      at_left_or_right and vline_hasnt_already_ended
-    )
-  }).map(v => {
-    // get the intersection between the hline and the cell's x-span.
-    let span = get-included-span(
-      v.start,
-      v.end,
-      start: cell.y,
-      end: cell.y + cell.rowspan,
-      limit: y_limit,
-    )
+        (
+          at_left_or_right and vline_hasnt_already_ended
+        )
+      })
+    .map(v => {
+        // get the intersection between the hline and the cell's x-span.
+        let span = get-included-span(
+          v.start,
+          v.end,
+          start: cell.y,
+          end: cell.y + cell.rowspan,
+          limit: y_limit,
+        )
 
-    if span == none {
-      // no intersection!
-      none
-    } else {
-      v-or-hline-with-span(
-        v,
-        start: span.at(0),
-        end: span.at(1),
-      )
-    }
-  }).filter(x => (
+        if span == none {
+          // no intersection!
+          none
+        } else {
+          v-or-hline-with-span(
+            v,
+            start: span.at(0),
+            end: span.at(1),
+          )
+        }
+      })
+    .filter(x => (
     x != none
   ))
 
@@ -3040,7 +3061,9 @@ input_file: tests/assets/tablex.typ
   if start == parent-start {
     // starts where its parent starts
     expansion.at(0) = default-if-auto(
-      line.expand.at(0),
+      line
+        .expand
+        .at(0),
       0pt,
     ) // => expand to the left
   }
@@ -3048,7 +3071,9 @@ input_file: tests/assets/tablex.typ
   if end == parent-end {
     // ends where its parent ends
     expansion.at(1) = default-if-auto(
-      line.expand.at(1),
+      line
+        .expand
+        .at(1),
       0pt,
     ) // => expand to the right
   }
@@ -3535,8 +3560,12 @@ input_file: tests/assets/tablex.typ
           for cell_box in (
             row
           ) {
-            let x = cell_box.cell.x
-            let y = cell_box.cell.y
+            let x = cell_box
+              .cell
+              .x
+            let y = cell_box
+              .cell
+              .y
             first_x = default-if-none(
               first_x,
               x,
@@ -3574,7 +3603,9 @@ input_file: tests/assets/tablex.typ
               // To do that, we subtract the cell's width from dx.
               dx -= width-between(
                 start: x,
-                end: x + cell_box.cell.colspan,
+                end: x + cell_box
+                  .cell
+                  .colspan,
               )
             }
 
@@ -3643,7 +3674,10 @@ input_file: tests/assets/tablex.typ
         )
 
         let header_last_y = if first-row-group != none {
-          first-row-group.row_group.y_span.at(1)
+          first-row-group
+            .row_group
+            .y_span
+            .at(1)
         } else {
           none
         }
@@ -3652,7 +3686,10 @@ input_file: tests/assets/tablex.typ
         // otherwise they'd repeat on every page), then
         // we draw its hlines for the header, below it.
         let hlines = if not header-hlines-have-priority and not is-header and start-y == header_last_y + 1 {
-          let hlines_below_header = first-row-group.row_group.hlines.filter(h => (
+          let hlines_below_header = first-row-group
+            .row_group
+            .hlines
+            .filter(h => (
             h.y == header_last_y + 1
           ))
 
@@ -3668,7 +3705,10 @@ input_file: tests/assets/tablex.typ
           // if header's wasn't already drawn
           if hline.y == start-y {
             let header_last_y = if first-row-group != none {
-              first-row-group.row_group.y_span.at(1)
+              first-row-group
+                .row_group
+                .y_span
+                .at(1)
             } else {
               none
             }
@@ -3911,15 +3951,19 @@ input_file: tests/assets/tablex.typ
           fill_default: fill,
         )
 
-        this_row_group.rows.last().push((
+        this_row_group
+          .rows
+          .last()
+          .push((
           cell: cell,
           box: cell_box,
         ))
 
         let hlines = hlines.filter(h => (
-          this_row_group.hlines.filter(
-            is-same-hline.with(h),
-          ).len() == 0
+          this_row_group
+            .hlines
+            .filter(is-same-hline.with(h))
+            .len() == 0
         ))
 
         let vlines = vlines.filter(v => (
@@ -4002,8 +4046,12 @@ input_file: tests/assets/tablex.typ
         content,
       )
     } else {
-      this_row_group.rows.push(())
-      this_row_group.y_span.at(1) += 1
+      this_row_group
+        .rows
+        .push(())
+      this_row_group
+        .y_span
+        .at(1) += 1
     }
   }
 }
@@ -4037,10 +4085,10 @@ input_file: tests/assets/tablex.typ
     line.expand = if line.expand == none {
       none
     } else {
-      line.expand.slice(
-        0,
-        2,
-      ).map(e => {
+      line
+        .expand
+        .slice(0, 2)
+        .map(e => {
         if e == none {
           e
         } else {
@@ -4101,25 +4149,27 @@ input_file: tests/assets/tablex.typ
   let new_vlines = ()
 
   if auto-hlines {
-    new_hlines = range(
-      0,
-      row_len + 1,
-    ).filter(y => (
-      hlines.filter(h => (
-        h.y == y
-      )).len() == 0
-    )).map(y => hlinex(y: y))
+    new_hlines = range(0, row_len + 1)
+      .filter(y => (
+          hlines
+            .filter(h => (
+                h.y == y
+              ))
+            .len() == 0
+        ))
+      .map(y => hlinex(y: y))
   }
 
   if auto-vlines {
-    new_vlines = range(
-      0,
-      col_len + 1,
-    ).filter(x => (
-      vlines.filter(v => (
-        v.x == x
-      )).len() == 0
-    )).map(x => vlinex(x: x))
+    new_vlines = range(0, col_len + 1)
+      .filter(x => (
+          vlines
+            .filter(v => (
+                v.x == x
+              ))
+            .len() == 0
+        ))
+      .map(x => vlinex(x: x))
   }
 
   (
@@ -4302,7 +4352,9 @@ input_file: tests/assets/tablex.typ
         }
 
         cell.content = [#cell.content]
-        grid.items.at(
+        grid
+          .items
+          .at(
           grid-index-at(
             cell.x,
             cell.y,
@@ -4372,7 +4424,9 @@ input_file: tests/assets/tablex.typ
         }
 
         cell.content = [#cell.content]
-        grid.items.at(
+        grid
+          .items
+          .at(
           grid-index-at(
             cell.x,
             cell.y,
@@ -4640,7 +4694,9 @@ input_file: tests/assets/tablex.typ
       t_pos,
     )
 
-    let items = items.pos().map(table-item-convert)
+    let items = items
+      .pos()
+      .map(table-item-convert)
 
     let gutter = parse-gutters(
       col-gutter: column-gutter,

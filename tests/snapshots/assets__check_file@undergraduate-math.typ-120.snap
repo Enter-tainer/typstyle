@@ -6,8 +6,28 @@ input_file: tests/assets/undergraduate-math.typ
 // Meta data
 #set document(title: "Typst Math for Undergrads", author: "johanvx")
 
-// Margin
-#set page(margin: 0.5in)
+// headcolor
+#let headcolor = rgb("004225")
+
+// Margin and footer
+#set page(
+  margin: 0.5in,
+  footer: context {
+    if counter(page).display() == "2" {
+      grid(
+        columns: (1fr, 1fr),
+        [],
+        block(
+          inset: 4pt,
+          stroke: (top: headcolor),
+          text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
+        ),
+      )
+    } else {
+      []
+    }
+  },
+)
 
 // Font size
 #let scriptsize = 7pt
@@ -42,10 +62,7 @@ input_file: tests/assets/undergraduate-math.typ
   box(L + kern(-0.36em) + A + kern(-0.15em) + TeX)
 })
 
-// Update date
-#let date = datetime.today().display()
-
-// Unavailable (last check date)
+// Unavailable (last check version)
 #show "??": box(text(red, [v#sys.version #emoji.crossmark]))
 // Tricky
 #show "!!": box(text(blue, emoji.drops))
@@ -61,9 +78,6 @@ input_file: tests/assets/undergraduate-math.typ
 // Justified paragraphs
 #set par(justify: true)
 
-// headcolor
-#let headcolor = rgb("004225")
-
 // Run-in sections, like LaTeX \paragraph
 #show heading.where(level: 1): it => text(
   size: normalsize,
@@ -77,9 +91,6 @@ input_file: tests/assets/undergraduate-math.typ
   it.text
 }
 
-// Put this here to avoid affecting the title
-#show link: underline
-
 // Two-column layout
 #show: rest => columns(2, rest)
 
@@ -90,6 +101,9 @@ input_file: tests/assets/undergraduate-math.typ
     #text(large, headcolor)[*Typst Math for Undergrads*]
   ],
 )
+
+// Put this here to avoid affecting the title
+#show link: underline
 
 This is a Typst port with typst #sys.version of _#LaTeX Math for Undergrads_ by Jim Hefferon.
 The original version is available at #link("https://gitlab.com/jim.hefferon/undergradmath").
@@ -209,14 +223,19 @@ Get the set complement $A^(sans(c))$ with `A^(sans(c))` (or $A^(complement)$ wit
 //     through Character Variant cv01. The fontsetup package provides the option
 //     'varnothing' to easily switch to the alternative character.
 
-// https://mirrors.sustech.edu.cn/CTAN/fonts/newcomputermodern/doc/newcm-doc.pdf
-// The NewComputerModern FontFamily §13.3
+// http://mirrors.ctan.org/fonts/newcomputermodern/doc/newcm-doc.pdf
+//
+// Version 5.1
+//
+// The NewComputerModern FontFamily §14.5
 // The Math fonts provide the character \varnothing (⌀, U+2300), as an alternative to \emptyset (a slashed zero), through Character Variant cv01.
 // The fontsetup package provides the option ‘varnothing’ to easily switch to the alternative character.
 
-/ Remark: Using `diameter` for `\varnothing` may cause some confusion. However, #LaTeX also uses $diameter$ (`\u{2300}`) instead of $\u{2205}$ (`\u{2205}`), see #link("https://mirrors.sustech.edu.cn/CTAN/fonts/newcomputermodern/doc/newcm-doc.pdf")[newcm $section$13.3].
-  Another solution is to use `text(font: "Fira Sans", nothing)`, but the resultant glyph $text(font: "Fira Sans", nothing)$ is subtly different from the widely used one.
-  Ultimately, the choice is always *your decision*.
+/ Remark: Using `diameter` for `\varnothing` may cause some confusion.
+  However, in #LaTeX, the `\varnothing` provided through Character Variant `cv01` is also `diameter`
+  (see #link("http://mirrors.ctan.org/fonts/newcomputermodern/doc/newcm-doc.pdf")[newcm $section$14.5]).
+  So a simple solution with the default math font _New Computer Modern Math_ is to define a new symbol `varnothing` with `#let varnothing = math.diameter`.
+  Other solutions can be found in #link("https://sitandr.github.io/typst-examples-book/book/basics/math/symbols.html#empty-set")[Typst Examples Book].
 
 = Decorations
 #align(
@@ -493,7 +512,7 @@ Definition by cases can be easily obtained with the `cases` function.
 
 = Spacing in mathematics
 Improve $sqrt(2) x$ to $sqrt(2) thin x$ with a thin space, as in `sqrt(2) thin x`.
-Slightly wider are `medium` and `thick` (the three are in ratio $3 : 4 : 5$).
+Slightly wider are `med` and `thick` (the three are in ratio $3 : 4 : 5$).
 Bigger space are: `quad` for $-> quad <-$ and `wide` for $-> wide <-$, which are useful between parts of a display.
 Get arbitrary space with the `h` function.
 For example, use `#h(-0.1667em)` for `\!` in #LaTeX.
@@ -575,7 +594,7 @@ The last three here are display style.
       ```
     ],
 
-    [$ "9.8" "m/s"^2 $], [`"9.8" "m/s"^2` @tricky],
+    [$ 9.8 thin "m/s"^2 $], [`9.8 thin "m/s"^2` @tricky],
     [$ lim_(h->0) (f(x+h)-f(x)) / h $],
     [
       ```
@@ -638,11 +657,3 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
 
 = For more
 See also the Typst Documentation at #link("https://typst.app/docs").
-
-#v(1fr)
-
-#block(
-  inset: 4pt,
-  stroke: (top: headcolor),
-  text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #date],
-)

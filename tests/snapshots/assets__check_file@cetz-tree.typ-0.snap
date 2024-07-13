@@ -153,7 +153,10 @@ input_file: tests/assets/cetz-tree.typ
     let children = ()
     let cnt = none
     if type(tree) == array {
-      children = tree.slice(1).enumerate().map((
+      children = tree
+        .slice(1)
+        .enumerate()
+        .map((
         (
           n,
           c,
@@ -187,7 +190,9 @@ input_file: tests/assets/cetz-tree.typ
     shift-x,
     ctx,
   ) = {
-    if node.children.len() == 0 {
+    if node
+      .children
+      .len() == 0 {
       node.x = shift-x
       return (
         node,
@@ -210,12 +215,16 @@ input_file: tests/assets/cetz-tree.typ
         none,
       )
 
-      let n-children = node.children.len()
+      let n-children = node
+        .children
+        .len()
       for i in range(
         0,
         n-children,
       ) {
-        let child = node.children.at(i)
+        let child = node
+          .children
+          .at(i)
         let (
           child-min-x,
           child-max-x,
@@ -233,7 +242,9 @@ input_file: tests/assets/cetz-tree.typ
           shift-x,
           ctx,
         )
-        node.children.at(i) = child
+        node
+          .children
+          .at(i) = child
 
         left = util.min(
           child.x,
@@ -400,7 +411,9 @@ input_file: tests/assets/cetz-tree.typ
       name: name,
       style: style.named(),
       before: ctx => {
-        ctx.groups.push((
+        ctx
+          .groups
+          .push((
           ctx: ctx,
           anchors: (:),
           tree-root: layout(
@@ -411,11 +424,15 @@ input_file: tests/assets/cetz-tree.typ
         return ctx
       },
       after: ctx => {
-        let self = ctx.groups.pop()
+        let self = ctx
+          .groups
+          .pop()
         let nodes = ctx.nodes
         ctx = self.ctx
         if name != none {
-          ctx.nodes.insert(
+          ctx
+            .nodes
+            .insert(
             name,
             nodes.at(name),
           )
@@ -423,14 +440,18 @@ input_file: tests/assets/cetz-tree.typ
         return ctx
       },
       custom-anchors-ctx: ctx => {
-        let self = ctx.groups.last()
+        let self = ctx
+          .groups
+          .last()
         return anchors(
           self.tree-root,
           none,
         )
       },
       children: ctx => {
-        let self = ctx.groups.last()
+        let self = ctx
+          .groups
+          .last()
         render(
           self.tree-root,
           none,

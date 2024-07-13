@@ -76,7 +76,9 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 #show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") {
   set text(1.2em)
   doc-style.show-type(
-    it.text.slice(
+    it
+      .text
+      .slice(
       1,
       -1,
     ),
@@ -277,7 +279,9 @@ Marks are arrow tips that can be added to the end of path based elements that su
           name,
           item,
         ) in (
-          cetz.mark-shapes.mnemonics
+          cetz
+            .mark-shapes
+            .mnemonics
         ) {
           let list = name-to-mnemonic.at(
             item.at(0),
@@ -295,14 +299,15 @@ Marks are arrow tips that can be added to the end of path based elements that su
         }
         (
           raw(name),
-          name-to-mnemonic.at(
-            name,
-            default: (
-              [],
-            ),
-          ).join([, ]),
+          name-to-mnemonic
+            .at(name, default: (
+                [],
+              ))
+            .join([, ]),
           cetz.canvas(
-            cetz.draw.line(
+            cetz
+              .draw
+              .line(
               (),
               (
                 1,

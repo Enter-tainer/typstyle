@@ -497,10 +497,7 @@ input_file: tests/assets/tablex.typ
     let em = len.em
     // Measure with abs (and later multiply by the sign) so negative em works.
     // Otherwise it would return 0pt, and we would need to measure again with abs.
-    let measured-em = calc-sign(em) * measure(
-      box(width: calc.abs(em) * 1em),
-      styles,
-    ).width
+    let measured-em = calc-sign(em) * measure(box(width: calc.abs(em) * 1em), styles).width
 
     return pt + measured-em
   }
@@ -1410,9 +1407,10 @@ input_file: tests/assets/tablex.typ
   let auto_sizes = ()
   let new_columns = columns
 
-  let all-frac-columns = columns.enumerate().filter(i-col => (
-    type(i-col.at(1)) == _fraction-type
-  )).map(i-col => i-col.at(0))
+  let all-frac-columns = columns
+    .enumerate()
+    .filter(i-col => type(i-col.at(1)) == _fraction-type)
+    .map(i-col => i-col.at(0))
   for (i, col) in columns.enumerate() {
     if col == auto {
       // max cell width
@@ -1476,10 +1474,7 @@ input_file: tests/assets/tablex.typ
               align_default: auto,
             )
 
-            let width = measure(
-              cell-box,
-              styles,
-            ).width // + 2*cell_inset // the box already considers inset
+            let width = measure(cell-box, styles).width // + 2*cell_inset // the box already considers inset
 
             // here, we are excluding from the width of this cell
             // at this column all width that was already covered by
@@ -1740,10 +1735,7 @@ input_file: tests/assets/tablex.typ
             // measure the cell's actual height,
             // with its calculated width
             // and with other constraints
-            let height = measure(
-              cell-box,
-              styles,
-            ).height // + 2*cell_inset (box already considers inset)
+            let height = measure(cell-box, styles).height // + 2*cell_inset (box already considers inset)
 
             // here, we are excluding from the height of this cell
             // at this row all height that was already covered by
@@ -2022,63 +2014,69 @@ input_file: tests/assets/tablex.typ
     )
   }
 
-  let hlines = hlines.filter(h => {
-    let y = h.y
+  let hlines = hlines
+    .filter(h => {
+        let y = h.y
 
-    let in_top_or_bottom = y in (cell.y, cell.y + cell.rowspan)
+        let in_top_or_bottom = y in (cell.y, cell.y + cell.rowspan)
 
-    let hline_hasnt_already_ended = (
+        let hline_hasnt_already_ended = (
                 h.end in (auto, none)  // always goes towards the right
                 or h.end >= cell.x + cell.colspan  // ends at or after this cell
             )
 
-    (in_top_or_bottom and hline_hasnt_already_ended)
-  }).map(h => {
-    // get the intersection between the hline and the cell's x-span.
-    let span = get-included-span(
-      h.start,
-      h.end,
-      start: cell.x,
-      end: cell.x + cell.colspan,
-      limit: x_limit,
-    )
+        (in_top_or_bottom and hline_hasnt_already_ended)
+      })
+    .map(h => {
+        // get the intersection between the hline and the cell's x-span.
+        let span = get-included-span(
+          h.start,
+          h.end,
+          start: cell.x,
+          end: cell.x + cell.colspan,
+          limit: x_limit,
+        )
 
-    if span == none {
-      // no intersection!
-      none
-    } else {
-      v-or-hline-with-span(h, start: span.at(0), end: span.at(1))
-    }
-  }).filter(x => x != none)
+        if span == none {
+          // no intersection!
+          none
+        } else {
+          v-or-hline-with-span(h, start: span.at(0), end: span.at(1))
+        }
+      })
+    .filter(x => x != none)
 
-  let vlines = vlines.filter(v => {
-    let x = v.x
+  let vlines = vlines
+    .filter(v => {
+        let x = v.x
 
-    let at_left_or_right = x in (cell.x, cell.x + cell.colspan)
+        let at_left_or_right = x in (cell.x, cell.x + cell.colspan)
 
-    let vline_hasnt_already_ended = (
+        let vline_hasnt_already_ended = (
                 v.end in (auto, none)  // always goes towards the bottom
                 or v.end >= cell.y + cell.rowspan  // ends at or after this cell
             )
 
-    (at_left_or_right and vline_hasnt_already_ended)
-  }).map(v => {
-    // get the intersection between the hline and the cell's x-span.
-    let span = get-included-span(
-      v.start,
-      v.end,
-      start: cell.y,
-      end: cell.y + cell.rowspan,
-      limit: y_limit,
-    )
+        (at_left_or_right and vline_hasnt_already_ended)
+      })
+    .map(v => {
+        // get the intersection between the hline and the cell's x-span.
+        let span = get-included-span(
+          v.start,
+          v.end,
+          start: cell.y,
+          end: cell.y + cell.rowspan,
+          limit: y_limit,
+        )
 
-    if span == none {
-      // no intersection!
-      none
-    } else {
-      v-or-hline-with-span(v, start: span.at(0), end: span.at(1))
-    }
-  }).filter(x => x != none)
+        if span == none {
+          // no intersection!
+          none
+        } else {
+          v-or-hline-with-span(v, start: span.at(0), end: span.at(1))
+        }
+      })
+    .filter(x => x != none)
 
   (
     hlines: hlines,
@@ -2651,9 +2649,10 @@ input_file: tests/assets/tablex.typ
         // otherwise they'd repeat on every page), then
         // we draw its hlines for the header, below it.
         let hlines = if not header-hlines-have-priority and not is-header and start-y == header_last_y + 1 {
-          let hlines_below_header = first-row-group.row_group.hlines.filter(h => (
-            h.y == header_last_y + 1
-          ))
+          let hlines_below_header = first-row-group
+            .row_group
+            .hlines
+            .filter(h => h.y == header_last_y + 1)
 
           hlines + hlines_below_header
         } else {
@@ -2977,15 +2976,15 @@ input_file: tests/assets/tablex.typ
   let new_vlines = ()
 
   if auto-hlines {
-    new_hlines = range(0, row_len + 1).filter(y => (
-      hlines.filter(h => h.y == y).len() == 0
-    )).map(y => hlinex(y: y))
+    new_hlines = range(0, row_len + 1)
+      .filter(y => hlines.filter(h => h.y == y).len() == 0)
+      .map(y => hlinex(y: y))
   }
 
   if auto-vlines {
-    new_vlines = range(0, col_len + 1).filter(x => (
-      vlines.filter(v => v.x == x).len() == 0
-    )).map(x => vlinex(x: x))
+    new_vlines = range(0, col_len + 1)
+      .filter(x => vlines.filter(v => v.x == x).len() == 0)
+      .map(x => vlinex(x: x))
   }
 
   (new_hlines: new_hlines, new_vlines: new_vlines)

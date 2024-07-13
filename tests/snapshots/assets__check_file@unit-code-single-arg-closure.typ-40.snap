@@ -9,13 +9,10 @@ input_file: tests/assets/unit/code/single-arg-closure.typ
     (h: 1, y: 1),
     (h: 2, y: 2),
   )
-  let new_hlines = range(
-    0,
-    row_len + 1,
-  ).filter(y => (
-    hlines.filter(h => (
-      h.y == y
-    )).len() == 0
+  let new_hlines = range(0, row_len + 1).filter(y => (
+    hlines
+      .filter(h => h.y == y)
+      .len() == 0
   ))
   new_hlines
 }
