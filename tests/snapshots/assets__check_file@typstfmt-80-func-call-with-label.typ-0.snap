@@ -1,0 +1,15 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/typstfmt/80-func-call-with-label.typ
+---
+#figure(
+  image(
+    "glacier.jpg",
+    width: 70%,
+  ),
+  caption: [
+    _Glaciers_ form an important part of the earth's
+    climate system.
+  ],
+)<glaciers>
