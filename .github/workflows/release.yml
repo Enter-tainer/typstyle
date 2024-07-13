@@ -48,17 +48,8 @@ jobs:
         run: |
           cargo fmt --all -- --check
           cargo clippy --all-targets --all-features -- -D warnings
-      - name: Install cargo-tarpaulin
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-tarpaulin
-      - name: Run tests with coverage
-        run: cargo tarpaulin --workspace --timeout 120 --out xml
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: Enter-tainer/typstyle
+      - name: Run tests
+        run: cargo test --all --all-features
 
   build:
     needs: [pre_build]
