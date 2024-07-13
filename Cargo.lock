@@ -3671,7 +3671,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle"
-version = "0.11.28"
+version = "0.11.29"
 dependencies = [
  "anyhow",
  "clap",

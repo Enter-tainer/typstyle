@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.11.29 - [2024-07-13]
+
+- typstyle cli now can be installed from `cargo-binstall`
+- typstyle now recognize dot chains and keep them aligned on multiple lines when possible.
+
+Previously, typstyle's format result looks like this:
+```typst
+#{
+  let (title, _) = query(heading.where(level: 1)).map(e => (
+    e.body,
+    e.location().page(),
+  )).rev().find(((_, v)) => v <= page)
+}
+
+```
+
+Now it will be formatted as:
+```typst
+#{
+  let (title, _) = query(heading.where(level: 1))
+    .map(e => (e.body, e.location().page()))
+    .rev()
+    .find(((_, v)) => v <= page)
+}
+```
+
+- Minor adjustment for closure body formatting. 
+
 ## v0.11.28 - [2024-06-25]
 
 - typstyle cli now has a `--check` flag to check if the input is formatted. If it's not formatted, it will return a non-zero exit code.
