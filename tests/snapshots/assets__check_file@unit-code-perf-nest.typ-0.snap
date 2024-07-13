@@ -5,7 +5,9 @@ input_file: tests/assets/unit/code/perf-nest.typ
 ---
 #let f(
   ..arg,
-) = arg
+) = (
+  arg
+)
 
 #f(
   f(
