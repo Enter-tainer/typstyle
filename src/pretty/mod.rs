@@ -647,17 +647,8 @@ impl PrettyPrinter {
             doc = doc
                 .append(BoxDoc::space())
                 .append(BoxDoc::text("=>"))
-                .append(BoxDoc::space());
-            let body_node = closure.body().to_untyped();
-            if body_node.cast::<CodeBlock>().is_some()
-                || body_node.cast::<Parenthesized>().is_some()
-                || body_node.cast::<FuncCall>().is_some()
-                || body_node.cast::<ContentBlock>().is_some()
-            {
-                doc = doc.append(self.convert_expr(closure.body()));
-            } else {
-                doc = doc.append(self.convert_expr_with_optional_paren(closure.body()));
-            }
+                .append(BoxDoc::space())
+                .append(self.convert_expr_with_optional_paren(closure.body()));
         }
         doc
     }
@@ -891,12 +882,11 @@ impl PrettyPrinter {
             .append(self.convert_pattern(for_loop.pattern()))
             .append(BoxDoc::space());
         let in_iter = BoxDoc::text("in")
-            .append(BoxDoc::softline())
-            .append(self.convert_expr(for_loop.iterable()))
-            .nest(2)
+            .append(BoxDoc::space())
+            .append(self.convert_expr_with_optional_paren(for_loop.iterable()))
             .append(BoxDoc::space());
         let body = self.convert_expr(for_loop.body());
-        for_pattern.append(in_iter).append(body)
+        (for_pattern.append(in_iter)).group().append(body)
     }
 
     fn convert_import<'a>(&'a self, import: ModuleImport<'a>) -> BoxDoc<'a, ()> {

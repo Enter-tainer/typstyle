@@ -21,12 +21,13 @@ input_file: tests/assets/unit/grid/colspan.typ
       center
     }
   ),
-  stroke: (x, y) => (
-    (
+  stroke: (
+    x,
+    y,
+  ) => (
     // Separate black cells with white strokes.
     left: if y == 0 and x > 0 { white } else { black },
     rest: black,
-  )
   ),
   fill: (_, y) => (
     if y == 0 {
