@@ -75,6 +75,20 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 } else {
   it
 }
+=======
+#show raw.where(block: false): it => (
+  if it.text.starts-with("<") and it
+    .text
+    .ends-with(">") {
+    set text(1.2em)
+    doc-style.show-type(
+      it.text.slice(1, -1),
+    )
+  } else {
+    it
+  }
+)
+>>>>>>> 9a78423 (test: apply closure format)
 
 == CeTZ Unique Argument Types
 Many CeTZ functions expect data in certain formats which we will call types. Note that these are actually made up of Typst primitives.

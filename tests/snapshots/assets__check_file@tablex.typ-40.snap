@@ -3562,9 +3562,10 @@ input_file: tests/assets/tablex.typ
         ))
 
         let hlines = hlines.filter(h => (
-          this_row_group.hlines.filter(
-            is-same-hline.with(h),
-          ).len() == 0
+          this_row_group
+            .hlines
+            .filter(is-same-hline.with(h))
+            .len() == 0
         ))
 
         let vlines = vlines.filter(v => (
