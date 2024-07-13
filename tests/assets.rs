@@ -42,7 +42,11 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                         .strip_prefix(env::current_dir()?)?
                         .display()
                         .to_string();
-
+                    let test_0 = {
+                        let path = path.clone();
+                        Trial::test(format!("{} - 0char", name), move || check_file(&path, 0))
+                            .with_kind("typst")
+                    };
                     let test_40 = {
                         let path: std::path::PathBuf = path.clone();
                         Trial::test(format!("{} - 40char", name), move || check_file(&path, 40))
@@ -60,22 +64,56 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                         })
                         .with_kind("typst")
                     };
-                    let test_convergence = {
+                    let test_convergence_0 = {
                         let path = path.clone();
-                        Trial::test(format!("{} - convergence", name), move || {
+                        Trial::test(format!("{} - convergence - 0char", name), move || {
+                            check_convergence(&path, 0)
+                        })
+                    };
+                    let test_convergence_40 = {
+                        let path = path.clone();
+                        Trial::test(format!("{} - convergence - 40char", name), move || {
+                            check_convergence(&path, 40)
+                        })
+                    };
+                    let test_convergence_80 = {
+                        let path = path.clone();
+                        Trial::test(format!("{} - convergence - 80char", name), move || {
                             check_convergence(&path, 80)
                         })
                     };
-                    let test_output_consistency =
-                        Trial::test(format!("{} - output consistency", name), move || {
-                            check_output_consistency(&path, 80)
-                        });
+                    let test_output_consistency_80 = {
+                        let path = path.clone();
+                        Trial::test(
+                            format!("{} - output consistency - 80char", name),
+                            move || check_output_consistency(&path, 80),
+                        )
+                    };
+                    let test_output_consistency_40 = {
+                        let path = path.clone();
+                        Trial::test(
+                            format!("{} - output consistency - 40char", name),
+                            move || check_output_consistency(&path, 40),
+                        )
+                    };
+                    let test_output_consistency_0 = {
+                        let path = path.clone();
+                        Trial::test(
+                            format!("{} - output consistency - 0char", name),
+                            move || check_output_consistency(&path, 0),
+                        )
+                    };
                     tests.extend([
+                        test_0,
                         test_40,
                         test_80,
                         test_120,
-                        test_convergence,
-                        test_output_consistency,
+                        test_convergence_0,
+                        test_convergence_40,
+                        test_convergence_80,
+                        test_output_consistency_0,
+                        test_output_consistency_40,
+                        test_output_consistency_80,
                     ]);
                 }
             } else if file_type.is_dir() {

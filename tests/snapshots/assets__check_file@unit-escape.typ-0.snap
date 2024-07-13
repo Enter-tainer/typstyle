@@ -1,0 +1,7 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/escape.typ
+---
+I got an ice cream for
+\$1.50! \u{1f600}

@@ -1,0 +1,22 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/off/content-func-call.typ
+---
+#table(
+  columns: /* @typstyle off */ (1fr,
+auto, auto),
+  inset: 10pt, align: horizon,[],
+      [*Area*],
+           [*Parameters*],
+  [Some image],
+  $ pi h (D^2 - d^2) / 4 $,
+  /* @typstyle off */ [
+      $h$: height \
+    $D$: outer radius \
+         $d$: inner radius
+  ],
+  [Another Image],
+  $ sqrt(2) / 12 a^3 $,
+  [$a$: edge length]
+)
