@@ -52,6 +52,7 @@ theme:
     - navigation.path
     - navigation.sections
     - navigation.expand
+    - navigation.tracking
   font:
     text: 'Fira Sans'
     code: 'Fira Mono'
@@ -71,7 +72,7 @@ markdown_extensions:
   - footnotes
   - meta
   - toc:
-      permalink: ""
+      permalink: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
   - pymdownx.arithmatex:
       generic: true
