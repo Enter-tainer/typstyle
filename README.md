@@ -10,7 +10,8 @@
 
 1. Download the binary from the [release page](https://github.com/Enter-tainer/typstyle/releases/)
 2. Install it from your package manager: <https://repology.org/project/typstyle/versions>
-3. Install it using cargo: `cargo install typstyle --locked`
+3. Install using [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall): `cargo binstall typstyle`
+4. Install it using cargo: `cargo install typstyle --locked`
 
 Usage: 
 ```txt
