@@ -9,6 +9,7 @@ use crate::attr::Attributes;
 use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
 
 mod func_call;
+mod parened_expr;
 mod table;
 mod util;
 
@@ -502,22 +503,6 @@ impl PrettyPrinter {
         doc
     }
 
-    fn convert_parenthesized<'a>(&'a self, parenthesized: Parenthesized<'a>) -> BoxDoc<'a, ()> {
-        if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
-            return res;
-        }
-        let mut doc = BoxDoc::text("(");
-        let inner = self.convert_expr(parenthesized.expr());
-        let inner = BoxDoc::line_()
-            .append(inner)
-            .append(BoxDoc::line_())
-            .nest(2)
-            .group();
-        doc = doc.append(inner);
-        doc = doc.append(BoxDoc::text(")"));
-        doc
-    }
-
     fn convert_array<'a>(&'a self, array: Array<'a>) -> BoxDoc<'a, ()> {
         let array_items = array
             .items()
@@ -659,31 +644,19 @@ impl PrettyPrinter {
             } else {
                 doc = arg_list
             }
-            doc = doc.append(BoxDoc::space());
-            doc = doc.append(BoxDoc::text("=>"));
-            let body_expr = self.convert_expr(closure.body());
+            doc = doc
+                .append(BoxDoc::space())
+                .append(BoxDoc::text("=>"))
+                .append(BoxDoc::space());
             let body_node = closure.body().to_untyped();
             if body_node.cast::<CodeBlock>().is_some()
                 || body_node.cast::<Parenthesized>().is_some()
                 || body_node.cast::<FuncCall>().is_some()
                 || body_node.cast::<ContentBlock>().is_some()
             {
-                doc = doc.append(BoxDoc::space()).append(body_expr);
+                doc = doc.append(self.convert_expr(closure.body()));
             } else {
-                let left_paren_or_nil = BoxDoc::text("(")
-                    .append(BoxDoc::line())
-                    .flat_alt(BoxDoc::nil());
-                let right_paren_or_nil = BoxDoc::line()
-                    .append(BoxDoc::text(")"))
-                    .flat_alt(BoxDoc::nil());
-                doc = doc.append(
-                    BoxDoc::space()
-                        .append(left_paren_or_nil)
-                        .append(body_expr)
-                        .nest(2)
-                        .append(right_paren_or_nil)
-                        .group(),
-                )
+                doc = doc.append(self.convert_expr_with_optional_paren(closure.body()));
             }
         }
         doc
