@@ -12,6 +12,13 @@ impl PrettyPrinter {
         if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
             return res;
         }
+        if !is_pattern {
+            if let Pattern::Parenthesized(paren) = parenthesized.pattern() {
+                return self.convert_parenthesized(paren, true);
+            }
+        } else if let Expr::Parenthesized(paren) = parenthesized.expr() {
+            return self.convert_parenthesized(paren, false);
+        }
         let mut doc = BoxDoc::text("(");
         let inner = if is_pattern {
             self.convert_pattern(parenthesized.pattern())
