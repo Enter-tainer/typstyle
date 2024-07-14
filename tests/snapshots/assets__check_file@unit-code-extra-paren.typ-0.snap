@@ -5,9 +5,7 @@ input_file: tests/assets/unit/code/extra-paren.typ
 ---
 #{
   let a = (
-    (
-      1 + 2
-    )
+    1 + 2
   )
   a
 }
@@ -26,4 +24,69 @@ input_file: tests/assets/unit/code/extra-paren.typ
     )
   ) = x
   a + b
+}
+
+#{
+  let x = (
+    1,
+    2,
+    3.4,
+  )
+  let (
+    (
+      a,
+      b,
+      ..,
+    )
+  ) = x
+  a + b
+}
+
+
+#{
+  if (
+    1 + 2 == 3
+  ) {
+    1
+  } else {
+    2
+  }
+}
+
+
+#{
+  if (
+    1 + 2 == 3
+  ) {
+    1
+  } else {
+    2
+  }
+}
+
+#{
+  while (
+    2 < 1
+  ) {
+    1
+  }
+}
+
+#{
+  while (
+    2 < 1
+  ) {
+    1
+  }
+}
+
+#{
+  for (
+    i
+  ) in range(
+    0,
+    5,
+  ) {
+    [#i]
+  }
 }
