@@ -50,6 +50,12 @@ jobs:
         run: |
           cargo fmt --all -- --check
           cargo clippy --all-targets --all-features -- -D warnings
+      - name: Install typst
+        uses: typst-community/setup-typst@v3
+      - name: Warmup typst package cache
+        run: |
+          python ./scripts/generate-imports.py
+          typst compile output.typ
       - name: Run Unit tests
         run: cargo nextest run -E 'not test(~e2e)' --no-fail-fast
       - name: Run E2E tests
