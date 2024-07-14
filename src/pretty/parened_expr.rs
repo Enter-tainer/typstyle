@@ -7,12 +7,17 @@ impl PrettyPrinter {
     pub(super) fn convert_parenthesized<'a>(
         &'a self,
         parenthesized: Parenthesized<'a>,
+        is_pattern: bool,
     ) -> BoxDoc<'a, ()> {
         if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
             return res;
         }
         let mut doc = BoxDoc::text("(");
-        let inner = self.convert_expr(parenthesized.expr());
+        let inner = if is_pattern {
+            self.convert_pattern(parenthesized.pattern())
+        } else {
+            self.convert_expr(parenthesized.expr())
+        };
         let inner = BoxDoc::line_()
             .append(inner)
             .append(BoxDoc::line_())
