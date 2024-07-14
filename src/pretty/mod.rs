@@ -164,7 +164,7 @@ impl PrettyPrinter {
             ast::Expr::Str(s) => self.convert_str(s),
             ast::Expr::Code(c) => self.convert_code_block(c),
             ast::Expr::Content(c) => self.convert_content_block(c),
-            ast::Expr::Parenthesized(p) => self.convert_parenthesized(p),
+            ast::Expr::Parenthesized(p) => self.convert_parenthesized(p, false),
             ast::Expr::Array(a) => self.convert_array(a),
             ast::Expr::Dict(d) => self.convert_dict(d),
             ast::Expr::Unary(u) => self.convert_unary(u),
@@ -716,7 +716,7 @@ impl PrettyPrinter {
             Pattern::Normal(n) => self.convert_expr(n),
             Pattern::Placeholder(p) => self.convert_underscore(p),
             Pattern::Destructuring(d) => self.convert_destructuring(d),
-            Pattern::Parenthesized(p) => self.convert_parenthesized(p),
+            Pattern::Parenthesized(p) => self.convert_parenthesized(p, true),
         }
     }
 
