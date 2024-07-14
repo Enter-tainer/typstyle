@@ -53,7 +53,7 @@ jobs:
       - name: Run Unit tests
         run: cargo nextest run -E 'not test(~e2e)' --no-fail-fast
       - name: Run E2E tests
-        run: cargo nextest run -E 'not test(~e2e)' --no-fail-fast
+        run: cargo nextest run -E 'test(~e2e)' --no-fail-fast
 
   build:
     needs: [pre_build]
