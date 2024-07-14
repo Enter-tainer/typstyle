@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.30 - [2024-07-14]
+
+- Bug fix: previously when a destructing pattern has extra parentheses, typstyle will completely remove everything inside the parentheses. Now it is fixed.
+- Typstyle now collapses extra parentheses in expression. 
+
 ## v0.11.29 - [2024-07-13]
 
 - typstyle cli now can be installed from `cargo-binstall`
