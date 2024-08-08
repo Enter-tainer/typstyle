@@ -25,19 +25,26 @@ impl FoldStyle {
     }
 }
 
-pub fn comma_seprated_items<'a, I>(items: I, fold_style: FoldStyle) -> BoxDoc<'a, ()>
+pub fn comma_seprated_items<'a, I>(
+    items: I,
+    fold_style: FoldStyle,
+    left: Option<&'static str>,
+    right: Option<&'static str>,
+) -> BoxDoc<'a, ()>
 where
     I: IntoIterator<Item = BoxDoc<'a, ()>> + ExactSizeIterator,
 {
+    let left = left.unwrap_or("(");
+    let right = right.unwrap_or(")");
     if items.len() == 0 {
-        return BoxDoc::text("()");
+        return BoxDoc::text(left).append(BoxDoc::text(right));
     }
     let comma_ = BoxDoc::text(",").flat_alt(BoxDoc::nil());
     match fold_style {
         FoldStyle::Fit => {
             let sep = BoxDoc::text(",").append(BoxDoc::line());
             let inner = BoxDoc::intersperse(items, sep).append(comma_);
-            BoxDoc::text("(")
+            BoxDoc::text(left)
                 .append(
                     BoxDoc::line_()
                         .append(inner)
@@ -45,15 +52,15 @@ where
                         .append(BoxDoc::line_())
                         .group(),
                 )
-                .append(")")
+                .append(BoxDoc::text(right))
         }
         FoldStyle::Never => {
             let sep = BoxDoc::text(",").append(BoxDoc::hardline());
             let inner = BoxDoc::intersperse(items, sep).append(BoxDoc::text(","));
-            BoxDoc::text("(")
+            BoxDoc::text(left)
                 .append(BoxDoc::hardline().append(inner).nest(2))
                 .append(BoxDoc::hardline())
-                .append(")")
+                .append(BoxDoc::text(right))
         }
     }
 }
