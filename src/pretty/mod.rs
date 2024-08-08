@@ -533,7 +533,7 @@ impl PrettyPrinter {
             res
         } else {
             let style = FoldStyle::from_attr(self.attr_map.get(array.to_untyped()));
-            comma_seprated_items(array_items.into_iter(), style)
+            comma_seprated_items(array_items.into_iter(), style, None, None)
         }
     }
 
@@ -546,15 +546,18 @@ impl PrettyPrinter {
     }
 
     fn convert_dict<'a>(&'a self, dict: Dict<'a>) -> BoxDoc<'a, ()> {
-        if dict.items().count() == 0 {
-            return BoxDoc::text("(:)");
-        }
+        let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
         let dict_items = dict
             .items()
             .map(|item| self.convert_dict_item(item))
             .collect_vec();
         let style = FoldStyle::from_attr(self.attr_map.get(dict.to_untyped()));
-        comma_seprated_items(dict_items.into_iter(), style)
+        comma_seprated_items(
+            dict_items.into_iter(),
+            style,
+            if all_spread { Some("(:") } else { None },
+            None,
+        )
     }
 
     fn convert_dict_item<'a>(&'a self, dict_item: DictItem<'a>) -> BoxDoc<'a, ()> {
@@ -649,7 +652,7 @@ impl PrettyPrinter {
         let arg_list = if let Some(res) = self.check_disabled(closure.params().to_untyped()) {
             res
         } else {
-            comma_seprated_items(params.clone().into_iter(), style)
+            comma_seprated_items(params.clone().into_iter(), style, None, None)
         };
 
         if let Some(name) = closure.name() {
@@ -742,7 +745,7 @@ impl PrettyPrinter {
                 .append(items.into_iter().next().unwrap())
                 .append(BoxDoc::text(",)"))
         } else {
-            comma_seprated_items(items.into_iter(), FoldStyle::Fit)
+            comma_seprated_items(items.into_iter(), FoldStyle::Fit, None, None)
         }
     }
 
