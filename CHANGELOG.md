@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.11.31 - [2024-08-08]
+
+- Bug fix: Typstyle previously removes necessary leading colon in dict. Now it is fixed.
+```typst
+#{
+  let a = (a: 1)
+  let b = (b: 2)
+  (: ..a, ..b) // previously it will be formatted as (..a, ..b)
+}
+```
+
 ## v0.11.30 - [2024-07-14]
 
 - Bug fix: previously when a destructing pattern has extra parentheses, typstyle will completely remove everything inside the parentheses. Now it is fixed.
