@@ -25,7 +25,7 @@ impl FoldStyle {
     }
 }
 
-pub fn comma_seprated_items<'a, I>(
+pub fn comma_separated_items<'a, I>(
     items: I,
     fold_style: FoldStyle,
     left: Option<&'static str>,
