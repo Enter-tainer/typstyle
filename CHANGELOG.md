@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.11.32 - [2024-08-19]
+
+- Bug fix: Typstyle previously fails to correctly format inline triple backtick code block without a lang tag or an empty inline triple backtick code block with only a lang tag. Now it is fixed.
+```typst
+#text(``` test ```)
+#text(```test ```)
+```
+
+Previously, it will be formatted as:
+```typst
+#text(```test  ```)
+#text(```test  ```)
+```
+
+Now it is fixed.
+
 ## v0.11.31 - [2024-08-08]
 
 - Bug fix: Typstyle previously removes necessary leading colon in dict. Now it is fixed.
