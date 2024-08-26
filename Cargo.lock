@@ -3634,7 +3634,7 @@ dependencies = [
  "typed-arena",
  "typst-assets 0.11.0 (git+https://github.com/typst/typst-assets?rev=4ee794c)",
  "typst-macros",
- "typst-syntax 0.11.0",
+ "typst-syntax",
  "typst-timing",
  "typst-utils",
  "unicode-bidi",
@@ -3731,23 +3731,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "typst-syntax"
-version = "0.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3db69f2f41613b1ff6edbec44fd7dc524137f099ee36c46f560cedeaadb40c4"
-dependencies = [
- "comemo",
- "ecow",
- "once_cell",
- "serde",
- "unicode-ident",
- "unicode-math-class",
- "unicode-script",
- "unicode-segmentation",
- "unscanny",
-]
-
-[[package]]
 name = "typst-timing"
 version = "0.11.0"
 source = "git+https://github.com/paran3xus/typst.git?branch=tinymist-nightly#e17630abc234ddb346664af1375ce7f980ec53a1"
@@ -3755,7 +3738,7 @@ dependencies = [
  "parking_lot",
  "serde",
  "serde_json",
- "typst-syntax 0.11.0",
+ "typst-syntax",
 ]
 
 [[package]]
@@ -3789,7 +3772,7 @@ dependencies = [
  "typst-assets 0.11.0 (git+https://github.com/typst/typst-assets?branch=main)",
  "typst-pdf",
  "typst-render",
- "typst-syntax 0.11.1",
+ "typst-syntax",
  "vergen",
  "walkdir",
  "wasm-bindgen",
