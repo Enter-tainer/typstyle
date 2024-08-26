@@ -147,6 +147,7 @@ impl PrettyPrinter {
             ast::Expr::Term(t) => self.convert_term_item(t),
             ast::Expr::Equation(e) => self.convert_equation(e),
             ast::Expr::Math(m) => self.convert_math(m),
+            ast::Expr::MathShorthand(ms) => self.convert_math_shorthand(ms),
             ast::Expr::MathIdent(mi) => trivia(mi.to_untyped()),
             ast::Expr::MathAlignPoint(map) => trivia(map.to_untyped()),
             ast::Expr::MathDelimited(md) => self.convert_math_delimited(md),
@@ -361,6 +362,11 @@ impl PrettyPrinter {
             }
         }
         doc
+    }
+
+    fn convert_math_shorthand<'a>(&'a self, ms: MathShorthand<'a>) -> BoxDoc<'a, ()> {
+        let node = ms.to_untyped();
+        trivia(node)
     }
 
     fn convert_ident<'a>(&'a self, ident: Ident<'a>) -> BoxDoc<'a, ()> {
@@ -919,7 +925,7 @@ impl PrettyPrinter {
 
     fn convert_import_item<'a>(&'a self, import_item: ImportItem<'a>) -> BoxDoc<'a, ()> {
         match import_item {
-            ImportItem::Simple(s) => self.convert_ident(s),
+            ImportItem::Simple(s) => self.convert_ident(s.name()),
             ImportItem::Renamed(r) => self
                 .convert_ident(r.original_name())
                 .append(BoxDoc::space())
