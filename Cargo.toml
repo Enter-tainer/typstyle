@@ -49,17 +49,15 @@ libtest-mimic = "0.7.3"
 pathdiff = "0.2.1"
 pretty_assertions = "1.4.0"
 walkdir = "2"
-typst-ts-core = { version = "0.5.0-rc2", default-features = false, features = [
-  "no-content-hint",
-] }
-typst-ts-compiler = { version = "0.5.0-rc2", default-features = false, features = [
+reflexo = { git = "https://github.com/paran3xus/typst.ts", branch = "nightly", default-features = false, features = [] }
+reflexo-typst = { git = "https://github.com/paran3xus/typst.ts", branch = "nightly", default-features = false, features = [
   "no-content-hint",
   "system-compile",
 ] }
-typst-assets = { version = "0.11.1", features = ["fonts"] }
-typst-render = "0.11.1"
-typst-pdf = "0.11.1"
-typst = "0.11.1"
+typst-assets = { git = "https://github.com/typst/typst-assets", branch = "main", features = ["fonts"] }
+typst-render = { git = "https://github.com/paran3xus/typst.git", branch = "tinymist-nightly" }
+typst-pdf = { git = "https://github.com/paran3xus/typst.git", branch = "tinymist-nightly" }
+typst = { git = "https://github.com/paran3xus/typst.git", branch = "tinymist-nightly" }
 
 [build-dependencies]
 anyhow = "1"
