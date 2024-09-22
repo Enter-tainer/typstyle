@@ -114,10 +114,11 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
             #[cfg(feature = "completion")]
             cli::Command::Completions { shell } => {
                 use clap::CommandFactory;
+
                 clap_complete::generate(
                     *shell,
                     &mut cli::CliArguments::command(),
-                    std::env::args().next().unwrap(),
+                    "typstyle",
                     &mut std::io::stdout(),
                 );
             }
