@@ -123,7 +123,7 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
 
                 let bin_name = bin_path
                     .as_ref()
-                    .and_then(|p| p.file_name().and_then(|p| p.to_str()))
+                    .and_then(|p| p.file_stem().and_then(|p| p.to_str()))
                     .unwrap_or("typstyle");
 
                 clap_complete::generate(
