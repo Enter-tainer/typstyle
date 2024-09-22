@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.34 - [2024-09-22]
+
+- Fix a bug in the `completions` subcommand. https://github.com/Enter-tainer/typstyle/pull/131#issuecomment-2365456088
+
 ## v0.11.33 - [2024-09-22]
 
 - feat: add command-line completions
