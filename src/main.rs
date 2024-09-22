@@ -114,10 +114,22 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
             #[cfg(feature = "completion")]
             cli::Command::Completions { shell } => {
                 use clap::CommandFactory;
+                use std::env::{args_os, current_exe};
+
+                let bin_path = args_os()
+                    .next()
+                    .map(PathBuf::from)
+                    .or_else(|| current_exe().ok());
+
+                let bin_name = bin_path
+                    .as_ref()
+                    .and_then(|p| p.file_name().and_then(|p| p.to_str()))
+                    .unwrap_or("typstyle");
+
                 clap_complete::generate(
                     *shell,
                     &mut cli::CliArguments::command(),
-                    std::env::args().next().unwrap(),
+                    bin_name,
                     &mut std::io::stdout(),
                 );
             }
