@@ -1,6 +1,6 @@
 [package]
 name = "typstyle"
-version = "0.11.32"
+version = "0.11.34"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
 license-file = "LICENSE"
@@ -42,6 +42,7 @@ once_cell = { version = "1.19.0", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 clap = { version = "4.5.4", features = ["derive", "env"], optional = true }
 walkdir = { version = "2", optional = true }
+clap_complete = { version = "4.5.26", optional = true }
 
 [dev-dependencies]
 insta = { version = "1.39.0" }
@@ -61,11 +62,7 @@ typst = { git = "https://github.com/paran3xus/typst.git", branch = "tinymist-typ
 
 [build-dependencies]
 anyhow = "1"
-vergen = { version = "8.3.1", features = [
-  "build",
-  "cargo",
-  "rustc",
-] }
+vergen = { version = "8.3.1", features = ["build", "cargo", "rustc"] }
 
 [profile.dev.package]
 insta.opt-level = 3
@@ -81,10 +78,11 @@ harness = false
 
 [features]
 
-default = ["cli", "wasm", "git-info"]
+default = ["cli", "wasm", "git-info", "completion"]
 cli = ["clap", "once_cell", "walkdir"]
 wasm = ["wasm-bindgen"]
 git-info = ["vergen/git", "vergen/git2"]
+completion = ["cli", "dep:clap_complete"]
 
 [profile.test]
 opt-level = 3

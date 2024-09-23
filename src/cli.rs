@@ -37,6 +37,13 @@ pub enum Command {
         /// The directory to format. If not provided, the current directory is used
         directory: Option<PathBuf>,
     },
+    #[cfg(feature = "completion")]
+    /// Generate shell completions for the given shell to stdout
+    Completions {
+        /// The shell to generate completions for
+        #[clap(value_enum)]
+        shell: clap_complete::Shell,
+    },
 }
 
 pub enum CliResults {

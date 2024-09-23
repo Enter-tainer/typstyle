@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.11.34 - [2024-09-22]
+
+- Fix a bug in the `completions` subcommand. https://github.com/Enter-tainer/typstyle/pull/131#issuecomment-2365456088
+
+## v0.11.33 - [2024-09-22]
+
+- feat: add command-line completions
+```
+Generate shell completions for the given shell to stdout
+
+Usage: typstyle completions <SHELL>
+
+Arguments:
+  <SHELL>  The shell to generate completions for [possible values: bash, elvish, fish, powershell, zsh]
+```
+
 ## v0.11.32 - [2024-08-19]
 
 - Bug fix: Typstyle previously fails to correctly format inline triple backtick code block without a lang tag or an empty inline triple backtick code block with only a lang tag. Now it is fixed.

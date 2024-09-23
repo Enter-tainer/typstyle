@@ -111,6 +111,17 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
                     bail!("failed to format {error_count} files");
                 }
             }
+            #[cfg(feature = "completion")]
+            cli::Command::Completions { shell } => {
+                use clap::CommandFactory;
+
+                clap_complete::generate(
+                    *shell,
+                    &mut cli::CliArguments::command(),
+                    "typstyle",
+                    &mut std::io::stdout(),
+                );
+            }
         }
 
         return Ok(changed.into());
