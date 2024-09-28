@@ -1,4 +1,8 @@
 use libtest_mimic::{Arguments, Failed, Trial};
+use reflexo_typst::{
+    config::CompileOpts, typst::prelude::EcoVec, world::EntryOpts, CompileDriver, ShadowApi,
+    TypstDocument, TypstSystemUniverse,
+};
 use std::{
     borrow::Cow,
     env,
@@ -8,16 +12,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
-use typst_ts_compiler::{
-    service::{CompileDriver, Compiler},
-    ShadowApi, TypstSystemWorld,
-};
-use typst_ts_core::{
-    config::{compiler::EntryOpts, CompileOpts},
-    diag::SourceDiagnostic,
-    typst::prelude::EcoVec,
-    TypstDocument,
-};
+use typst::diag::SourceDiagnostic;
 use typstyle_core::Typstyle;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -194,16 +189,18 @@ fn compile_typst_src(content: &str) -> Result<Arc<TypstDocument>, EcoVec<SourceD
     } else {
         PathBuf::from("/")
     };
-    let world = TypstSystemWorld::new(CompileOpts {
+    let world = TypstSystemUniverse::new(CompileOpts {
         entry: EntryOpts::new_rooted(root.clone(), Some(PathBuf::from("/main.typ"))),
         with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
         ..Default::default()
     })
     .unwrap();
+    let mut world = world.with_entry_file(root.join("main.typ"));
     world
         .map_shadow(&root.join("main.typ"), content.as_bytes().into())
         .unwrap();
-    let mut driver = CompileDriver::new(world).with_entry_file(root.join("main.typ"));
+    let c = std::marker::PhantomData;
+    let mut driver = CompileDriver::new(c, world);
     driver.compile(&mut Default::default())
 }
 
@@ -233,34 +230,26 @@ fn compare_docs(
                 "The page counts are not consistent"
             );
             pretty_assertions::assert_eq!(
-                doc.title,
-                formatted_doc.title,
+                doc.info.title,
+                formatted_doc.info.title,
                 "The titles are not consistent"
             );
             pretty_assertions::assert_eq!(
-                doc.author,
-                formatted_doc.author,
+                doc.info.author,
+                formatted_doc.info.author,
                 "The authors are not consistent"
             );
             pretty_assertions::assert_eq!(
-                doc.keywords,
-                formatted_doc.keywords,
+                doc.info.keywords,
+                formatted_doc.info.keywords,
                 "The keywords are not consistent"
             );
 
             for (i, (doc, formatted_doc)) in
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
-                let png = typst_render::render(
-                    &doc.frame,
-                    2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
-                );
-                let formatted_png = typst_render::render(
-                    &formatted_doc.frame,
-                    2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
-                );
+                let png = typst_render::render(doc, 2.0);
+                let formatted_png = typst_render::render(formatted_doc, 2.0);
                 if png != formatted_png {
                     // save both to tmp path and report error
                     let tmp_dir = env::temp_dir();

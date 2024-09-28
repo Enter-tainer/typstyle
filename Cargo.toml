@@ -59,9 +59,9 @@ reflexo-typst = { git = "https://github.com/Myriad-Dreamin/typst.ts", branch = "
 typst-assets = { git = "https://github.com/typst/typst-assets", rev = "4ee794cf8fb98eb67194e757c9820ab8562d853b", features = [
   "fonts",
 ] }
-typst-render = { git = "https://github.com/Myriad-Dreamin/typst.git", ref = "tinymist-v0.11.23" }
-typst-pdf = { git = "https://github.com/Myriad-Dreamin/typst.git", ref = "tinymist-v0.11.23" }
-typst = { git = "https://github.com/Myriad-Dreamin/typst.git", ref = "tinymist-v0.11.23" }
+typst-render = { git = "https://github.com/Myriad-Dreamin/typst.git", tag = "tinymist-v0.11.23" }
+typst-pdf = { git = "https://github.com/Myriad-Dreamin/typst.git", tag = "tinymist-v0.11.23" }
+typst = { git = "https://github.com/Myriad-Dreamin/typst.git", tag = "tinymist-v0.11.23" }
 
 [build-dependencies]
 anyhow = "1"

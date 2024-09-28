@@ -9,18 +9,11 @@ use std::{
 use anyhow::{bail, Context};
 use itertools::Itertools;
 use libtest_mimic::{Arguments, Failed, Trial};
-use typst_ts_compiler::{
-    service::{CompileDriver, Compiler},
-    ShadowApi, TypstSystemWorld,
+use reflexo_typst::{
+    config::CompileOpts, error::diag_from_std, foundations::Smart, typst::prelude::EcoVec,
+    world::EntryOpts, CompileDriver, ShadowApi, TypstDocument, TypstSystemUniverse, TypstWorld,
 };
-use typst_ts_core::{
-    config::{compiler::EntryOpts, CompileOpts},
-    diag::SourceDiagnostic,
-    error::diag_from_std,
-    foundations::Smart,
-    typst::prelude::EcoVec,
-    TypstDocument, TypstWorld,
-};
+use typst::diag::SourceDiagnostic;
 use typstyle_core::Typstyle;
 
 fn main() -> anyhow::Result<()> {
@@ -217,15 +210,15 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
     } else {
         PathBuf::from("/")
     };
-    let make_world = || -> anyhow::Result<TypstSystemWorld> {
-        Ok(TypstSystemWorld::new(CompileOpts {
+    let make_world = || -> anyhow::Result<TypstSystemUniverse> {
+        Ok(TypstSystemUniverse::new(CompileOpts {
             entry: EntryOpts::new_rooted(root.clone(), Some(entrypoint.clone())),
             with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
             ..Default::default()
         })?)
     };
-    let world = make_world()?;
-    let formatted_world = make_world()?;
+    let mut world = make_world()?;
+    let mut formatted_world = make_world()?;
     // map all files within the testcase_dir
     for entry in walkdir::WalkDir::new(&testcase_dir) {
         let entry = entry?;
@@ -266,16 +259,19 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
             .strip_prefix(&testcase_dir)
             .context("entrypoint is not within the testcase_dir")?,
     );
-    let mut driver = CompileDriver::new(world).with_entry_file(entry_file.clone());
-    let mut formatted_driver = CompileDriver::new(formatted_world).with_entry_file(entry_file);
+    let c = std::marker::PhantomData;
+    let world = world.with_entry_file(entry_file.clone());
+    let mut driver = CompileDriver::new(c, world);
+    let formatted_world = formatted_world.with_entry_file(entry_file);
+    let mut formatted_driver = CompileDriver::new(c, formatted_world);
     let doc = driver.compile(&mut Default::default());
     let formatted_doc = formatted_driver.compile(&mut Default::default());
     compare_docs(
         &testcase.name,
         doc,
-        &driver.world,
+        &driver.snapshot(),
         formatted_doc,
-        &formatted_driver.world,
+        &formatted_driver.snapshot(),
     )?;
     Ok(())
 }
@@ -289,8 +285,9 @@ fn compare_docs(
 ) -> anyhow::Result<()> {
     match (doc, formatted_doc) {
         (Ok(doc), Ok(formatted_doc)) => {
-            let pdf = typst_pdf::pdf(&doc, Smart::Custom("original"), None);
-            let formatted_pdf = typst_pdf::pdf(&formatted_doc, Smart::Custom("formatted"), None);
+            let pdf = typst_pdf::pdf(&doc, Smart::Custom("original"), None, None);
+            let formatted_pdf =
+                typst_pdf::pdf(&formatted_doc, Smart::Custom("formatted"), None, None);
             // write both pdf to tmp path
             let tmp_dir = env::temp_dir();
             let pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "original"));
@@ -309,34 +306,26 @@ fn compare_docs(
                 "The page counts are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.title,
-                formatted_doc.title,
+                doc.info.title,
+                formatted_doc.info.title,
                 "The titles are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.author,
-                formatted_doc.author,
+                doc.info.author,
+                formatted_doc.info.author,
                 "The authors are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.keywords,
-                formatted_doc.keywords,
+                doc.info.keywords,
+                formatted_doc.info.keywords,
                 "The keywords are not consistent. {message}"
             );
 
             for (i, (doc, formatted_doc)) in
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
-                let png = typst_render::render(
-                    &doc.frame,
-                    2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
-                );
-                let formatted_png = typst_render::render(
-                    &formatted_doc.frame,
-                    2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
-                );
+                let png = typst_render::render(doc, 2.0);
+                let formatted_png = typst_render::render(formatted_doc, 2.0);
                 if png != formatted_png {
                     // save both to tmp path and report error
                     let tmp_dir = env::temp_dir();
