@@ -10,15 +10,12 @@ use std::{
 use anyhow::{bail, Context};
 use itertools::Itertools;
 use libtest_mimic::{Arguments, Failed, Trial};
-use typst_ts_compiler::{CompileDriver, CompilerUniverse, ShadowApi, TypstSystemUniverse};
-use typst_ts_core::{
-    config::{compiler::EntryOpts, CompileOpts},
-    diag::SourceDiagnostic,
-    error::diag_from_std,
-    foundations::Smart,
-    typst::prelude::EcoVec,
-    TypstDocument, TypstWorld,
+use reflexo_typst::{
+    config::CompileOpts, error::diag_from_std, foundations::Smart, typst::prelude::EcoVec,
+    world::EntryOpts, CompileDriver, ShadowApi, TypstDocument, TypstSystemUniverse, TypstWorld,
 };
+use typst::diag::SourceDiagnostic;
+use typst_pdf::PdfOptions;
 use typstyle_core::Typstyle;
 
 fn main() -> anyhow::Result<()> {
@@ -221,7 +218,7 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
             .context("entrypoint is not within the testcase_dir")?,
     );
     let make_world = || -> anyhow::Result<TypstSystemUniverse> {
-        let univ = CompilerUniverse::new(CompileOpts {
+        let univ = TypstSystemUniverse::new(CompileOpts {
             entry: EntryOpts::new_rooted(root.clone(), Some(entrypoint.clone())),
             with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
             ..Default::default()
