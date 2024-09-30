@@ -5,13 +5,11 @@ use std::{
     error::Error,
     ffi::OsStr,
     fs,
+    marker::PhantomData,
     path::{Path, PathBuf},
     sync::Arc,
 };
-use typst_ts_compiler::{
-    service::{CompileDriver, Compiler},
-    ShadowApi, TypstSystemWorld,
-};
+use typst_ts_compiler::{CompileDriver, ShadowApi, TypstSystemUniverse};
 use typst_ts_core::{
     config::{compiler::EntryOpts, CompileOpts},
     diag::SourceDiagnostic,
@@ -194,16 +192,17 @@ fn compile_typst_src(content: &str) -> Result<Arc<TypstDocument>, EcoVec<SourceD
     } else {
         PathBuf::from("/")
     };
-    let world = TypstSystemWorld::new(CompileOpts {
+    let mut univ = TypstSystemUniverse::new(CompileOpts {
         entry: EntryOpts::new_rooted(root.clone(), Some(PathBuf::from("/main.typ"))),
         with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
         ..Default::default()
     })
-    .unwrap();
-    world
-        .map_shadow(&root.join("main.typ"), content.as_bytes().into())
+    .unwrap()
+    .with_entry_file(root.join("main.typ"));
+    univ.map_shadow(&root.join("main.typ"), content.as_bytes().into())
         .unwrap();
-    let mut driver = CompileDriver::new(world).with_entry_file(root.join("main.typ"));
+    let compiler = PhantomData;
+    let mut driver = CompileDriver::new(compiler, univ);
     driver.compile(&mut Default::default())
 }
 

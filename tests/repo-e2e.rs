@@ -2,6 +2,7 @@ use std::{
     borrow::Cow,
     collections::HashSet,
     env, fs,
+    marker::PhantomData,
     path::{Path, PathBuf},
     sync::Arc,
 };
@@ -9,10 +10,7 @@ use std::{
 use anyhow::{bail, Context};
 use itertools::Itertools;
 use libtest_mimic::{Arguments, Failed, Trial};
-use typst_ts_compiler::{
-    service::{CompileDriver, Compiler},
-    ShadowApi, TypstSystemWorld,
-};
+use typst_ts_compiler::{CompileDriver, CompilerUniverse, ShadowApi, TypstSystemUniverse};
 use typst_ts_core::{
     config::{compiler::EntryOpts, CompileOpts},
     diag::SourceDiagnostic,
@@ -217,15 +215,22 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
     } else {
         PathBuf::from("/")
     };
-    let make_world = || -> anyhow::Result<TypstSystemWorld> {
-        Ok(TypstSystemWorld::new(CompileOpts {
+    let entry_file = root.join(
+        entrypoint
+            .strip_prefix(&testcase_dir)
+            .context("entrypoint is not within the testcase_dir")?,
+    );
+    let make_world = || -> anyhow::Result<TypstSystemUniverse> {
+        let univ = CompilerUniverse::new(CompileOpts {
             entry: EntryOpts::new_rooted(root.clone(), Some(entrypoint.clone())),
             with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
             ..Default::default()
-        })?)
+        })?
+        .with_entry_file(entry_file.clone());
+        Ok(univ)
     };
-    let world = make_world()?;
-    let formatted_world = make_world()?;
+    let mut world = make_world()?;
+    let mut formatted_world = make_world()?;
     // map all files within the testcase_dir
     for entry in walkdir::WalkDir::new(&testcase_dir) {
         let entry = entry?;
@@ -261,21 +266,16 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
             )?;
         }
     }
-    let entry_file = root.join(
-        entrypoint
-            .strip_prefix(&testcase_dir)
-            .context("entrypoint is not within the testcase_dir")?,
-    );
-    let mut driver = CompileDriver::new(world).with_entry_file(entry_file.clone());
-    let mut formatted_driver = CompileDriver::new(formatted_world).with_entry_file(entry_file);
+    let mut driver = CompileDriver::new(PhantomData, world);
+    let mut formatted_driver = CompileDriver::new(PhantomData, formatted_world);
     let doc = driver.compile(&mut Default::default());
     let formatted_doc = formatted_driver.compile(&mut Default::default());
     compare_docs(
         &testcase.name,
         doc,
-        &driver.world,
+        &driver.universe().snapshot(),
         formatted_doc,
-        &formatted_driver.world,
+        &formatted_driver.universe().snapshot(),
     )?;
     Ok(())
 }
