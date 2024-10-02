@@ -286,8 +286,22 @@ fn compare_docs(
 ) -> anyhow::Result<()> {
     match (doc, formatted_doc) {
         (Ok(doc), Ok(formatted_doc)) => {
-            let pdf = typst_pdf::pdf(&doc, Smart::Custom("original"), None);
-            let formatted_pdf = typst_pdf::pdf(&formatted_doc, Smart::Custom("formatted"), None);
+            let pdf = typst_pdf::pdf(
+                &doc,
+                &PdfOptions {
+                    ident: Smart::Custom("original"),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            let formatted_pdf = typst_pdf::pdf(
+                &formatted_doc,
+                &PdfOptions {
+                    ident: Smart::Custom("formatted"),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
             // write both pdf to tmp path
             let tmp_dir = env::temp_dir();
             let pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "original"));
@@ -306,34 +320,26 @@ fn compare_docs(
                 "The page counts are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.title,
-                formatted_doc.title,
+                doc.info.title,
+                formatted_doc.info.title,
                 "The titles are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.author,
-                formatted_doc.author,
+                doc.info.author,
+                formatted_doc.info.author,
                 "The authors are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.keywords,
-                formatted_doc.keywords,
+                doc.info.keywords,
+                formatted_doc.info.keywords,
                 "The keywords are not consistent. {message}"
             );
 
             for (i, (doc, formatted_doc)) in
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
-                let png = typst_render::render(
-                    &doc.frame,
-                    2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
-                );
-                let formatted_png = typst_render::render(
-                    &formatted_doc.frame,
-                    2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
-                );
+                let png = typst_render::render(doc, 2.0);
+                let formatted_png = typst_render::render(formatted_doc, 2.0);
                 if png != formatted_png {
                     // save both to tmp path and report error
                     let tmp_dir = env::temp_dir();
