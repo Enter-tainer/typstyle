@@ -46,7 +46,7 @@ Now it is fixed.
 ## v0.11.30 - [2024-07-14]
 
 - Bug fix: previously when a destructing pattern has extra parentheses, typstyle will completely remove everything inside the parentheses. Now it is fixed.
-- Typstyle now collapses extra parentheses in expression. 
+- Typstyle now collapses extra parentheses in expression.
 
 ## v0.11.29 - [2024-07-13]
 
@@ -74,7 +74,7 @@ Now it will be formatted as:
 }
 ```
 
-- Minor adjustment for closure body formatting. 
+- Minor adjustment for closure body formatting.
 
 ## v0.11.28 - [2024-06-25]
 
@@ -146,7 +146,7 @@ After formatting, it will become this. Notice the extra newlines are kept.
 ```typst
 #table(
   columns: 4 * (1fr,),
-  
+
   [a], [b], [c], [d],
   fill: (_, y) => if y == 0 { black },
   table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],
@@ -282,7 +282,7 @@ For example, this code:
     [Substance],
     [Subcritical °C],
     [Supercritical °C],
-  
+
   [Hydrochloric Acid],
   [12.0], [92.1],
   [Sodium Myreth Sulfate],
@@ -430,7 +430,7 @@ After formatting, it will become:
 ## v0.11.10 - [2024-04-02]
 
 - Block math equations are no longer indented.
-- We now support flavor detection for block equations. 
+- We now support flavor detection for block equations.
 
 For example, this code:
 ```typst
@@ -518,7 +518,7 @@ After formatting, it will become:
 
 ## v0.11.2 - [2024-03-24]
 
-- Fix math attach and function call mis-formatting
+- Fix math attach and function call misformatting
 
 ## v0.11.1 - [2024-03-21]
 
