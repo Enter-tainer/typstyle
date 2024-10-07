@@ -3290,6 +3290,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "thin-vec"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a38c90d48152c236a3ab59271da4f4ae63d678c5d7ad6b7714d7cb9760be5e4b"
+
+[[package]]
 name = "thiserror"
 version = "1.0.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3603,7 +3609,7 @@ dependencies = [
  "typed-arena",
  "typst-assets",
  "typst-macros",
- "typst-syntax",
+ "typst-syntax 0.11.1",
  "typst-timing",
  "unicode-bidi",
  "unicode-math-class",
@@ -3696,6 +3702,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "typst-syntax"
+version = "0.12.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cd92cccb773f9a9d1822b33efae3336a4c5b4d44dc28317a508d2fdfa3c0aa3c"
+dependencies = [
+ "ecow",
+ "once_cell",
+ "serde",
+ "toml",
+ "typst-utils",
+ "unicode-ident",
+ "unicode-math-class",
+ "unicode-script",
+ "unicode-segmentation",
+ "unscanny",
+]
+
+[[package]]
 name = "typst-timing"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3704,7 +3728,7 @@ dependencies = [
  "parking_lot",
  "serde",
  "serde_json",
- "typst-syntax",
+ "typst-syntax 0.11.1",
 ]
 
 [[package]]
@@ -3776,6 +3800,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "typst-utils"
+version = "0.12.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7027f9854d07cf44ac532dff33b00b64376c64653904cdc7172c9eea51cfd458"
+dependencies = [
+ "once_cell",
+ "portable-atomic",
+ "rayon",
+ "siphasher 1.0.1",
+ "thin-vec",
+]
+
+[[package]]
 name = "typstyle"
 version = "0.11.35"
 dependencies = [
@@ -3793,7 +3830,7 @@ dependencies = [
  "typst-assets",
  "typst-pdf",
  "typst-render",
- "typst-syntax",
+ "typst-syntax 0.12.0-rc1",
  "typst-ts-compiler",
  "typst-ts-core",
  "vergen",
