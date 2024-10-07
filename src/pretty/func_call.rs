@@ -2,7 +2,7 @@ use itertools::Itertools;
 use pretty::BoxDoc;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::{pretty::trivia, util::FoldStyle, PrettyPrinter};
+use crate::{util::FoldStyle, PrettyPrinter};
 
 use super::{
     table,
@@ -76,7 +76,7 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
                 inner
             }
             ParenthesizedFuncCallArg::LineComment(comment)
-            | ParenthesizedFuncCallArg::BlockComment(comment) => trivia(comment),
+            | ParenthesizedFuncCallArg::BlockComment(comment) => super::comment(comment),
         }
     }
 }
