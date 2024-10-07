@@ -1,0 +1,27 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/comment/comment-convergence.typ
+---
+#[
+  /* bar
+  */
+]
+
+-   /* bar
+   */ 123
+
+- /* bar
+   */
+
+#[
+  /* Somebody write this up:
+  - 1000 participants.
+  - 2x2 data design. */
+]
+
+#[
+  // Somebody write this up:
+  //  - 1000 participants.
+  //  - 2x2 data design.
+]

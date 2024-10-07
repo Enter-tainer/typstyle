@@ -5,8 +5,8 @@ input_file: tests/assets/unit/comment/block-comment.typ
 ---
 Our study design is as follows:
 /* Somebody write this up:
-   - 1000 participants.
-   - 2x2 data design. */
+- 1000 participants.
+- 2x2 data design. */
 
 #if draw-edge == auto {
   draw-edge = (

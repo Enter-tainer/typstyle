@@ -105,7 +105,7 @@ impl PrettyPrinter {
                     let expr_doc = self.convert_expr(expr);
                     doc = doc.append(expr_doc);
                 } else {
-                    doc = doc.append(trivia(node));
+                    doc = doc.append(comment(node));
                 }
             }
         }
@@ -464,12 +464,9 @@ impl PrettyPrinter {
             {
                 if !codes.is_empty() && is_attached_comment(i) {
                     let last = codes.pop().unwrap();
-                    codes.push(
-                        last.append(BoxDoc::space())
-                            .append(to_doc(std::borrow::Cow::Borrowed(node.text()), true)),
-                    );
+                    codes.push(last.append(BoxDoc::space()).append(comment(node)));
                 } else {
-                    codes.push(to_doc(std::borrow::Cow::Borrowed(node.text()), true));
+                    codes.push(comment(node));
                 }
             } else if node.kind() == SyntaxKind::Space {
                 let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
@@ -815,10 +812,10 @@ impl PrettyPrinter {
                 doc = doc.append(BoxDoc::text("else"));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::BlockComment {
-                doc = doc.append(trivia(child));
+                doc = doc.append(comment(child));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::LineComment {
-                doc = doc.append(trivia(child));
+                doc = doc.append(comment(child));
                 doc = doc.append(BoxDoc::hardline());
             } else {
                 match expr_type {
@@ -862,10 +859,10 @@ impl PrettyPrinter {
                 doc = doc.append(BoxDoc::text("while"));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::BlockComment {
-                doc = doc.append(trivia(child));
+                doc = doc.append(comment(child));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::LineComment {
-                doc = doc.append(trivia(child));
+                doc = doc.append(comment(child));
                 doc = doc.append(BoxDoc::hardline());
             } else if let Some(expr) = child.cast() {
                 doc = doc.append(self.convert_expr(expr));
@@ -1069,22 +1066,44 @@ impl PrettyPrinter {
     }
 }
 
-fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
-    to_doc(std::borrow::Cow::Borrowed(node.text()), false)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StripMode {
+    None,
+    Prefix,
+    PrefixOnBoundaryMarkers,
 }
 
-pub fn to_doc(s: Cow<'_, str>, strip_prefix: bool) -> BoxDoc<'_, ()> {
-    let get_line = |s: &str| {
-        if strip_prefix {
-            s.trim_start().to_string()
+fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+    to_doc(std::borrow::Cow::Borrowed(node.text()), StripMode::None)
+}
+
+fn comment(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+    to_doc(std::borrow::Cow::Borrowed(node.text()), StripMode::Prefix)
+}
+
+pub fn to_doc(s: Cow<'_, str>, strip_prefix: StripMode) -> BoxDoc<'_, ()> {
+    let get_line = |i: itertools::Position, line: &str| {
+        let should_trim = matches!(strip_prefix, StripMode::Prefix)
+            || (matches!(strip_prefix, StripMode::PrefixOnBoundaryMarkers)
+                && matches!(
+                    i,
+                    itertools::Position::First
+                        | itertools::Position::Last
+                        | itertools::Position::Only
+                ));
+
+        if should_trim {
+            line.trim_start().to_string()
         } else {
-            s.to_string()
+            line.to_string()
         }
     };
     // String::lines() doesn't include the trailing newline
     let has_trailing_newline = s.ends_with('\n');
     let res = BoxDoc::intersperse(
-        s.lines().map(|s| BoxDoc::text(get_line(s))),
+        s.lines()
+            .with_position()
+            .map(|(i, s)| BoxDoc::text(get_line(i, s))),
         BoxDoc::hardline(),
     );
     if has_trailing_newline {
@@ -1109,7 +1128,7 @@ mod tests {
             "123\n4568\n789\n",
         ];
         for test in tests.into_iter() {
-            insta::assert_debug_snapshot!(to_doc(test.into(), false));
+            insta::assert_debug_snapshot!(to_doc(test.into(), StripMode::None));
         }
     }
 
