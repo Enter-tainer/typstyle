@@ -19,7 +19,10 @@ input_file: tests/assets/unit/grid/cell.typ
 )
 
 
-#import table: cell, header
+#import table: (
+  cell,
+  header,
+)
 
 #table(
   columns: 2,
