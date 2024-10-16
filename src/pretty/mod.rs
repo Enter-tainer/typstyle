@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 use mode::Mode;
+use parened_expr::optional_paren;
 use pretty::BoxDoc;
 use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
@@ -905,10 +906,15 @@ impl PrettyPrinter {
             doc = doc.append(BoxDoc::space());
             let imports = match imports {
                 Imports::Wildcard => BoxDoc::text("*"),
-                Imports::Items(i) => BoxDoc::intersperse(
-                    i.iter().map(|item| self.convert_import_item(item)),
-                    BoxDoc::text(",").append(BoxDoc::space()),
-                ),
+                Imports::Items(i) => {
+                    let trailing_comma = BoxDoc::flat_alt(BoxDoc::text(","), BoxDoc::nil());
+                    let inner = BoxDoc::intersperse(
+                        i.iter().map(|item| self.convert_import_item(item)),
+                        BoxDoc::text(",").append(BoxDoc::line()),
+                    )
+                    .append(trailing_comma);
+                    optional_paren(inner)
+                }
             };
             doc = doc.append(imports.group());
         }

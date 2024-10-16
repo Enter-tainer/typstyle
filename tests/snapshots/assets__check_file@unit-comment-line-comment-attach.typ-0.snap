@@ -3,7 +3,9 @@ source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/comment/line-comment-attach.typ
 ---
-#import "@preview/cheq:0.1.0": checklist
+#import "@preview/cheq:0.1.0": (
+  checklist,
+)
 
 #{
   show: checklist.with(
