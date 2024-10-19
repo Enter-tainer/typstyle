@@ -8,17 +8,21 @@ use std::{
 };
 
 use anyhow::{bail, Context};
+use ecow::EcoVec;
 use itertools::Itertools;
 use libtest_mimic::{Arguments, Failed, Trial};
-use typst_ts_compiler::{CompileDriver, CompilerUniverse, ShadowApi, TypstSystemUniverse};
-use typst_ts_core::{
-    config::{compiler::EntryOpts, CompileOpts},
-    diag::SourceDiagnostic,
-    error::diag_from_std,
-    foundations::Smart,
-    typst::prelude::EcoVec,
-    TypstDocument, TypstWorld,
+use reflexo_typst::{error::diag_from_std, CompileDriver};
+use reflexo_world::{
+    config::CompileOpts, CompilerUniverse, EntryOpts, ShadowApi, TypstSystemUniverse,
 };
+use typst::{
+    diag::SourceDiagnostic,
+    foundations::Smart::{Auto, Custom},
+    layout::Page,
+    model::Document,
+    World,
+};
+use typst_pdf::{PdfOptions, PdfStandards};
 use typstyle_core::Typstyle;
 
 fn main() -> anyhow::Result<()> {
@@ -282,21 +286,37 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
 
 fn compare_docs(
     name: &str,
-    doc: Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>>,
-    world: &dyn TypstWorld,
-    formatted_doc: Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>>,
-    formatted_world: &dyn TypstWorld,
+    doc: Result<Arc<Document>, EcoVec<SourceDiagnostic>>,
+    world: &dyn World,
+    formatted_doc: Result<Arc<Document>, EcoVec<SourceDiagnostic>>,
+    formatted_world: &dyn World,
 ) -> anyhow::Result<()> {
     match (doc, formatted_doc) {
         (Ok(doc), Ok(formatted_doc)) => {
-            let pdf = typst_pdf::pdf(&doc, Smart::Custom("original"), None);
-            let formatted_pdf = typst_pdf::pdf(&formatted_doc, Smart::Custom("formatted"), None);
+            let pdf = typst_pdf::pdf(
+                &doc,
+                &PdfOptions {
+                    ident: Custom("original"),
+                    timestamp: None,
+                    page_ranges: None,
+                    standards: PdfStandards::default(),
+                },
+            );
+            let formatted_pdf = typst_pdf::pdf(
+                &formatted_doc,
+                &PdfOptions {
+                    ident: Custom("formatted"),
+                    timestamp: None,
+                    page_ranges: None,
+                    standards: PdfStandards::default(),
+                },
+            );
             // write both pdf to tmp path
             let tmp_dir = env::temp_dir();
             let pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "original"));
             let formatted_pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "formatted"));
-            std::fs::write(&pdf_path, pdf).context("failed to write pdf")?;
-            std::fs::write(&formatted_pdf_path, formatted_pdf)
+            std::fs::write(&pdf_path, pdf.unwrap()).context("failed to write pdf")?;
+            std::fs::write(&formatted_pdf_path, formatted_pdf.unwrap())
                 .context("failed to write formatted pdf")?;
             let message = format!(
                 "The pdfs are written to \"{}\" and \"{}\"",
@@ -309,18 +329,18 @@ fn compare_docs(
                 "The page counts are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.title,
-                formatted_doc.title,
+                doc.info.title,
+                formatted_doc.info.title,
                 "The titles are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.author,
-                formatted_doc.author,
+                doc.info.author,
+                formatted_doc.info.author,
                 "The authors are not consistent. {message}"
             );
             pretty_assertions::assert_eq!(
-                doc.keywords,
-                formatted_doc.keywords,
+                doc.info.keywords,
+                formatted_doc.info.keywords,
                 "The keywords are not consistent. {message}"
             );
 
@@ -328,14 +348,22 @@ fn compare_docs(
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
                 let png = typst_render::render(
-                    &doc.frame,
+                    &Page {
+                        frame: doc.frame.clone(),
+                        fill: Auto,
+                        numbering: None,
+                        number: i,
+                    },
                     2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
                 );
                 let formatted_png = typst_render::render(
-                    &formatted_doc.frame,
+                    &Page {
+                        frame: formatted_doc.frame.clone(),
+                        fill: Auto,
+                        numbering: None,
+                        number: i,
+                    },
                     2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
                 );
                 if png != formatted_png {
                     // save both to tmp path and report error
