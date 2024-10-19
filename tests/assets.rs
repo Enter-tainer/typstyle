@@ -1,4 +1,7 @@
+use ecow::EcoVec;
 use libtest_mimic::{Arguments, Failed, Trial};
+use reflexo_typst::CompileDriver;
+use reflexo_world::{config::CompileOpts, EntryOpts, ShadowApi, TypstSystemUniverse};
 use std::{
     borrow::Cow,
     env,
@@ -9,13 +12,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
-use typst_ts_compiler::{CompileDriver, ShadowApi, TypstSystemUniverse};
-use typst_ts_core::{
-    config::{compiler::EntryOpts, CompileOpts},
-    diag::SourceDiagnostic,
-    typst::prelude::EcoVec,
-    TypstDocument,
-};
+use typst::{diag::SourceDiagnostic, layout::Page, model::Document};
 use typstyle_core::Typstyle;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -186,7 +183,7 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
     Ok(())
 }
 
-fn compile_typst_src(content: &str) -> Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>> {
+fn compile_typst_src(content: &str) -> Result<Arc<Document>, EcoVec<SourceDiagnostic>> {
     let root = if cfg!(windows) {
         PathBuf::from("C:\\")
     } else {
@@ -221,8 +218,8 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
 }
 
 fn compare_docs(
-    doc: Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>>,
-    formatted_doc: Result<Arc<TypstDocument>, EcoVec<SourceDiagnostic>>,
+    doc: Result<Arc<Document>, EcoVec<SourceDiagnostic>>,
+    formatted_doc: Result<Arc<Document>, EcoVec<SourceDiagnostic>>,
 ) -> Result<(), Failed> {
     match (doc, formatted_doc) {
         (Ok(doc), Ok(formatted_doc)) => {
@@ -232,18 +229,18 @@ fn compare_docs(
                 "The page counts are not consistent"
             );
             pretty_assertions::assert_eq!(
-                doc.title,
-                formatted_doc.title,
+                doc.info.title,
+                formatted_doc.info.title,
                 "The titles are not consistent"
             );
             pretty_assertions::assert_eq!(
-                doc.author,
-                formatted_doc.author,
+                doc.info.author,
+                formatted_doc.info.author,
                 "The authors are not consistent"
             );
             pretty_assertions::assert_eq!(
-                doc.keywords,
-                formatted_doc.keywords,
+                doc.info.keywords,
+                formatted_doc.info.keywords,
                 "The keywords are not consistent"
             );
 
@@ -251,14 +248,22 @@ fn compare_docs(
                 doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
             {
                 let png = typst_render::render(
-                    &doc.frame,
+                    &Page {
+                        frame: doc.frame.clone(),
+                        fill: typst::foundations::Smart::Auto,
+                        numbering: None,
+                        number: i,
+                    },
                     2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
                 );
                 let formatted_png = typst_render::render(
-                    &formatted_doc.frame,
+                    &Page {
+                        frame: formatted_doc.frame.clone(),
+                        fill: typst::foundations::Smart::Auto,
+                        numbering: None,
+                        number: i,
+                    },
                     2.0,
-                    typst::visualize::Color::from_u8(255, 255, 255, 255),
                 );
                 if png != formatted_png {
                     // save both to tmp path and report error

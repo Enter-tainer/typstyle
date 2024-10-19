@@ -35,32 +35,41 @@ crate-type = ["cdylib", "lib"]
 [dependencies]
 itertools = "0.13.0"
 pretty = "0.12.3"
-typst-syntax = "0.12.0-rc2"
+typst-syntax = "0.12.0"
 
 anyhow = "1"
-once_cell = { version = "1.20.1", optional = true }
+once_cell = { version = "1.20.2", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
-clap = { version = "4.5.18", features = ["derive", "env"], optional = true }
+clap = { version = "4.5.20", features = ["derive", "env"], optional = true }
 walkdir = { version = "2", optional = true }
-clap_complete = { version = "4.5.29", optional = true }
+clap_complete = { version = "4.5.33", optional = true }
 
 [dev-dependencies]
 insta = { version = "1.40.0" }
-libtest-mimic = "0.7.3"
-pathdiff = "0.2.1"
+libtest-mimic = "0.8.1"
+pathdiff = "0.2.2"
 pretty_assertions = "1.4.1"
 walkdir = "2"
-typst-ts-core = { version = "0.5.0-rc6", default-features = false, features = [
+reflexo = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+  "typst",
+] }
+reflexo-typst-shim = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+] }
+reflexo-world = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+  "system",
+] }
+reflexo-vfs = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+  "system",
+] }
+reflexo-typst = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+  "system",
   "no-content-hint",
 ] }
-typst-ts-compiler = { version = "0.5.0-rc6", default-features = false, features = [
-  "no-content-hint",
-  "system-compile",
-] }
-typst-assets = { version = "0.11.1", features = ["fonts"] }
-typst-render = "0.11.1"
-typst-pdf = "0.11.1"
-typst = "0.11.1"
+typst-assets = { version = "0.12.0", features = ["fonts"] }
+typst-render = "0.12.0"
+typst-pdf = "0.12.0"
+typst = "0.12.0"
+ecow = "0.2.2"
 
 [build-dependencies]
 anyhow = "1"
