@@ -1,6 +1,6 @@
 [package]
 name = "typstyle"
-version = "0.11.35"
+version = "0.12.0"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
 license = "Apache-2.0"

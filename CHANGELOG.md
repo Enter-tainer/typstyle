@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.12.0 - [2024-10-19]
+
+- Bump to typst v0.12.0
+- Support new import syntax. Now long import can be broken into multiple lines.
+
+Previous:
+
+```typst
+#import "test.typ": aaa, bbb as cccccccccc, ddd as eeeeeeeeeee, fff as g
+```
+
+Now:
+
+```typst
+#import "test.typ": (
+  aaa,
+  bbb as cccccccccc,
+  ddd as eeeeeeeeeee,
+  fff as g,
+)
+```
+
 ## v0.11.35 - [2024-10-07]
 
 - Fix block comments drifting right if they have indentation. Now we strips all leading whitespaces in block comments.
