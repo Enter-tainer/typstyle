@@ -42,10 +42,10 @@ once_cell = { version = "1.20.2", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 clap = { version = "4.5.20", features = ["derive", "env"], optional = true }
 walkdir = { version = "2", optional = true }
-clap_complete = { version = "4.5.33", optional = true }
+clap_complete = { version = "4.5.36", optional = true }
 
 [dev-dependencies]
-insta = { version = "1.40.0" }
+insta = { version = "1.41.1" }
 libtest-mimic = "0.8.1"
 pathdiff = "0.2.2"
 pretty_assertions = "1.4.1"
@@ -69,7 +69,7 @@ typst-assets = { version = "0.12.0", features = ["fonts"] }
 typst-render = "0.12.0"
 typst-pdf = "0.12.0"
 typst = "0.12.0"
-ecow = "0.2.2"
+ecow = "0.2.3"
 
 [build-dependencies]
 anyhow = "1"
