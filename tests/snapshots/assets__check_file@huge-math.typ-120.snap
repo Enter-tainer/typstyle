@@ -20,7 +20,7 @@ $
   (rho(r)) / ((r^2 + s^2 - 2 r s u)^(1\/2)) r^2 dif r dif u
   &u = cos(theta), dif u = - sin(theta) d theta\
   &=
-  - 2 pi G integral_(r=0)^R rho(r) r^2 integral_(u=-1)^1 (dif u) / (((r^2 + s^2) + (-2 r s) u)^(1\/2)) dif r
+  - 2 pi G integral_(r=0)^R rho(r) r^2 integral_(u=-1)^1 (dif u) / (((r^2 + s^2) + (-2 r s ) u )^(1\/2)) dif r
   &integral (dif x) / sqrt(a + b x) = (2 sqrt(a + b x)) / b\
   &= - 2 pi G integral_(r=0)^R rho(r) r^2 [2 sqrt(r^2 + s^2 - 2 r s u) / (- 2 r s)]_(-1)^1 dif r\
   &= - 2 pi G integral_(r=0)^R rho(r) r^2 1 / (r s) (sqrt(r^2 + s^2 + 2 r s) - sqrt(r^2 + s^2 - 2 r s)) dif r\

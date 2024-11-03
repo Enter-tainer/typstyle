@@ -961,13 +961,39 @@ impl PrettyPrinter {
     }
 
     fn convert_math_delimited<'a>(&'a self, math_delimited: MathDelimited<'a>) -> BoxDoc<'a, ()> {
+        fn has_spaces(math_delimited: MathDelimited<'_>) -> (bool, bool) {
+            let mut has_space_before_math = false;
+            let mut has_space_after_math = false;
+            let mut is_before_math = true;
+            for child in math_delimited.to_untyped().children() {
+                if child.kind() == SyntaxKind::Math {
+                    is_before_math = false;
+                } else if child.kind() == SyntaxKind::Space {
+                    if is_before_math {
+                        has_space_before_math = true;
+                    } else {
+                        has_space_after_math = true;
+                    }
+                }
+            }
+            (has_space_before_math, has_space_after_math)
+        }
         let open = self.convert_expr(math_delimited.open());
         let close = self.convert_expr(math_delimited.close());
         let body = self.convert_math(math_delimited.body());
+        let (has_space_before_math, has_space_after_math) = has_spaces(math_delimited);
         let doc = open
-            .append(BoxDoc::line_())
+            .append(if has_space_before_math {
+                BoxDoc::line()
+            } else {
+                BoxDoc::line_()
+            })
             .append(body)
-            .append(BoxDoc::line_())
+            .append(if has_space_after_math {
+                BoxDoc::line()
+            } else {
+                BoxDoc::line_()
+            })
             .nest(2)
             .append(close);
         doc
