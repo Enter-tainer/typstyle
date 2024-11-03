@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.12.1 - [2024-11-03]
+
+- Typstyle now keeps spaces around math-delimited when there is already space around it. This prevents a bug when removing the space can cause wrong format result.
+
+For example, this code:
+```typst
+$[ | | ]$
+```
+
+Previous:
+
+```typst
+$[| |]$
+```
+
+Now it is fixed.
+
 ## v0.12.0 - [2024-10-19]
 
 - Bump to typst v0.12.0
