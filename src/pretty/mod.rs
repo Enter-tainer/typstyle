@@ -984,15 +984,15 @@ impl PrettyPrinter {
         let (has_space_before_math, has_space_after_math) = has_spaces(math_delimited);
         let doc = open
             .append(if has_space_before_math {
-                BoxDoc::line()
+                BoxDoc::space()
             } else {
-                BoxDoc::line_()
+                BoxDoc::nil()
             })
             .append(body)
             .append(if has_space_after_math {
-                BoxDoc::line()
+                BoxDoc::space()
             } else {
-                BoxDoc::line_()
+                BoxDoc::nil()
             })
             .nest(2)
             .append(close);

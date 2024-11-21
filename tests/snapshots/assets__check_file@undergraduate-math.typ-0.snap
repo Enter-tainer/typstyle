@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/undergraduate-math.typ
+snapshot_kind: text
 ---
 // Meta data
 #set document(
@@ -881,27 +882,21 @@ These do the same.
       1em,
     ),
     row-gutter: 0.5em,
-    [$(
-
-        )$],
+    [$()$],
     [`()`],
     [$angle.l angle.r$],
     [`angle.l angle.r`],
     [$abs("")$],
     [`abs("")`],
 
-    [$[
-
-        ]$],
+    [$[]$],
     [`[]`],
     [$floor("")$],
     [`floor("")`],
     [$norm("")$],
     [`norm("")`],
 
-    [${
-
-        }$],
+    [${}$],
     [`{}`],
     [$ceil("")$],
     [`ceil("")`],
@@ -956,9 +951,7 @@ Fences scale by default if entered directly as codepoints, and don't scale autom
     ),
     column-gutter: 1em,
     [$
-        (
-          1 / n^(alpha)
-        )
+        (1 / n^(alpha))
       $],
     [
       ```
@@ -1139,11 +1132,7 @@ The last three here are display style.
     [`9.8 thin "m/s"^2` @tricky],
 
     [$
-        lim_(h->0) (f(
-          x+h
-        )-f(
-          x
-        )) / h
+        lim_(h->0) (f(x+h)-f(x)) / h
       $],
     [
       ```
@@ -1195,9 +1184,7 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
     ],
 
     [$
-        E(
-          X
-        ) = mu_X = sum(x_i - P(x_i))
+        E(X) = mu_X = sum(x_i - P(x_i))
       $],
     [
       ```
@@ -1206,9 +1193,7 @@ For permutations use $n^(underline(r))$ from `n^(underline(r))` (some authors us
     ],
 
     [$
-        1 / sqrt(2 sigma^2 pi) e^(- (
-          x - mu
-        )^2 / (2 sigma^2))
+        1 / sqrt(2 sigma^2 pi) e^(- (x - mu)^2 / (2 sigma^2))
       $],
     [
       ```
