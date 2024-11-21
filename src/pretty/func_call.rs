@@ -149,7 +149,7 @@ impl PrettyPrinter {
             while let Some(ParenthesizedFuncCallArg::Newline(_)) = args.last() {
                 args.pop();
             }
-            comma_seprated_args(
+            comma_separated_args(
                 args.into_iter(),
                 if is_multiline {
                     FoldStyle::Never
@@ -214,7 +214,7 @@ fn parse_args(args: Args<'_>) -> impl Iterator<Item = ParenthesizedFuncCallArg<'
     })
 }
 
-fn comma_seprated_args<'a, I>(
+fn comma_separated_args<'a, I>(
     args: I,
     fold_style: FoldStyle,
     pp: &'a PrettyPrinter,
