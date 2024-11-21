@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/cetz-manual.typ
+snapshot_kind: text
 ---
 #import "doc/util.typ": *
 #import "doc/example.typ": example
@@ -236,11 +237,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
         let name-to-mnemonic = (:)
         for (name, item) in cetz.mark-shapes.mnemonics {
           let list = name-to-mnemonic.at(item.at(0), default: ())
-          list += (
-            raw(name) + if item.at(1) {
-              " (reversed)"
-            },
-          )
+          list += (raw(name) + if item.at(1) { " (reversed)" },)
           name-to-mnemonic.insert(item.at(0), list)
         }
         (
@@ -1073,9 +1070,7 @@ The palette library provides some predefined palettes.
     {
       import cetz.draw: *
       for i in range(0, p("len")) {
-        if calc.rem(i, 10) == 0 {
-          move-to((rel: (0, -.5)))
-        }
+        if calc.rem(i, 10) == 0 { move-to((rel: (0, -.5))) }
         rect((), (rel: (1, .5)), name: "r", ..p(i))
         move-to("r.south-east")
       }

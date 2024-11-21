@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/tablex.typ
+snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -378,16 +379,8 @@ input_file: tests/assets/tablex.typ
 // is greater than 1)
 #let positions-spanned-by(cell, x: 0, y: 0, x_limit: 0, y_limit: none) = {
   let result = ()
-  let rowspan = if "rowspan" in cell {
-    cell.rowspan
-  } else {
-    1
-  }
-  let colspan = if "colspan" in cell {
-    cell.colspan
-  } else {
-    1
-  }
+  let rowspan = if "rowspan" in cell { cell.rowspan } else { 1 }
+  let colspan = if "colspan" in cell { cell.colspan } else { 1 }
 
   if rowspan < 1 {
     panic("Cell rowspan must be 1 or greater (bad cell: " + repr((x, y)) + ")")
@@ -2210,9 +2203,7 @@ input_file: tests/assets/tablex.typ
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) {
-    return
-  }
+  ) { return  }
 
   if gutter != none and gutter.row != none and (
     (pre-gutter and hline.gutter-restrict == bottom) or (
@@ -2314,9 +2305,7 @@ input_file: tests/assets/tablex.typ
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) {
-    return
-  }
+  ) { return  }
 
   if gutter != none and gutter.col != none and (
     (pre-gutter and vline.gutter-restrict == right) or (
@@ -3079,11 +3068,7 @@ input_file: tests/assets/tablex.typ
       let cells = map-rows(
         row,
         original-cells.map(c => {
-          if is-tablex-occupied(c) {
-            none
-          } else {
-            c
-          }
+          if is-tablex-occupied(c) { none } else { c }
         }),
       )
 
@@ -3139,11 +3124,7 @@ input_file: tests/assets/tablex.typ
       let cells = map-cols(
         column,
         original-cells.map(c => {
-          if is-tablex-occupied(c) {
-            none
-          } else {
-            c
-          }
+          if is-tablex-occupied(c) { none } else { c }
         }),
       )
 
@@ -3446,11 +3427,7 @@ input_file: tests/assets/tablex.typ
 
     // When there are more rows than the user specified, we ensure they have
     // the same size as the last specified row.
-    let last-row-size = if rows.len() == 0 {
-      auto
-    } else {
-      rows.last()
-    }
+    let last-row-size = if rows.len() == 0 { auto } else { rows.last() }
     for _ in range(grid_info.new_row_count - row_len) {
       rows.push(last-row-size) // add new rows (due to extra cells)
     }

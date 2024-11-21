@@ -99,18 +99,6 @@ fn pretty_items_impl<'a>(
     fold_style: FoldStyle,
 ) -> BoxDoc<'a, ()> {
     let (left, right) = bracket;
-    let flat: BoxDoc<'a, ()> = {
-        let inner = BoxDoc::intersperse(items.iter().cloned(), single_line_separator);
-        let (left, right) = if bracket_space {
-            (
-                left.clone().append(BoxDoc::space()),
-                BoxDoc::space().append(right.clone()),
-            )
-        } else {
-            (left.clone(), right.clone())
-        };
-        left.append(inner).append(right)
-    };
     let multi = {
         let mut inner = BoxDoc::nil();
         for item in items {
@@ -119,11 +107,24 @@ fn pretty_items_impl<'a>(
                 .append(multi_line_separator.clone().append(BoxDoc::hardline()));
         }
         let doc = BoxDoc::hardline().append(inner).nest(2);
-        left.append(doc).append(right)
+        left.clone().append(doc).append(right.clone())
     };
-    let auto_items = multi.clone().flat_alt(flat).group();
     match fold_style {
-        FoldStyle::Fit => auto_items,
+        FoldStyle::Fit => {
+            let flat = {
+                let inner = BoxDoc::intersperse(items.iter().cloned(), single_line_separator);
+                let (left, right) = if bracket_space {
+                    (
+                        left.clone().append(BoxDoc::space()),
+                        BoxDoc::space().append(right.clone()),
+                    )
+                } else {
+                    (left, right)
+                };
+                left.append(inner).append(right)
+            };
+            multi.clone().flat_alt(flat).group()
+        }
         FoldStyle::Never => multi,
     }
 }
