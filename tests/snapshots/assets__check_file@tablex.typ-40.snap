@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/tablex.typ
+snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -468,14 +469,10 @@ input_file: tests/assets/tablex.typ
   let result = ()
   let rowspan = if "rowspan" in cell {
     cell.rowspan
-  } else {
-    1
-  }
+  } else { 1 }
   let colspan = if "colspan" in cell {
     cell.colspan
-  } else {
-    1
-  }
+  } else { 1 }
 
   if rowspan < 1 {
     panic("Cell rowspan must be 1 or greater (bad cell: " + repr((
@@ -2751,9 +2748,7 @@ input_file: tests/assets/tablex.typ
   ) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) {
-    return
-  }
+  ) { return  }
 
   if gutter != none and gutter.row != none and (
     (
@@ -2882,9 +2877,7 @@ input_file: tests/assets/tablex.typ
   ) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) {
-    return
-  }
+  ) { return  }
 
   if gutter != none and gutter.col != none and (
     (
@@ -3878,9 +3871,7 @@ input_file: tests/assets/tablex.typ
         original-cells.map(c => {
           if is-tablex-occupied(c) {
             none
-          } else {
-            c
-          }
+          } else { c }
         }),
       )
 
@@ -3950,9 +3941,7 @@ input_file: tests/assets/tablex.typ
         original-cells.map(c => {
           if is-tablex-occupied(c) {
             none
-          } else {
-            c
-          }
+          } else { c }
         }),
       )
 
@@ -4302,9 +4291,7 @@ input_file: tests/assets/tablex.typ
     // the same size as the last specified row.
     let last-row-size = if rows.len() == 0 {
       auto
-    } else {
-      rows.last()
-    }
+    } else { rows.last() }
     for _ in range(grid_info.new_row_count - row_len) {
       rows.push(last-row-size) // add new rows (due to extra cells)
     }

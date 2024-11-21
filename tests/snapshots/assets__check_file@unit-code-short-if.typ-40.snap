@@ -1,0 +1,32 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/code/short-if.typ
+snapshot_kind: text
+---
+#table(
+  fill: (x, y) => if y == 0 {
+    white.darken(15%)
+  } else { none },
+  align: (x, y) => if y == 0 {
+    center
+  } else { horizon },
+  [Hi],
+  [there],
+)
+
+#if true {
+  [a]
+} else [
+  bbb
+]
+
+#let a = if true { 0 } else { 1 }
+
+#{
+  if true {
+    [a]
+  } else [
+    bbb
+  ]
+}

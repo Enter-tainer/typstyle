@@ -31,6 +31,10 @@ impl PrettyPrinter {
             mode: vec![].into(),
         }
     }
+
+    fn get_fold_style<'a>(&self, node: impl AstNode<'a>) -> FoldStyle {
+        FoldStyle::from_attr(self.attr_map.get(node.to_untyped()))
+    }
 }
 
 impl PrettyPrinter {
@@ -427,7 +431,11 @@ impl PrettyPrinter {
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
             true,
-            FoldStyle::Never,
+            if codes.len() == 1 {
+                self.get_fold_style(code_block)
+            } else {
+                FoldStyle::Never
+            },
         );
         doc
     }
@@ -504,7 +512,7 @@ impl PrettyPrinter {
                 .group();
             res
         } else {
-            let style = FoldStyle::from_attr(self.attr_map.get(array.to_untyped()));
+            let style = self.get_fold_style(array);
             comma_seprated_items(array_items.into_iter(), style, None, None)
         }
     }
@@ -523,7 +531,7 @@ impl PrettyPrinter {
             .items()
             .map(|item| self.convert_dict_item(item))
             .collect_vec();
-        let style = FoldStyle::from_attr(self.attr_map.get(dict.to_untyped()));
+        let style = self.get_fold_style(dict);
         comma_seprated_items(
             dict_items.into_iter(),
             style,
@@ -620,7 +628,7 @@ impl PrettyPrinter {
     fn convert_closure<'a>(&'a self, closure: Closure<'a>) -> BoxDoc<'a, ()> {
         let mut doc = BoxDoc::nil();
         let params = self.convert_params(closure.params());
-        let style = FoldStyle::from_attr(self.attr_map.get(closure.params().to_untyped()));
+        let style = self.get_fold_style(closure.params());
         let arg_list = if let Some(res) = self.check_disabled(closure.params().to_untyped()) {
             res
         } else {
