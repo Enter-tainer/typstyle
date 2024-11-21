@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/math/long.typ
+snapshot_kind: text
 ---
 #let aaaaaaaaaaaaaaaaaaaaa = 0
 #let bbbbbbbbbbbbbbbbbbbbbb = 0
@@ -10,12 +11,8 @@ $
   aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb + CCCCCCCCCCCCCCCCCCCCCCCCC
 $
 $
-  [
-    aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb
-  ] + CCCCCCCCCCCCCCCCCCCCCCCCC
+  [aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb] + CCCCCCCCCCCCCCCCCCCCCCCCC
 $
 $
-  [
-    aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb
-  ] + CCCCCCCCCCCCCCCCCCCCCCCCC
+  [aaaaaaaaaaaaaaaaaaaaa + bbbbbbbbbbbbbbbbbbbbbb] + CCCCCCCCCCCCCCCCCCCCCCCCC
 $
