@@ -751,320 +751,1169 @@ snapshot_kind: text
   it,
   block-label: none,
   extra: (:),
-) = (
-  context {
-    show raw
-      .line
-      .where(label: <codly-highlighted>): it => codly-line(
-      it,
-      block-label: block-label,
-      extra: (:),
-    )
+) = context {
+  show raw
+    .line
+    .where(label: <codly-highlighted>): it => codly-line(
+    it,
+    block-label: block-label,
+    extra: (:),
+  )
 
-    if type(it) != content or it.func() != raw {
-      panic("codly-raw: body must be a raw content")
+  if type(it) != content or it.func() != raw {
+    panic("codly-raw: body must be a raw content")
+  }
+
+  set par(justify: false)
+  let enabled = (
+    __codly-args.enabled.type_check
+  )(if "enabled" in extra {
+    extra.enabled
+  } else {
+    state("codly-enabled", __codly-args
+        .enabled
+        .default).get()
+  })
+
+  if not enabled {
+    return it
+  }
+
+  let args = __codly-args
+  let range = (
+    __codly-args.range.type_check
+  )(if "range" in extra {
+    extra.range
+  } else {
+    state("codly-range", __codly-args
+        .range
+        .default).get()
+  })
+
+  let ranges = (
+    __codly-args.ranges.type_check
+  )(if "ranges" in extra {
+    extra.ranges
+  } else {
+    state("codly-ranges", __codly-args
+        .ranges
+        .default).get()
+  })
+
+  if ranges == none and range != none {
+    ranges = (range,)
+  }
+
+
+  let in_range(line) = {
+    if ranges == none {
+      return true
     }
 
-    set par(justify: false)
-    let enabled = (
-      __codly-args.enabled.type_check
-    )(if "enabled" in extra {
-      extra.enabled
-    } else {
-      state("codly-enabled", __codly-args
-          .enabled
-          .default).get()
-    })
+    // Return true if the line is contained in any of the ranges.
+    for r in ranges {
+      assert(
+        type(r) == array,
+        message: "codly: ranges must be an array of arrays, found " + type(r),
+      )
+      assert(
+        r.len() == 2,
+        message: "codly: ranges must be an array of arrays with two elements",
+      )
 
-    if not enabled {
-      return it
-    }
-
-    let args = __codly-args
-    let range = (
-      __codly-args.range.type_check
-    )(if "range" in extra {
-      extra.range
-    } else {
-      state("codly-range", __codly-args
-          .range
-          .default).get()
-    })
-
-    let ranges = (
-      __codly-args.ranges.type_check
-    )(if "ranges" in extra {
-      extra.ranges
-    } else {
-      state("codly-ranges", __codly-args
-          .ranges
-          .default).get()
-    })
-
-    if ranges == none and range != none {
-      ranges = (range,)
-    }
-
-
-    let in_range(line) = {
-      if ranges == none {
-        return true
-      }
-
-      // Return true if the line is contained in any of the ranges.
-      for r in ranges {
-        assert(
-          type(r) == array,
-          message: "codly: ranges must be an array of arrays, found " + type(r),
-        )
-        assert(
-          r.len() == 2,
-          message: "codly: ranges must be an array of arrays with two elements",
-        )
-
-        if r.at(0) == none {
-          if line <= r.at(1) {
-            return true
-          }
-        } else if r.at(1) == none {
-          if r.at(0) <= line {
-            return true
-          }
-        } else if r.at(0) <= line and line <= r.at(1) {
+      if r.at(0) == none {
+        if line <= r.at(1) {
           return true
         }
+      } else if r.at(1) == none {
+        if r.at(0) <= line {
+          return true
+        }
+      } else if r.at(0) <= line and line <= r.at(1) {
+        return true
       }
-
-      return false
     }
 
-    let block-label = auto
-    let display-names = (
-      __codly-args
+    return false
+  }
+
+  let block-label = auto
+  let display-names = (
+    __codly-args.display-name.type_check
+  )(if "display-name" in extra {
+    extra.display-name
+  } else {
+    state("codly-display-name", __codly-args
         .display-name
-        .type_check
-    )(if "display-name" in extra {
-      extra.display-name
-    } else {
-      state("codly-display-name", __codly-args
-          .display-name
-          .default).get()
-    })
+        .default).get()
+  })
 
-    let display-icons = (
-      __codly-args
+  let display-icons = (
+    __codly-args.display-icon.type_check
+  )(if "display-icon" in extra {
+    extra.display-icon
+  } else {
+    state("codly-display-icon", __codly-args
         .display-icon
-        .type_check
-    )(if "display-icon" in extra {
-      extra.display-icon
-    } else {
-      state("codly-display-icon", __codly-args
-          .display-icon
-          .default).get()
-    })
+        .default).get()
+  })
 
-    let lang-outset = (
-      __codly-args
+  let lang-outset = (
+    __codly-args.lang-outset.type_check
+  )(if "lang-outset" in extra {
+    extra.lang-outset
+  } else {
+    state("codly-lang-outset", __codly-args
         .lang-outset
+        .default).get()
+  })
+
+  let language-block = {
+    let fn = (
+      __codly-args
+        .lang-format
         .type_check
-    )(if "lang-outset" in extra {
-      extra.lang-outset
+    )(if "lang-format" in extra {
+      extra.lang-format
     } else {
-      state("codly-lang-outset", __codly-args
-          .lang-outset
+      state("codly-lang-format", __codly-args
+          .lang-format
           .default).get()
     })
 
-    let language-block = {
-      let fn = (
+    if fn == none {
+      (..) => none
+    } else if fn == auto {
+      auto
+    } else {
+      fn
+    }
+  }
+  let default-color = (
+    __codly-args
+      .default-color
+      .type_check
+  )(if "default-color" in extra {
+    extra.default-color
+  } else {
+    state("codly-default-color", __codly-args
+        .default-color
+        .default).get()
+  })
+
+  let radius = (
+    __codly-args.radius.type_check
+  )(if "radius" in extra {
+    extra.radius
+  } else {
+    state("codly-radius", __codly-args
+        .radius
+        .default).get()
+  })
+
+  let offset = (
+    __codly-args.offset.type_check
+  )(if "offset" in extra {
+    extra.offset
+  } else {
+    state("codly-offset", __codly-args
+        .offset
+        .default).get()
+  })
+
+  let stroke = (
+    __codly-args.stroke.type_check
+  )(if "stroke" in extra {
+    extra.stroke
+  } else {
+    state("codly-stroke", __codly-args
+        .stroke
+        .default).get()
+  })
+
+  let zebra-color = (
+    __codly-args.zebra-fill.type_check
+  )(if "zebra-fill" in extra {
+    extra.zebra-fill
+  } else {
+    state("codly-zebra-fill", __codly-args
+        .zebra-fill
+        .default).get()
+  })
+
+  let numbers-format = (
+    __codly-args
+      .number-format
+      .type_check
+  )(if "number-format" in extra {
+    extra.number-format
+  } else {
+    state("codly-number-format", __codly-args
+        .number-format
+        .default).get()
+  })
+
+  let numbers-alignment = (
+    __codly-args.number-align.type_check
+  )(if "number-align" in extra {
+    extra.number-align
+  } else {
+    state("codly-number-align", __codly-args
+        .number-align
+        .default).get()
+  })
+
+  let padding = __codly-inset(
+    (
+      __codly-args.inset.type_check
+    )(if "inset" in extra {
+      extrainset
+    } else {
+      state("codly-inset", __codly-args
+          .inset
+          .default).get()
+    }),
+  )
+
+  let breakable = (
+    __codly-args.breakable.type_check
+  )(if "breakable" in extra {
+    extra.breakable
+  } else {
+    state("codly-breakable", __codly-args
+        .breakable
+        .default).get()
+  })
+
+  let fill = (
+    __codly-args.fill.type_check
+  )(if "fill" in extra {
+    extra.fill
+  } else {
+    state("codly-fill", __codly-args
+        .fill
+        .default).get()
+  })
+
+  let skips = {
+    let skips = (
+      __codly-args.skips.type_check
+    )(if "skips" in extra {
+      extra.skips
+    } else {
+      state("codly-skips", __codly-args
+          .skips
+          .default).get()
+    })
+    if skips == none {
+      ()
+    } else {
+      skips
+        .sorted(key: x => x.at(0))
+        .dedup()
+    }
+  }
+
+  let skip-line = (
+    __codly-args.skip-line.type_check
+  )(if "skip-line" in extra {
+    extra.skip-line
+  } else {
+    state("codly-skip-line", __codly-args
+        .skip-line
+        .default).get()
+  })
+
+  let skip-number = (
+    __codly-args.skip-number.type_check
+  )(if "skip-number" in extra {
+    extra.skip-number
+  } else {
+    state("codly-skip-number", __codly-args
+        .skip-number
+        .default).get()
+  })
+
+  let reference-by = (
+    __codly-args.reference-by.type_check
+  )(if "reference-by" in extra {
+    extra.reference-by
+  } else {
+    state("codly-reference-by", __codly-args
+        .reference-by
+        .default).get()
+  })
+
+  if not reference-by in (
+    "line",
+    "item",
+  ) {
+    panic("codly: reference-by must be either 'line' or 'item'")
+  }
+
+  let reference-sep = (
+    __codly-args
+      .reference-sep
+      .type_check
+  )(if "reference-sep" in extra {
+    extra.reference-sep
+  } else {
+    state("codly-reference-sep", __codly-args
+        .reference-sep
+        .default).get()
+  })
+
+  let reference-number-format = (
+    __codly-args
+      .reference-number-format
+      .type_check
+  )(if "reference-number-format" in extra {
+    extra.reference-number-format
+  } else {
+    state("codly-reference-number-format", __codly-args
+        .reference-number-format
+        .default).get()
+  })
+
+  let annotation-format = {
+    let fn = (
+      __codly-args
+        .annotation-format
+        .type_check
+    )(if "annotation-format" in extra {
+      extra.annotation-format
+    } else {
+      state("codly-annotation-format", __codly-args
+          .annotation-format
+          .default).get()
+    })
+    if fn == none {
+      _ => none
+    } else {
+      fn
+    }
+  }
+
+  let annotations = {
+    let annotations = (
+      __codly-args
+        .annotations
+        .type_check
+    )(if "annotations" in extra {
+      extra.annotations
+    } else {
+      state("codly-annotations", __codly-args
+          .annotations
+          .default).get()
+    })
+    annotations = if annotations == none {
+      ()
+    } else {
+      annotations
+        .sorted(key: x => x.start)
+        .map(x => {
+        if (
+          not "end" in x
+        ) or x.end == none {
+          x.insert("end", x.start)
+        }
+
+        if (not "content" in x) {
+          x.insert("content", none)
+        }
+
+        if "label" in x {
+          if block-label == none {
+            panic("codly: label " + str(x.label) + " is only allowed in a figure block")
+          }
+        }
+
+        x
+      })
+    }
+
+    // Check for overlapping annotations.
+    let current = none
+    for a in annotations {
+      if current != none and a.start <= current.end {
+        panic("codly: overlapping annotations")
+      }
+      current = a
+    }
+
+    annotations
+  }
+  let has-annotations = annotations != none and annotations.len() > 0
+
+  let start = if range == none {
+    1
+  } else {
+    range.at(0)
+  }
+
+  // Get the widest annotation.
+  let annot-bodies-width = annotations
+    .map(x => x.content)
+    .map(measure)
+    .map(x => x.width)
+  let num = annotation-format(
+    annotations.len(),
+  )
+  let lr-width = if annotations.len() > 0 {
+    measure(math.lr(
+        "}",
+        size: 5em,
+      ) + num).width
+  } else {
+    0pt
+  }
+
+  let annot-width = annot-bodies-width.fold(
+    0pt,
+    (a, b) => calc.max(a, b),
+  ) + padding.left + padding.right + lr-width
+
+  // Get the height of an individual line.
+  let line-height = measure(
+    raw.line(
+      1,
+      1,
+      "Hello, World!",
+      [Hello, World!],
+    )
+  ).height + padding.top + padding.bottom
+
+  let items = ()
+  let height = measure[1].height
+  let current-annot = none
+  let first-annot = false
+  let annots = 0
+
+  // prepare the header
+  let header = (
+    __codly-args.header.type_check
+  )(if "header" in extra {
+    extra.header
+  } else {
+    state("codly-header", __codly-args
+        .header
+        .default).get()
+  })
+  let header-repeat = (
+    __codly-args
+      .header-repeat
+      .type_check
+  )(if "header-repeat" in extra {
+    extra.header-repeat
+  } else {
+    state("codly-header-repeat", __codly-args
+        .header-repeat
+        .default).get()
+  })
+
+  // The language block (icon + name)
+  let languages = (
+    __codly-args.languages.type_check
+  )(if "languages" in extra {
+    extra.languages
+  } else {
+    state("codly-languages", __codly-args
+        .languages
+        .default).get()
+  })
+  let language-block = if it.lang == none {
+    none
+  } else if it.lang in languages {
+    let lang = languages.at(it.lang)
+    let name = if type(lang) == str {
+      lang
+    } else if display-names and "name" in lang {
+      lang.name
+    } else {
+      []
+    }
+    let icon = if display-icons and "icon" in lang {
+      lang.icon
+    } else {
+      []
+    }
+    let color = if "color" in lang {
+      lang.color
+    } else {
+      default-color
+    }
+
+    if language-block == auto {
+      let radius = (
         __codly-args
-          .lang-format
+          .lang-radius
           .type_check
-      )(if "lang-format" in extra {
-        extra.lang-format
+      )(if "lang-radius" in extra {
+        extra.lang-radius
       } else {
-        state("codly-lang-format", __codly-args
-            .lang-format
+        state("codly-lang-radius", __codly-args
+            .lang-radius
+            .default).get()
+      })
+      let padding = __codly-inset(
+        (
+          __codly-args
+            .lang-inset
+            .type_check
+        )(if "lang-inset" in extra {
+          extra.lang-inset
+        } else {
+          state("codly-lang-inset", __codly-args
+              .lang-inset
+              .default).get()
+        }),
+      )
+
+      let lang-stroke = (
+        __codly-args
+          .lang-stroke
+          .type_check
+      )(if "lang-stroke" in extra {
+        extra.lang-stroke
+      } else {
+        state("codly-lang-stroke", __codly-args
+            .lang-stroke
+            .default).get()
+      })
+      let lang-fill = (
+        __codly-args
+          .lang-fill
+          .type_check
+      )(if "lang-fill" in extra {
+        extra.lang-fill
+      } else {
+        state("codly-lang-fill", __codly-args
+            .lang-fill
             .default).get()
       })
 
-      if fn == none {
-        (..) => none
-      } else if fn == auto {
-        auto
+      let fill = if type(lang-fill) == function {
+        (lang-fill)((
+          name: name,
+          icon: icon,
+          color: color,
+        ))
+      } else if type(lang-fill) == color or type(lang-fill) == gradient or type(lang-fill) == pattern {
+        lang-fill
       } else {
-        fn
+        color
+      }
+
+      let stroke = if type(lang-stroke) == function {
+        (lang-stroke)((
+          name: name,
+          icon: icon,
+          color: color,
+        ))
+      } else {
+        lang-stroke
+      }
+
+      let b = measure(icon + name)
+      box(
+        radius: radius,
+        fill: fill,
+        inset: padding,
+        stroke: stroke,
+        outset: 0pt,
+        height: b.height + padding.top + padding.bottom,
+        icon + name,
+      )
+    } else {
+      (language-block)(
+        name,
+        icon,
+        color,
+      )
+    }
+  } else if display-names {
+    if language-block == auto {
+      let radius = (
+        __codly-args
+          .lang-radius
+          .type_check
+      )(if "lang-radius" in extra {
+        extra.lang-radius
+      } else {
+        state("codly-lang-radius", __codly-args
+            .lang-radius
+            .default).get()
+      })
+
+      let padding = __codly-inset(
+        (
+          __codly-args
+            .lang-inset
+            .type_check
+        )(if "lang-inset" in extra {
+          extra.lang-inset
+        } else {
+          state("codly-lang-inset", __codly-args
+              .lang-inset
+              .default).get()
+        }),
+      )
+
+      let lang-stroke = (
+        __codly-args
+          .lang-stroke
+          .type_check
+      )(if "lang-stroke" in extra {
+        extra.lang-stroke
+      } else {
+        state("codly-lang-stroke", __codly-args
+            .lang-stroke
+            .default).get()
+      })
+
+      let lang-fill = (
+        __codly-args
+          .lang-fill
+          .type_check
+      )(if "lang-fill" in extra {
+        extra.lang-fill
+      } else {
+        state("codly-lang-fill", __codly-args
+            .lang-fill
+            .default).get()
+      })
+
+      let fill = if type(lang-fill) == function {
+        (lang-fill)((
+          name: it.lang,
+          icon: [],
+          color: default-color,
+        ))
+      } else if type(lang-fill) == color or type(lang-fill) == gradient or type(lang-fill) == pattern {
+        lang-fill
+      } else {
+        default-color
+      }
+
+      let stroke = if type(lang-stroke) == function {
+        (lang-stroke)((
+          name: it.lang,
+          icon: [],
+          color: default-color,
+        ))
+      } else {
+        lang-stroke
+      }
+
+      let b = measure(it.lang)
+      box(
+        radius: radius,
+        fill: fill,
+        inset: padding,
+        stroke: stroke,
+        outset: 0pt,
+        height: b.height + padding.top + padding.bottom,
+        it.lang,
+      )
+    } else {
+      (language-block)(
+        it.lang,
+        [],
+        default-color,
+      )
+    }
+  }
+
+  // Push the line and the language block in a grid for alignment
+  let language-block-final = place(
+    right + horizon,
+    dx: lang-outset.x,
+    dy: lang-outset.y,
+    language-block,
+  )
+  let lb = measure(language-block)
+
+  let header = if header != none {
+    let header-args = (
+      __codly-args
+        .header-cell-args
+        .type_check
+    )(if "header-cell-args" in extra {
+      extra.header-cell-args
+    } else {
+      state("codly-header-cell-args", __codly-args
+          .header-cell-args
+          .default).get()
+    })
+    let transform = (
+      __codly-args
+        .header-transform
+        .type_check
+    )(if "header-transform" in extra {
+      extra.header-transform
+    } else {
+      state("codly-header-transform", __codly-args
+          .header-transform
+          .default).get()
+    })
+    (
+      grid.header(
+        repeat: header-repeat,
+        grid.cell(
+          transform(header) + language-block-final,
+          colspan: 2,
+          ..header-args,
+        ),
+      ),
+    )
+  } else {
+    none
+  }
+
+  for (i, line) in it
+    .lines
+    .enumerate() {
+    first-annot = false
+
+    // Check for annotations
+    let annot = annotations.at(
+      0,
+      default: none,
+    )
+    if annot != none and i == annot.start {
+      current-annot = annot
+      first-annot = true
+      annots += 1
+    }
+
+    // Cleanup annotations
+    if current-annot != none and i > current-annot.end {
+      current-annot = none
+      _ = annotations.remove(0)
+    }
+
+    // Annotation printing
+    let annot(
+      extra: none,
+    ) = if current-annot != none and first-annot {
+      let height = line-height * (
+        current-annot.end - current-annot.start + 1
+      )
+      let num = annotation-format(annots)
+      let label = if "label" in current-annot and current-annot.label != none {
+        let referenced = if reference-by == "line" {
+          reference-number-format(line.number + offset)
+        } else {
+          num
+        }
+        place(
+          hide[#figure(
+              kind: "codly-referencer",
+              supplement: none,
+            )[#box(referenced)#box(
+                str(block-label),
+              )]#current-annot.label],
+        )
+      } else {
+        none
+      }
+
+      let annot-content = {
+        $lr(}, size: #height) #num #current-annot.content #label$
+      }
+
+      (
+        grid.cell(
+          rowspan: current-annot.end - current-annot.start + 1,
+          align: left + horizon,
+          annot-content + extra,
+        ),
+      )
+    } else if current-annot != none or not has-annotations {
+      ()
+    } else {
+      (extra,)
+    }
+
+    // Try and look for a skip
+    let skip = skips.at(
+      0,
+      default: none,
+    )
+    if skip != none and i == skip.at(0) {
+      items.push(skip-number)
+      items.push(skip-line)
+      // Advance the offset.
+      offset += skip.at(1)
+      _ = skips.remove(0)
+    }
+
+    if not in_range(line.number) {
+      continue
+    }
+
+    // Always push the formatted line number
+    let l = [#raw.line(
+        line.number + offset,
+        line.count,
+        line.text,
+        line.body,
+      )<codly-highlighted>]
+
+    // Must be done before the smart indentation code.
+    // Otherwise it results in two paragraphs.
+    if numbers-format != none {
+      items.push(
+        numbers-format(line.number + offset),
+      )
+    } else {
+      l = [#raw.line(
+          line.number + offset,
+          line.count,
+          line.text,
+          box(
+            height: height,
+            width: 0pt,
+          ) + line.body,
+        )<codly-highlighted>]
+    }
+
+    if line.number != start or (
+      display-names != true and display-icons != true
+    ) {
+      items = (..items, l, ..annot())
+      continue
+    } else if it.lang == none {
+      items = (..items, l, ..annot())
+      continue
+    }
+
+    if has-annotations {
+      if header != none {
+        items = (..items, l, ..annot())
+      } else {
+        items = (
+          ..items,
+          l,
+          ..annot(extra: language-block-final),
+        )
+      }
+    } else {
+      if header != none {
+        items.push(l)
+      } else {
+        items.push(
+          grid(
+            columns: (
+              1fr,
+              lb.width + padding.left + padding.right,
+            ),
+            l, language-block-final,
+          ),
+        )
       }
     }
-    let default-color = (
+  }
+
+  // prepare the footer
+  let footer = (
+    __codly-args.footer.type_check
+  )(if "footer" in extra {
+    extra.footer
+  } else {
+    state("codly-footer", __codly-args
+        .footer
+        .default).get()
+  })
+  let footer-repeat = (
+    __codly-args
+      .footer-repeat
+      .type_check
+  )(if "footer-repeat" in extra {
+    extra.footer-repeat
+  } else {
+    state("codly-footer-repeat", __codly-args
+        .footer-repeat
+        .default).get()
+  })
+  let footer = if footer != none {
+    let footer-args = (
       __codly-args
-        .default-color
+        .footer-cell-args
         .type_check
-    )(if "default-color" in extra {
-      extra.default-color
+    )(if "footer-cell-args" in extra {
+      extra.footer-cell-args
     } else {
-      state("codly-default-color", __codly-args
-          .default-color
+      state("codly-footer-cell-args", __codly-args
+          .footer-cell-args
           .default).get()
     })
-
-    let radius = (
-      __codly-args.radius.type_check
-    )(if "radius" in extra {
-      extra.radius
-    } else {
-      state("codly-radius", __codly-args
-          .radius
-          .default).get()
-    })
-
-    let offset = (
-      __codly-args.offset.type_check
-    )(if "offset" in extra {
-      extra.offset
-    } else {
-      state("codly-offset", __codly-args
-          .offset
-          .default).get()
-    })
-
-    let stroke = (
-      __codly-args.stroke.type_check
-    )(if "stroke" in extra {
-      extra.stroke
-    } else {
-      state("codly-stroke", __codly-args
-          .stroke
-          .default).get()
-    })
-
-    let zebra-color = (
-      __codly-args.zebra-fill.type_check
-    )(if "zebra-fill" in extra {
-      extra.zebra-fill
-    } else {
-      state("codly-zebra-fill", __codly-args
-          .zebra-fill
-          .default).get()
-    })
-
-    let numbers-format = (
+    let transform = (
       __codly-args
-        .number-format
+        .footer-transform
         .type_check
-    )(if "number-format" in extra {
-      extra.number-format
+    )(if "footer-transform" in extra {
+      extra.footer-transform
     } else {
-      state("codly-number-format", __codly-args
-          .number-format
+      state("codly-footer-transform", __codly-args
+          .footer-transform
           .default).get()
     })
+    (
+      grid.footer(
+        repeat: footer-repeat,
+        grid.cell(
+          transform(footer),
+          colspan: 2,
+          ..footer-args,
+        ),
+      ),
+    )
+  } else {
+    ()
+  }
 
-    let numbers-alignment = (
-      __codly-args
-        .number-align
-        .type_check
-    )(if "number-align" in extra {
-      extra.number-align
-    } else {
-      state("codly-number-align", __codly-args
-          .number-align
-          .default).get()
-    })
+  // If the fill or zebra color is a gradient, we will draw it on a separate layer.
+  let is-complex-fill = (
+    (
+      type(fill) != color and fill != none
+    ) or (
+      type(zebra-color) != color and zebra-color != none
+    )
+  )
 
-    let padding = __codly-inset(
-      (
-        __codly-args.inset.type_check
-      )(if "inset" in extra {
-        extrainset
+  block(
+    breakable: breakable,
+    clip: true,
+    width: 100%,
+    radius: radius,
+    stroke: stroke,
+    {
+      if is-complex-fill {
+        // We use place to draw the fill on a separate layer.
+        place(
+          grid(
+            columns: if has-annotations {
+              (1fr, annot-width)
+            } else {
+              (1fr,)
+            },
+            stroke: none,
+            inset: padding
+              .pairs()
+              .map(((k, x)) => (
+                  k,
+                  x * 1.5,
+                ))
+              .to-dict(),
+            fill: (
+              x,
+              y,
+            ) => if zebra-color != none and calc.rem(
+              y,
+              2,
+            ) == 0 {
+              zebra-color
+            } else {
+              fill
+            },
+            ..header,
+            ..it
+              .lines
+              .map(line => hide(line)),
+            ..footer,
+          ),
+        )
+      }
+      if numbers-format != none {
+        grid(
+          columns: if has-annotations {
+            (auto, 1fr, annot-width)
+          } else {
+            (auto, 1fr)
+          },
+          inset: padding
+            .pairs()
+            .map(((k, x)) => (
+                k,
+                x * 1.5,
+              ))
+            .to-dict(),
+          stroke: none,
+          align: (
+            numbers-alignment,
+            left + horizon,
+          ),
+          fill: if is-complex-fill {
+            none
+          } else {
+            (
+              x,
+              y,
+            ) => if zebra-color != none and calc.rem(
+              y,
+              2,
+            ) == 0 {
+              zebra-color
+            } else {
+              fill
+            }
+          },
+          ..header,
+          ..items,
+          ..footer,
+        )
       } else {
-        state("codly-inset", __codly-args
-            .inset
-            .default).get()
-      }),
+        grid(
+          columns: if has-annotations {
+            (1fr, annot-width)
+          } else {
+            (1fr)
+          },
+          inset: padding
+            .pairs()
+            .map(((k, x)) => (
+                k,
+                x * 1.5,
+              ))
+            .to-dict(),
+          stroke: none,
+          align: (
+            numbers-alignment,
+            left + horizon,
+          ),
+          fill: (
+            x,
+            y,
+          ) => if zebra-color != none and calc.rem(
+            y,
+            2,
+          ) == 0 {
+            zebra-color
+          } else {
+            fill
+          },
+          ..header,
+          ..items,
+          ..footer,
+        )
+      }
+    },
+  )
+
+  if offset != 0 {
+    state("codly-offset").update(0)
+  }
+
+  if range != none {
+    state("codly-range").update(none)
+  }
+
+  if ranges != none {
+    state("codly-ranges").update(none)
+  }
+
+  if skips != none and skips != () {
+    state("codly-skips").update(())
+  }
+
+  if has-annotations {
+    state("codly-annotations").update(())
+  }
+
+  if header != () {
+    state("codly-header").update(none)
+  }
+
+  if footer != () {
+    state("codly-footer").update(none)
+  }
+
+  let highlights = state("codly-highlights").get()
+  if highlights != none and highlights != () {
+    state("codly-highlights").update(())
+  }
+}
+
+#let __codly-get-parts(heading) = {
+  let num = heading.body.children.at(0)
+  let lbl = heading.body.children.at(1)
+  (num.body, label(lbl.body.text))
+}
+
+#let __codly-ref(
+  it,
+  extra: (:),
+) = context {
+  if it.element != none and it
+    .element
+    .func() == heading and it
+    .element
+    .level == level-highlight {
+    let sep = (
+      __codly-args
+        .reference-sep
+        .type_check
+    )(if "reference-sep" in extra {
+      extra.reference-sep
+    } else {
+      state("codly-reference-sep", __codly-args
+          .reference-sep
+          .default).get()
+    })
+    let (
+      tag,
+      label,
+    ) = __codly-get-parts(it.element)
+    link(
+      it.target,
+      (
+        ref(label),
+        sep,
+        tag,
+      ).join(),
+    )
+  } else if it.element != none and it
+    .element
+    .func() == figure and it
+    .element
+    .kind == "codly-referencer" {
+    let sep = (
+      __codly-args
+        .reference-sep
+        .type_check
+    )(if "reference-sep" in extra {
+      extra.reference-sep
+    } else {
+      state("codly-reference-sep", __codly-args
+          .reference-sep
+          .default).get()
+    })
+    let (
+      num,
+      label,
+    ) = __codly-get-parts(it.element)
+    link(
+      it.target,
+      (
+        ref(label),
+        sep,
+        num,
+      ).join(),
+    )
+  } else if it.element != none and it
+    .element
+    .func() == raw.line and type(it.target) == "label" {
+    let segments = str(it.target).split(":")
+    assert(
+      segments.len() > 1,
+      message: "codly: invalid label",
+    )
+    let lab = label(
+      segments.slice(0, -1).join(":"),
     )
 
-    let breakable = (
-      __codly-args.breakable.type_check
-    )(if "breakable" in extra {
-      extra.breakable
-    } else {
-      state("codly-breakable", __codly-args
-          .breakable
-          .default).get()
-    })
-
-    let fill = (
-      __codly-args.fill.type_check
-    )(if "fill" in extra {
-      extra.fill
-    } else {
-      state("codly-fill", __codly-args
-          .fill
-          .default).get()
-    })
-
-    let skips = {
-      let skips = (
-        __codly-args.skips.type_check
-      )(if "skips" in extra {
-        extra.skips
-      } else {
-        state("codly-skips", __codly-args
-            .skips
-            .default).get()
-      })
-      if skips == none {
-        ()
-      } else {
-        skips
-          .sorted(key: x => x.at(0))
-          .dedup()
-      }
-    }
-
-    let skip-line = (
-      __codly-args.skip-line.type_check
-    )(if "skip-line" in extra {
-      extra.skip-line
-    } else {
-      state("codly-skip-line", __codly-args
-          .skip-line
-          .default).get()
-    })
-
-    let skip-number = (
-      __codly-args
-        .skip-number
-        .type_check
-    )(if "skip-number" in extra {
-      extra.skip-number
-    } else {
-      state("codly-skip-number", __codly-args
-          .skip-number
-          .default).get()
-    })
-
-    let reference-by = (
-      __codly-args
-        .reference-by
-        .type_check
-    )(if "reference-by" in extra {
-      extra.reference-by
-    } else {
-      state("codly-reference-by", __codly-args
-          .reference-by
-          .default).get()
-    })
-
-    if not reference-by in (
-      "line",
-      "item",
-    ) {
-      panic("codly: reference-by must be either 'line' or 'item'")
-    }
-
-    let reference-sep = (
+    let sep = (
       __codly-args
         .reference-sep
         .type_check
@@ -1088,886 +1937,20 @@ snapshot_kind: text
           .default).get()
     })
 
-    let annotation-format = {
-      let fn = (
-        __codly-args
-          .annotation-format
-          .type_check
-      )(if "annotation-format" in extra {
-        extra.annotation-format
-      } else {
-        state("codly-annotation-format", __codly-args
-            .annotation-format
-            .default).get()
-      })
-      if fn == none {
-        _ => none
-      } else {
-        fn
-      }
-    }
-
-    let annotations = {
-      let annotations = (
-        __codly-args
-          .annotations
-          .type_check
-      )(if "annotations" in extra {
-        extra.annotations
-      } else {
-        state("codly-annotations", __codly-args
-            .annotations
-            .default).get()
-      })
-      annotations = if annotations == none {
-        ()
-      } else {
-        annotations
-          .sorted(key: x => x.start)
-          .map(x => {
-          if (
-            not "end" in x
-          ) or x.end == none {
-            x.insert("end", x.start)
-          }
-
-          if (not "content" in x) {
-            x.insert("content", none)
-          }
-
-          if "label" in x {
-            if block-label == none {
-              panic("codly: label " + str(x.label) + " is only allowed in a figure block")
-            }
-          }
-
-          x
-        })
-      }
-
-      // Check for overlapping annotations.
-      let current = none
-      for a in annotations {
-        if current != none and a.start <= current.end {
-          panic("codly: overlapping annotations")
-        }
-        current = a
-      }
-
-      annotations
-    }
-    let has-annotations = annotations != none and annotations.len() > 0
-
-    let start = if range == none {
-      1
-    } else {
-      range.at(0)
-    }
-
-    // Get the widest annotation.
-    let annot-bodies-width = annotations
-      .map(x => x.content)
-      .map(measure)
-      .map(x => x.width)
-    let num = annotation-format(
-      annotations.len(),
-    )
-    let lr-width = if annotations.len() > 0 {
-      measure(math.lr(
-          "}",
-          size: 5em,
-        ) + num).width
-    } else {
-      0pt
-    }
-
-    let annot-width = annot-bodies-width.fold(
-      0pt,
-      (a, b) => calc.max(a, b),
-    ) + padding.left + padding.right + lr-width
-
-    // Get the height of an individual line.
-    let line-height = measure(
-      raw.line(
-        1,
-        1,
-        "Hello, World!",
-        [Hello, World!],
-      )
-    ).height + padding.top + padding.bottom
-
-    let items = ()
-    let height = measure[1].height
-    let current-annot = none
-    let first-annot = false
-    let annots = 0
-
-    // prepare the header
-    let header = (
-      __codly-args.header.type_check
-    )(if "header" in extra {
-      extra.header
-    } else {
-      state("codly-header", __codly-args
-          .header
-          .default).get()
-    })
-    let header-repeat = (
-      __codly-args
-        .header-repeat
-        .type_check
-    )(if "header-repeat" in extra {
-      extra.header-repeat
-    } else {
-      state("codly-header-repeat", __codly-args
-          .header-repeat
-          .default).get()
-    })
-
-    // The language block (icon + name)
-    let languages = (
-      __codly-args.languages.type_check
-    )(if "languages" in extra {
-      extra.languages
-    } else {
-      state("codly-languages", __codly-args
-          .languages
-          .default).get()
-    })
-    let language-block = if it.lang == none {
-      none
-    } else if it.lang in languages {
-      let lang = languages.at(it.lang)
-      let name = if type(lang) == str {
-        lang
-      } else if display-names and "name" in lang {
-        lang.name
-      } else {
-        []
-      }
-      let icon = if display-icons and "icon" in lang {
-        lang.icon
-      } else {
-        []
-      }
-      let color = if "color" in lang {
-        lang.color
-      } else {
-        default-color
-      }
-
-      if language-block == auto {
-        let radius = (
-          __codly-args
-            .lang-radius
-            .type_check
-        )(if "lang-radius" in extra {
-          extra.lang-radius
-        } else {
-          state("codly-lang-radius", __codly-args
-              .lang-radius
-              .default).get()
-        })
-        let padding = __codly-inset(
-          (
-            __codly-args
-              .lang-inset
-              .type_check
-          )(if "lang-inset" in extra {
-            extra.lang-inset
-          } else {
-            state("codly-lang-inset", __codly-args
-                .lang-inset
-                .default).get()
-          }),
-        )
-
-        let lang-stroke = (
-          __codly-args
-            .lang-stroke
-            .type_check
-        )(if "lang-stroke" in extra {
-          extra.lang-stroke
-        } else {
-          state("codly-lang-stroke", __codly-args
-              .lang-stroke
-              .default).get()
-        })
-        let lang-fill = (
-          __codly-args
-            .lang-fill
-            .type_check
-        )(if "lang-fill" in extra {
-          extra.lang-fill
-        } else {
-          state("codly-lang-fill", __codly-args
-              .lang-fill
-              .default).get()
-        })
-
-        let fill = if type(lang-fill) == function {
-          (lang-fill)((
-            name: name,
-            icon: icon,
-            color: color,
-          ))
-        } else if type(lang-fill) == color or type(lang-fill) == gradient or type(lang-fill) == pattern {
-          lang-fill
-        } else {
-          color
-        }
-
-        let stroke = if type(lang-stroke) == function {
-          (lang-stroke)((
-            name: name,
-            icon: icon,
-            color: color,
-          ))
-        } else {
-          lang-stroke
-        }
-
-        let b = measure(icon + name)
-        box(
-          radius: radius,
-          fill: fill,
-          inset: padding,
-          stroke: stroke,
-          outset: 0pt,
-          height: b.height + padding.top + padding.bottom,
-          icon + name,
-        )
-      } else {
-        (language-block)(
-          name,
-          icon,
-          color,
-        )
-      }
-    } else if display-names {
-      if language-block == auto {
-        let radius = (
-          __codly-args
-            .lang-radius
-            .type_check
-        )(if "lang-radius" in extra {
-          extra.lang-radius
-        } else {
-          state("codly-lang-radius", __codly-args
-              .lang-radius
-              .default).get()
-        })
-
-        let padding = __codly-inset(
-          (
-            __codly-args
-              .lang-inset
-              .type_check
-          )(if "lang-inset" in extra {
-            extra.lang-inset
-          } else {
-            state("codly-lang-inset", __codly-args
-                .lang-inset
-                .default).get()
-          }),
-        )
-
-        let lang-stroke = (
-          __codly-args
-            .lang-stroke
-            .type_check
-        )(if "lang-stroke" in extra {
-          extra.lang-stroke
-        } else {
-          state("codly-lang-stroke", __codly-args
-              .lang-stroke
-              .default).get()
-        })
-
-        let lang-fill = (
-          __codly-args
-            .lang-fill
-            .type_check
-        )(if "lang-fill" in extra {
-          extra.lang-fill
-        } else {
-          state("codly-lang-fill", __codly-args
-              .lang-fill
-              .default).get()
-        })
-
-        let fill = if type(lang-fill) == function {
-          (lang-fill)((
-            name: it.lang,
-            icon: [],
-            color: default-color,
-          ))
-        } else if type(lang-fill) == color or type(lang-fill) == gradient or type(lang-fill) == pattern {
-          lang-fill
-        } else {
-          default-color
-        }
-
-        let stroke = if type(lang-stroke) == function {
-          (lang-stroke)((
-            name: it.lang,
-            icon: [],
-            color: default-color,
-          ))
-        } else {
-          lang-stroke
-        }
-
-        let b = measure(it.lang)
-        box(
-          radius: radius,
-          fill: fill,
-          inset: padding,
-          stroke: stroke,
-          outset: 0pt,
-          height: b.height + padding.top + padding.bottom,
-          it.lang,
-        )
-      } else {
-        (language-block)(
-          it.lang,
-          [],
-          default-color,
-        )
-      }
-    }
-
-    // Push the line and the language block in a grid for alignment
-    let language-block-final = place(
-      right + horizon,
-      dx: lang-outset.x,
-      dy: lang-outset.y,
-      language-block,
-    )
-    let lb = measure(language-block)
-
-    let header = if header != none {
-      let header-args = (
-        __codly-args
-          .header-cell-args
-          .type_check
-      )(if "header-cell-args" in extra {
-        extra.header-cell-args
-      } else {
-        state("codly-header-cell-args", __codly-args
-            .header-cell-args
-            .default).get()
-      })
-      let transform = (
-        __codly-args
-          .header-transform
-          .type_check
-      )(if "header-transform" in extra {
-        extra.header-transform
-      } else {
-        state("codly-header-transform", __codly-args
-            .header-transform
-            .default).get()
-      })
+    link(
+      it.target,
       (
-        grid.header(
-          repeat: header-repeat,
-          grid.cell(
-            transform(header) + language-block-final,
-            colspan: 2,
-            ..header-args,
-          ),
-        ),
-      )
-    } else {
-      none
-    }
-
-    for (i, line) in it
-      .lines
-      .enumerate() {
-      first-annot = false
-
-      // Check for annotations
-      let annot = annotations.at(
-        0,
-        default: none,
-      )
-      if annot != none and i == annot.start {
-        current-annot = annot
-        first-annot = true
-        annots += 1
-      }
-
-      // Cleanup annotations
-      if current-annot != none and i > current-annot.end {
-        current-annot = none
-        _ = annotations.remove(0)
-      }
-
-      // Annotation printing
-      let annot(
-        extra: none,
-      ) = if current-annot != none and first-annot {
-        let height = line-height * (
-          current-annot.end - current-annot.start + 1
-        )
-        let num = annotation-format(annots)
-        let label = if "label" in current-annot and current-annot.label != none {
-          let referenced = if reference-by == "line" {
-            reference-number-format(line.number + offset)
-          } else {
-            num
-          }
-          place(
-            hide[#figure(
-                kind: "codly-referencer",
-                supplement: none,
-              )[#box(referenced)#box(
-                  str(block-label),
-                )]#current-annot.label],
-          )
-        } else {
-          none
-        }
-
-        let annot-content = {
-          $lr(}, size: #height) #num #current-annot.content #label$
-        }
-
-        (
-          grid.cell(
-            rowspan: current-annot.end - current-annot.start + 1,
-            align: left + horizon,
-            annot-content + extra,
-          ),
-        )
-      } else if current-annot != none or not has-annotations {
-        ()
-      } else {
-        (extra,)
-      }
-
-      // Try and look for a skip
-      let skip = skips.at(
-        0,
-        default: none,
-      )
-      if skip != none and i == skip.at(0) {
-        items.push(skip-number)
-        items.push(skip-line)
-        // Advance the offset.
-        offset += skip.at(1)
-        _ = skips.remove(0)
-      }
-
-      if not in_range(line.number) {
-        continue
-      }
-
-      // Always push the formatted line number
-      let l = [#raw.line(
-          line.number + offset,
-          line.count,
-          line.text,
-          line.body,
-        )<codly-highlighted>]
-
-      // Must be done before the smart indentation code.
-      // Otherwise it results in two paragraphs.
-      if numbers-format != none {
-        items.push(
-          numbers-format(line.number + offset),
-        )
-      } else {
-        l = [#raw.line(
-            line.number + offset,
-            line.count,
-            line.text,
-            box(
-              height: height,
-              width: 0pt,
-            ) + line.body,
-          )<codly-highlighted>]
-      }
-
-      if line.number != start or (
-        display-names != true and display-icons != true
-      ) {
-        items = (..items, l, ..annot())
-        continue
-      } else if it.lang == none {
-        items = (..items, l, ..annot())
-        continue
-      }
-
-      if has-annotations {
-        if header != none {
-          items = (
-            ..items,
-            l,
-            ..annot(),
-          )
-        } else {
-          items = (
-            ..items,
-            l,
-            ..annot(extra: language-block-final),
-          )
-        }
-      } else {
-        if header != none {
-          items.push(l)
-        } else {
-          items.push(
-            grid(
-              columns: (
-                1fr,
-                lb.width + padding.left + padding.right,
-              ),
-              l, language-block-final,
-            ),
-          )
-        }
-      }
-    }
-
-    // prepare the footer
-    let footer = (
-      __codly-args.footer.type_check
-    )(if "footer" in extra {
-      extra.footer
-    } else {
-      state("codly-footer", __codly-args
-          .footer
-          .default).get()
-    })
-    let footer-repeat = (
-      __codly-args
-        .footer-repeat
-        .type_check
-    )(if "footer-repeat" in extra {
-      extra.footer-repeat
-    } else {
-      state("codly-footer-repeat", __codly-args
-          .footer-repeat
-          .default).get()
-    })
-    let footer = if footer != none {
-      let footer-args = (
-        __codly-args
-          .footer-cell-args
-          .type_check
-      )(if "footer-cell-args" in extra {
-        extra.footer-cell-args
-      } else {
-        state("codly-footer-cell-args", __codly-args
-            .footer-cell-args
-            .default).get()
-      })
-      let transform = (
-        __codly-args
-          .footer-transform
-          .type_check
-      )(if "footer-transform" in extra {
-        extra.footer-transform
-      } else {
-        state("codly-footer-transform", __codly-args
-            .footer-transform
-            .default).get()
-      })
-      (
-        grid.footer(
-          repeat: footer-repeat,
-          grid.cell(
-            transform(footer),
-            colspan: 2,
-            ..footer-args,
-          ),
-        ),
-      )
-    } else {
-      ()
-    }
-
-    // If the fill or zebra color is a gradient, we will draw it on a separate layer.
-    let is-complex-fill = (
-      (
-        type(fill) != color and fill != none
-      ) or (
-        type(zebra-color) != color and zebra-color != none
-      )
+        ref(lab),
+        sep,
+        reference-number-format(it
+          .element
+          .number),
+      ).join(),
     )
-
-    block(
-      breakable: breakable,
-      clip: true,
-      width: 100%,
-      radius: radius,
-      stroke: stroke,
-      {
-        if is-complex-fill {
-          // We use place to draw the fill on a separate layer.
-          place(
-            grid(
-              columns: if has-annotations {
-                (1fr, annot-width)
-              } else {
-                (1fr,)
-              },
-              stroke: none,
-              inset: padding
-                .pairs()
-                .map(((k, x)) => (
-                    k,
-                    x * 1.5,
-                  ))
-                .to-dict(),
-              fill: (
-                x,
-                y,
-              ) => if zebra-color != none and calc.rem(
-                y,
-                2,
-              ) == 0 {
-                zebra-color
-              } else {
-                fill
-              },
-              ..header,
-              ..it
-                .lines
-                .map(line => hide(line)),
-              ..footer,
-            ),
-          )
-        }
-        if numbers-format != none {
-          grid(
-            columns: if has-annotations {
-              (auto, 1fr, annot-width)
-            } else {
-              (auto, 1fr)
-            },
-            inset: padding
-              .pairs()
-              .map(((k, x)) => (
-                  k,
-                  x * 1.5,
-                ))
-              .to-dict(),
-            stroke: none,
-            align: (
-              numbers-alignment,
-              left + horizon,
-            ),
-            fill: if is-complex-fill {
-              none
-            } else {
-              (
-                x,
-                y,
-              ) => if zebra-color != none and calc.rem(
-                y,
-                2,
-              ) == 0 {
-                zebra-color
-              } else {
-                fill
-              }
-            },
-            ..header,
-            ..items,
-            ..footer,
-          )
-        } else {
-          grid(
-            columns: if has-annotations {
-              (1fr, annot-width)
-            } else {
-              (1fr)
-            },
-            inset: padding
-              .pairs()
-              .map(((k, x)) => (
-                  k,
-                  x * 1.5,
-                ))
-              .to-dict(),
-            stroke: none,
-            align: (
-              numbers-alignment,
-              left + horizon,
-            ),
-            fill: (
-              x,
-              y,
-            ) => if zebra-color != none and calc.rem(
-              y,
-              2,
-            ) == 0 {
-              zebra-color
-            } else {
-              fill
-            },
-            ..header,
-            ..items,
-            ..footer,
-          )
-        }
-      },
-    )
-
-    if offset != 0 {
-      state("codly-offset").update(0)
-    }
-
-    if range != none {
-      state("codly-range").update(none)
-    }
-
-    if ranges != none {
-      state("codly-ranges").update(none)
-    }
-
-    if skips != none and skips != () {
-      state("codly-skips").update(())
-    }
-
-    if has-annotations {
-      state("codly-annotations").update(())
-    }
-
-    if header != () {
-      state("codly-header").update(none)
-    }
-
-    if footer != () {
-      state("codly-footer").update(none)
-    }
-
-    let highlights = state("codly-highlights").get()
-    if highlights != none and highlights != () {
-      state("codly-highlights").update(())
-    }
+  } else {
+    it
   }
-)
-
-#let __codly-get-parts(heading) = {
-  let num = heading.body.children.at(0)
-  let lbl = heading.body.children.at(1)
-  (num.body, label(lbl.body.text))
 }
-
-#let __codly-ref(it, extra: (:)) = (
-  context {
-    if it.element != none and it
-      .element
-      .func() == heading and it
-      .element
-      .level == level-highlight {
-      let sep = (
-        __codly-args
-          .reference-sep
-          .type_check
-      )(if "reference-sep" in extra {
-        extra.reference-sep
-      } else {
-        state("codly-reference-sep", __codly-args
-            .reference-sep
-            .default).get()
-      })
-      let (
-        tag,
-        label,
-      ) = __codly-get-parts(it.element)
-      link(
-        it.target,
-        (
-          ref(label),
-          sep,
-          tag,
-        ).join(),
-      )
-    } else if it.element != none and it
-      .element
-      .func() == figure and it
-      .element
-      .kind == "codly-referencer" {
-      let sep = (
-        __codly-args
-          .reference-sep
-          .type_check
-      )(if "reference-sep" in extra {
-        extra.reference-sep
-      } else {
-        state("codly-reference-sep", __codly-args
-            .reference-sep
-            .default).get()
-      })
-      let (
-        num,
-        label,
-      ) = __codly-get-parts(it.element)
-      link(
-        it.target,
-        (
-          ref(label),
-          sep,
-          num,
-        ).join(),
-      )
-    } else if it.element != none and it
-      .element
-      .func() == raw.line and type(it.target) == "label" {
-      let segments = str(it.target).split(":")
-      assert(
-        segments.len() > 1,
-        message: "codly: invalid label",
-      )
-      let lab = label(
-        segments.slice(0, -1).join(":"),
-      )
-
-      let sep = (
-        __codly-args
-          .reference-sep
-          .type_check
-      )(if "reference-sep" in extra {
-        extra.reference-sep
-      } else {
-        state("codly-reference-sep", __codly-args
-            .reference-sep
-            .default).get()
-      })
-
-      let reference-number-format = (
-        __codly-args
-          .reference-number-format
-          .type_check
-      )(if "reference-number-format" in extra {
-        extra.reference-number-format
-      } else {
-        state("codly-reference-number-format", __codly-args
-            .reference-number-format
-            .default).get()
-      })
-
-      link(
-        it.target,
-        (
-          ref(lab),
-          sep,
-          reference-number-format(it
-            .element
-            .number),
-        ).join(),
-      )
-    } else {
-      it
-    }
-  }
-)
 
 /// Initializes the codly show rule.
 ///
