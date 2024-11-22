@@ -1119,7 +1119,6 @@ snapshot_kind: text
   align_default: left,
   fill_default: none,
 ) = {
-
   let align_default = if type(align_default) == _function-type {
     align_default(cell.x, cell.y) // column, row
   } else {

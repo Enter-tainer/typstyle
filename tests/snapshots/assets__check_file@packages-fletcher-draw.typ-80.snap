@@ -22,10 +22,8 @@ snapshot_kind: text
 
 
 #let draw-node(node, debug: 0) = {
-
   let result = {
     if node.stroke != none or node.fill != none {
-
       cetz.draw.group({
         cetz.draw.translate(node.pos.xyz)
         for (i, extrude) in node.extrude.enumerate() {
@@ -39,7 +37,6 @@ snapshot_kind: text
     }
 
     if node.label != none {
-
       cetz.draw.content(
         node.pos.xyz,
         box(
@@ -105,7 +102,6 @@ snapshot_kind: text
 /// - curve (function): Parametric curve $RR -> RR^2$ describing the shape of
 ///   the edge in $x y$ coordinates.
 #let place-edge-label-on-curve(edge, curve, debug: 0) = {
-
   let curve-point = curve(edge.label-pos)
   let curve-point-ε = curve(edge.label-pos + 1e-3)
 
@@ -119,7 +115,6 @@ snapshot_kind: text
       left: 180deg,
       bottom: 270deg,
     ).at(repr(edge.label-angle))
-
   } else if edge.label-angle == auto {
     edge.label-angle = θ
     if calc.abs(edge.label-angle) > 90deg {
@@ -217,7 +212,6 @@ snapshot_kind: text
 
   // Draw line(s), one for each extrusion shift
   for shift in edge.extrude {
-
     let offsets = cap-offsets(edge, shift)
     let points = (from, to).zip(offsets).map(((point, offset)) => {
       // Shift line sideways (for multi-stroke effect)
@@ -243,7 +237,6 @@ snapshot_kind: text
 
   // Draw label
   if edge.label != none {
-
     // Choose label anchor based on edge direction,
     // preferring to place labels above the edge
     if edge.label-side == auto {
@@ -252,7 +245,6 @@ snapshot_kind: text
 
     place-edge-label-on-curve(edge, curve, debug: debug)
   }
-
 }
 
 
@@ -282,7 +274,6 @@ snapshot_kind: text
 
   // Draw arc(s), one for each extrusion shift
   for shift in edge.extrude {
-
     // Adjust arc angles to accommodate for cap offsets
     let (δ-start, δ-stop) = cap-offsets(edge, shift).map(arclen => (
       -bend-dir * arclen / radius * 1rad
@@ -308,14 +299,12 @@ snapshot_kind: text
 
   // Draw label
   if edge.label != none {
-
     if edge.label-side == auto {
       // Choose label side to be on outside of arc
       edge.label-side = if edge.bend > 0deg { left } else { right }
     }
 
     place-edge-label-on-curve(edge, curve, debug: debug)
-
   }
 }
 
@@ -334,7 +323,6 @@ snapshot_kind: text
 ///   - `label-side`, `label-pos`, `label-sep`, and `label-anchor`.
 /// - debug (int): Level of debug details to draw.
 #let draw-edge-polyline(edge, debug: 0) = {
-
   let verts = edge.final-vertices
   let n-segments = verts.len() - 1
 
@@ -376,7 +364,6 @@ snapshot_kind: text
 				line-shift: 0*radius, // distance from vertex to beginning of arc
 			)
     } else {
-
       // distance from vertex to center of curvature
       let dist = radius / calc.cos(Δθ / 2)
 
@@ -388,7 +375,6 @@ snapshot_kind: text
 				line-shift: radius*calc.tan(Δθ/2), // distance from vertex to beginning of arc
 			)
     }
-
   }
 
   let rounded-corners
@@ -424,7 +410,6 @@ snapshot_kind: text
     let Δphase = 0pt
 
     if edge.corner-radius == none {
-
       // add phantom marks to ensure segment joins are clean
       if i > 0 {
         let Δθ = θs.at(i) - θs.at(i - 1)
@@ -446,7 +431,6 @@ snapshot_kind: text
       }
 
       Δphase += vector-len(vector.sub(from, to))
-
     } else {
       // rounded corners
 
@@ -457,7 +441,6 @@ snapshot_kind: text
       }
 
       if i < θs.len() - 1 {
-
         let (
           arc-center,
           arc-radius,
@@ -490,7 +473,6 @@ snapshot_kind: text
                 stroke: debug-stroke,
               ),
             )
-
           }
         }
 
@@ -526,7 +508,6 @@ snapshot_kind: text
     )
 
     phase += Δphase
-
   }
 
 
@@ -550,14 +531,12 @@ snapshot_kind: text
 /// - target (point): Target point to sort intersections by proximity with, and
 ///  to use as a fallback if no intersections are found.
 #let find-farthest-intersection(objects, target, callback) = {
-
   if objects == none { return callback(target) }
 
   let node-name = "intersection-finder"
   cetz.draw.hide(cetz.draw.intersections(node-name, objects))
 
   cetz.draw.get-ctx(ctx => {
-
     let calculate-anchors = ctx.nodes.at(node-name).anchors
     let anchor-names = calculate-anchors(())
     let anchor-points = anchor-names
@@ -572,9 +551,7 @@ snapshot_kind: text
     let anchor = anchor-points.at(-1, default: target)
 
     callback(anchor)
-
   })
-
 }
 
 #let find-anchor-pair(
@@ -595,7 +572,6 @@ snapshot_kind: text
       )
     },
   )
-
 }
 
 /// Get the anchor point around a node outline at a certain angle.
@@ -626,7 +602,6 @@ snapshot_kind: text
     calc.max(0pt, node.size.at(0) / 2 * (1 - 1 / μ)) * calc.cos(θ),
     calc.max(0pt, node.size.at(1) / 2 * (1 - μ / 1)) * calc.sin(θ),
   )
-
 }
 
 
@@ -640,7 +615,6 @@ snapshot_kind: text
   }
   if nodes.at(1).len() == 1 {
     to = vector.add(to, defocus-adjustment(nodes.at(1).at(0), θ + 90deg))
-
   }
 
 
@@ -674,7 +648,6 @@ snapshot_kind: text
       (edge.post)(obj) // post-process (e.g., hide)
     },
   )
-
 }
 
 
@@ -753,7 +726,6 @@ snapshot_kind: text
       (edge.post)(obj) // post-process (e.g., hide)
     },
   )
-
 }
 
 
@@ -782,7 +754,6 @@ snapshot_kind: text
 ///   - `cell-sizes: (x-sizes, y-sizes)`, the physical sizes of each row and
 ///     each column.
 #let draw-debug-axes(grid, debug: false) = {
-
   let (x-lims, y-lims) = range(2).map(axis => (
     grid.centers.at(axis).at(0) - grid.cell-sizes.at(axis).at(0) / 2,
     grid.centers.at(axis).at(-1) + grid.cell-sizes.at(axis).at(-1) / 2,
@@ -861,7 +832,6 @@ snapshot_kind: text
         anchor: "north-east",
       )
     }
-
   })
 }
 
@@ -876,7 +846,6 @@ snapshot_kind: text
   }
 
   if type(key) == array and key.len() == 2 {
-
     let xy-pos = key
     let candidates = nodes.filter(node => {
       if node.snap == false { return false }
@@ -899,7 +868,6 @@ snapshot_kind: text
     }
 
     return candidates
-
   }
 
   error("Couldn't find node corresponding to #0 in diagram.", key)
@@ -935,7 +903,6 @@ snapshot_kind: text
   if debug >= 1 {
     draw-debug-axes(grid, debug: debug >= 2)
   }
-
 }
 
 /// Make diagram contents invisible, with or without affecting layout. Works by
