@@ -24,29 +24,21 @@ snapshot_kind: text
 }
 
 // issues/129
-#let foo() = (
-  context {
-    5
-  }
-)
+#let foo() = context {
+  5
+}
 
-#let foo() = (
-  context {
-    5
-  }
-)
+#let foo() = context {
+  5
+}
 
-#let foo() = (
-  context {
-    5
-  }
-)
+#let foo() = context {
+  5
+}
 
-#let foo() = (
-  context {
-    5
-  }
-)
+#let foo() = context {
+  5
+}
 
 #let foo = context {
   5

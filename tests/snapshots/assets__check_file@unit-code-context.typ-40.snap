@@ -20,19 +20,15 @@ snapshot_kind: text
 #context { text.size }
 
 // issues/129
-#let foo() = (
-  context {
-    5
-  }
-)
+#let foo() = context {
+  5
+}
 
 #let foo() = context { 5 }
 
-#let foo() = (
-  context {
-    5
-  }
-)
+#let foo() = context {
+  5
+}
 
 #let foo() = context { 5 }
 

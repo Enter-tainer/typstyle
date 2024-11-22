@@ -50,6 +50,7 @@ impl PrettyPrinter {
                 | Expr::Dict(_)
                 | Expr::Conditional(_)
                 | Expr::For(_)
+                | Expr::Contextual(_)
         ) {
             return self.convert_expr(expr);
         }

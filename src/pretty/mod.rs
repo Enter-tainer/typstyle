@@ -9,7 +9,7 @@ use pretty::BoxDoc;
 use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
 use crate::attr::Attributes;
-use crate::util::{comma_seprated_items, pretty_items, FoldStyle};
+use crate::util::{comma_separated_items, pretty_items, FoldStyle};
 
 mod dot_chain;
 mod func_call;
@@ -516,7 +516,7 @@ impl PrettyPrinter {
             res
         } else {
             let style = self.get_fold_style(array);
-            comma_seprated_items(array_items.into_iter(), style, None, None)
+            comma_separated_items(array_items.into_iter(), style, None, None)
         }
     }
 
@@ -535,7 +535,7 @@ impl PrettyPrinter {
             .map(|item| self.convert_dict_item(item))
             .collect_vec();
         let style = self.get_fold_style(dict);
-        comma_seprated_items(
+        comma_separated_items(
             dict_items.into_iter(),
             style,
             if all_spread { Some("(:") } else { None },
@@ -635,7 +635,7 @@ impl PrettyPrinter {
         let arg_list = if let Some(res) = self.check_disabled(closure.params().to_untyped()) {
             res
         } else {
-            comma_seprated_items(params.clone().into_iter(), style, None, None)
+            comma_separated_items(params.clone().into_iter(), style, None, None)
         };
 
         if let Some(name) = closure.name() {
@@ -728,7 +728,7 @@ impl PrettyPrinter {
                 .append(items.into_iter().next().unwrap())
                 .append(BoxDoc::text(",)"))
         } else {
-            comma_seprated_items(items.into_iter(), FoldStyle::Fit, None, None)
+            comma_separated_items(items.into_iter(), FoldStyle::Fit, None, None)
         }
     }
 
