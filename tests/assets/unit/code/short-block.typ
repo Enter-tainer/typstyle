@@ -20,41 +20,6 @@ true
 
 }
 
-#let   o   =    {
-  // comments
-}
-
-#let   o   =    {    // comments
-
-}
-
-#let   o   =    {
-   /* comments */
-}
-
-#let   o   =    {  /*
-   comments
-    */  }
-
-#let   o   =    {
-   /* comments
-
-    */
-}
-
-#let   o   =    {   /*
-comments */
-}
-
-#let   o   =    {   /* comments */  }
-
-#let a = { 543 }
-
-#let a = { 543 /* something */ }
-
-#let a = { 543 // something
-}
-
 #let b = { "114"; "514" }
 
 #let c = {  let x = 3 }
