@@ -1,3 +1,13 @@
+pub mod config;
+
+mod comment;
+mod dot_chain;
+mod func_call;
+mod mode;
+mod parened_expr;
+mod table;
+mod util;
+
 use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -11,14 +21,7 @@ use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
 use crate::attr::Attributes;
 use crate::util::{comma_separated_items, pretty_items, FoldStyle};
-
-pub mod config;
-mod dot_chain;
-mod func_call;
-mod mode;
-mod parened_expr;
-mod table;
-mod util;
+use comment::{block_comment, comment, line_comment};
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
@@ -113,8 +116,13 @@ impl PrettyPrinter {
                 } else if let Some(expr) = node.cast::<Expr>() {
                     let expr_doc = self.convert_expr(expr);
                     doc = doc.append(expr_doc);
-                } else {
+                } else if matches!(
+                    node.kind(),
+                    SyntaxKind::LineComment | SyntaxKind::BlockComment
+                ) {
                     doc = doc.append(comment(node));
+                } else {
+                    doc = doc.append(trivia_prefix(node));
                 }
             }
         }
@@ -824,10 +832,10 @@ impl PrettyPrinter {
                 doc = doc.append(BoxDoc::text("else"));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::BlockComment {
-                doc = doc.append(comment(child));
+                doc = doc.append(block_comment(child));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::LineComment {
-                doc = doc.append(comment(child));
+                doc = doc.append(line_comment(child));
                 doc = doc.append(BoxDoc::hardline());
             } else {
                 match expr_type {
@@ -871,10 +879,10 @@ impl PrettyPrinter {
                 doc = doc.append(BoxDoc::text("while"));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::BlockComment {
-                doc = doc.append(comment(child));
+                doc = doc.append(block_comment(child));
                 doc = doc.append(BoxDoc::space());
             } else if child.kind() == SyntaxKind::LineComment {
-                doc = doc.append(comment(child));
+                doc = doc.append(line_comment(child));
                 doc = doc.append(BoxDoc::hardline());
             } else if let Some(expr) = child.cast() {
                 doc = doc.append(self.convert_expr(expr));
@@ -1122,7 +1130,7 @@ fn trivia(node: &SyntaxNode) -> BoxDoc<'_, ()> {
     to_doc(std::borrow::Cow::Borrowed(node.text()), StripMode::None)
 }
 
-fn comment(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+fn trivia_prefix(node: &SyntaxNode) -> BoxDoc<'_, ()> {
     to_doc(std::borrow::Cow::Borrowed(node.text()), StripMode::Prefix)
 }
 

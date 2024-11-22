@@ -5,13 +5,13 @@ input_file: tests/assets/packages/indenta.typ
 snapshot_kind: text
 ---
 /*
-* This test case is copied from [indenta]
-* Original source: [https://github.com/flaribbit/indenta/blob/master/lib.typ]
-* Author: [flaribbit]
-* License: [MIT]
-*
-* This file is used as test case only and remains unchanged from the original.
-*/
+ * This test case is copied from [indenta]
+ * Original source: [https://github.com/flaribbit/indenta/blob/master/lib.typ]
+ * Author: [flaribbit]
+ * License: [MIT]
+ *
+ * This file is used as test case only and remains unchanged from the original.
+ */
 
 // https://github.com/flaribbit/indenta
 #let fix-indent(

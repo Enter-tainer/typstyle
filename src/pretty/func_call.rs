@@ -5,8 +5,9 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use crate::{util::FoldStyle, PrettyPrinter};
 
 use super::{
+    comment::comment,
     table,
-    util::{self, get_parenthesized_args_untyped},
+    util::{get_parenthesized_args_untyped, has_parenthesized_args},
 };
 
 #[derive(Debug)]
@@ -75,8 +76,8 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
                 }
                 inner
             }
-            ParenthesizedFuncCallArg::LineComment(comment)
-            | ParenthesizedFuncCallArg::BlockComment(comment) => super::comment(comment),
+            ParenthesizedFuncCallArg::LineComment(cmt)
+            | ParenthesizedFuncCallArg::BlockComment(cmt) => comment(cmt),
         }
     }
 }
@@ -87,7 +88,7 @@ impl PrettyPrinter {
         if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
             return doc.append(res);
         }
-        let has_parenthesized_args = util::has_parenthesized_args(func_call.args());
+        let has_parenthesized_args = has_parenthesized_args(func_call.args());
         if table::is_table(func_call) {
             if let Some(cols) = table::is_formatable_table(func_call) {
                 doc = doc.append(self.convert_table(func_call, cols));
@@ -101,7 +102,7 @@ impl PrettyPrinter {
     }
 
     pub(super) fn convert_args<'a>(&'a self, args: Args<'a>) -> BoxDoc<'a, ()> {
-        let has_parenthesized_args = util::has_parenthesized_args(args);
+        let has_parenthesized_args = has_parenthesized_args(args);
         let mut doc = BoxDoc::nil();
         if has_parenthesized_args {
             doc = doc.append(self.convert_parenthesized_args_as_is(args));
