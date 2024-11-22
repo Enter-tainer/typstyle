@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/cetz-tree.typ
+snapshot_kind: text
 ---
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
@@ -64,8 +65,10 @@ input_file: tests/assets/cetz-tree.typ
       target-name,
       target-node,
     ) => {
-      let (a, b) = (source-name + "." + direction,
-                    target-name + "." + opposite-dir.at(direction))
+      let (a, b) = (
+        source-name + "." + direction,
+        target-name + "." + opposite-dir.at(direction),
+      )
 
       draw.line(a, b)
       /*

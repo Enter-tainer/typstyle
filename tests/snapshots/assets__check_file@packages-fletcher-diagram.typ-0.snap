@@ -5,13 +5,13 @@ input_file: tests/assets/packages/fletcher-diagram.typ
 snapshot_kind: text
 ---
 /*
-* This test case is copied from [typst-fletcher]
-* Original source: [https://github.com/Jollywatt/typst-fletcher/blob/master/src/diagram.typ]
-* Author: [Jollywatt]
-* License: [MIT]
-*
-* This file is used as test case only and remains unchanged from the original.
-*/
+ * This test case is copied from [typst-fletcher]
+ * Original source: [https://github.com/Jollywatt/typst-fletcher/blob/master/src/diagram.typ]
+ * Author: [Jollywatt]
+ * License: [MIT]
+ *
+ * This file is used as test case only and remains unchanged from the original.
+ */
 
 #import "utils.typ": *
 #import "node.typ": *

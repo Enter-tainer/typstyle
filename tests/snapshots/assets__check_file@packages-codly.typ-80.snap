@@ -5,13 +5,13 @@ input_file: tests/assets/packages/codly.typ
 snapshot_kind: text
 ---
  /*
-* This test case is copied from [codly]
-* Original source: [https://github.com/Dherse/codly/blob/main/codly.typ]
-* Author: [Dherse]
-* License: [MIT]
-*
-* This file is used as test case only and remains unchanged from the original.
-*/
+  * This test case is copied from [codly]
+  * Original source: [https://github.com/Dherse/codly/blob/main/codly.typ]
+  * Author: [Dherse]
+  * License: [MIT]
+  *
+  * This file is used as test case only and remains unchanged from the original.
+  */
 
 #import "args.typ": __codly-args, __codly-save, __codly-load
 

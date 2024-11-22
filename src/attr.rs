@@ -111,19 +111,18 @@ fn get_no_format_nodes_impl(
             }
         };
     for child in node.children() {
-        if child.kind() == SyntaxKind::LineComment || child.kind() == SyntaxKind::BlockComment {
+        let child_kind = child.kind();
+        if child_kind == SyntaxKind::LineComment || child_kind == SyntaxKind::BlockComment {
             // @typstyle off affects the whole next block
             if child.text().contains("@typstyle off") {
                 no_format = true;
                 set_no_format(child.clone(), attr_map);
             }
-            // child contains block comment and is not a code block or content block
-            // no format current node
-            if child.kind() == SyntaxKind::BlockComment
-                || (node.kind() != SyntaxKind::ContentBlock
-                    && node.kind() != SyntaxKind::CodeBlock
-                    && node.kind() != SyntaxKind::Code)
-            {
+            // currently we only support comments as children of these nodes
+            if !matches!(
+                node.kind(),
+                SyntaxKind::ContentBlock | SyntaxKind::CodeBlock | SyntaxKind::Code
+            ) {
                 set_no_format(node.clone(), attr_map);
             }
             continue;
@@ -135,7 +134,7 @@ fn get_no_format_nodes_impl(
             }
         }
         // no format hash related nodes in math blocks
-        if child.kind() == SyntaxKind::Hash && state.is_math {
+        if child_kind == SyntaxKind::Hash && state.is_math {
             set_no_format(node.clone(), attr_map);
             break;
         }
