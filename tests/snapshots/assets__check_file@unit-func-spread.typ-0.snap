@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/func/spread.typ
+snapshot_kind: text
 ---
 #let tree(
   root,
@@ -13,9 +14,7 @@ input_file: tests/assets/unit/func/spread.typ
   spread: 1,
   name: none,
   ..style,
-) = {
-
-}
+) = { }
 
 #let f = (
   ..,

@@ -2,6 +2,7 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
+use config::PrinterConfig;
 use itertools::Itertools;
 use mode::Mode;
 use parened_expr::optional_paren;
@@ -11,6 +12,7 @@ use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 use crate::attr::Attributes;
 use crate::util::{comma_separated_items, pretty_items, FoldStyle};
 
+pub mod config;
 mod dot_chain;
 mod func_call;
 mod mode;
@@ -20,6 +22,7 @@ mod util;
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
+    config: PrinterConfig,
     attr_map: HashMap<SyntaxNode, Attributes>,
     mode: RefCell<Vec<Mode>>,
 }
@@ -27,6 +30,7 @@ pub struct PrettyPrinter {
 impl PrettyPrinter {
     pub fn new(attr_map: HashMap<SyntaxNode, Attributes>) -> Self {
         Self {
+            config: Default::default(),
             attr_map,
             mode: vec![].into(),
         }
@@ -444,50 +448,45 @@ impl PrettyPrinter {
     }
 
     fn convert_code<'a>(&'a self, code: Vec<&'a SyntaxNode>) -> Vec<BoxDoc<'a, ()>> {
-        let is_attached_comment = |idx: usize| {
-            debug_assert!(idx < code.len());
-            if idx == 0 || idx == code.len() - 1 {
-                return false;
-            }
-            let prev = code[idx - 1];
-            let curr = code[idx];
-            let next = code[idx + 1];
-            let prev_cond = prev.cast::<Expr>().is_some()
-                || if let Some(space) = prev.cast::<Space>() {
-                    !space.to_untyped().text().contains('\n')
-                } else {
-                    false
-                };
-            let curr_cond =
-                curr.kind() == SyntaxKind::LineComment || curr.kind() == SyntaxKind::BlockComment;
-            let next_cond = if let Some(next) = next.cast::<Space>() {
-                next.to_untyped().text().contains('\n')
-            } else {
-                false
-            };
-            prev_cond && curr_cond && next_cond
-        };
+        let mut code = &code[..];
+
+        // Strip trailing empty lines
+        while (code.last()).is_some_and(|last| last.kind() == SyntaxKind::Space) {
+            code = &code[..code.len() - 1];
+        }
+
         let mut codes: Vec<_> = vec![];
-        for (i, node) in code.iter().enumerate() {
+        let mut can_attach_comment = false; // Whether a comment can follow the next node.
+        for node in code {
             if let Some(expr) = node.cast::<Expr>() {
                 let expr_doc = self.convert_expr(expr);
                 codes.push(expr_doc);
+                can_attach_comment = true;
             } else if node.kind() == SyntaxKind::LineComment
                 || node.kind() == SyntaxKind::BlockComment
             {
-                if !codes.is_empty() && is_attached_comment(i) {
+                if can_attach_comment {
                     let last = codes.pop().unwrap();
                     codes.push(last.append(BoxDoc::space()).append(comment(node)));
                 } else {
                     codes.push(comment(node));
                 }
+                can_attach_comment = false;
             } else if node.kind() == SyntaxKind::Space {
                 let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
-                for _ in 0..newline_cnt.saturating_sub(1) {
-                    codes.push(BoxDoc::nil());
+                if newline_cnt > 0 {
+                    // Ensures no leading empty line.
+                    if !codes.is_empty() {
+                        codes.extend(std::iter::repeat_n(
+                            BoxDoc::nil(),
+                            (newline_cnt - 1).min(self.config.blank_lines_upper_bound),
+                        ));
+                    }
+                    can_attach_comment = false;
                 }
             }
         }
+
         codes
     }
 

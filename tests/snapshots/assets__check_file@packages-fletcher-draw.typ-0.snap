@@ -27,10 +27,8 @@ snapshot_kind: text
   node,
   debug: 0,
 ) = {
-
   let result = {
     if node.stroke != none or node.fill != none {
-
       cetz
         .draw
         .group({
@@ -64,7 +62,6 @@ snapshot_kind: text
     }
 
     if node.label != none {
-
       cetz
         .draw
         .content(
@@ -171,7 +168,6 @@ snapshot_kind: text
   curve,
   debug: 0,
 ) = {
-
   let curve-point = curve(edge.label-pos)
   let curve-point-ε = curve(edge.label-pos + 1e-3)
 
@@ -196,7 +192,6 @@ snapshot_kind: text
     ).at(
       repr(edge.label-angle),
     )
-
   } else if edge.label-angle == auto {
     edge.label-angle = θ
     if calc.abs(edge.label-angle) > 90deg {
@@ -370,7 +365,6 @@ snapshot_kind: text
   for shift in (
     edge.extrude
   ) {
-
     let offsets = cap-offsets(
       edge,
       shift,
@@ -439,7 +433,6 @@ snapshot_kind: text
 
   // Draw label
   if edge.label != none {
-
     // Choose label anchor based on edge direction,
     // preferring to place labels above the edge
     if edge.label-side == auto {
@@ -456,7 +449,6 @@ snapshot_kind: text
       debug: debug,
     )
   }
-
 }
 
 
@@ -503,7 +495,6 @@ snapshot_kind: text
   for shift in (
     edge.extrude
   ) {
-
     // Adjust arc angles to accommodate for cap offsets
     let (
       δ-start,
@@ -556,7 +547,6 @@ snapshot_kind: text
 
   // Draw label
   if edge.label != none {
-
     if edge.label-side == auto {
       // Choose label side to be on outside of arc
       edge.label-side = if edge.bend > 0deg {
@@ -571,7 +561,6 @@ snapshot_kind: text
       curve,
       debug: debug,
     )
-
   }
 }
 
@@ -593,7 +582,6 @@ snapshot_kind: text
   edge,
   debug: 0,
 ) = {
-
   let verts = edge.final-vertices
   let n-segments = verts.len() - 1
 
@@ -655,7 +643,6 @@ snapshot_kind: text
 				line-shift: 0*radius, // distance from vertex to beginning of arc
 			)
     } else {
-
       // distance from vertex to center of curvature
       let dist = radius / calc.cos(Δθ / 2)
 
@@ -667,7 +654,6 @@ snapshot_kind: text
 				line-shift: radius*calc.tan(Δθ/2), // distance from vertex to beginning of arc
 			)
     }
-
   }
 
   let rounded-corners
@@ -724,7 +710,6 @@ snapshot_kind: text
     let Δphase = 0pt
 
     if edge.corner-radius == none {
-
       // add phantom marks to ensure segment joins are clean
       if i > 0 {
         let Δθ = θs.at(i) - θs.at(i - 1)
@@ -751,7 +736,6 @@ snapshot_kind: text
           to,
         ),
       )
-
     } else {
       // rounded corners
 
@@ -768,7 +752,6 @@ snapshot_kind: text
       }
 
       if i < θs.len() - 1 {
-
         let (
           arc-center,
           arc-radius,
@@ -820,7 +803,6 @@ snapshot_kind: text
                 stroke: debug-stroke,
               ),
             )
-
           }
         }
 
@@ -874,7 +856,6 @@ snapshot_kind: text
     )
 
     phase += Δphase
-
   }
 
 
@@ -904,7 +885,6 @@ snapshot_kind: text
   target,
   callback,
 ) = {
-
   if objects == none {
     return callback(target)
   }
@@ -924,7 +904,6 @@ snapshot_kind: text
   cetz
     .draw
     .get-ctx(ctx => {
-
     let calculate-anchors = ctx
       .nodes
       .at(node-name)
@@ -955,9 +934,7 @@ snapshot_kind: text
     )
 
     callback(anchor)
-
   })
-
 }
 
 #let find-anchor-pair(
@@ -987,7 +964,6 @@ snapshot_kind: text
       )
     },
   )
-
 }
 
 /// Get the anchor point around a node outline at a certain angle.
@@ -1073,7 +1049,6 @@ snapshot_kind: text
       ),
     ) * calc.sin(θ),
   )
-
 }
 
 
@@ -1117,7 +1092,6 @@ snapshot_kind: text
         θ + 90deg,
       ),
     )
-
   }
 
 
@@ -1171,7 +1145,6 @@ snapshot_kind: text
       )(obj) // post-process (e.g., hide)
     },
   )
-
 }
 
 
@@ -1349,7 +1322,6 @@ snapshot_kind: text
       )(obj) // post-process (e.g., hide)
     },
   )
-
 }
 
 
@@ -1409,7 +1381,6 @@ snapshot_kind: text
   grid,
   debug: false,
 ) = {
-
   let (
     x-lims,
     y-lims,
@@ -1671,7 +1642,6 @@ snapshot_kind: text
         anchor: "north-east",
       )
     }
-
   })
 }
 
@@ -1694,7 +1664,6 @@ snapshot_kind: text
   }
 
   if type(key) == array and key.len() == 2 {
-
     let xy-pos = key
     let candidates = nodes.filter(node => {
       if node.snap == false {
@@ -1727,7 +1696,6 @@ snapshot_kind: text
     }
 
     return candidates
-
   }
 
   error(
@@ -1804,7 +1772,6 @@ snapshot_kind: text
       debug: debug >= 2,
     )
   }
-
 }
 
 /// Make diagram contents invisible, with or without affecting layout. Works by

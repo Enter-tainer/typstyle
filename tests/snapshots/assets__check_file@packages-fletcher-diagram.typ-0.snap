@@ -516,7 +516,6 @@ snapshot_kind: text
         .class == "node" {
         let node = obj.value
         nodes.push(node)
-
       } else if obj
         .value
         .class == "edge" {
@@ -524,12 +523,10 @@ snapshot_kind: text
         edge.node-index = nodes.len()
         edges.push(edge)
       }
-
     } else if obj.func() == math.equation {
       let result = extract-nodes-and-edges-from-equation(obj)
       nodes += result.nodes
       edges += result.edges
-
     } else {
       panic(
         "Unrecognised value passed to diagram:",
@@ -542,7 +539,6 @@ snapshot_kind: text
     nodes: nodes,
     edges: edges,
   )
-
 }
 
 
@@ -735,7 +731,6 @@ snapshot_kind: text
     )
   },
 ) = {
-
   let spacing = as-pair(spacing).map(as-length)
   let cell-size = as-pair(cell-size).map(as-length)
 

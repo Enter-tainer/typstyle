@@ -121,7 +121,6 @@ snapshot_kind: text
   label-prefix: "",
   first-line-number: 0,
 ) = {
-
   let description = lines
     .enumerate(start: first-line-number)
     .map(eval-doc-comment-test.with(label-prefix: label-prefix))
@@ -372,7 +371,6 @@ snapshot_kind: text
 
       line = line.trim("#", at: start)
       if line.starts-with("let ") and name == none {
-
         found-code = true
         let match = line.match(definition-name-regex)
         if match != none {
@@ -387,7 +385,6 @@ snapshot_kind: text
             finished-definition = true
           }
         }
-
       } else {
         // neither /// nor (#)let
         if not found-code {
@@ -397,7 +394,6 @@ snapshot_kind: text
         if name == none {
           desc-lines = ()
         }
-
       }
     }
   }
@@ -410,8 +406,6 @@ snapshot_kind: text
   )
 }
 #{
-
-
   let src = ```
   ///Description
   let func(

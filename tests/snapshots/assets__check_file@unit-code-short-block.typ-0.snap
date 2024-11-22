@@ -8,22 +8,12 @@ snapshot_kind: text
 
 #let o = { }
 
-#let o = {
+#let o = { }
 
-}
-
-#let o = {
-
-
-
-
-}
+#let o = { }
 
 #let o = {
-
-
   true
-
 }
 
 #let b = {

@@ -10,14 +10,11 @@ snapshot_kind: text
 
 #let o = {
   // comments
-
 }
 
 
 #let o = {
-
   // comments
-
 }
 
 #let o = {
@@ -85,25 +82,21 @@ comments */
 
 #let o = {
   666 // comments
-
 }
 
 
 #let o = {
   666
   // comments
-
 }
 
 #let o = {
   666
 
   // comments
-
 }
 
 #let o = {
-
   // comments
   666
 }

@@ -40,7 +40,6 @@ snapshot_kind: text
     true
   } else if c < d [ false ] else if 1 + 2 == 3 [
     *strong*] else { none }
-
 }
 
 #if a < b {

@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/tablex.typ
+snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -1725,7 +1726,6 @@ input_file: tests/assets/tablex.typ
   align_default: left,
   fill_default: none,
 ) = {
-
   let align_default = if type(align_default) == _function-type {
     align_default(
       cell.x,
