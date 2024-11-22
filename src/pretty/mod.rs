@@ -414,14 +414,17 @@ impl PrettyPrinter {
     fn convert_code_block<'a>(&'a self, code_block: CodeBlock<'a>) -> BoxDoc<'a, ()> {
         let _g = self.with_mode(Mode::Code);
         let mut code_nodes = vec![];
+        let mut has_comment = false;
         for node in code_block.to_untyped().children() {
             if let Some(code) = node.cast::<Code>() {
                 code_nodes.extend(code.to_untyped().children());
+            } else if node.kind() == SyntaxKind::Space {
+                code_nodes.push(node);
             } else if node.kind() == SyntaxKind::LineComment
                 || node.kind() == SyntaxKind::BlockComment
-                || node.kind() == SyntaxKind::Space
             {
                 code_nodes.push(node);
+                has_comment = true;
             }
         }
         let codes = self.convert_code(code_nodes);
@@ -431,7 +434,7 @@ impl PrettyPrinter {
             BoxDoc::nil(),
             (BoxDoc::text("{"), BoxDoc::text("}")),
             true,
-            if codes.len() == 1 {
+            if codes.len() == 1 && !has_comment {
                 self.get_fold_style(code_block)
             } else {
                 FoldStyle::Never

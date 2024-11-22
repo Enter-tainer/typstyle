@@ -59,7 +59,9 @@ comments */
 
 #let a = { 543 /* something */ }
 
-#let a = { 543 // something }
+#let a = {
+  543 // something
+}
 
 #let b = {
   "114"
