@@ -233,7 +233,7 @@ where
         inner + comma_
     };
     match fold_style {
-        FoldStyle::Fit => {
+        FoldStyle::Fit | FoldStyle::Always => {
             let comma_ = pp.arena.text(",").flat_alt(pp.arena.nil());
             let sep = pp.arena.text(",") + pp.arena.line();
             let inner = format_inner(sep, comma_);

@@ -4,4 +4,6 @@ pub enum FoldStyle {
     Fit,
     /// Never fold items
     Never,
+    /// Always fold items
+    Always,
 }
