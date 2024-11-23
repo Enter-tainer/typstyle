@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/destruction.typ
+snapshot_kind: text
 ---
 #let (
   n,
@@ -38,10 +39,45 @@ input_file: tests/assets/unit/destruction.typ
   Austen: "Persuasion",
 )
 
-#let (Austen,) = books
+#let (
+  Austen,
+) = books
 Austen wrote #Austen.
 
 #let (
   Homer: h,
 ) = books
 Homer wrote #h.
+
+#let (
+  a,
+  b: (
+    ..,
+    d,
+  ),
+  ..c,
+) = (
+  a: 1,
+  b: (
+    c: 4,
+    d: 5,
+  ),
+)
+#let (
+  a,
+) = (
+  a: 1,
+  b: (
+    c: 4,
+    d: 5,
+  ),
+)
+#let (
+  ..,
+) = (
+  a: 1,
+  b: (
+    c: 4,
+    d: 5,
+  ),
+)

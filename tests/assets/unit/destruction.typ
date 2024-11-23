@@ -17,3 +17,7 @@ Austen wrote #Austen.
 
 #let (Homer: h) = books
 Homer wrote #h.
+
+#let (a, b: (.., d), ..c) = (a:1, b:(c: 4, d: 5))
+#let (a,) = (a:1, b:(c: 4, d: 5))
+#let (..) = (a:1, b:(c: 4, d: 5))

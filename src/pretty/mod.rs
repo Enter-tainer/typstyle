@@ -639,26 +639,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_destructuring(&'a self, destructuring: Destructuring<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(destructuring.to_untyped()) {
-            return res;
-        }
-        let items: Vec<_> = destructuring
-            .items()
-            .map(|item| self.convert_destructuring_item(item))
-            .collect();
-        if items.len() == 1
-            && matches!(
-                destructuring.items().next().unwrap(),
-                DestructuringItem::Pattern(_)
-            )
-        {
-            self.arena
-                .text("(")
-                .append(items.into_iter().next().unwrap())
-                .append(self.arena.text(",)"))
-        } else {
-            comma_separated_items(&self.arena, items.into_iter(), FoldStyle::Fit, None, None)
-        }
+        ListStylist::new(self).convert_destructuring(destructuring)
     }
 
     fn convert_destructuring_item(

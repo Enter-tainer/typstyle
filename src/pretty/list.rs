@@ -76,6 +76,27 @@ impl<'a> ListStylist<'a> {
         })
     }
 
+    pub fn convert_destructuring(mut self, destructuring: Destructuring<'a>) -> ArenaDoc<'a> {
+        let only_one_pattern = {
+            let mut it = destructuring.items();
+            it.next().is_some_and(|first| {
+                matches!(first, DestructuringItem::Pattern(_)) && it.next().is_none()
+            })
+        };
+
+        self.process_list(destructuring.to_untyped(), |node| {
+            self.printer.convert_destructuring_item(node)
+        });
+
+        self.pretty_commented_items(ListStyle {
+            single_line_sep: ",",
+            multi_line_sep: ",",
+            delim: ("(", ")"),
+            add_space_if_empty: false,
+            add_trailing_sep_single: only_one_pattern,
+        })
+    }
+
     fn process_list<T: AstNode<'a>>(
         &mut self,
         list_node: &'a SyntaxNode,
