@@ -16,7 +16,7 @@ use std::cell::RefCell;
 
 use arg::ArgStylist;
 use config::PrinterConfig;
-use items::{comma_separated_items, pretty_items};
+use items::pretty_items;
 use itertools::Itertools;
 use list::ListStylist;
 use mode::Mode;
@@ -570,47 +570,26 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_closure(&'a self, closure: Closure<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.arena.nil();
-        let params = self.convert_params(closure.params());
-        let style = self.get_fold_style(closure.params());
-        let arg_list = if let Some(res) = self.check_disabled(closure.params().to_untyped()) {
-            res
-        } else {
-            comma_separated_items(&self.arena, params.clone().into_iter(), style, None, None)
-        };
-
         if let Some(name) = closure.name() {
-            doc += self.convert_ident(name)
-                + arg_list
+            let params = self.convert_params(closure.params(), true);
+            self.convert_ident(name)
+                + params
                 + self.arena.space()
                 + self.arena.text("=")
                 + self.arena.space()
-                + self.convert_expr_with_optional_paren(closure.body());
+                + self.convert_expr_with_optional_paren(closure.body())
         } else {
-            if params.len() == 1
-                && matches!(closure.params().children().next().unwrap(), Param::Pos(_))
-                && !matches!(
-                    closure.params().children().next().unwrap(),
-                    Param::Pos(Pattern::Destructuring(_))
-                )
-            {
-                doc = params[0].clone();
-            } else {
-                doc = arg_list
-            }
-            doc += self.arena.space()
+            let params = self.convert_params(closure.params(), false);
+            params
+                + self.arena.space()
                 + self.arena.text("=>")
                 + self.arena.space()
-                + self.convert_expr_with_optional_paren(closure.body());
+                + self.convert_expr_with_optional_paren(closure.body())
         }
-        doc
     }
 
-    fn convert_params(&'a self, params: Params<'a>) -> Vec<ArenaDoc<'a>> {
-        params
-            .children()
-            .map(|param| self.convert_param(param))
-            .collect()
+    fn convert_params(&'a self, params: Params<'a>, is_named: bool) -> ArenaDoc<'a> {
+        ListStylist::new(self).convert_params(params, !is_named)
     }
 
     fn convert_param(&'a self, param: Param<'a>) -> ArenaDoc<'a> {

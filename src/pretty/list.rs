@@ -17,6 +17,7 @@ pub struct ListStylist<'a> {
     can_attach: bool,
     free_comments: Vec<ArenaDoc<'a>>,
     items: Vec<Item<'a>>,
+    item_count: usize,
     fold_style: FoldStyle,
 }
 
@@ -31,6 +32,8 @@ struct ListStyle {
     add_space_if_empty: bool,
     /// Whether a trailing single-line separator is need if the list contains only one item.
     add_trailing_sep_single: bool,
+    /// Whether can omit the delimiter if the list contains only one item.
+    omit_delim_single: bool,
 }
 
 impl<'a> ListStylist<'a> {
@@ -41,6 +44,7 @@ impl<'a> ListStylist<'a> {
             can_attach: false,
             free_comments: Default::default(),
             items: Default::default(),
+            item_count: 0,
             fold_style: FoldStyle::Fit,
         }
     }
@@ -57,6 +61,7 @@ impl<'a> ListStylist<'a> {
             delim: ("(", ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: true,
+            omit_delim_single: false,
         })
     }
 
@@ -73,16 +78,14 @@ impl<'a> ListStylist<'a> {
             delim: (if all_spread { "(:" } else { "(" }, ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: false,
+            omit_delim_single: false,
         })
     }
 
     pub fn convert_destructuring(mut self, destructuring: Destructuring<'a>) -> ArenaDoc<'a> {
-        let only_one_pattern = {
-            let mut it = destructuring.items();
-            it.next().is_some_and(|first| {
-                matches!(first, DestructuringItem::Pattern(_)) && it.next().is_none()
-            })
-        };
+        let only_one_pattern = is_only_one_and(destructuring.items(), |it| {
+            matches!(*it, DestructuringItem::Pattern(_))
+        });
 
         self.process_list(destructuring.to_untyped(), |node| {
             self.printer.convert_destructuring_item(node)
@@ -94,6 +97,32 @@ impl<'a> ListStylist<'a> {
             delim: ("(", ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: only_one_pattern,
+            omit_delim_single: false,
+        })
+    }
+
+    pub fn convert_params(mut self, params: Params<'a>, is_unnamed: bool) -> ArenaDoc<'a> {
+        let is_single_simple = is_unnamed
+            && is_only_one_and(params.children(), |it| {
+                matches!(
+                    *it,
+                    Param::Pos(Pattern::Normal(_)) | Param::Pos(Pattern::Placeholder(_))
+                )
+            });
+
+        self.process_list(params.to_untyped(), |node| self.printer.convert_param(node));
+
+        if is_single_simple {
+            self.fold_style = FoldStyle::Always;
+        }
+
+        self.pretty_commented_items(ListStyle {
+            single_line_sep: ",",
+            multi_line_sep: ",",
+            delim: ("(", ")"),
+            add_space_if_empty: false,
+            add_trailing_sep_single: false,
+            omit_delim_single: is_single_simple,
         })
     }
 
@@ -110,6 +139,7 @@ impl<'a> ListStylist<'a> {
 
         for node in list_node.children() {
             if let Some(item) = node.cast() {
+                self.item_count += 1;
                 let before = if self.free_comments.is_empty() {
                     self.arena.nil()
                 } else {
@@ -212,7 +242,9 @@ impl<'a> ListStylist<'a> {
                     }
                 }
             }
-            if sty.add_space_if_empty {
+            if cnt == 1 && sty.omit_delim_single {
+                inner
+            } else if sty.add_space_if_empty {
                 inner.enclose(
                     self.arena.text(open) + self.arena.space(),
                     self.arena.space() + close,
@@ -224,6 +256,13 @@ impl<'a> ListStylist<'a> {
         match self.fold_style {
             FoldStyle::Never => multi,
             FoldStyle::Fit => multi.clone().flat_alt(flat()).group(),
+            FoldStyle::Always => flat(),
         }
     }
+}
+
+fn is_only_one_and<T>(mut iterator: impl Iterator<Item = T>, f: impl FnOnce(&T) -> bool) -> bool {
+    iterator
+        .next()
+        .is_some_and(|first| f(&first) && iterator.next().is_none())
 }

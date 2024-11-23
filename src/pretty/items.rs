@@ -3,48 +3,6 @@ use pretty::{Arena, DocAllocator};
 use super::style::FoldStyle;
 use super::ArenaDoc;
 
-pub fn comma_separated_items<'a, I>(
-    arena: &'a Arena<'a>,
-    items: I,
-    fold_style: FoldStyle,
-    left: Option<&'static str>,
-    right: Option<&'static str>,
-) -> ArenaDoc<'a>
-where
-    I: IntoIterator<Item = ArenaDoc<'a>> + ExactSizeIterator,
-{
-    let left = left.unwrap_or("(");
-    let right = right.unwrap_or(")");
-    if items.len() == 0 {
-        return arena.text(left) + arena.text(right);
-    }
-    let comma_ = arena.text(",").flat_alt(arena.nil());
-    match fold_style {
-        FoldStyle::Fit => {
-            let sep = arena.text(",") + arena.line();
-            let inner = arena.intersperse(items, sep).append(comma_);
-            arena
-                .text(left)
-                .append(
-                    (arena.line_() + inner)
-                        .nest(2)
-                        .append(arena.line_())
-                        .group(),
-                )
-                .append(arena.text(right))
-        }
-        FoldStyle::Never => {
-            let sep = arena.text(",").append(arena.hardline());
-            let inner = arena.intersperse(items, sep).append(arena.text(","));
-            arena
-                .text(left)
-                .append(arena.hardline().append(inner).nest(2))
-                .append(arena.hardline())
-                .append(arena.text(right))
-        }
-    }
-}
-
 pub fn pretty_items<'a>(
     arena: &'a Arena<'a>,
     items: &[ArenaDoc<'a>],
@@ -93,7 +51,7 @@ fn pretty_items_impl<'a>(
         left.clone().append(doc).append(right.clone())
     };
     match fold_style {
-        FoldStyle::Fit => {
+        FoldStyle::Fit | FoldStyle::Always => {
             let flat = {
                 let inner = arena.intersperse(items.iter().cloned(), single_line_separator);
                 let (left, right) = if bracket_space {

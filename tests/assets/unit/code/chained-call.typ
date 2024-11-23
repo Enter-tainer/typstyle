@@ -20,3 +20,22 @@
   (1,).rev().map(((n, c)) =>
         f(n,c,1))
 }
+
+#{padding
+            .pairs()
+            .map((k, x) => (k, x * 1.5))
+            .to-dict()
+            }
+#{
+
+  let hlines_below_header = first-row-group-long-long
+    .row_group-long-long-long-long
+    .hlines-long-long-long-long
+    .filter(h => (h.y == header_last_y + 1))
+
+    let hlines_below_header = first-row-group-long-long
+    .row_group-long-long-long-long
+    .hlines-long-long-long-long
+    .filter((h, _) => (h.y == header_last_y + 1))
+
+}

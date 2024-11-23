@@ -1,0 +1,29 @@
+#show raw: it => {
+  it
+}
+
+
+#show raw: it => {
+  it
+}
+
+
+#show raw: (..it) => {
+  it
+}
+
+#set heading(numbering: (..num) => if num.pos().len() < 4 {
+  numbering("1.1", ..num)
+})
+
+#set heading(numbering: (..num) => none)
+
+#show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") { }
+
+#let show-palette(p) = box({ })
+
+#a.map(((n, c)) => none)
+
+#a.map((n, c) => none)
+
+#range(amount).map(i => init_function())
