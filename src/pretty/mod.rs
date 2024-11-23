@@ -1,6 +1,7 @@
 pub mod config;
 pub mod style;
 
+mod arg;
 mod comment;
 mod dot_chain;
 mod func_call;
@@ -13,6 +14,7 @@ mod util;
 
 use std::cell::RefCell;
 
+use arg::ArgStylist;
 use config::PrinterConfig;
 use items::{comma_separated_items, pretty_items};
 use itertools::Itertools;
@@ -502,19 +504,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_dict(&'a self, dict: Dict<'a>) -> ArenaDoc<'a> {
-        let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
-        let dict_items = dict
-            .items()
-            .map(|item| self.convert_dict_item(item))
-            .collect_vec();
-        let style = self.get_fold_style(dict);
-        comma_separated_items(
-            &self.arena,
-            dict_items.into_iter(),
-            style,
-            if all_spread { Some("(:") } else { None },
-            None,
-        )
+        ListStylist::new(self).convert_dict(dict)
     }
 
     fn convert_dict_item(&'a self, dict_item: DictItem<'a>) -> ArenaDoc<'a> {
@@ -526,33 +516,11 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_named(&'a self, named: Named<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(named.to_untyped()) {
-            return res;
-        }
-        // TODO: better handling hash #
-        let has_hash = named
-            .to_untyped()
-            .children()
-            .any(|node| matches!(node.kind(), SyntaxKind::Hash));
-        let mut doc = self.convert_ident(named.name());
-        doc = doc.append(self.arena.text(":"));
-        doc = doc.append(self.arena.space());
-        if has_hash {
-            doc = doc.append(self.arena.text("#"));
-        }
-        doc = doc.append(self.convert_expr(named.expr()));
-        doc.group()
+        ArgStylist::new(self).convert_named(named)
     }
 
     fn convert_keyed(&'a self, keyed: Keyed<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(keyed.to_untyped()) {
-            return res;
-        }
-        let mut doc = self.convert_expr(keyed.key());
-        doc = doc.append(self.arena.text(":"));
-        doc = doc.append(self.arena.space());
-        doc = doc.append(self.convert_expr(keyed.expr()));
-        doc
+        ArgStylist::new(self).convert_keyed(keyed)
     }
 
     fn convert_unary(&'a self, unary: Unary<'a>) -> ArenaDoc<'a> {
@@ -654,19 +622,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_spread(&'a self, spread: Spread<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(spread.to_untyped()) {
-            return res;
-        }
-        let mut doc = self.arena.text("..");
-        let ident = if let Some(id) = spread.sink_ident() {
-            self.convert_ident(id)
-        } else if let Some(expr) = spread.sink_expr() {
-            self.convert_expr(expr)
-        } else {
-            self.arena.nil()
-        };
-        doc = doc.append(ident);
-        doc.group()
+        ArgStylist::new(self).convert_spread(spread)
     }
 
     fn convert_pattern(&'a self, pattern: Pattern<'a>) -> ArenaDoc<'a> {

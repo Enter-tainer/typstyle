@@ -111,6 +111,7 @@ impl AttrStore {
                         | SyntaxKind::CodeBlock
                         | SyntaxKind::Code
                         | SyntaxKind::Array
+                        | SyntaxKind::Dict
                 ) {
                     self.set_no_format(node);
                 }
