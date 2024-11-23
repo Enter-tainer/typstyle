@@ -667,9 +667,9 @@ snapshot_kind: text
   let (from, to) = (edge.final-vertices.at(0), edge.final-vertices.at(-1))
 
   let end-segments = (
-		edge.final-vertices.slice(0, 2), // first two vertices
-		edge.final-vertices.slice(-2), // last two vertices
-	)
+    edge.final-vertices.slice(0, 2), // first two vertices
+    edge.final-vertices.slice(-2), // last two vertices
+  )
 
   let dummy-lines = end-segments.map(points => cetz.draw.line(..points))
 

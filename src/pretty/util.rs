@@ -1,6 +1,13 @@
 use ecow::EcoString;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
+pub fn is_comment_node(node: &SyntaxNode) -> bool {
+    matches!(
+        node.kind(),
+        SyntaxKind::LineComment | SyntaxKind::BlockComment
+    )
+}
+
 pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
     node.callee()
         .to_untyped()
