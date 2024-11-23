@@ -28,7 +28,9 @@ snapshot_kind: text
     pppppppppppppppppppppppppppppppppppppppppp,
     cccccccccccccccccccccccccccccccc,
     b,
-  ) in ((111111, 111111111, 1),) {
+  ) in (
+    (111111, 111111111, 1),
+  ) {
     "111111111111111111111111111111111"
   }
 }

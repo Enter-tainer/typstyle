@@ -5,6 +5,7 @@ mod comment;
 mod dot_chain;
 mod func_call;
 mod items;
+mod list;
 mod mode;
 mod parened_expr;
 mod table;
@@ -15,10 +16,12 @@ use std::cell::RefCell;
 use config::PrinterConfig;
 use items::{comma_separated_items, pretty_items};
 use itertools::Itertools;
+use list::ListStylist;
 use mode::Mode;
 use parened_expr::optional_paren;
 use pretty::{Arena, DocAllocator, DocBuilder};
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
+use util::is_comment_node;
 
 use crate::AttrStore;
 use style::FoldStyle;
@@ -44,7 +47,11 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn get_fold_style(&self, node: impl AstNode<'a>) -> FoldStyle {
-        if self.attr_store.is_node_multiline(node.to_untyped()) {
+        self.get_fold_style_untyped(node.to_untyped())
+    }
+
+    fn get_fold_style_untyped(&self, node: &'a SyntaxNode) -> FoldStyle {
+        if self.attr_store.is_node_multiline(node) {
             FoldStyle::Never
         } else {
             FoldStyle::Fit
@@ -122,12 +129,8 @@ impl<'a> PrettyPrinter<'a> {
                 if has_text {
                     doc += self.format_disabled(node);
                 } else if let Some(expr) = node.cast::<Expr>() {
-                    let expr_doc = self.convert_expr(expr);
-                    doc += expr_doc;
-                } else if matches!(
-                    node.kind(),
-                    SyntaxKind::LineComment | SyntaxKind::BlockComment
-                ) {
+                    doc += self.convert_expr(expr);
+                } else if is_comment_node(node) {
                     doc += self.convert_comment(node);
                 } else {
                     doc += trivia_prefix(&self.arena, node);
@@ -419,9 +422,7 @@ impl<'a> PrettyPrinter<'a> {
                 code_nodes.extend(code.to_untyped().children());
             } else if node.kind() == SyntaxKind::Space {
                 code_nodes.push(node);
-            } else if node.kind() == SyntaxKind::LineComment
-                || node.kind() == SyntaxKind::BlockComment
-            {
+            } else if is_comment_node(node) {
                 code_nodes.push(node);
                 has_comment = true;
             }
@@ -458,9 +459,7 @@ impl<'a> PrettyPrinter<'a> {
                 let expr_doc = self.convert_expr(expr);
                 codes.push(expr_doc);
                 can_attach_comment = true;
-            } else if node.kind() == SyntaxKind::LineComment
-                || node.kind() == SyntaxKind::BlockComment
-            {
+            } else if is_comment_node(node) {
                 if can_attach_comment {
                     let last = codes.pop().unwrap();
                     codes.push(last + self.arena.space() + self.convert_comment(node));
@@ -492,29 +491,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_array(&'a self, array: Array<'a>) -> ArenaDoc<'a> {
-        let array_items = array
-            .items()
-            .map(|item| self.convert_array_item(item))
-            .collect_vec();
-        if array_items.len() == 1 {
-            let res = self
-                .arena
-                .text("(")
-                .append(
-                    self.arena
-                        .line_()
-                        .append(array_items[0].clone())
-                        .append(self.arena.text(","))
-                        .nest(2),
-                )
-                .append(self.arena.line_())
-                .append(self.arena.text(")"))
-                .group();
-            res
-        } else {
-            let style = self.get_fold_style(array);
-            comma_separated_items(&self.arena, array_items.into_iter(), style, None, None)
-        }
+        ListStylist::new(self).convert_array(array)
     }
 
     fn convert_array_item(&'a self, array_item: ArrayItem<'a>) -> ArenaDoc<'a> {
