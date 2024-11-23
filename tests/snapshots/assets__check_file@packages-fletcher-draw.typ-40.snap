@@ -567,7 +567,9 @@ snapshot_kind: text
 
       if i > 0 {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at(i - 1)
+        let (
+          line-shift,
+        ) = rounded-corners.at(i - 1)
         from = vector.add(
           from,
           vector-polar(
