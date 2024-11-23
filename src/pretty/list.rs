@@ -29,6 +29,8 @@ struct ListStyle {
     delim: (&'static str, &'static str),
     /// Whether to add an addition space inside the delimiters if the list is empty.
     add_space_if_empty: bool,
+    /// Whether a trailing single-line separator is need if the list contains only one item.
+    add_trailing_sep_single: bool,
 }
 
 impl<'a> ListStylist<'a> {
@@ -54,6 +56,23 @@ impl<'a> ListStylist<'a> {
             multi_line_sep: ",",
             delim: ("(", ")"),
             add_space_if_empty: false,
+            add_trailing_sep_single: true,
+        })
+    }
+
+    pub fn convert_dict(mut self, dict: Dict<'a>) -> ArenaDoc<'a> {
+        let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
+
+        self.process_list(dict.to_untyped(), |node| {
+            self.printer.convert_dict_item(node)
+        });
+
+        self.pretty_commented_items(ListStyle {
+            single_line_sep: ",",
+            multi_line_sep: ",",
+            delim: (if all_spread { "(:" } else { "(" }, ")"),
+            add_space_if_empty: false,
+            add_trailing_sep_single: false,
         })
     }
 
@@ -165,7 +184,7 @@ impl<'a> ListStylist<'a> {
                         inner += body.clone() + after.clone();
                         if i != self.items.len() - 1 {
                             inner += self.arena.text(sty.single_line_sep) + self.arena.space();
-                        } else if cnt == 1 {
+                        } else if cnt == 1 && sty.add_trailing_sep_single {
                             // trailing comma for one-size array
                             inner += sty.single_line_sep;
                         }

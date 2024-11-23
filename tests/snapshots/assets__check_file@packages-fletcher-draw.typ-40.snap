@@ -473,23 +473,26 @@ snapshot_kind: text
     if calc.abs(Δθ) > 179deg {
       // singular line; skip arc
       (
-				arc-center: pt,
-				arc-radius: 0*radius,
-				start: θs.at(i - 1) - 90deg,
-				delta: wrap-angle-180(Δθ),
-				line-shift: 0*radius, // distance from vertex to beginning of arc
-			)
+        arc-center: pt,
+        arc-radius: 0 * radius,
+        start: θs.at(i - 1) - 90deg,
+        delta: wrap-angle-180(Δθ),
+        line-shift: 0 * radius, // distance from vertex to beginning of arc
+      )
     } else {
       // distance from vertex to center of curvature
       let dist = radius / calc.cos(Δθ / 2)
 
       (
-				arc-center: vector.add(pt, vector-polar(dist, θ-normal)),
-				arc-radius: radius,
-				start: θs.at(i - 1) - 90deg,
-				delta: wrap-angle-180(Δθ),
-				line-shift: radius*calc.tan(Δθ/2), // distance from vertex to beginning of arc
-			)
+        arc-center: vector.add(
+          pt,
+          vector-polar(dist, θ-normal),
+        ),
+        arc-radius: radius,
+        start: θs.at(i - 1) - 90deg,
+        delta: wrap-angle-180(Δθ),
+        line-shift: radius * calc.tan(Δθ / 2), // distance from vertex to beginning of arc
+      )
     }
   }
 

@@ -142,16 +142,16 @@ snapshot_kind: text
   stroke-expand: true,
   expand: none,
 ) = (
-    tablex-dict-type: "hline",
-    start: start,
-    end: end,
-    y: y,
-    stroke: stroke,
-    stop-pre-gutter: stop-pre-gutter,
-    gutter-restrict: gutter-restrict,
-    stroke-expand: stroke-expand,
-    expand: expand,
-    parent: none,  // if hline was broken into multiple
+  tablex-dict-type: "hline",
+  start: start,
+  end: end,
+  y: y,
+  stroke: stroke,
+  stop-pre-gutter: stop-pre-gutter,
+  gutter-restrict: gutter-restrict,
+  stroke-expand: stroke-expand,
+  expand: expand,
+  parent: none, // if hline was broken into multiple
 )
 
 #let vlinex(
@@ -2439,11 +2439,11 @@ snapshot_kind: text
   end: none,
 ) = {
   (
-        ..v_or_hline,
-        start: start,
-        end: end,
-        parent: v_or_hline  // the one that generated this
-    )
+    ..v_or_hline,
+    start: start,
+    end: end,
+    parent: v_or_hline, // the one that generated this
+  )
 }
 
 // check the subspan a hline or vline goes through inside a larger span
