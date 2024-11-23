@@ -1,5 +1,102 @@
 # Changelog
 
+## v0.12.2 - [2024-11-23]
+
+Introducing new contributor: @QuadnucYard. Welcome! 🎉 
+
+- For single item code block, typstyle will try to keep it inline if it fits in a single line and it's inline in original code.
+
+For example, you will get following code:
+```typst
+#{
+  let x = if true { 1 } else { 2 }
+}
+```
+
+Instead of:
+```typst
+#{
+  let x = if true {
+    1
+  } else {
+    2
+  }
+}
+```
+
+- Typstyle now strip excessive newlines in code blocks. Previously, typstyle will keep all newlines in code blocks. Now it will strip newlines at beginning and end of code blocks. It will also strip newlines in the middle of code blocks if there are more than 2 consecutive newlines.
+
+For example, the following code:
+```typst
+#{
+  
+  
+  let x = 1
+
+  let y = 2
+
+}
+```
+
+After formatting, it will become:
+```typst
+#{
+  let x = 1
+
+  let y = 2
+}
+```
+
+- Formatting block comments are now improved. Previously, leading spaces in block comments are blindly removed. Now typstyle will keep leading spaces in block comments if they are consistent. Typstyle will also try to align `*` in block comments.
+
+For example, the following code:
+```typst
+#{
+  let x = 1   /* Attached block comment
+      that spans
+ multiple lines
+  */
+  
+  /* Block comment
+      that spans
+ multiple lines
+  */
+  
+  /* Block comment with leading stars
+    *  that
+        *  spans
+ *  multiple
+    *  lines
+  */
+}
+
+```
+
+Will be formatted as:
+```typst
+#{
+  let x = 1 /* Attached block comment
+                 that spans
+            multiple lines
+             */
+
+  /* Block comment
+       that spans
+  multiple lines
+   */
+
+  /* Block comment with leading stars
+   *  that
+   *  spans
+   *  multiple
+   *  lines
+   */
+}
+```
+
+
+- Fix: `context` expressions are now longer surrounded by unneeded parentheses. Previously, if a context expression spans multiple lines, typstyle will wrap it in parentheses. Now it doesn't.
+
 ## v0.12.1 - [2024-11-03]
 
 - Typstyle now keeps spaces around math-delimited when there is already space around it. This prevents a bug when removing the space can cause wrong format result.
