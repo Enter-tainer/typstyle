@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.3 - [2024-11-24]
+
+- Fix doc test failure that prevents nixpkgs from building typstyle.
+
 ## v0.12.2 - [2024-11-23]
 
 Introducing new contributor: @QuadnucYard. Welcome! 🎉 
