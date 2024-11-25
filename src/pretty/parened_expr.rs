@@ -1,14 +1,16 @@
-use pretty::BoxDoc;
+use pretty::{Arena, DocAllocator};
 use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-impl PrettyPrinter {
-    pub(super) fn convert_parenthesized<'a>(
+use super::MyDoc;
+
+impl<'a> PrettyPrinter<'a> {
+    pub(super) fn convert_parenthesized(
         &'a self,
         parenthesized: Parenthesized<'a>,
         is_pattern: bool,
-    ) -> BoxDoc<'a, ()> {
+    ) -> MyDoc<'a> {
         if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
             return res;
         }
@@ -19,27 +21,23 @@ impl PrettyPrinter {
         } else if let Expr::Parenthesized(paren) = parenthesized.expr() {
             return self.convert_parenthesized(paren, false);
         }
-        let mut doc = BoxDoc::text("(");
         let inner = if is_pattern {
             self.convert_pattern(parenthesized.pattern())
         } else {
             self.convert_expr(parenthesized.expr())
         };
-        let inner = BoxDoc::line_()
-            .append(inner)
-            .append(BoxDoc::line_())
+        inner
+            .enclose(self.arena.line_(), self.arena.line_())
             .nest(2)
-            .group();
-        doc = doc.append(inner);
-        doc = doc.append(BoxDoc::text(")"));
-        doc
+            .group()
+            .parens()
     }
 
     /// Convert an expression with optional parentheses.
     /// If the expression is a parenthesized expression, a code block, a content block, or a function call,
     /// the expression will be converted without parentheses.
     /// Otherwise, the expression will be converted with parentheses if it is layouted on multiple lines.
-    pub(super) fn convert_expr_with_optional_paren<'a>(&'a self, expr: Expr<'a>) -> BoxDoc<'a, ()> {
+    pub(super) fn convert_expr_with_optional_paren(&'a self, expr: Expr<'a>) -> MyDoc<'a> {
         if matches!(
             expr,
             Expr::Parenthesized(_)
@@ -55,21 +53,13 @@ impl PrettyPrinter {
             return self.convert_expr(expr);
         }
         let body_expr = self.convert_expr(expr);
-        optional_paren(body_expr)
+        optional_paren(&self.arena, body_expr)
     }
 }
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
-pub(super) fn optional_paren(body: BoxDoc<'_, ()>) -> BoxDoc<'_, ()> {
-    let left_paren_or_nil = BoxDoc::text("(")
-        .append(BoxDoc::line())
-        .flat_alt(BoxDoc::nil());
-    let right_paren_or_nil = BoxDoc::line()
-        .append(BoxDoc::text(")"))
-        .flat_alt(BoxDoc::nil());
-    left_paren_or_nil
-        .append(body)
-        .nest(2)
-        .append(right_paren_or_nil)
-        .group()
+pub(super) fn optional_paren<'a>(arena: &'a Arena<'a>, body: MyDoc<'a>) -> MyDoc<'a> {
+    let left_paren_or_nil = (arena.text("(") + arena.line()).flat_alt(arena.nil());
+    let right_paren_or_nil = (arena.line() + arena.text(")")).flat_alt(arena.nil());
+    ((left_paren_or_nil + body).nest(2) + right_paren_or_nil).group()
 }

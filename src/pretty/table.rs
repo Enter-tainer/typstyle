@@ -1,10 +1,13 @@
 use itertools::Itertools;
-use pretty::BoxDoc;
+use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::{pretty::util::get_parenthesized_args, PrettyPrinter};
 
-use super::util::{func_name, indent_func_name};
+use super::{
+    util::{func_name, indent_func_name},
+    MyDoc,
+};
 
 const BLACK_LIST: [&str; 6] = [
     "table.cell",
@@ -17,21 +20,14 @@ const BLACK_LIST: [&str; 6] = [
 
 const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header", "grid.footer"];
 
-impl PrettyPrinter {
-    pub(super) fn convert_table<'a>(
-        &'a self,
-        table: FuncCall<'a>,
-        columns: usize,
-    ) -> BoxDoc<'a, ()> {
-        let mut doc = BoxDoc::text("(").append(BoxDoc::hardline());
+impl<'a> PrettyPrinter<'a> {
+    pub(super) fn convert_table(&'a self, table: FuncCall<'a>, columns: usize) -> MyDoc<'a> {
+        let mut doc = self.arena.text("(") + self.arena.hardline();
         for named in table.args().items().filter_map(|node| match node {
             Arg::Named(named) => Some(named),
             _ => None,
         }) {
-            doc = doc
-                .append(self.convert_named(named))
-                .append(BoxDoc::text(","))
-                .append(BoxDoc::hardline());
+            doc += self.convert_named(named) + "," + self.arena.hardline();
         }
         #[derive(Debug)]
         struct Row<'a> {
@@ -79,28 +75,27 @@ impl PrettyPrinter {
             table
         };
         for (row_pos, row) in table.into_iter().with_position() {
-            let mut row_doc = BoxDoc::nil();
+            let mut row_doc = self.arena.nil();
             for (pos, cell) in row.cells.into_iter().with_position() {
                 row_doc = row_doc
-                    .append(self.convert_arg(cell))
-                    .append(BoxDoc::text(","))
-                    .append(if has_predecessor(&pos) {
-                        BoxDoc::line()
+                    + self.convert_arg(cell)
+                    + self.arena.text(",")
+                    + (if has_predecessor(&pos) {
+                        self.arena.line()
                     } else if has_predecessor(&row_pos) {
-                        BoxDoc::line_()
+                        self.arena.line_()
                     } else {
-                        BoxDoc::nil()
+                        self.arena.nil()
                     });
             }
-            doc = doc
-                .append(row_doc.group())
-                .append(if has_predecessor(&row_pos) {
-                    BoxDoc::hardline()
+            doc += row_doc.group()
+                + (if has_predecessor(&row_pos) {
+                    self.arena.hardline()
                 } else {
-                    BoxDoc::nil()
+                    self.arena.nil()
                 });
         }
-        doc.nest(2).append(BoxDoc::hardline()).append(")")
+        doc.nest(2) + self.arena.hardline() + ")"
     }
 }
 

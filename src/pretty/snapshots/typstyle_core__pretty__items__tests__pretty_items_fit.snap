@@ -1,6 +1,7 @@
 ---
-source: src/util.rs
+source: src/pretty/items.rs
 expression: outer
+snapshot_kind: text
 ---
 Group(
     FlatAlt(

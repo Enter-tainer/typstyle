@@ -1,6 +1,7 @@
 ---
-source: src/util.rs
+source: src/pretty/items.rs
 expression: outer.pretty(10).to_string()
+snapshot_kind: text
 ---
 [
   123,
