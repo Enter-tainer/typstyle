@@ -3,10 +3,8 @@ use std::{io::Read, path::PathBuf};
 
 use anyhow::{bail, Context, Result};
 use clap::Parser;
-use typst_syntax::parse;
-use typstyle_core::{
-    attr::calculate_attributes, strip_trailing_whitespace, PrettyPrinter, Typstyle,
-};
+use typst_syntax::Source;
+use typstyle_core::{attr::AttrStore, strip_trailing_whitespace, PrettyPrinter, Typstyle};
 use walkdir::{DirEntry, WalkDir};
 
 use crate::cli::{CliArguments, CliResults};
@@ -160,13 +158,14 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<bool> {
         bail!("cannot perform in-place formatting without at least one file being presented");
     }
     let content = get_input(input)?;
-    let root = parse(&content);
-    let attr_map = calculate_attributes(root.clone());
+    let source = Source::detached(&content);
+    let root = source.root();
+    let attr_store = AttrStore::new(root);
     if *ast {
         println!("{:#?}", root);
     }
     let markup = root.cast().unwrap();
-    let printer = PrettyPrinter::new(attr_map);
+    let printer = PrettyPrinter::new(attr_store);
     let doc = printer.convert_markup(markup);
     if *pretty_doc {
         println!("{:#?}", doc);

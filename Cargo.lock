@@ -3940,6 +3940,7 @@ dependencies = [
  "reflexo-typst-shim",
  "reflexo-vfs",
  "reflexo-world",
+ "rustc-hash",
  "typst",
  "typst-assets",
  "typst-pdf",
