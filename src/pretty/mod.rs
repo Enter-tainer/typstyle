@@ -10,7 +10,6 @@ mod parened_expr;
 mod table;
 mod util;
 
-use std::borrow::Cow;
 use std::cell::RefCell;
 
 use config::PrinterConfig;
@@ -221,7 +220,7 @@ impl<'a> PrettyPrinter<'a> {
         trivia(&self.arena, node.to_untyped())
     }
 
-    fn convert_trivia_untyped(&'a self, node: &SyntaxNode) -> MyDoc<'a> {
+    fn convert_trivia_untyped(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
         trivia(&self.arena, node)
     }
 
@@ -405,7 +404,7 @@ impl<'a> PrettyPrinter<'a> {
     fn convert_str(&'a self, str: Str<'a>) -> MyDoc<'a> {
         let node = str.to_untyped();
         if node.text().contains('\n') {
-            self.arena.text(node.text().to_string())
+            self.arena.text(node.text().as_str())
         } else {
             self.convert_trivia_untyped(node)
         }
@@ -1088,24 +1087,16 @@ pub enum StripMode {
     PrefixOnBoundaryMarkers,
 }
 
-fn trivia<'a>(arena: &'a Arena<'a>, node: &SyntaxNode) -> MyDoc<'a> {
-    to_doc(
-        arena,
-        std::borrow::Cow::Borrowed(node.text()),
-        StripMode::None,
-    )
+fn trivia<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
+    to_doc(arena, node.text(), StripMode::None)
 }
 
-fn trivia_prefix<'a>(arena: &'a Arena<'a>, node: &SyntaxNode) -> MyDoc<'a> {
-    to_doc(
-        arena,
-        std::borrow::Cow::Borrowed(node.text()),
-        StripMode::Prefix,
-    )
+fn trivia_prefix<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
+    to_doc(arena, node.text(), StripMode::Prefix)
 }
 
-pub fn to_doc<'a>(arena: &'a Arena<'a>, s: Cow<'_, str>, strip_prefix: StripMode) -> MyDoc<'a> {
-    let get_line = |i: itertools::Position, line: &str| {
+pub fn to_doc<'a>(arena: &'a Arena<'a>, s: &'a str, strip_prefix: StripMode) -> MyDoc<'a> {
+    let get_line = |i: itertools::Position, line: &'a str| -> &'a str {
         let should_trim = matches!(strip_prefix, StripMode::Prefix)
             || (matches!(strip_prefix, StripMode::PrefixOnBoundaryMarkers)
                 && matches!(
@@ -1116,9 +1107,9 @@ pub fn to_doc<'a>(arena: &'a Arena<'a>, s: Cow<'_, str>, strip_prefix: StripMode
                 ));
 
         if should_trim {
-            line.trim_start().to_string()
+            line.trim_start()
         } else {
-            line.to_string()
+            line
         }
     };
     // String::lines() doesn't include the trailing newline
@@ -1152,7 +1143,7 @@ mod tests {
         ];
         let arena = Arena::new();
         for test in tests.into_iter() {
-            insta::assert_debug_snapshot!(to_doc(&arena, test.into(), StripMode::None));
+            insta::assert_debug_snapshot!(to_doc(&arena, test, StripMode::None));
         }
     }
 

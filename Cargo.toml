@@ -40,6 +40,7 @@ rustc-hash = "2.0"
 typst-syntax = "0.12.0"
 
 anyhow = "1"
+ecow = "0.2.3"
 once_cell = { version = "1.20.2", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 clap = { version = "4.5.20", features = ["derive", "env"], optional = true }
@@ -71,7 +72,6 @@ typst-assets = { version = "0.12.0", features = ["fonts"] }
 typst-render = "0.12.0"
 typst-pdf = "0.12.0"
 typst = "0.12.0"
-ecow = "0.2.3"
 
 criterion = { version = "0.5" }
 
