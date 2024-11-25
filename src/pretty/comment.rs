@@ -44,20 +44,11 @@ pub fn block_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a
         return arena.text(node.text().as_str());
     }
     // Then the comment is multiline.
-    let text = node.text().clone();
-    let style = get_comment_style(&text);
+    let text = node.text().as_str();
+    let style = get_comment_style(text);
     match style {
-        CommentStyle::Plain => {
-            let leading = get_follow_leading(&text).unwrap();
-            arena.column(move |col| {
-                arena
-                    .text(align_multiline(&text, leading, line_num, col))
-                    .into_doc()
-            })
-        }
-        CommentStyle::Bullet => {
-            arena.column(move |col| arena.text(align_multiline_simple(&text, col)).into_doc())
-        }
+        CommentStyle::Plain => align_multiline(arena, text),
+        CommentStyle::Bullet => align_multiline_simple(arena, text),
     }
 }
 
@@ -82,113 +73,82 @@ fn get_follow_leading(text: &str) -> Option<usize> {
         .min()
 }
 
-/// For general cases. All lines need to be indented simultaneously.
-fn align_multiline(text: &str, leading: usize, line_num: usize, col: usize) -> String {
-    if col == leading {
-        return text.to_string();
-    }
-    let offset = col as isize - leading as isize;
-    let mut result =
-        String::with_capacity((text.len() as isize + (line_num as isize - 1) * offset) as usize);
-    if col < leading {
-        // need to remove line prefix
-        let offset = leading - col;
-        for (i, line) in text.lines().enumerate() {
-            if i == 0 {
-                result.push_str(line);
-                continue;
-            }
-            result.push('\n');
-            if line.len() > offset {
-                result.push_str(&line[offset..]);
+/// For general cases. All lines need to be indented together.
+fn align_multiline<'a>(arena: &'a Arena<'a>, text: &'a str) -> MyDoc<'a> {
+    let leading = get_follow_leading(text).unwrap();
+    let mut doc = arena.nil();
+    for (i, line) in text.lines().enumerate() {
+        if i == 0 {
+            doc += line;
+        } else {
+            doc += arena.hardline();
+            if line.len() > leading {
+                doc += &line[leading..]; // Remove line prefix
             } // otherwise this line is blank
         }
-    } else {
-        // need to add spaces
-        let offset = col - leading;
-        for (i, line) in text.lines().enumerate() {
-            if i == 0 {
-                result.push_str(line);
-                continue;
-            }
-            result.push('\n');
-            result.extend(std::iter::repeat_n(' ', offset));
-            result.push_str(line);
-        }
     }
-    result
+    doc.align()
 }
 
 /// For special cases. All lines can be indented independently.
-fn align_multiline_simple(text: &str, col: usize) -> String {
-    let mut result = String::new();
+fn align_multiline_simple<'a>(arena: &'a Arena<'a>, text: &'a str) -> MyDoc<'a> {
+    let mut doc = arena.nil();
     for (i, line) in text.lines().enumerate() {
-        if i == 0 {
-            result.push_str(line);
-            continue;
+        if i > 0 {
+            doc += arena.hardline();
         }
-        result.push('\n');
-        result.extend(std::iter::repeat_n(' ', col + 1));
-        result.push_str(line.trim_start());
+        doc += line.trim_start();
     }
-    result
+    doc.hang(1)
 }
 
 #[cfg(test)]
 mod tests {
+    use pretty::{Arena, DocAllocator};
+
     use crate::pretty::comment::{align_multiline, align_multiline_simple, get_follow_leading};
 
     #[test]
     fn test_align() {
-        let text = "/*
-      ---
-        --
-    ---
-      */";
-        let leading = get_follow_leading(text).unwrap();
+        let cmt = "/* 0
+      --- 1
+        -- 2
+    --- 3
+     -- 4 */";
+        let arena = Arena::new();
+        let leading = get_follow_leading(cmt).unwrap();
         assert_eq!(leading, 4);
+        let doc = arena.text("lorem ipsum") + arena.space() + align_multiline(&arena, cmt);
+        let result = doc.pretty(80).to_string();
+        // println!("{result}");
         assert_eq!(
-            align_multiline(text, leading, 5, 0),
-            "/*
-  ---
-    --
----
-  */"
-        );
-        assert_eq!(
-            align_multiline(text, leading, 5, 8),
-            "/*
-          ---
-            --
-        ---
-          */"
+            result,
+            "lorem ipsum /* 0
+              --- 1
+                -- 2
+            --- 3
+             -- 4 */"
         );
     }
 
     #[test]
     fn test_align2() {
-        let text = "/*
-      *
-        *
-    *
+        let cmt = "/* 0
+      * 1
+        * 2
+    * 3
       */";
-        let leading = get_follow_leading(text).unwrap();
-        assert_eq!(leading, 4);
+        let arena = Arena::new();
+        let doc = arena.text("lorem ipsum") + arena.space() + align_multiline_simple(&arena, cmt);
+        let result = doc.pretty(80).to_string();
+        // println!("{result}");
         assert_eq!(
-            align_multiline_simple(text, 0),
-            "/*
- *
- *
- *
- */"
-        );
-        assert_eq!(
-            align_multiline_simple(text, 8),
-            "/*
-         *
-         *
-         *
-         */"
+            result,
+            "lorem ipsum /* 0
+             * 1
+             * 2
+             * 3
+             */"
         );
     }
 }

@@ -1,3 +1,4 @@
+use ecow::EcoString;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
@@ -7,8 +8,8 @@ pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
         .map(|ident| ident.as_str())
 }
 
-pub(super) fn func_name(node: FuncCall<'_>) -> String {
-    node.callee().to_untyped().clone().into_text().to_string()
+pub(super) fn func_name(node: FuncCall<'_>) -> EcoString {
+    node.callee().to_untyped().clone().into_text()
 }
 
 pub(super) fn has_parenthesized_args(node: Args<'_>) -> bool {
