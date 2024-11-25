@@ -7,7 +7,7 @@ pub mod pretty;
 pub mod util;
 
 #[doc(hidden)]
-pub use attr::calculate_attributes;
+pub use attr::AttrStore;
 #[doc(hidden)]
 pub use pretty::PrettyPrinter;
 
@@ -30,12 +30,8 @@ impl Typstyle {
     /// let res = Typstyle::new_with_content(content.to_string(), 80).pretty_print();
     /// ```
     pub fn new_with_content(content: String, width: usize) -> Self {
-        let root = typst_syntax::parse(&content);
-        Self {
-            content,
-            root,
-            width,
-        }
+        // We should ensure that the source tree is spanned.
+        Self::new_with_src(Source::detached(content), width)
     }
 
     /// Create a new Typstyle instance from a [`Source`].
@@ -56,11 +52,12 @@ impl Typstyle {
         if self.root.erroneous() {
             return self.content.to_string();
         }
-        let attr_map = calculate_attributes(self.root.clone());
-        let printer = PrettyPrinter::new(attr_map);
+        let attr_store = AttrStore::new(&self.root);
+        let printer = PrettyPrinter::new(attr_store);
         let markup = self.root.cast().unwrap();
         let doc = printer.convert_markup(markup);
-        strip_trailing_whitespace(&doc.pretty(self.width).to_string())
+        let result = doc.pretty(self.width).to_string();
+        strip_trailing_whitespace(&result)
     }
 }
 

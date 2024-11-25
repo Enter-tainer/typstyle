@@ -10,7 +10,6 @@ mod util;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
-use std::collections::HashMap;
 
 use config::PrinterConfig;
 use itertools::Itertools;
@@ -19,28 +18,32 @@ use parened_expr::optional_paren;
 use pretty::BoxDoc;
 use typst_syntax::{ast, ast::*, SyntaxKind, SyntaxNode};
 
-use crate::attr::Attributes;
 use crate::util::{comma_separated_items, pretty_items, FoldStyle};
+use crate::AttrStore;
 use comment::{block_comment, comment, line_comment};
 
 #[derive(Debug, Default)]
 pub struct PrettyPrinter {
     config: PrinterConfig,
-    attr_map: HashMap<SyntaxNode, Attributes>,
+    attr_store: AttrStore,
     mode: RefCell<Vec<Mode>>,
 }
 
 impl PrettyPrinter {
-    pub fn new(attr_map: HashMap<SyntaxNode, Attributes>) -> Self {
+    pub fn new(attr_store: AttrStore) -> Self {
         Self {
             config: Default::default(),
-            attr_map,
+            attr_store,
             mode: vec![].into(),
         }
     }
 
     fn get_fold_style<'a>(&self, node: impl AstNode<'a>) -> FoldStyle {
-        FoldStyle::from_attr(self.attr_map.get(node.to_untyped()))
+        if self.attr_store.is_node_multiline(node.to_untyped()) {
+            FoldStyle::Never
+        } else {
+            FoldStyle::Fit
+        }
     }
 }
 
@@ -130,9 +133,10 @@ impl PrettyPrinter {
     }
 
     fn check_disabled<'a>(&'a self, node: &'a SyntaxNode) -> Option<BoxDoc<'a, ()>> {
-        match self.attr_map.get(node) {
-            Some(attr) if attr.no_format() => Some(self.format_disabled(node)),
-            _ => None,
+        if self.attr_store.is_node_no_format(node) {
+            Some(self.format_disabled(node))
+        } else {
+            None
         }
     }
 
@@ -342,10 +346,7 @@ impl PrettyPrinter {
     fn convert_equation<'a>(&'a self, equation: Equation<'a>) -> BoxDoc<'a, ()> {
         let _g = self.with_mode(Mode::Math);
         let mut doc = BoxDoc::text("$");
-        let is_multi_line = self
-            .attr_map
-            .get(equation.to_untyped())
-            .map_or(false, |attr| attr.is_multiline_flavor());
+        let is_multi_line = self.attr_store.is_node_multiline(equation.to_untyped());
         let block_sep = if is_multi_line {
             BoxDoc::hardline()
         } else {
