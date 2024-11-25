@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.4 - [2024-11-26]
+
+- Performance improvement(#158, #159 by @QuadnucYard): Typstyle now becomes 10-100x faster than before. Previously formatting tablex source code takes ~500ms, but now it only takes less than 5ms.
+
 ## v0.12.3 - [2024-11-24]
 
 - Fix doc test failure that prevents nixpkgs from building typstyle.
