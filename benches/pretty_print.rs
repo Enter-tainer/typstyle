@@ -25,13 +25,15 @@ fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
     });
 }
 
-const TEST_ASSETS: [&str; 6] = [
+const TEST_ASSETS: [&str; 8] = [
     "tablex",
     "cetz-manual",
     "undergraduate-math",
     "packages/codly",
     "packages/fletcher-diagram",
     "packages/fletcher-draw",
+    "packages/touying/core",
+    "packages/touying/utils",
 ];
 
 fn benchmark_attrs(c: &mut Criterion) {
