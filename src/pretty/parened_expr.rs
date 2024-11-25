@@ -3,14 +3,14 @@ use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-use super::MyDoc;
+use super::ArenaDoc;
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_parenthesized(
         &'a self,
         parenthesized: Parenthesized<'a>,
         is_pattern: bool,
-    ) -> MyDoc<'a> {
+    ) -> ArenaDoc<'a> {
         if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
             return res;
         }
@@ -37,7 +37,7 @@ impl<'a> PrettyPrinter<'a> {
     /// If the expression is a parenthesized expression, a code block, a content block, or a function call,
     /// the expression will be converted without parentheses.
     /// Otherwise, the expression will be converted with parentheses if it is layouted on multiple lines.
-    pub(super) fn convert_expr_with_optional_paren(&'a self, expr: Expr<'a>) -> MyDoc<'a> {
+    pub(super) fn convert_expr_with_optional_paren(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
         if matches!(
             expr,
             Expr::Parenthesized(_)
@@ -58,7 +58,7 @@ impl<'a> PrettyPrinter<'a> {
 }
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
-pub(super) fn optional_paren<'a>(arena: &'a Arena<'a>, body: MyDoc<'a>) -> MyDoc<'a> {
+pub(super) fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>) -> ArenaDoc<'a> {
     let left_paren_or_nil = (arena.text("(") + arena.line()).flat_alt(arena.nil());
     let right_paren_or_nil = (arena.line() + arena.text(")")).flat_alt(arena.nil());
     ((left_paren_or_nil + body).nest(2) + right_paren_or_nil).group()

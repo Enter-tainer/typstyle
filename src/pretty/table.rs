@@ -6,7 +6,7 @@ use crate::{pretty::util::get_parenthesized_args, PrettyPrinter};
 
 use super::{
     util::{func_name, indent_func_name},
-    MyDoc,
+    ArenaDoc,
 };
 
 const BLACK_LIST: [&str; 6] = [
@@ -21,7 +21,7 @@ const BLACK_LIST: [&str; 6] = [
 const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header", "grid.footer"];
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_table(&'a self, table: FuncCall<'a>, columns: usize) -> MyDoc<'a> {
+    pub(super) fn convert_table(&'a self, table: FuncCall<'a>, columns: usize) -> ArenaDoc<'a> {
         let mut doc = self.arena.text("(") + self.arena.hardline();
         for named in table.args().items().filter_map(|node| match node {
             Arg::Named(named) => Some(named),

@@ -1,7 +1,7 @@
 use pretty::{Arena, DocAllocator};
 
 use super::style::FoldStyle;
-use super::MyDoc;
+use super::ArenaDoc;
 
 pub fn comma_separated_items<'a, I>(
     arena: &'a Arena<'a>,
@@ -9,9 +9,9 @@ pub fn comma_separated_items<'a, I>(
     fold_style: FoldStyle,
     left: Option<&'static str>,
     right: Option<&'static str>,
-) -> MyDoc<'a>
+) -> ArenaDoc<'a>
 where
-    I: IntoIterator<Item = MyDoc<'a>> + ExactSizeIterator,
+    I: IntoIterator<Item = ArenaDoc<'a>> + ExactSizeIterator,
 {
     let left = left.unwrap_or("(");
     let right = right.unwrap_or(")");
@@ -47,13 +47,13 @@ where
 
 pub fn pretty_items<'a>(
     arena: &'a Arena<'a>,
-    items: &[MyDoc<'a>],
-    single_line_separator: MyDoc<'a>,
-    multi_line_separator: MyDoc<'a>,
-    bracket: (MyDoc<'a>, MyDoc<'a>),
+    items: &[ArenaDoc<'a>],
+    single_line_separator: ArenaDoc<'a>,
+    multi_line_separator: ArenaDoc<'a>,
+    bracket: (ArenaDoc<'a>, ArenaDoc<'a>),
     bracket_space: bool,
     fold_style: FoldStyle,
-) -> MyDoc<'a> {
+) -> ArenaDoc<'a> {
     if items.is_empty() {
         return bracket.0.append(if bracket_space {
             arena.space().append(bracket.1)
@@ -74,13 +74,13 @@ pub fn pretty_items<'a>(
 
 fn pretty_items_impl<'a>(
     arena: &'a Arena<'a>,
-    items: &[MyDoc<'a>],
-    single_line_separator: MyDoc<'a>,
-    multi_line_separator: MyDoc<'a>,
-    bracket: (MyDoc<'a>, MyDoc<'a>),
+    items: &[ArenaDoc<'a>],
+    single_line_separator: ArenaDoc<'a>,
+    multi_line_separator: ArenaDoc<'a>,
+    bracket: (ArenaDoc<'a>, ArenaDoc<'a>),
     bracket_space: bool,
     fold_style: FoldStyle,
-) -> MyDoc<'a> {
+) -> ArenaDoc<'a> {
     let (left, right) = bracket;
     let multi = {
         let mut inner = arena.nil();

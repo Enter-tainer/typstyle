@@ -1,18 +1,18 @@
 use pretty::{Arena, DocAllocator};
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
-use super::{MyDoc, PrettyPrinter};
+use super::{ArenaDoc, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_comment(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
+    pub(super) fn convert_comment(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         comment(&self.arena, node)
     }
 
-    pub(super) fn convert_line_comment(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
+    pub(super) fn convert_line_comment(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         line_comment(&self.arena, node)
     }
 
-    pub(super) fn convert_block_comment(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
+    pub(super) fn convert_block_comment(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         block_comment(&self.arena, node)
     }
 }
@@ -23,7 +23,7 @@ enum CommentStyle {
 }
 
 /// Convert either line comment or block comment.
-pub fn comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
+pub fn comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
     if node.kind() == SyntaxKind::LineComment {
         line_comment(arena, node)
     } else if node.kind() == SyntaxKind::BlockComment {
@@ -33,11 +33,11 @@ pub fn comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
     }
 }
 
-pub fn line_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
+pub fn line_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
     arena.text(node.text().as_str())
 }
 
-pub fn block_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
+pub fn block_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
     // Calculate the number of leading spaces except the first line.
     let line_num = node.text().lines().count();
     if line_num == 0 {
@@ -74,7 +74,7 @@ fn get_follow_leading(text: &str) -> Option<usize> {
 }
 
 /// For general cases. All lines need to be indented together.
-fn align_multiline<'a>(arena: &'a Arena<'a>, text: &'a str) -> MyDoc<'a> {
+fn align_multiline<'a>(arena: &'a Arena<'a>, text: &'a str) -> ArenaDoc<'a> {
     let leading = get_follow_leading(text).unwrap();
     let mut doc = arena.nil();
     for (i, line) in text.lines().enumerate() {
@@ -91,7 +91,7 @@ fn align_multiline<'a>(arena: &'a Arena<'a>, text: &'a str) -> MyDoc<'a> {
 }
 
 /// For special cases. All lines can be indented independently.
-fn align_multiline_simple<'a>(arena: &'a Arena<'a>, text: &'a str) -> MyDoc<'a> {
+fn align_multiline_simple<'a>(arena: &'a Arena<'a>, text: &'a str) -> ArenaDoc<'a> {
     let mut doc = arena.nil();
     for (i, line) in text.lines().enumerate() {
         if i > 0 {
