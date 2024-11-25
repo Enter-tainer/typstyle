@@ -30,6 +30,7 @@ doc = false
 name = "typstyle_core"
 path = "src/lib.rs"
 crate-type = ["cdylib", "lib"]
+bench = false
 
 
 [dependencies]
@@ -71,6 +72,12 @@ typst-render = "0.12.0"
 typst-pdf = "0.12.0"
 typst = "0.12.0"
 ecow = "0.2.3"
+
+criterion = { version = "0.5" }
+
+[[bench]]
+name = "pretty_print"
+harness = false
 
 [build-dependencies]
 anyhow = "1"
