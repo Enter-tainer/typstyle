@@ -2,12 +2,12 @@ use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-use super::MyDoc;
+use super::ArenaDoc;
 
 impl<'a> PrettyPrinter<'a> {
-    pub fn resolve_dot_chain(&'a self, field_access: FieldAccess<'a>) -> Option<Vec<MyDoc<'a>>> {
+    pub fn resolve_dot_chain(&'a self, field_access: FieldAccess<'a>) -> Option<Vec<ArenaDoc<'a>>> {
         let mut nodes = vec![];
-        let mut push_node = |node: MyDoc<'a>, last_is_field_access: bool| {
+        let mut push_node = |node: ArenaDoc<'a>, last_is_field_access: bool| {
             if last_is_field_access {
                 nodes.push(node);
             } else {

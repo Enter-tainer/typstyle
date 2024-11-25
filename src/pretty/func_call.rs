@@ -7,7 +7,7 @@ use super::{style::FoldStyle, PrettyPrinter};
 use super::{
     table,
     util::{get_parenthesized_args_untyped, has_parenthesized_args},
-    MyDoc,
+    ArenaDoc,
 };
 
 #[derive(Debug)]
@@ -64,7 +64,7 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
         self,
         printer: &'a PrettyPrinter<'a>,
         reduce_newline: Option<usize>,
-    ) -> MyDoc<'a> {
+    ) -> ArenaDoc<'a> {
         match self {
             ParenthesizedFuncCallArg::Argument(arg) => printer.convert_arg(arg),
             ParenthesizedFuncCallArg::Comma => printer.arena.text(","),
@@ -80,7 +80,7 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
 }
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> MyDoc<'a> {
+    pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
         let mut doc = self.convert_expr(func_call.callee());
         if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
             return doc + res;
@@ -98,7 +98,7 @@ impl<'a> PrettyPrinter<'a> {
         doc + self.convert_additional_args(func_call.args(), has_parenthesized_args)
     }
 
-    pub(super) fn convert_args(&'a self, args: Args<'a>) -> MyDoc<'a> {
+    pub(super) fn convert_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
         let has_parenthesized_args = has_parenthesized_args(args);
         let parenthesized = if has_parenthesized_args {
             self.convert_parenthesized_args_as_is(args)
@@ -108,7 +108,7 @@ impl<'a> PrettyPrinter<'a> {
         parenthesized + self.convert_additional_args(args, has_parenthesized_args)
     }
 
-    pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> MyDoc<'a> {
+    pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
         let args = parse_args(args).collect_vec();
         let is_multiline = {
             let mut is_multiline = false;
@@ -157,13 +157,13 @@ impl<'a> PrettyPrinter<'a> {
         doc
     }
 
-    pub(super) fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> MyDoc<'a> {
+    pub(super) fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
         let args = parse_args(args);
         let inner = self.arena.concat(args.map(|arg| arg.into_doc(self, None)));
         inner.nest(2).parens()
     }
 
-    fn convert_additional_args(&'a self, args: Args<'a>, has_paren: bool) -> MyDoc<'a> {
+    fn convert_additional_args(&'a self, args: Args<'a>, has_paren: bool) -> ArenaDoc<'a> {
         let node = args.to_untyped();
         let args = node
             .children()
@@ -180,7 +180,7 @@ impl<'a> PrettyPrinter<'a> {
             .group()
     }
 
-    pub(super) fn convert_arg(&'a self, arg: Arg<'a>) -> MyDoc<'a> {
+    pub(super) fn convert_arg(&'a self, arg: Arg<'a>) -> ArenaDoc<'a> {
         match arg {
             Arg::Pos(p) => self.convert_expr(p),
             Arg::Named(n) => self.convert_named(n),
@@ -210,14 +210,14 @@ fn comma_seprated_args<'a, I>(
     pp: &'a PrettyPrinter<'a>,
     args: I,
     fold_style: FoldStyle,
-) -> MyDoc<'a>
+) -> ArenaDoc<'a>
 where
     I: Iterator<Item = ParenthesizedFuncCallArg<'a>> + ExactSizeIterator,
 {
     if args.len() == 0 {
         return pp.arena.nil().parens();
     }
-    let format_inner = |sep: MyDoc<'a>, comma_: MyDoc<'a>| {
+    let format_inner = |sep: ArenaDoc<'a>, comma_: ArenaDoc<'a>| {
         let mut inner = pp.arena.nil();
         for (pos, arg) in args.with_position() {
             let need_sep = matches!(arg, ParenthesizedFuncCallArg::Argument(_));
