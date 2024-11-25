@@ -3,8 +3,6 @@
 pub mod attr;
 #[doc(hidden)]
 pub mod pretty;
-#[doc(hidden)]
-pub mod util;
 
 #[doc(hidden)]
 pub use attr::AttrStore;

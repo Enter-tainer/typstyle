@@ -1,20 +1,18 @@
-use pretty::BoxDoc;
 use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-impl PrettyPrinter {
-    pub fn resolve_dot_chain<'a>(
-        &'a self,
-        field_access: FieldAccess<'a>,
-    ) -> Option<Vec<BoxDoc<'a, ()>>> {
+use super::MyDoc;
+
+impl<'a> PrettyPrinter<'a> {
+    pub fn resolve_dot_chain(&'a self, field_access: FieldAccess<'a>) -> Option<Vec<MyDoc<'a>>> {
         let mut nodes = vec![];
-        let mut push_node = |node: BoxDoc<'a, ()>, last_is_field_access: bool| {
+        let mut push_node = |node: MyDoc<'a>, last_is_field_access: bool| {
             if last_is_field_access {
                 nodes.push(node);
             } else {
                 let last = nodes.pop().unwrap();
-                nodes.push(node.append(last));
+                nodes.push(node + last);
             }
         };
         let mut current = field_access.to_untyped();

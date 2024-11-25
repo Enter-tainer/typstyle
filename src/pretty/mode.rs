@@ -8,7 +8,7 @@ pub enum Mode {
     Math,
 }
 
-impl PrettyPrinter {
+impl PrettyPrinter<'_> {
     pub(super) fn push_mode(&self, mode: Mode) {
         self.mode.borrow_mut().push(mode);
     }
@@ -22,10 +22,10 @@ impl PrettyPrinter {
     }
 }
 
-pub(super) struct ModeGuard<'a>(&'a PrettyPrinter);
+pub(super) struct ModeGuard<'a>(&'a PrettyPrinter<'a>);
 
-impl PrettyPrinter {
-    pub(super) fn with_mode(&self, mode: Mode) -> ModeGuard {
+impl<'a> PrettyPrinter<'a> {
+    pub(super) fn with_mode(&'a self, mode: Mode) -> ModeGuard {
         self.push_mode(mode);
         ModeGuard(self)
     }

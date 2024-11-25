@@ -1,5 +1,21 @@
-use pretty::BoxDoc;
+use pretty::{Arena, DocAllocator};
 use typst_syntax::{SyntaxKind, SyntaxNode};
+
+use super::{MyDoc, PrettyPrinter};
+
+impl<'a> PrettyPrinter<'a> {
+    pub(super) fn convert_comment(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
+        comment(&self.arena, node)
+    }
+
+    pub(super) fn convert_line_comment(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
+        line_comment(&self.arena, node)
+    }
+
+    pub(super) fn convert_block_comment(&'a self, node: &'a SyntaxNode) -> MyDoc<'a> {
+        block_comment(&self.arena, node)
+    }
+}
 
 enum CommentStyle {
     Plain,
@@ -7,25 +23,25 @@ enum CommentStyle {
 }
 
 /// Convert either line comment or block comment.
-pub fn comment(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+pub fn comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
     if node.kind() == SyntaxKind::LineComment {
-        line_comment(node)
+        line_comment(arena, node)
     } else if node.kind() == SyntaxKind::BlockComment {
-        block_comment(node)
+        block_comment(arena, node)
     } else {
         unreachable!("the node should not be a comment node!")
     }
 }
 
-pub fn line_comment(node: &SyntaxNode) -> BoxDoc<'_, ()> {
-    BoxDoc::text(node.text().to_string())
+pub fn line_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
+    arena.text(node.text().as_str())
 }
 
-pub fn block_comment(node: &SyntaxNode) -> BoxDoc<'_, ()> {
+pub fn block_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> MyDoc<'a> {
     // Calculate the number of leading spaces except the first line.
     let line_num = node.text().lines().count();
     if line_num == 0 {
-        return BoxDoc::text(node.text().as_str());
+        return arena.text(node.text().as_str());
     }
     // Then the comment is multiline.
     let text = node.text().clone();
@@ -33,10 +49,14 @@ pub fn block_comment(node: &SyntaxNode) -> BoxDoc<'_, ()> {
     match style {
         CommentStyle::Plain => {
             let leading = get_follow_leading(&text).unwrap();
-            BoxDoc::column(move |col| BoxDoc::text(align_multiline(&text, leading, line_num, col)))
+            arena.column(move |col| {
+                arena
+                    .text(align_multiline(&text, leading, line_num, col))
+                    .into_doc()
+            })
         }
         CommentStyle::Bullet => {
-            BoxDoc::column(move |col| BoxDoc::text(align_multiline_simple(&text, col)))
+            arena.column(move |col| arena.text(align_multiline_simple(&text, col)).into_doc())
         }
     }
 }
