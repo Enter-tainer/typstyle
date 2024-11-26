@@ -39,9 +39,7 @@ snapshot_kind: text
   Austen: "Persuasion",
 )
 
-#let (
-  Austen,
-) = books
+#let (Austen,) = books
 Austen wrote #Austen.
 
 #let (
@@ -63,9 +61,7 @@ Homer wrote #h.
     d: 5,
   ),
 )
-#let (
-  a,
-) = (
+#let (a,) = (
   a: 1,
   b: (
     c: 4,

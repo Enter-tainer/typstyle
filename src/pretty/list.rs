@@ -91,6 +91,10 @@ impl<'a> ListStylist<'a> {
             self.printer.convert_destructuring_item(node)
         });
 
+        if only_one_pattern {
+            self.fold_style = FoldStyle::Always;
+        }
+
         self.pretty_commented_items(ListStyle {
             single_line_sep: ",",
             multi_line_sep: ",",
