@@ -2,6 +2,7 @@ use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
+use super::doc_ext::DocExt;
 use super::{style::FoldStyle, PrettyPrinter};
 
 use super::{
@@ -69,10 +70,10 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
             ParenthesizedFuncCallArg::Argument(arg) => printer.convert_arg(arg),
             ParenthesizedFuncCallArg::Comma => printer.arena.text(","),
             ParenthesizedFuncCallArg::Space => printer.arena.space(),
-            ParenthesizedFuncCallArg::Newline(count) => printer.arena.concat(std::iter::repeat_n(
-                printer.arena.hardline(),
-                count - reduce_newline.unwrap_or(0),
-            )),
+            ParenthesizedFuncCallArg::Newline(count) => {
+                let line_count = count - reduce_newline.unwrap_or(0);
+                printer.arena.hardline().repeat_n(line_count)
+            }
             ParenthesizedFuncCallArg::LineComment(cmt)
             | ParenthesizedFuncCallArg::BlockComment(cmt) => printer.convert_comment(cmt),
         }
