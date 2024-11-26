@@ -1,4 +1,5 @@
 pub mod config;
+pub mod doc_ext;
 pub mod style;
 
 mod arg;
@@ -16,6 +17,7 @@ use std::cell::RefCell;
 
 use arg::ArgStylist;
 use config::PrinterConfig;
+use doc_ext::DocExt;
 use items::pretty_items;
 use itertools::Itertools;
 use list::ListStylist;
@@ -253,8 +255,7 @@ impl<'a> PrettyPrinter<'a> {
             .chars()
             .filter(|c| *c == '\n')
             .count();
-        self.arena
-            .concat(std::iter::repeat_n(self.arena.hardline(), newline_count))
+        self.arena.hardline().repeat_n(newline_count)
     }
 
     fn convert_escape(&'a self, escape: Escape<'a>) -> ArenaDoc<'a> {
@@ -474,10 +475,9 @@ impl<'a> PrettyPrinter<'a> {
                 if newline_cnt > 0 {
                     // Ensures no leading empty line.
                     if !codes.is_empty() {
-                        codes.extend(std::iter::repeat_n(
-                            self.arena.nil(),
-                            (newline_cnt - 1).min(self.config.blank_lines_upper_bound),
-                        ));
+                        for _ in 0..(newline_cnt - 1).min(self.config.blank_lines_upper_bound) {
+                            codes.push(self.arena.nil());
+                        }
                     }
                     can_attach_comment = false;
                 }
