@@ -198,7 +198,9 @@ snapshot_kind: text
 // -- type checks, transformers and validators --
 
 // Is this a valid dict created by this library?
-#let is-tablex-dict(x) = (type(x) == _dict-type and "tablex-dict-type" in x)
+#let is-tablex-dict(x) = (
+  type(x) == _dict-type and "tablex-dict-type" in x
+)
 
 #let is-tablex-dict-type(x, ..dict_types) = (
   is-tablex-dict(x) and x.tablex-dict-type in dict_types.pos()
@@ -775,7 +777,9 @@ snapshot_kind: text
 )
 
 // How many rows are in this grid? (Given its width)
-#let grid-count-rows(grid) = (calc.floor(grid.items.len() / grid.width))
+#let grid-count-rows(grid) = (
+  calc.floor(grid.items.len() / grid.width)
+)
 
 // Converts a grid array index to (x, y)
 #let grid-index-to-pos(grid, index) = (
@@ -2013,11 +2017,13 @@ snapshot_kind: text
         let in_top_or_bottom = y in (cell.y, cell.y + cell.rowspan)
 
         let hline_hasnt_already_ended = (
-                h.end in (auto, none)  // always goes towards the right
-                or h.end >= cell.x + cell.colspan  // ends at or after this cell
-            )
+          h.end in (auto, none) // always goes towards the right
+          or h.end >= cell.x + cell.colspan // ends at or after this cell
+        )
 
-        (in_top_or_bottom and hline_hasnt_already_ended)
+        (
+          in_top_or_bottom and hline_hasnt_already_ended
+        )
       })
     .map(h => {
         // get the intersection between the hline and the cell's x-span.
@@ -2045,11 +2051,13 @@ snapshot_kind: text
         let at_left_or_right = x in (cell.x, cell.x + cell.colspan)
 
         let vline_hasnt_already_ended = (
-                v.end in (auto, none)  // always goes towards the bottom
-                or v.end >= cell.y + cell.rowspan  // ends at or after this cell
-            )
+          v.end in (auto, none) // always goes towards the bottom
+          or v.end >= cell.y + cell.rowspan // ends at or after this cell
+        )
 
-        (at_left_or_right and vline_hasnt_already_ended)
+        (
+          at_left_or_right and vline_hasnt_already_ended
+        )
       })
     .map(v => {
         // get the intersection between the hline and the cell's x-span.

@@ -248,38 +248,50 @@ snapshot_kind: text
 #let codly-line(it, block-label: none, extra: (:)) = {
   let indent-regex = regex("^\\s*")
   let args = __codly-args
-  let highlight-stroke = (__codly-args.highlight-stroke.type_check)(if "highlight-stroke" in extra {
+  let highlight-stroke = (
+    __codly-args.highlight-stroke.type_check
+  )(if "highlight-stroke" in extra {
     extra.highlight-stroke
   } else {
     state("codly-highlight-stroke", __codly-args.highlight-stroke.default).get()
   })
 
-  let highlight-fill = (__codly-args.highlight-fill.type_check)(if "highlight-fill" in extra {
+  let highlight-fill = (
+    __codly-args.highlight-fill.type_check
+  )(if "highlight-fill" in extra {
     extra.highlight-fill
   } else {
     state("codly-highlight-fill", __codly-args.highlight-fill.default).get()
   })
 
-  let highlight-radius = (__codly-args.highlight-radius.type_check)(if "highlight-radius" in extra {
+  let highlight-radius = (
+    __codly-args.highlight-radius.type_check
+  )(if "highlight-radius" in extra {
     extra.highlight-radius
   } else {
     state("codly-highlight-radius", __codly-args.highlight-radius.default).get()
   })
 
-  let highlight-inset = (__codly-args.highlight-inset.type_check)(if "highlight-inset" in extra {
+  let highlight-inset = (
+    __codly-args.highlight-inset.type_check
+  )(if "highlight-inset" in extra {
     extra.highlight-inset
   } else {
     state("codly-highlight-inset", __codly-args.highlight-inset.default).get()
   })
 
-  let default-color = (__codly-args.default-color.type_check)(if "default-color" in extra {
+  let default-color = (
+    __codly-args.default-color.type_check
+  )(if "default-color" in extra {
     extra.default-color
   } else {
     state("codly-default-color", __codly-args.default-color.default).get()
   })
 
   let highlights = {
-    let highlights = (__codly-args.highlights.type_check)(if "highlights" in extra {
+    let highlights = (
+      __codly-args.highlights.type_check
+    )(if "highlights" in extra {
       extra.highlights
     } else {
       state("codly-highlights", __codly-args.highlights.default).get()
@@ -309,7 +321,9 @@ snapshot_kind: text
   let highlighted = it.body
 
   // Smart indentation code.
-  let smart-indent = (__codly-args.smart-indent.type_check)(if "smart-indent" in extra {
+  let smart-indent = (
+    __codly-args.smart-indent.type_check
+  )(if "smart-indent" in extra {
     extra.smart-indent
   } else {
     state("codly-smart-indent", __codly-args.smart-indent.default).get()
@@ -467,19 +481,25 @@ snapshot_kind: text
 
       if collection != none {
         collection.push(child)
-      } else if collection == none and (i >= hl.start or i + len >= hl.start) and (i < hl.end) {
+      } else if collection == none and (
+        i >= hl.start or i + len >= hl.start
+      ) and (i < hl.end) {
         collection = (child,)
       } else {
         children.push(child)
       }
 
       let label = if "label" in hl and hl.label != none {
-        let reference-by = (__codly-args.reference-by.type_check)(if "reference-by" in extra {
+        let reference-by = (
+          __codly-args.reference-by.type_check
+        )(if "reference-by" in extra {
           extra.reference-by
         } else {
           state("codly-reference-by", __codly-args.reference-by.default).get()
         })
-        let reference-sep = (__codly-args.reference-sep.type_check)(if "reference-sep" in extra {
+        let reference-sep = (
+          __codly-args.reference-sep.type_check
+        )(if "reference-sep" in extra {
           extra.reference-sep
         } else {
           state("codly-reference-sep", __codly-args.reference-sep.default).get()
@@ -660,19 +680,25 @@ snapshot_kind: text
   }
 
   let block-label = auto
-  let display-names = (__codly-args.display-name.type_check)(if "display-name" in extra {
+  let display-names = (
+    __codly-args.display-name.type_check
+  )(if "display-name" in extra {
     extra.display-name
   } else {
     state("codly-display-name", __codly-args.display-name.default).get()
   })
 
-  let display-icons = (__codly-args.display-icon.type_check)(if "display-icon" in extra {
+  let display-icons = (
+    __codly-args.display-icon.type_check
+  )(if "display-icon" in extra {
     extra.display-icon
   } else {
     state("codly-display-icon", __codly-args.display-icon.default).get()
   })
 
-  let lang-outset = (__codly-args.lang-outset.type_check)(if "lang-outset" in extra {
+  let lang-outset = (
+    __codly-args.lang-outset.type_check
+  )(if "lang-outset" in extra {
     extra.lang-outset
   } else {
     state("codly-lang-outset", __codly-args.lang-outset.default).get()
@@ -693,7 +719,9 @@ snapshot_kind: text
       fn
     }
   }
-  let default-color = (__codly-args.default-color.type_check)(if "default-color" in extra {
+  let default-color = (
+    __codly-args.default-color.type_check
+  )(if "default-color" in extra {
     extra.default-color
   } else {
     state("codly-default-color", __codly-args.default-color.default).get()
@@ -717,19 +745,25 @@ snapshot_kind: text
     state("codly-stroke", __codly-args.stroke.default).get()
   })
 
-  let zebra-color = (__codly-args.zebra-fill.type_check)(if "zebra-fill" in extra {
+  let zebra-color = (
+    __codly-args.zebra-fill.type_check
+  )(if "zebra-fill" in extra {
     extra.zebra-fill
   } else {
     state("codly-zebra-fill", __codly-args.zebra-fill.default).get()
   })
 
-  let numbers-format = (__codly-args.number-format.type_check)(if "number-format" in extra {
+  let numbers-format = (
+    __codly-args.number-format.type_check
+  )(if "number-format" in extra {
     extra.number-format
   } else {
     state("codly-number-format", __codly-args.number-format.default).get()
   })
 
-  let numbers-alignment = (__codly-args.number-align.type_check)(if "number-align" in extra {
+  let numbers-alignment = (
+    __codly-args.number-align.type_check
+  )(if "number-align" in extra {
     extra.number-align
   } else {
     state("codly-number-align", __codly-args.number-align.default).get()
@@ -743,7 +777,9 @@ snapshot_kind: text
     }),
   )
 
-  let breakable = (__codly-args.breakable.type_check)(if "breakable" in extra {
+  let breakable = (
+    __codly-args.breakable.type_check
+  )(if "breakable" in extra {
     extra.breakable
   } else {
     state("codly-breakable", __codly-args.breakable.default).get()
@@ -768,19 +804,25 @@ snapshot_kind: text
     }
   }
 
-  let skip-line = (__codly-args.skip-line.type_check)(if "skip-line" in extra {
+  let skip-line = (
+    __codly-args.skip-line.type_check
+  )(if "skip-line" in extra {
     extra.skip-line
   } else {
     state("codly-skip-line", __codly-args.skip-line.default).get()
   })
 
-  let skip-number = (__codly-args.skip-number.type_check)(if "skip-number" in extra {
+  let skip-number = (
+    __codly-args.skip-number.type_check
+  )(if "skip-number" in extra {
     extra.skip-number
   } else {
     state("codly-skip-number", __codly-args.skip-number.default).get()
   })
 
-  let reference-by = (__codly-args.reference-by.type_check)(if "reference-by" in extra {
+  let reference-by = (
+    __codly-args.reference-by.type_check
+  )(if "reference-by" in extra {
     extra.reference-by
   } else {
     state("codly-reference-by", __codly-args.reference-by.default).get()
@@ -790,7 +832,9 @@ snapshot_kind: text
     panic("codly: reference-by must be either 'line' or 'item'")
   }
 
-  let reference-sep = (__codly-args.reference-sep.type_check)(if "reference-sep" in extra {
+  let reference-sep = (
+    __codly-args.reference-sep.type_check
+  )(if "reference-sep" in extra {
     extra.reference-sep
   } else {
     state("codly-reference-sep", __codly-args.reference-sep.default).get()
@@ -805,7 +849,9 @@ snapshot_kind: text
   })
 
   let annotation-format = {
-    let fn = (__codly-args.annotation-format.type_check)(if "annotation-format" in extra {
+    let fn = (
+      __codly-args.annotation-format.type_check
+    )(if "annotation-format" in extra {
       extra.annotation-format
     } else {
       state("codly-annotation-format", __codly-args.annotation-format.default).get()
@@ -818,7 +864,9 @@ snapshot_kind: text
   }
 
   let annotations = {
-    let annotations = (__codly-args.annotations.type_check)(if "annotations" in extra {
+    let annotations = (
+      __codly-args.annotations.type_check
+    )(if "annotations" in extra {
       extra.annotations
     } else {
       state("codly-annotations", __codly-args.annotations.default).get()
@@ -895,14 +943,18 @@ snapshot_kind: text
   } else {
     state("codly-header", __codly-args.header.default).get()
   })
-  let header-repeat = (__codly-args.header-repeat.type_check)(if "header-repeat" in extra {
+  let header-repeat = (
+    __codly-args.header-repeat.type_check
+  )(if "header-repeat" in extra {
     extra.header-repeat
   } else {
     state("codly-header-repeat", __codly-args.header-repeat.default).get()
   })
 
   // The language block (icon + name)
-  let languages = (__codly-args.languages.type_check)(if "languages" in extra {
+  let languages = (
+    __codly-args.languages.type_check
+  )(if "languages" in extra {
     extra.languages
   } else {
     state("codly-languages", __codly-args.languages.default).get()
@@ -930,7 +982,9 @@ snapshot_kind: text
     }
 
     if language-block == auto {
-      let radius = (__codly-args.lang-radius.type_check)(if "lang-radius" in extra {
+      let radius = (
+        __codly-args.lang-radius.type_check
+      )(if "lang-radius" in extra {
         extra.lang-radius
       } else {
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
@@ -943,12 +997,16 @@ snapshot_kind: text
         }),
       )
 
-      let lang-stroke = (__codly-args.lang-stroke.type_check)(if "lang-stroke" in extra {
+      let lang-stroke = (
+        __codly-args.lang-stroke.type_check
+      )(if "lang-stroke" in extra {
         extra.lang-stroke
       } else {
         state("codly-lang-stroke", __codly-args.lang-stroke.default).get()
       })
-      let lang-fill = (__codly-args.lang-fill.type_check)(if "lang-fill" in extra {
+      let lang-fill = (
+        __codly-args.lang-fill.type_check
+      )(if "lang-fill" in extra {
         extra.lang-fill
       } else {
         state("codly-lang-fill", __codly-args.lang-fill.default).get()
@@ -983,7 +1041,9 @@ snapshot_kind: text
     }
   } else if display-names {
     if language-block == auto {
-      let radius = (__codly-args.lang-radius.type_check)(if "lang-radius" in extra {
+      let radius = (
+        __codly-args.lang-radius.type_check
+      )(if "lang-radius" in extra {
         extra.lang-radius
       } else {
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
@@ -997,13 +1057,17 @@ snapshot_kind: text
         }),
       )
 
-      let lang-stroke = (__codly-args.lang-stroke.type_check)(if "lang-stroke" in extra {
+      let lang-stroke = (
+        __codly-args.lang-stroke.type_check
+      )(if "lang-stroke" in extra {
         extra.lang-stroke
       } else {
         state("codly-lang-stroke", __codly-args.lang-stroke.default).get()
       })
 
-      let lang-fill = (__codly-args.lang-fill.type_check)(if "lang-fill" in extra {
+      let lang-fill = (
+        __codly-args.lang-fill.type_check
+      )(if "lang-fill" in extra {
         extra.lang-fill
       } else {
         state("codly-lang-fill", __codly-args.lang-fill.default).get()
@@ -1048,12 +1112,16 @@ snapshot_kind: text
   let lb = measure(language-block)
 
   let header = if header != none {
-    let header-args = (__codly-args.header-cell-args.type_check)(if "header-cell-args" in extra {
+    let header-args = (
+      __codly-args.header-cell-args.type_check
+    )(if "header-cell-args" in extra {
       extra.header-cell-args
     } else {
       state("codly-header-cell-args", __codly-args.header-cell-args.default).get()
     })
-    let transform = (__codly-args.header-transform.type_check)(if "header-transform" in extra {
+    let transform = (
+      __codly-args.header-transform.type_check
+    )(if "header-transform" in extra {
       extra.header-transform
     } else {
       state("codly-header-transform", __codly-args.header-transform.default).get()
@@ -1160,7 +1228,9 @@ snapshot_kind: text
         )<codly-highlighted>]
     }
 
-    if line.number != start or (display-names != true and display-icons != true) {
+    if line.number != start or (
+      display-names != true and display-icons != true
+    ) {
       items = (..items, l, ..annot())
       continue
     } else if it.lang == none {
@@ -1194,18 +1264,24 @@ snapshot_kind: text
   } else {
     state("codly-footer", __codly-args.footer.default).get()
   })
-  let footer-repeat = (__codly-args.footer-repeat.type_check)(if "footer-repeat" in extra {
+  let footer-repeat = (
+    __codly-args.footer-repeat.type_check
+  )(if "footer-repeat" in extra {
     extra.footer-repeat
   } else {
     state("codly-footer-repeat", __codly-args.footer-repeat.default).get()
   })
   let footer = if footer != none {
-    let footer-args = (__codly-args.footer-cell-args.type_check)(if "footer-cell-args" in extra {
+    let footer-args = (
+      __codly-args.footer-cell-args.type_check
+    )(if "footer-cell-args" in extra {
       extra.footer-cell-args
     } else {
       state("codly-footer-cell-args", __codly-args.footer-cell-args.default).get()
     })
-    let transform = (__codly-args.footer-transform.type_check)(if "footer-transform" in extra {
+    let transform = (
+      __codly-args.footer-transform.type_check
+    )(if "footer-transform" in extra {
       extra.footer-transform
     } else {
       state("codly-footer-transform", __codly-args.footer-transform.default).get()
@@ -1221,7 +1297,11 @@ snapshot_kind: text
   }
 
   // If the fill or zebra color is a gradient, we will draw it on a separate layer.
-  let is-complex-fill = ((type(fill) != color and fill != none) or (type(zebra-color) != color and zebra-color != none))
+  let is-complex-fill = (
+    (type(fill) != color and fill != none) or (
+      type(zebra-color) != color and zebra-color != none
+    )
+  )
 
   block(
     breakable: breakable,
@@ -1340,7 +1420,9 @@ snapshot_kind: text
 
 #let __codly-ref(it, extra: (:)) = context {
   if it.element != none and it.element.func() == heading and it.element.level == level-highlight {
-    let sep = (__codly-args.reference-sep.type_check)(if "reference-sep" in extra {
+    let sep = (
+      __codly-args.reference-sep.type_check
+    )(if "reference-sep" in extra {
       extra.reference-sep
     } else {
       state("codly-reference-sep", __codly-args.reference-sep.default).get()
@@ -1355,7 +1437,9 @@ snapshot_kind: text
       ).join(),
     )
   } else if it.element != none and it.element.func() == figure and it.element.kind == "codly-referencer" {
-    let sep = (__codly-args.reference-sep.type_check)(if "reference-sep" in extra {
+    let sep = (
+      __codly-args.reference-sep.type_check
+    )(if "reference-sep" in extra {
       extra.reference-sep
     } else {
       state("codly-reference-sep", __codly-args.reference-sep.default).get()
@@ -1374,7 +1458,9 @@ snapshot_kind: text
     assert(segments.len() > 1, message: "codly: invalid label")
     let lab = label(segments.slice(0, -1).join(":"))
 
-    let sep = (__codly-args.reference-sep.type_check)(if "reference-sep" in extra {
+    let sep = (
+      __codly-args.reference-sep.type_check
+    )(if "reference-sep" in extra {
       extra.reference-sep
     } else {
       state("codly-reference-sep", __codly-args.reference-sep.default).get()

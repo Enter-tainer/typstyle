@@ -2,10 +2,13 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/code/show-closure-paren.typ
+snapshot_kind: text
 ---
 #show raw: it => it.text.ends-with(">")
 
-#show raw: it => (it.text.ends-with(">"))
+#show raw: it => (
+  it.text.ends-with(">")
+)
 
 #show raw: it => if true {
   set text(1.2em)

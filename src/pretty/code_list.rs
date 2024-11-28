@@ -7,6 +7,24 @@ use super::{
 };
 
 impl<'a> PrettyPrinter<'a> {
+    pub(super) fn convert_parenthesized_impl(
+        &'a self,
+        parenthesized: Parenthesized<'a>,
+    ) -> ArenaDoc<'a> {
+        ListStylist::new(self)
+            .process_list(parenthesized.to_untyped(), |node| {
+                self.convert_pattern(node)
+            })
+            .print_doc(ListStyle {
+                separator: "",
+                delim: ("(", ")"),
+                add_space_if_empty: false,
+                add_trailing_sep_single: false,
+                omit_delim_single: false,
+                omit_delim_flat: false,
+            })
+    }
+
     pub(super) fn convert_array(&'a self, array: Array<'a>) -> ArenaDoc<'a> {
         ListStylist::new(self)
             .process_list(array.to_untyped(), |node| self.convert_array_item(node))

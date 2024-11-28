@@ -3,34 +3,25 @@ use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-use super::ArenaDoc;
+use super::{util::is_comment_node, ArenaDoc};
 
 impl<'a> PrettyPrinter<'a> {
+    /// We do not care whether it is `Pattern` or `Expr`.
+    /// It is safe to treat it as `Pattern`, since `Pattern` can be `Expr`.
     pub(super) fn convert_parenthesized(
         &'a self,
         parenthesized: Parenthesized<'a>,
-        is_pattern: bool,
     ) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(parenthesized.to_untyped()) {
-            return res;
-        }
-        if is_pattern {
-            if let Pattern::Parenthesized(paren) = parenthesized.pattern() {
-                return self.convert_parenthesized(paren, true);
+        let pattern = parenthesized.pattern();
+        if let Pattern::Parenthesized(paren) = pattern {
+            if !parenthesized.to_untyped().children().any(is_comment_node) {
+                // Remove a layer of paren if no comment inside.
+                return self.convert_parenthesized(paren);
             }
-        } else if let Expr::Parenthesized(paren) = parenthesized.expr() {
-            return self.convert_parenthesized(paren, false);
         }
-        let inner = if is_pattern {
-            self.convert_pattern(parenthesized.pattern())
-        } else {
-            self.convert_expr(parenthesized.expr())
-        };
-        inner
-            .enclose(self.arena.line_(), self.arena.line_())
-            .nest(2)
-            .group()
-            .parens()
+
+        // Treat is as a list with a single item.
+        self.convert_parenthesized_impl(parenthesized)
     }
 
     /// Convert an expression with optional parentheses.
