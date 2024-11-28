@@ -9,6 +9,7 @@ mod flow;
 mod func_call;
 mod items;
 mod list;
+mod markup;
 mod mode;
 mod parened_expr;
 mod table;
@@ -145,7 +146,15 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn check_disabled(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
-        if self.attr_store.is_node_no_format(node) {
+        if self.attr_store.is_node_format_disabled(node) {
+            Some(self.format_disabled(node))
+        } else {
+            None
+        }
+    }
+
+    fn check_unformattable(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
+        if self.attr_store.is_node_unformattable(node) {
             Some(self.format_disabled(node))
         } else {
             None
@@ -314,34 +323,6 @@ impl<'a> PrettyPrinter<'a> {
             doc += self.convert_content_block(supplement);
         }
         doc
-    }
-
-    fn convert_heading(&'a self, heading: Heading<'a>) -> ArenaDoc<'a> {
-        self.arena.text("=".repeat(heading.depth().into()))
-            + self.arena.space()
-            + self.convert_markup(heading.body())
-    }
-
-    fn convert_list_item(&'a self, list_item: ListItem<'a>) -> ArenaDoc<'a> {
-        self.arena.text("-") + self.arena.space() + self.convert_markup(list_item.body()).nest(2)
-    }
-
-    fn convert_enum_item(&'a self, enum_item: EnumItem<'a>) -> ArenaDoc<'a> {
-        let doc = if let Some(number) = enum_item.number() {
-            self.arena.text(format!("{number}."))
-        } else {
-            self.arena.text("+")
-        };
-        doc + self.arena.space() + self.convert_markup(enum_item.body()).nest(2)
-    }
-
-    fn convert_term_item(&'a self, term: TermItem<'a>) -> ArenaDoc<'a> {
-        self.arena.text("/")
-            + self.arena.space()
-            + self.convert_markup(term.term())
-            + self.arena.text(":")
-            + self.arena.space()
-            + self.convert_markup(term.description()).nest(2)
     }
 
     fn convert_equation(&'a self, equation: Equation<'a>) -> ArenaDoc<'a> {
@@ -516,6 +497,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_unary(&'a self, unary: Unary<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(unary.to_untyped()) {
+            return res;
+        }
         let op_text = match unary.op() {
             UnOp::Pos => "+",
             UnOp::Neg => "-",
@@ -525,6 +509,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_binary(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(binary.to_untyped()) {
+            return res;
+        }
         self.convert_expr(binary.lhs())
             + self.arena.space()
             + self.arena.text(binary.op().as_str())
@@ -620,42 +607,13 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_let_binding(&'a self, let_binding: LetBinding<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.arena.text("let") + self.arena.space();
-        match let_binding.kind() {
-            LetBindingKind::Normal(n) => {
-                doc += self.convert_pattern(n).group();
-                if let Some(expr) = let_binding.init() {
-                    doc += self.arena.space()
-                        + self.arena.text("=")
-                        + self.arena.space()
-                        + self.convert_expr(expr);
-                }
-            }
-            LetBindingKind::Closure(_c) => {
-                if let Some(c) = let_binding.init() {
-                    doc += self.convert_expr(c);
-                }
-            }
-        }
-        doc
-    }
-
-    fn convert_destruct_assignment(
-        &'a self,
-        destruct_assign: DestructAssignment<'a>,
-    ) -> ArenaDoc<'a> {
-        self.convert_pattern(destruct_assign.pattern())
-            + self.arena.space()
-            + self.arena.text("=")
-            + self.arena.space()
-            + self.convert_expr(destruct_assign.value())
-    }
-
     fn convert_set_rule(&'a self, set_rule: SetRule<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(set_rule.to_untyped()) {
+            return res;
+        }
         let mut doc =
             self.arena.text("set") + self.arena.space() + self.convert_expr(set_rule.target());
-        if let Some(res) = self.check_disabled(set_rule.args().to_untyped()) {
+        if let Some(res) = self.check_unformattable(set_rule.args().to_untyped()) {
             doc += res;
         } else {
             doc += self.convert_parenthesized_args(set_rule.args());
@@ -670,6 +628,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_show_rule(&'a self, show_rule: ShowRule<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(show_rule.to_untyped()) {
+            return res;
+        }
         let mut doc = self.arena.text("show");
         if let Some(selector) = show_rule.selector() {
             doc += self.arena.space() + self.convert_expr(selector);
@@ -678,6 +639,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(import.to_untyped()) {
+            return res;
+        }
         let mut doc =
             self.arena.text("import") + self.arena.space() + self.convert_expr(import.source());
         if let Some(new_name) = import.new_name() {
@@ -720,24 +684,12 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_include(&'a self, include: ModuleInclude<'a>) -> ArenaDoc<'a> {
-        self.arena.text("include") + self.arena.space() + self.convert_expr(include.source())
-    }
-
     fn convert_break(&'a self, _break: LoopBreak<'a>) -> ArenaDoc<'a> {
         self.arena.text("break")
     }
 
     fn convert_continue(&'a self, _continue: LoopContinue<'a>) -> ArenaDoc<'a> {
         self.arena.text("continue")
-    }
-
-    fn convert_return(&'a self, return_stmt: FuncReturn<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.arena.text("return") + self.arena.space();
-        if let Some(body) = return_stmt.body() {
-            doc += self.convert_expr(body);
-        }
-        doc
     }
 
     fn convert_math_delimited(&'a self, math_delimited: MathDelimited<'a>) -> ArenaDoc<'a> {
@@ -859,22 +811,17 @@ impl<'a> PrettyPrinter<'a> {
     fn convert_math_root(&'a self, math_root: MathRoot<'a>) -> ArenaDoc<'a> {
         let sqrt_sym = if let Some(index) = math_root.index() {
             if index == 3 {
-                self.arena.text("∛")
+                "∛"
             } else if index == 4 {
-                self.arena.text("∜")
+                "∜"
             } else {
                 // TODO: actually unreachable
-                self.arena.text("√")
+                "√"
             }
         } else {
-            self.arena.text("√")
+            "√"
         };
-        sqrt_sym + self.convert_expr(math_root.radicand())
-    }
-
-    fn convert_contextual(&'a self, ctx: Contextual<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_expr(ctx.body());
-        self.arena.text("context") + self.arena.space() + body
+        self.arena.text(sqrt_sym) + self.convert_expr(math_root.radicand())
     }
 }
 

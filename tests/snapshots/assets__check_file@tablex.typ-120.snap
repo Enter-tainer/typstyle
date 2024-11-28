@@ -2033,7 +2033,7 @@ snapshot_kind: text
   let stroke = default-if-auto(hline.stroke, stroke)
   let stroke = parse-stroke(stroke)
 
-  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(end, columns.len()) { return  }
+  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(end, columns.len()) { return }
 
   if gutter != none and gutter.row != none and (
     (pre-gutter and hline.gutter-restrict == bottom) or (not pre-gutter and hline.gutter-restrict == top)
@@ -2072,7 +2072,7 @@ snapshot_kind: text
   ) + right-expand
 
   if end_x - start_x < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {
@@ -2120,7 +2120,7 @@ snapshot_kind: text
   let stroke = default-if-auto(vline.stroke, stroke)
   let stroke = parse-stroke(stroke)
 
-  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(end, rows.len()) { return  }
+  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(end, rows.len()) { return }
 
   if gutter != none and gutter.col != none and (
     (pre-gutter and vline.gutter-restrict == right) or (not pre-gutter and vline.gutter-restrict == left)
@@ -2153,7 +2153,7 @@ snapshot_kind: text
   ) + bottom-expand
 
   if end_y - start_y < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {

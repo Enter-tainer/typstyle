@@ -11,19 +11,12 @@ struct State {
 
 #[derive(Debug, Clone, Default)]
 pub struct Attributes {
-    no_format: bool,
+    /// Manually marked `@typstyle off` or always ignored.
+    pub format_disabled: bool,
+    /// Has a child of comment.
+    pub commented: bool,
     /// If (a) the first space child contains a newline, (b) one of the children is a multiline
-    multiline: bool,
-}
-
-impl Attributes {
-    pub fn no_format(&self) -> bool {
-        self.no_format
-    }
-
-    pub fn is_multiline_flavor(&self) -> bool {
-        self.multiline
-    }
+    pub multiline: bool,
 }
 
 #[derive(Debug, Default)]
@@ -41,16 +34,28 @@ impl AttrStore {
         store
     }
 
+    pub fn is_node_commented(&self, node: &SyntaxNode) -> bool {
+        self.attr_map
+            .get(&node.span())
+            .is_some_and(|attr| attr.commented)
+    }
+
     pub fn is_node_multiline(&self, node: &SyntaxNode) -> bool {
         self.attr_map
             .get(&node.span())
             .is_some_and(|attr| attr.multiline)
     }
 
-    pub fn is_node_no_format(&self, node: &SyntaxNode) -> bool {
+    pub fn is_node_format_disabled(&self, node: &SyntaxNode) -> bool {
         self.attr_map
             .get(&node.span())
-            .is_some_and(|attr| attr.no_format)
+            .is_some_and(|attr| attr.format_disabled)
+    }
+
+    pub fn is_node_unformattable(&self, node: &SyntaxNode) -> bool {
+        self.attr_map
+            .get(&node.span())
+            .is_some_and(|attr| attr.format_disabled || attr.commented)
     }
 
     fn compute_multiline(&mut self, root: &SyntaxNode) {
@@ -87,10 +92,10 @@ impl AttrStore {
     }
 
     fn compute_no_format_impl(&mut self, node: &SyntaxNode, state: &mut State) {
-        if self.is_node_no_format(node) {
+        if self.is_node_format_disabled(node) {
             return;
         }
-        let mut no_format = false;
+        let mut format_disabled = false;
         let original_is_math = state.is_math;
         if node.is::<Math>() {
             state.is_math = true;
@@ -99,50 +104,37 @@ impl AttrStore {
         for child in node.children() {
             let child_kind = child.kind();
             if child_kind == SyntaxKind::LineComment || child_kind == SyntaxKind::BlockComment {
+                self.set_commented(node);
                 // @typstyle off affects the whole next block
                 if child.text().contains("@typstyle off") {
-                    no_format = true;
-                    self.set_no_format(child);
-                }
-                // currently we only support comments as children of these nodes
-                if !matches!(
-                    node.kind(),
-                    SyntaxKind::ContentBlock
-                        | SyntaxKind::CodeBlock
-                        | SyntaxKind::Code
-                        | SyntaxKind::Array
-                        | SyntaxKind::Dict
-                        | SyntaxKind::Conditional
-                        | SyntaxKind::WhileLoop
-                        | SyntaxKind::ForLoop
-                ) {
-                    self.set_no_format(node);
+                    format_disabled = true;
+                    self.set_format_disabled(child);
                 }
                 continue;
             }
             // no format multiline single backtick raw block
             if let Some(raw) = child.cast::<Raw>() {
                 if !raw.block() && raw.lines().count() > 1 {
-                    self.set_no_format(child);
+                    self.set_format_disabled(child);
                 }
             }
             // no format hash related nodes in math blocks
             if child_kind == SyntaxKind::Hash && state.is_math {
-                self.set_no_format(node);
+                self.set_format_disabled(node);
                 break;
             }
             // no format args in math blocks
-            if child.cast::<Args>().is_some() && state.is_math {
-                self.set_no_format(child);
+            if child.is::<Args>() && state.is_math {
+                self.set_format_disabled(child);
                 continue;
             }
             if child.children().count() == 0 {
                 continue;
             }
             // no format nodes with @typstyle off
-            if no_format {
-                self.set_no_format(child);
-                no_format = false;
+            if format_disabled {
+                self.set_format_disabled(child);
+                format_disabled = false;
                 continue;
             }
             self.compute_no_format_impl(child, state);
@@ -150,8 +142,15 @@ impl AttrStore {
         state.is_math = original_is_math;
     }
 
-    fn set_no_format(&mut self, node: &SyntaxNode) {
-        self.attr_map.entry(node.span()).or_default().no_format = true;
+    fn set_format_disabled(&mut self, node: &SyntaxNode) {
+        self.attr_map
+            .entry(node.span())
+            .or_default()
+            .format_disabled = true;
+    }
+
+    fn set_commented(&mut self, node: &SyntaxNode) {
+        self.attr_map.entry(node.span()).or_default().commented = true;
     }
 }
 

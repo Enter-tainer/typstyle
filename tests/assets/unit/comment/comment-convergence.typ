@@ -9,6 +9,9 @@
 - /* bar
    */
 
+- /* foo
+     */
+
 #[
   /* Somebody write this up:
    - 1000 participants.

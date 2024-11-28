@@ -9,10 +9,13 @@ snapshot_kind: text
    */
 ]
 
--   /* bar
+- /* bar
    */ 123
 
 - /* bar
+   */
+
+- /* foo
    */
 
 #[
