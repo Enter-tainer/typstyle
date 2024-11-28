@@ -2,28 +2,18 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/comment/comment-in-if.typ
+snapshot_kind: text
 ---
 #{
-  if /*(condition)*/ true {
-  }
-  
-  if true /*(condition)*/ {
-  }
-  
-  if
-   // (condition)
-   false {
-   }
+  if /*(condition)*/ true { }
+
+  if true /*(condition)*/ { }
+
   if true {
-    
+    /*  111
+    222   */
   } // (condition)
-  else {
-    
-  }
-  
-  if true {
-  
-  }
-  else /*(condition)*/ {
-  }
+  else { }
+
+  if true { } else /*(condition)*/ { }
 }

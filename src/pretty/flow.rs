@@ -97,7 +97,9 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let mut flow = FlowStylist::new(self);
         for child in node.children() {
-            if is_comment_node(child) {
+            if child.kind().is_keyword() {
+                flow.push_doc(self.arena.text(child.text().as_str()), true, true);
+            } else if is_comment_node(child) {
                 flow.push_comment(child);
             } else {
                 let item = producer(child);
@@ -107,5 +109,16 @@ impl<'a> PrettyPrinter<'a> {
             }
         }
         flow.into_doc()
+    }
+
+    /// Convert nodes with only keywords, exprs (followed by space), and comments.
+    pub(super) fn convert_expr_flow(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+        self.convert_flow_like(node, |child| {
+            if let Some(expr) = child.cast() {
+                FlowItem::spaced(self.convert_expr(expr))
+            } else {
+                FlowItem::none()
+            }
+        })
     }
 }
