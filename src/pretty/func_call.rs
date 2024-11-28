@@ -110,6 +110,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(args.to_untyped()) {
+            return res;
+        }
         let args = parse_args(args).collect_vec();
         let is_multiline = {
             let mut is_multiline = false;
