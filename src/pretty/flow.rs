@@ -43,6 +43,11 @@ impl<'a> FlowItem<'a> {
         Self::new(doc, true, false)
     }
 
+    /// Create an item that disallows space before and after.
+    pub fn tight(doc: ArenaDoc<'a>) -> Self {
+        Self::new(doc, false, false)
+    }
+
     pub const fn none() -> Self {
         Self(None)
     }

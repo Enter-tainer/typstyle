@@ -7,6 +7,7 @@ mod comment;
 mod dot_chain;
 mod flow;
 mod func_call;
+mod import;
 mod items;
 mod list;
 mod markup;
@@ -23,7 +24,6 @@ use items::pretty_items;
 use itertools::Itertools;
 use list::ListStylist;
 use mode::Mode;
-use parened_expr::optional_paren;
 use pretty::{Arena, DocAllocator, DocBuilder};
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use util::is_comment_node;
@@ -584,52 +584,6 @@ impl<'a> PrettyPrinter<'a> {
             DestructuringItem::Spread(s) => self.convert_spread(s),
             DestructuringItem::Named(n) => self.convert_named(n),
             DestructuringItem::Pattern(p) => self.convert_pattern(p),
-        }
-    }
-
-    fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(import.to_untyped()) {
-            return res;
-        }
-        let mut doc =
-            self.arena.text("import") + self.arena.space() + self.convert_expr(import.source());
-        if let Some(new_name) = import.new_name() {
-            doc += self.arena.space()
-                + self.arena.text("as")
-                + self.arena.space()
-                + self.convert_ident(new_name);
-        }
-        if let Some(imports) = import.imports() {
-            doc += self.arena.text(":") + self.arena.space();
-            let imports = match imports {
-                Imports::Wildcard => self.arena.text("*"),
-                Imports::Items(i) => {
-                    let trailing_comma = self.arena.text(",").flat_alt(self.arena.nil());
-                    let inner = self.arena.intersperse(
-                        i.iter().map(|item| self.convert_import_item(item)),
-                        self.arena.text(",") + self.arena.line(),
-                    ) + trailing_comma;
-                    optional_paren(&self.arena, inner)
-                }
-            };
-            doc += imports.group();
-        }
-        doc
-    }
-
-    fn convert_import_item(&'a self, import_item: ImportItem<'a>) -> ArenaDoc<'a> {
-        match import_item {
-            ImportItem::Simple(s) => self.arena.intersperse(
-                s.iter().map(|id| self.convert_ident(id)),
-                self.arena.text("."),
-            ),
-            ImportItem::Renamed(r) => {
-                self.convert_ident(r.original_name())
-                    + self.arena.space()
-                    + self.arena.text("as")
-                    + self.arena.space()
-                    + self.convert_ident(r.new_name())
-            }
         }
     }
 

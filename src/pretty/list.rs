@@ -22,10 +22,8 @@ pub struct ListStylist<'a> {
 }
 
 struct ListStyle {
-    /// The separator used in single-line style.
-    single_line_sep: &'static str,
-    /// The separator used in multi-line style.
-    multi_line_sep: &'static str,
+    /// The separator between items.
+    separator: &'static str,
     /// The delimiter of the list.
     delim: (&'static str, &'static str),
     /// Whether to add an addition space inside the delimiters if the list is empty.
@@ -34,6 +32,8 @@ struct ListStyle {
     add_trailing_sep_single: bool,
     /// Whether can omit the delimiter if the list contains only one item.
     omit_delim_single: bool,
+    /// Whether can omit the delimiter if the list is flat.
+    omit_delim_flat: bool,
 }
 
 impl<'a> ListStylist<'a> {
@@ -56,12 +56,12 @@ impl<'a> ListStylist<'a> {
         });
 
         self.pretty_commented_items(ListStyle {
-            single_line_sep: ",",
-            multi_line_sep: ",",
+            separator: ",",
             delim: ("(", ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: true,
             omit_delim_single: false,
+            omit_delim_flat: false,
         })
     }
 
@@ -73,12 +73,12 @@ impl<'a> ListStylist<'a> {
         });
 
         self.pretty_commented_items(ListStyle {
-            single_line_sep: ",",
-            multi_line_sep: ",",
+            separator: ",",
             delim: (if all_spread { "(:" } else { "(" }, ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: false,
             omit_delim_single: false,
+            omit_delim_flat: false,
         })
     }
 
@@ -96,12 +96,12 @@ impl<'a> ListStylist<'a> {
         }
 
         self.pretty_commented_items(ListStyle {
-            single_line_sep: ",",
-            multi_line_sep: ",",
+            separator: ",",
             delim: ("(", ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: only_one_pattern,
             omit_delim_single: false,
+            omit_delim_flat: false,
         })
     }
 
@@ -121,19 +121,50 @@ impl<'a> ListStylist<'a> {
         }
 
         self.pretty_commented_items(ListStyle {
-            single_line_sep: ",",
-            multi_line_sep: ",",
+            separator: ",",
             delim: ("(", ")"),
             add_space_if_empty: false,
             add_trailing_sep_single: false,
             omit_delim_single: is_single_simple,
+            omit_delim_flat: false,
         })
     }
 
+    pub fn convert_import_items(mut self, import_items: ImportItems<'a>) -> ArenaDoc<'a> {
+        // Note that `ImportItem` does not implement `AstNode`.
+        self.process_list_impl(import_items.to_untyped(), |child| match child.kind() {
+            SyntaxKind::RenamedImportItem => child
+                .cast()
+                .map(|item| self.printer.convert_import_item_renamed(item)),
+            SyntaxKind::ImportItemPath => child
+                .cast()
+                .map(|item| self.printer.convert_import_item_path(item)),
+            _ => Option::None,
+        });
+
+        self.pretty_commented_items(ListStyle {
+            separator: ",",
+            delim: ("(", ")"),
+            add_space_if_empty: false,
+            add_trailing_sep_single: false,
+            omit_delim_single: true,
+            omit_delim_flat: true,
+        })
+    }
+
+    /// Process a list of AstNodes.
     fn process_list<T: AstNode<'a>>(
         &mut self,
         list_node: &'a SyntaxNode,
         item_converter: impl Fn(T) -> ArenaDoc<'a>,
+    ) {
+        self.process_list_impl(list_node, |node| node.cast().map(&item_converter));
+    }
+
+    fn process_list_impl(
+        &mut self,
+        list_node: &'a SyntaxNode,
+        item_checker: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) {
         // Each item can be attached with comments at the front and back.
         // Can break line after front attachments.
@@ -142,7 +173,7 @@ impl<'a> ListStylist<'a> {
         self.fold_style = self.printer.get_fold_style_untyped(list_node);
 
         for node in list_node.children() {
-            if let Some(item) = node.cast() {
+            if let Some(item_body) = item_checker(node) {
                 self.item_count += 1;
                 let before = if self.free_comments.is_empty() {
                     self.arena.nil()
@@ -152,7 +183,7 @@ impl<'a> ListStylist<'a> {
                         + self.arena.line()
                 };
                 self.items.push(Item::Commented {
-                    body: (before + item_converter(item)).group(),
+                    body: (before + item_body).group(),
                     after: self.arena.nil(),
                 });
                 self.can_attach = true;
@@ -219,10 +250,8 @@ impl<'a> ListStylist<'a> {
                 match item {
                     Item::Comment(cmt) => inner += cmt.clone() + self.arena.hardline(),
                     Item::Commented { body, after } => {
-                        inner += body.clone()
-                            + sty.multi_line_sep
-                            + after.clone()
-                            + self.arena.hardline();
+                        inner +=
+                            body.clone() + sty.separator + after.clone() + self.arena.hardline();
                     }
                 }
             }
@@ -238,15 +267,15 @@ impl<'a> ListStylist<'a> {
                         cnt += 1;
                         inner += body.clone() + after.clone();
                         if i != self.items.len() - 1 {
-                            inner += self.arena.text(sty.single_line_sep) + self.arena.space();
+                            inner += self.arena.text(sty.separator) + self.arena.space();
                         } else if cnt == 1 && sty.add_trailing_sep_single {
                             // trailing comma for one-size array
-                            inner += sty.single_line_sep;
+                            inner += sty.separator;
                         }
                     }
                 }
             }
-            if cnt == 1 && sty.omit_delim_single {
+            if cnt == 1 && sty.omit_delim_single || sty.omit_delim_flat {
                 inner
             } else if sty.add_space_if_empty {
                 inner.enclose(
