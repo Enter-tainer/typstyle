@@ -8,6 +8,15 @@ impl<'a> PrettyPrinter<'a> {
         comment(&self.arena, node)
     }
 
+    pub(super) fn convert_comment_br(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+        let doc = comment(&self.arena, node);
+        if node.kind() == SyntaxKind::LineComment {
+            doc + self.arena.hardline()
+        } else {
+            doc
+        }
+    }
+
     pub(super) fn convert_line_comment(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         line_comment(&self.arena, node)
     }
@@ -37,6 +46,7 @@ pub fn line_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<
     arena.text(node.text().as_str())
 }
 
+/// It does not add a hardline to the doc.
 pub fn block_comment<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
     // Calculate the number of leading spaces except the first line.
     let line_num = node.text().lines().count();

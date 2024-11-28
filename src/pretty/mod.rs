@@ -2,9 +2,10 @@ pub mod config;
 pub mod doc_ext;
 pub mod style;
 
-mod arg;
+mod code_flow;
 mod comment;
 mod dot_chain;
+mod flow;
 mod func_call;
 mod items;
 mod list;
@@ -15,7 +16,6 @@ mod util;
 
 use std::cell::RefCell;
 
-use arg::ArgStylist;
 use config::PrinterConfig;
 use doc_ext::DocExt;
 use items::pretty_items;
@@ -515,14 +515,6 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_named(&'a self, named: Named<'a>) -> ArenaDoc<'a> {
-        ArgStylist::new(self).convert_named(named)
-    }
-
-    fn convert_keyed(&'a self, keyed: Keyed<'a>) -> ArenaDoc<'a> {
-        ArgStylist::new(self).convert_keyed(keyed)
-    }
-
     fn convert_unary(&'a self, unary: Unary<'a>) -> ArenaDoc<'a> {
         let op_text = match unary.op() {
             UnOp::Pos => "+",
@@ -598,10 +590,6 @@ impl<'a> PrettyPrinter<'a> {
             Param::Named(n) => self.convert_named(n),
             Param::Spread(s) => self.convert_spread(s),
         }
-    }
-
-    fn convert_spread(&'a self, spread: Spread<'a>) -> ArenaDoc<'a> {
-        ArgStylist::new(self).convert_spread(spread)
     }
 
     fn convert_pattern(&'a self, pattern: Pattern<'a>) -> ArenaDoc<'a> {
