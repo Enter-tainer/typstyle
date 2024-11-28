@@ -496,30 +496,10 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_unary(&'a self, unary: Unary<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(unary.to_untyped()) {
-            return res;
-        }
-        let op_text = match unary.op() {
-            UnOp::Pos => "+",
-            UnOp::Neg => "-",
-            UnOp::Not => "not ",
-        };
-        self.arena.text(op_text) + self.convert_expr(unary.expr())
-    }
-
-    fn convert_binary(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(binary.to_untyped()) {
-            return res;
-        }
-        self.convert_expr(binary.lhs())
-            + self.arena.space()
-            + self.arena.text(binary.op().as_str())
-            + self.arena.space()
-            + self.convert_expr(binary.rhs())
-    }
-
     fn convert_field_access(&'a self, field_access: FieldAccess<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(field_access.to_untyped()) {
+            return res;
+        }
         let chain = self.resolve_dot_chain(field_access);
         if chain.is_none() || matches!(self.current_mode(), Mode::Markup | Mode::Math) {
             let left = self.convert_expr(field_access.target());
@@ -605,37 +585,6 @@ impl<'a> PrettyPrinter<'a> {
             DestructuringItem::Named(n) => self.convert_named(n),
             DestructuringItem::Pattern(p) => self.convert_pattern(p),
         }
-    }
-
-    fn convert_set_rule(&'a self, set_rule: SetRule<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(set_rule.to_untyped()) {
-            return res;
-        }
-        let mut doc =
-            self.arena.text("set") + self.arena.space() + self.convert_expr(set_rule.target());
-        if let Some(res) = self.check_unformattable(set_rule.args().to_untyped()) {
-            doc += res;
-        } else {
-            doc += self.convert_parenthesized_args(set_rule.args());
-        }
-        if let Some(condition) = set_rule.condition() {
-            doc += self.arena.space()
-                + self.arena.text("if")
-                + self.arena.space()
-                + self.convert_expr(condition)
-        }
-        doc
-    }
-
-    fn convert_show_rule(&'a self, show_rule: ShowRule<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(show_rule.to_untyped()) {
-            return res;
-        }
-        let mut doc = self.arena.text("show");
-        if let Some(selector) = show_rule.selector() {
-            doc += self.arena.space() + self.convert_expr(selector);
-        }
-        doc + self.arena.text(":") + self.arena.space() + self.convert_expr(show_rule.transform())
     }
 
     fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
