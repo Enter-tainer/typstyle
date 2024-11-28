@@ -3183,7 +3183,7 @@ snapshot_kind: text
   ) + right-expand
 
   if end_x - start_x < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {
@@ -3319,7 +3319,7 @@ snapshot_kind: text
   ) + bottom-expand
 
   if end_y - start_y < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {

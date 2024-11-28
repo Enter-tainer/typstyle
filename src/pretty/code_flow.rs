@@ -51,6 +51,42 @@ impl<'a> PrettyPrinter<'a> {
         })
     }
 
+    pub(super) fn convert_let_binding(&'a self, let_binding: LetBinding<'a>) -> ArenaDoc<'a> {
+        self.convert_flow_like(let_binding.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::Eq {
+                FlowItem::spaced(self.arena.text("="))
+            } else if let Some(pattern) = child.cast() {
+                // Must try pattern before expr
+                FlowItem::spaced(self.convert_pattern(pattern))
+            } else {
+                FlowItem::none()
+            }
+        })
+    }
+
+    pub(super) fn convert_destruct_assignment(
+        &'a self,
+        destruct_assign: DestructAssignment<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like(destruct_assign.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::Eq {
+                FlowItem::spaced(self.arena.text("="))
+            } else if let Some(pattern) = child.cast() {
+                // pattern
+                FlowItem::spaced(self.convert_pattern(pattern))
+            } else if let Some(expr) = child.cast() {
+                // value
+                FlowItem::spaced(self.convert_expr(expr))
+            } else {
+                FlowItem::none()
+            }
+        })
+    }
+
+    pub(super) fn convert_contextual(&'a self, ctx: Contextual<'a>) -> ArenaDoc<'a> {
+        self.convert_expr_flow(ctx.to_untyped())
+    }
+
     pub(super) fn convert_conditional(&'a self, conditional: Conditional<'a>) -> ArenaDoc<'a> {
         self.convert_expr_flow(conditional.to_untyped())
     }
@@ -88,5 +124,13 @@ impl<'a> PrettyPrinter<'a> {
             }
             FlowItem::none()
         })
+    }
+
+    pub(super) fn convert_return(&'a self, return_stmt: FuncReturn<'a>) -> ArenaDoc<'a> {
+        self.convert_expr_flow(return_stmt.to_untyped())
+    }
+
+    pub(super) fn convert_include(&'a self, include: ModuleInclude<'a>) -> ArenaDoc<'a> {
+        self.convert_expr_flow(include.to_untyped())
     }
 }

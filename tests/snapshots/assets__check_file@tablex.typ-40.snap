@@ -2747,7 +2747,7 @@ snapshot_kind: text
   ) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) { return  }
+  ) { return }
 
   if gutter != none and gutter.row != none and (
     (
@@ -2815,7 +2815,7 @@ snapshot_kind: text
   ) + right-expand
 
   if end_x - start_x < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {
@@ -2876,7 +2876,7 @@ snapshot_kind: text
   ) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) { return  }
+  ) { return }
 
   if gutter != none and gutter.col != none and (
     (
@@ -2943,7 +2943,7 @@ snapshot_kind: text
   ) + bottom-expand
 
   if end_y - start_y < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {

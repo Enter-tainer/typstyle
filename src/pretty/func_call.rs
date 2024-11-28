@@ -83,7 +83,7 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
         let mut doc = self.convert_expr(func_call.callee());
-        if let Some(res) = self.check_disabled(func_call.args().to_untyped()) {
+        if let Some(res) = self.check_unformattable(func_call.args().to_untyped()) {
             return doc + res;
         }
         let has_parenthesized_args = has_parenthesized_args(func_call.args());

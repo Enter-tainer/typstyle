@@ -1,0 +1,9 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/comment/comment-in-include.typ
+snapshot_kind: text
+---
+#include /* * strong * */ /* block */ "cond.typ" // line
+#include /* block
+          */ "cond.typ" // line

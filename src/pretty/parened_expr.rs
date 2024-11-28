@@ -11,7 +11,7 @@ impl<'a> PrettyPrinter<'a> {
         parenthesized: Parenthesized<'a>,
         is_pattern: bool,
     ) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(parenthesized.to_untyped()) {
+        if let Some(res) = self.check_unformattable(parenthesized.to_untyped()) {
             return res;
         }
         if is_pattern {

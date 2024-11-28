@@ -2202,7 +2202,7 @@ snapshot_kind: text
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
     end,
     columns.len(),
-  ) { return  }
+  ) { return }
 
   if gutter != none and gutter.row != none and (
     (pre-gutter and hline.gutter-restrict == bottom) or (
@@ -2253,7 +2253,7 @@ snapshot_kind: text
   ) + right-expand
 
   if end_x - start_x < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {
@@ -2304,7 +2304,7 @@ snapshot_kind: text
   if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
     end,
     rows.len(),
-  ) { return  }
+  ) { return }
 
   if gutter != none and gutter.col != none and (
     (pre-gutter and vline.gutter-restrict == right) or (
@@ -2354,7 +2354,7 @@ snapshot_kind: text
   ) + bottom-expand
 
   if end_y - start_y < 0pt {
-    return  // negative length
+    return // negative length
   }
 
   if rtl {
