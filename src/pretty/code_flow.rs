@@ -50,4 +50,43 @@ impl<'a> PrettyPrinter<'a> {
             }
         })
     }
+
+    pub(super) fn convert_conditional(&'a self, conditional: Conditional<'a>) -> ArenaDoc<'a> {
+        self.convert_expr_flow(conditional.to_untyped())
+    }
+
+    pub(super) fn convert_while_loop(&'a self, while_loop: WhileLoop<'a>) -> ArenaDoc<'a> {
+        self.convert_expr_flow(while_loop.to_untyped())
+    }
+
+    pub(super) fn convert_for_loop(&'a self, for_loop: ForLoop<'a>) -> ArenaDoc<'a> {
+        enum LookAhead {
+            Pattern,
+            Iterable,
+            Body,
+        }
+        let mut look_ahead = LookAhead::Pattern;
+        self.convert_flow_like(for_loop.to_untyped(), |child| {
+            match look_ahead {
+                LookAhead::Pattern => {
+                    if let Some(pattern) = child.cast() {
+                        look_ahead = LookAhead::Iterable;
+                        return FlowItem::spaced(self.convert_pattern(pattern));
+                    }
+                }
+                LookAhead::Iterable => {
+                    if let Some(expr) = child.cast() {
+                        look_ahead = LookAhead::Body;
+                        return FlowItem::spaced(self.convert_expr_with_optional_paren(expr));
+                    }
+                }
+                LookAhead::Body => {
+                    if let Some(expr) = child.cast() {
+                        return FlowItem::spaced(self.convert_expr(expr));
+                    }
+                }
+            }
+            FlowItem::none()
+        })
+    }
 }

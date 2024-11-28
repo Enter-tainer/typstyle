@@ -1,24 +1,20 @@
 #{
-  if /*(condition)*/ true {
+  if      /*(condition)*/  true   {
   }
-  
-  if true /*(condition)*/ {
+
+  if   true  /*(condition)*/    {
   }
-  
-  if
-   // (condition)
-   false {
-   }
-  if true {
-    
-  } // (condition)
+
+  if true    {/*  111
+222   */
+  }    // (condition)
   else {
-    
+
   }
-  
-  if true {
-  
+
+  if   true   {
+
   }
-  else /*(condition)*/ {
+  else  /*(condition)*/  {
   }
 }

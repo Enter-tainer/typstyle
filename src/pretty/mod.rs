@@ -211,8 +211,8 @@ impl<'a> PrettyPrinter<'a> {
             Expr::Set(s) => self.convert_set_rule(s),
             Expr::Show(s) => self.convert_show_rule(s),
             Expr::Conditional(c) => self.convert_conditional(c),
-            Expr::While(w) => self.convert_while(w),
-            Expr::For(f) => self.convert_for(f),
+            Expr::While(w) => self.convert_while_loop(w),
+            Expr::For(f) => self.convert_for_loop(f),
             Expr::Import(i) => self.convert_import(i),
             Expr::Include(i) => self.convert_include(i),
             Expr::Break(b) => self.convert_break(b),
@@ -675,92 +675,6 @@ impl<'a> PrettyPrinter<'a> {
             doc += self.arena.space() + self.convert_expr(selector);
         }
         doc + self.arena.text(":") + self.arena.space() + self.convert_expr(show_rule.transform())
-    }
-
-    fn convert_conditional(&'a self, conditional: Conditional<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.arena.nil();
-        enum CastType {
-            Condition,
-            Then,
-            Else,
-        }
-        let has_else = conditional.else_body().is_some();
-        let mut expr_type = CastType::Condition;
-        for child in conditional.to_untyped().children() {
-            if child.kind() == SyntaxKind::If {
-                doc += self.arena.text("if") + self.arena.space();
-            } else if child.kind() == SyntaxKind::Else {
-                doc += self.arena.text("else") + self.arena.space();
-            } else if child.kind() == SyntaxKind::BlockComment {
-                doc += self.convert_block_comment(child) + self.arena.space();
-            } else if child.kind() == SyntaxKind::LineComment {
-                doc += self.convert_line_comment(child) + self.arena.hardline();
-            } else {
-                match expr_type {
-                    CastType::Condition => {
-                        if let Some(condition) = child.cast() {
-                            doc += self.convert_expr(condition) + self.arena.space();
-                            expr_type = CastType::Then;
-                        }
-                    }
-                    CastType::Then => {
-                        if let Some(then_expr) = child.cast() {
-                            doc += self.convert_expr(then_expr).group();
-                            if has_else {
-                                expr_type = CastType::Else;
-                                doc += self.arena.space();
-                            }
-                        }
-                    }
-                    CastType::Else => {
-                        if let Some(else_expr) = child.cast() {
-                            doc += self.convert_expr(else_expr).group();
-                        }
-                    }
-                }
-            }
-        }
-        doc
-    }
-
-    fn convert_while(&'a self, while_loop: WhileLoop<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.arena.nil();
-        #[derive(Debug, PartialEq)]
-        enum CastType {
-            Condition,
-            Body,
-        }
-        let mut expr_type = CastType::Condition;
-        for child in while_loop.to_untyped().children() {
-            if child.kind() == SyntaxKind::While {
-                doc += self.arena.text("while") + self.arena.space();
-            } else if child.kind() == SyntaxKind::BlockComment {
-                doc += self.convert_block_comment(child) + self.arena.space();
-            } else if child.kind() == SyntaxKind::LineComment {
-                doc += self.convert_line_comment(child) + self.arena.hardline();
-            } else if let Some(expr) = child.cast() {
-                doc += self.convert_expr(expr);
-                if expr_type == CastType::Condition {
-                    doc += self.arena.space();
-                    expr_type = CastType::Body;
-                }
-            }
-        }
-        doc
-    }
-
-    fn convert_for(&'a self, for_loop: ForLoop<'a>) -> ArenaDoc<'a> {
-        let for_pattern = self.arena.text("for")
-            + self.arena.space()
-            + self.convert_pattern(for_loop.pattern())
-            + self.arena.space();
-        let in_iter = self.arena.text("in")
-            + self.arena.space()
-            // + self.arena.softline() // upstream issue: https://github.com/typst/typst/issues/4548
-            + self.convert_expr_with_optional_paren(for_loop.iterable())
-            + self.arena.space();
-        let body = self.convert_expr(for_loop.body());
-        (for_pattern + in_iter).group() + body
     }
 
     fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {

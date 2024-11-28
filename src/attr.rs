@@ -112,6 +112,9 @@ impl AttrStore {
                         | SyntaxKind::Code
                         | SyntaxKind::Array
                         | SyntaxKind::Dict
+                        | SyntaxKind::Conditional
+                        | SyntaxKind::WhileLoop
+                        | SyntaxKind::ForLoop
                 ) {
                     self.set_no_format(node);
                 }

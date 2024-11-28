@@ -2,18 +2,19 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/comment/comment-in-for.typ
+snapshot_kind: text
 ---
 #{
-  for /* test */ i in "123" {
-
-  }
-  for i /* test */ in "123" {
-
-  }
-  for i in /* test */ "123" {
-
-  }
-  for i in "123" /* test */ {
-
-  }
+  for /* test */ i in (
+    "123"
+  ) { }
+  for i /* test */ in (
+    "123"
+  ) { }
+  for i in /* test */ (
+    "123"
+  ) { }
+  for i in (
+    "123"
+  ) /* test */ { }
 }
