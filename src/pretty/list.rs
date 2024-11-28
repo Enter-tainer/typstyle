@@ -18,6 +18,7 @@ pub struct ListStylist<'a> {
     free_comments: Vec<ArenaDoc<'a>>,
     items: Vec<Item<'a>>,
     item_count: usize,
+    has_line_comment: bool,
     fold_style: FoldStyle,
 }
 
@@ -45,6 +46,7 @@ impl<'a> ListStylist<'a> {
             free_comments: Default::default(),
             items: Default::default(),
             item_count: 0,
+            has_line_comment: false,
             fold_style: FoldStyle::Fit,
         }
     }
@@ -190,6 +192,7 @@ impl<'a> ListStylist<'a> {
             } else if is_comment_node(node) {
                 // Line comment cannot appear in single line block
                 if node.kind() == SyntaxKind::LineComment {
+                    self.has_line_comment = true;
                     self.fold_style = FoldStyle::Never;
                 }
                 self.free_comments.push(self.printer.convert_comment(node));
@@ -244,7 +247,7 @@ impl<'a> ListStylist<'a> {
             };
         }
         let (open, close) = delim;
-        let multi = {
+        let multi = || {
             let mut inner = self.arena.nil();
             for item in self.items.iter() {
                 match item {
@@ -286,9 +289,14 @@ impl<'a> ListStylist<'a> {
                 inner.enclose(open, close)
             }
         };
-        match self.fold_style {
-            FoldStyle::Never => multi,
-            FoldStyle::Fit => multi.clone().flat_alt(flat()).group(),
+        let fold_style = if self.has_line_comment {
+            FoldStyle::Never
+        } else {
+            self.fold_style
+        };
+        match fold_style {
+            FoldStyle::Never => multi(),
+            FoldStyle::Fit => multi().flat_alt(flat()).group(),
             FoldStyle::Always => flat(),
         }
     }
