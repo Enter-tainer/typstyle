@@ -165,7 +165,7 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<bool> {
         println!("{:#?}", root);
     }
     let markup = root.cast().unwrap();
-    let printer = PrettyPrinter::new(attr_store);
+    let printer = PrettyPrinter::new(source.clone(), attr_store);
     let doc = printer.convert_markup(markup);
     if *pretty_doc {
         println!("{:#?}", doc);

@@ -11,13 +11,12 @@ pub use attr::AttrStore;
 #[doc(hidden)]
 pub use pretty::PrettyPrinter;
 
-use typst_syntax::{Source, SyntaxNode};
+use typst_syntax::Source;
 
 /// Entry point for pretty printing a typst document.
 #[derive(Debug, Clone)]
 pub struct Typstyle {
-    content: String,
-    root: SyntaxNode,
+    source: Source,
     width: usize,
 }
 
@@ -38,23 +37,18 @@ impl Typstyle {
     ///
     /// This is useful when you have a [`Source`] instance and you can avoid reparsing the content.
     pub fn new_with_src(src: Source, width: usize) -> Self {
-        let content = src.text().to_string();
-        let root = src.root().clone();
-        Self {
-            content,
-            root,
-            width,
-        }
+        Self { source: src, width }
     }
 
     /// Pretty print the content to a string.
     pub fn pretty_print(&self) -> String {
-        if self.root.erroneous() {
-            return self.content.to_string();
+        let root = self.source.root();
+        if root.erroneous() {
+            return self.source.text().to_string();
         }
-        let attr_store = AttrStore::new(&self.root);
-        let printer = PrettyPrinter::new(attr_store);
-        let markup = self.root.cast().unwrap();
+        let attr_store = AttrStore::new(root);
+        let printer = PrettyPrinter::new(self.source.clone(), attr_store);
+        let markup = root.cast().unwrap();
         let doc = printer.convert_markup(markup);
         let result = doc.pretty(self.width).to_string();
         strip_trailing_whitespace(&result)

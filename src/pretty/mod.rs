@@ -25,7 +25,7 @@ use doc_ext::DocExt;
 use itertools::Itertools;
 use mode::Mode;
 use pretty::{Arena, DocAllocator, DocBuilder};
-use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
+use typst_syntax::{ast::*, Source, SyntaxKind, SyntaxNode};
 use util::is_comment_node;
 
 use crate::{ext::StrExt, AttrStore};
@@ -33,17 +33,18 @@ use style::FoldStyle;
 
 type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
-#[derive(Default)]
 pub struct PrettyPrinter<'a> {
     config: PrinterConfig,
+    source: Source,
     attr_store: AttrStore,
     mode: RefCell<Vec<Mode>>,
     arena: Arena<'a>,
 }
 
 impl<'a> PrettyPrinter<'a> {
-    pub fn new(attr_store: AttrStore) -> Self {
+    pub fn new(source: Source, attr_store: AttrStore) -> Self {
         Self {
+            source,
             config: Default::default(),
             attr_store,
             mode: vec![].into(),
@@ -163,7 +164,25 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn format_disabled(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
-        self.arena.text(node.clone().into_text().to_string())
+        if let Some(text) = self
+            .source
+            .find(node.span())
+            .and_then(|linked_node| self.source.get(linked_node.range()))
+        {
+            self.arena.text(text)
+        } else {
+            self.arena.text(node.clone().into_text().to_string())
+        }
+    }
+
+    /// For leaf only.
+    fn convert_verbatim(&'a self, node: impl AstNode<'a>) -> ArenaDoc<'a> {
+        self.convert_verbatim_untyped(node.to_untyped())
+    }
+
+    /// For leaf only.
+    fn convert_verbatim_untyped(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+        self.arena.text(node.text().as_str())
     }
 
     fn convert_expr(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
@@ -173,16 +192,16 @@ impl<'a> PrettyPrinter<'a> {
         match expr {
             Expr::Text(t) => self.convert_text(t),
             Expr::Space(s) => self.convert_space(s),
-            Expr::Linebreak(b) => self.convert_linebreak(b),
+            Expr::Linebreak(b) => self.convert_verbatim(b),
             Expr::Parbreak(b) => self.convert_parbreak(b),
-            Expr::Escape(e) => self.convert_escape(e),
-            Expr::Shorthand(s) => self.convert_shorthand(s),
-            Expr::SmartQuote(s) => self.convert_smart_quote(s),
+            Expr::Escape(e) => self.convert_verbatim(e),
+            Expr::Shorthand(s) => self.convert_verbatim(s),
+            Expr::SmartQuote(s) => self.convert_verbatim(s),
             Expr::Strong(s) => self.convert_strong(s),
             Expr::Emph(e) => self.convert_emph(e),
             Expr::Raw(r) => self.convert_raw(r),
-            Expr::Link(l) => self.convert_link(l),
-            Expr::Label(l) => self.convert_label(l),
+            Expr::Link(l) => self.convert_verbatim(l),
+            Expr::Label(l) => self.convert_verbatim(l),
             Expr::Ref(r) => self.convert_ref(r),
             Expr::Heading(h) => self.convert_heading(h),
             Expr::List(l) => self.convert_list_item(l),
@@ -190,22 +209,22 @@ impl<'a> PrettyPrinter<'a> {
             Expr::Term(t) => self.convert_term_item(t),
             Expr::Equation(e) => self.convert_equation(e),
             Expr::Math(m) => self.convert_math(m),
-            Expr::MathIdent(mi) => self.convert_trivia(mi),
-            Expr::MathAlignPoint(map) => self.convert_trivia(map),
+            Expr::MathIdent(mi) => self.convert_verbatim(mi),
+            Expr::MathAlignPoint(map) => self.convert_verbatim(map),
             Expr::MathDelimited(md) => self.convert_math_delimited(md),
             Expr::MathAttach(ma) => self.convert_math_attach(ma),
             Expr::MathPrimes(mp) => self.convert_math_primes(mp),
             Expr::MathFrac(mf) => self.convert_math_frac(mf),
             Expr::MathRoot(mr) => self.convert_math_root(mr),
-            Expr::MathShorthand(ms) => self.convert_trivia(ms),
+            Expr::MathShorthand(ms) => self.convert_verbatim(ms),
             Expr::Ident(i) => self.convert_ident(i),
-            Expr::None(n) => self.convert_none(n),
-            Expr::Auto(a) => self.convert_auto(a),
-            Expr::Bool(b) => self.convert_bool(b),
-            Expr::Int(i) => self.convert_int(i),
-            Expr::Float(f) => self.convert_float(f),
-            Expr::Numeric(n) => self.convert_numeric(n),
-            Expr::Str(s) => self.convert_str(s),
+            Expr::None(n) => self.convert_verbatim(n),
+            Expr::Auto(a) => self.convert_verbatim(a),
+            Expr::Bool(b) => self.convert_verbatim(b),
+            Expr::Int(i) => self.convert_verbatim(i),
+            Expr::Float(f) => self.convert_verbatim(f),
+            Expr::Numeric(n) => self.convert_verbatim(n),
+            Expr::Str(s) => self.convert_verbatim(s),
             Expr::Code(c) => self.convert_code_block(c),
             Expr::Content(c) => self.convert_content_block(c),
             Expr::Parenthesized(p) => self.convert_parenthesized(p),
@@ -254,25 +273,9 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_linebreak(&'a self, linebreak: Linebreak<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(linebreak)
-    }
-
     fn convert_parbreak(&'a self, parbreak: Parbreak<'a>) -> ArenaDoc<'a> {
         let newline_count = parbreak.to_untyped().text().count_linebreaks();
         self.arena.hardline().repeat_n(newline_count)
-    }
-
-    fn convert_escape(&'a self, escape: Escape<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(escape)
-    }
-
-    fn convert_shorthand(&'a self, shorthand: Shorthand<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(shorthand)
-    }
-
-    fn convert_smart_quote(&'a self, smart_quote: SmartQuote<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(smart_quote)
     }
 
     fn convert_strong(&'a self, strong: Strong<'a>) -> ArenaDoc<'a> {
@@ -289,9 +292,9 @@ impl<'a> PrettyPrinter<'a> {
         let mut doc = self.arena.nil();
         for child in raw.to_untyped().children() {
             if let Some(delim) = child.cast::<RawDelim>() {
-                doc += self.convert_trivia(delim);
+                doc += self.convert_verbatim(delim);
             } else if let Some(lang) = child.cast::<RawLang>() {
-                doc += self.convert_trivia(lang);
+                doc += self.convert_verbatim(lang);
             } else if let Some(line) = child.cast::<Text>() {
                 doc += self.convert_trivia(line);
             } else if child.kind() == SyntaxKind::RawTrimmed {
@@ -303,14 +306,6 @@ impl<'a> PrettyPrinter<'a> {
             }
         }
         doc
-    }
-
-    fn convert_link(&'a self, link: Link<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(link)
-    }
-
-    fn convert_label(&'a self, label: Label<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(label)
     }
 
     fn convert_ref(&'a self, reference: Ref<'a>) -> ArenaDoc<'a> {
@@ -357,40 +352,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
-        self.arena.text(ident.as_str())
-    }
-
-    fn convert_none(&'a self, _none: None<'a>) -> ArenaDoc<'a> {
-        self.arena.text("none")
-    }
-
-    fn convert_auto(&'a self, _auto: Auto<'a>) -> ArenaDoc<'a> {
-        self.arena.text("auto")
-    }
-
-    fn convert_bool(&'a self, boolean: Bool<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(boolean)
-    }
-
-    fn convert_int(&'a self, int: Int<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(int)
-    }
-
-    fn convert_float(&'a self, float: Float<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(float)
-    }
-
-    fn convert_numeric(&'a self, numeric: Numeric<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(numeric)
-    }
-
-    fn convert_str(&'a self, str: Str<'a>) -> ArenaDoc<'a> {
-        let node = str.to_untyped();
-        if node.text().has_linebreak() {
-            self.arena.text(node.text().as_str())
-        } else {
-            self.convert_trivia_untyped(node)
-        }
+        self.convert_verbatim(ident)
     }
 
     fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
@@ -427,14 +389,10 @@ impl<'a> PrettyPrinter<'a> {
         }
         match pattern {
             Pattern::Normal(n) => self.convert_expr(n),
-            Pattern::Placeholder(p) => self.convert_underscore(p),
+            Pattern::Placeholder(p) => self.convert_verbatim(p),
             Pattern::Destructuring(d) => self.convert_destructuring(d),
             Pattern::Parenthesized(p) => self.convert_parenthesized(p),
         }
-    }
-
-    fn convert_underscore(&'a self, _underscore: Underscore<'a>) -> ArenaDoc<'a> {
-        self.arena.text("_")
     }
 
     fn convert_destructuring_item(
@@ -638,8 +596,6 @@ pub fn to_doc<'a>(arena: &'a Arena<'a>, s: &'a str, strip_prefix: StripMode) -> 
 
 #[cfg(test)]
 mod tests {
-    use typst_syntax::parse;
-
     use super::*;
 
     #[test]
@@ -663,10 +619,11 @@ mod tests {
 When you use the `--open` flag, typst-book will open the rendered book in
 your default web browser after building it."];
         for test in tests.into_iter() {
-            let root = parse(test);
+            let source = Source::detached(test);
+            let root = source.root();
             insta::assert_debug_snapshot!(root);
             let markup = root.cast().unwrap();
-            let printer = PrettyPrinter::default();
+            let printer = PrettyPrinter::new(source.clone(), Default::default());
             let doc = printer.convert_markup(markup);
             insta::assert_debug_snapshot!(doc.pretty(120).to_string());
         }
@@ -676,10 +633,11 @@ your default web browser after building it."];
     fn convert_func_call() {
         let tests = [r#"#link("http://example.com")[test]"#];
         for test in tests.into_iter() {
-            let root = parse(test);
+            let source = Source::detached(test);
+            let root = source.root();
             insta::assert_debug_snapshot!(root);
             let markup = root.cast().unwrap();
-            let printer = PrettyPrinter::default();
+            let printer = PrettyPrinter::new(source.clone(), Default::default());
             let doc = printer.convert_markup(markup);
             insta::assert_debug_snapshot!(doc.pretty(120).to_string());
         }
