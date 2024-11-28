@@ -793,7 +793,9 @@ snapshot_kind: text
     }),
   )
 
-  let breakable = (__codly-args.breakable.type_check)(if "breakable" in extra {
+  let breakable = (
+    __codly-args.breakable.type_check
+  )(if "breakable" in extra {
     extra.breakable
   } else {
     state("codly-breakable", __codly-args.breakable.default).get()
@@ -818,7 +820,9 @@ snapshot_kind: text
     }
   }
 
-  let skip-line = (__codly-args.skip-line.type_check)(if "skip-line" in extra {
+  let skip-line = (
+    __codly-args.skip-line.type_check
+  )(if "skip-line" in extra {
     extra.skip-line
   } else {
     state("codly-skip-line", __codly-args.skip-line.default).get()
@@ -971,7 +975,9 @@ snapshot_kind: text
   })
 
   // The language block (icon + name)
-  let languages = (__codly-args.languages.type_check)(if "languages" in extra {
+  let languages = (
+    __codly-args.languages.type_check
+  )(if "languages" in extra {
     extra.languages
   } else {
     state("codly-languages", __codly-args.languages.default).get()
