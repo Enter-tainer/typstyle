@@ -4040,7 +4040,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle"
-version = "0.12.4"
+version = "0.12.5"
 dependencies = [
  "anyhow",
  "clap",
