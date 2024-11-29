@@ -1,5 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::fs;
+use std::time::Duration;
 use typst_syntax::Source;
 use typstyle_core::attr::AttrStore;
 use typstyle_core::Typstyle;
@@ -56,5 +57,11 @@ fn benchmark_pretty(c: &mut Criterion) {
     }
 }
 
-criterion_group!(benches, benchmark_attrs, benchmark_pretty);
+criterion_group! {
+    name = benches;
+    config = Criterion::default()
+        .measurement_time(Duration::from_secs(8))  // 只增加测量时间
+        .sample_size(50);                          // 减少采样数量
+    targets = benchmark_attrs, benchmark_pretty
+}
 criterion_main!(benches);
