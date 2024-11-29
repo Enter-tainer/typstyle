@@ -1,4 +1,4 @@
-use pretty::{Arena, DocAllocator};
+use pretty::DocAllocator;
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use super::{util::is_comment_node, ArenaDoc, PrettyPrinter};
@@ -54,7 +54,6 @@ impl<'a> FlowItem<'a> {
 }
 
 pub struct FlowStylist<'a> {
-    arena: &'a Arena<'a>,
     printer: &'a PrettyPrinter<'a>,
     doc: ArenaDoc<'a>,
     space_after: bool,
@@ -63,7 +62,6 @@ pub struct FlowStylist<'a> {
 impl<'a> FlowStylist<'a> {
     pub fn new(printer: &'a PrettyPrinter<'a>) -> Self {
         Self {
-            arena: &printer.arena,
             doc: printer.arena.nil(),
             printer,
             space_after: false,
@@ -82,7 +80,7 @@ impl<'a> FlowStylist<'a> {
 
     pub fn push_doc(&mut self, doc: ArenaDoc<'a>, space_before: bool, space_after: bool) {
         if space_before && self.space_after {
-            self.doc += self.arena.space();
+            self.doc += self.printer.arena.space();
         }
         self.doc += doc;
         self.space_after = space_after;

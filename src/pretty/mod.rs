@@ -3,6 +3,7 @@ pub mod doc_ext;
 pub mod style;
 
 mod code_flow;
+mod code_list;
 mod comment;
 mod dot_chain;
 mod flow;
@@ -22,7 +23,6 @@ use config::PrinterConfig;
 use doc_ext::DocExt;
 use items::pretty_items;
 use itertools::Itertools;
-use list::ListStylist;
 use mode::Mode;
 use pretty::{Arena, DocAllocator, DocBuilder};
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
@@ -473,19 +473,11 @@ impl<'a> PrettyPrinter<'a> {
         content.brackets()
     }
 
-    fn convert_array(&'a self, array: Array<'a>) -> ArenaDoc<'a> {
-        ListStylist::new(self).convert_array(array)
-    }
-
     fn convert_array_item(&'a self, array_item: ArrayItem<'a>) -> ArenaDoc<'a> {
         match array_item {
             ArrayItem::Pos(p) => self.convert_expr(p),
             ArrayItem::Spread(s) => self.convert_spread(s),
         }
-    }
-
-    fn convert_dict(&'a self, dict: Dict<'a>) -> ArenaDoc<'a> {
-        ListStylist::new(self).convert_dict(dict)
     }
 
     fn convert_dict_item(&'a self, dict_item: DictItem<'a>) -> ArenaDoc<'a> {
@@ -530,7 +522,7 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_closure(&'a self, closure: Closure<'a>) -> ArenaDoc<'a> {
         if let Some(name) = closure.name() {
-            let params = self.convert_params(closure.params(), true);
+            let params = self.convert_params(closure.params(), false);
             self.convert_ident(name)
                 + params
                 + self.arena.space()
@@ -538,17 +530,13 @@ impl<'a> PrettyPrinter<'a> {
                 + self.arena.space()
                 + self.convert_expr_with_optional_paren(closure.body())
         } else {
-            let params = self.convert_params(closure.params(), false);
+            let params = self.convert_params(closure.params(), true);
             params
                 + self.arena.space()
                 + self.arena.text("=>")
                 + self.arena.space()
                 + self.convert_expr_with_optional_paren(closure.body())
         }
-    }
-
-    fn convert_params(&'a self, params: Params<'a>, is_named: bool) -> ArenaDoc<'a> {
-        ListStylist::new(self).convert_params(params, !is_named)
     }
 
     fn convert_param(&'a self, param: Param<'a>) -> ArenaDoc<'a> {
@@ -570,10 +558,6 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_underscore(&'a self, _underscore: Underscore<'a>) -> ArenaDoc<'a> {
         self.arena.text("_")
-    }
-
-    fn convert_destructuring(&'a self, destructuring: Destructuring<'a>) -> ArenaDoc<'a> {
-        ListStylist::new(self).convert_destructuring(destructuring)
     }
 
     fn convert_destructuring_item(

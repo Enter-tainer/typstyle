@@ -1,18 +1,21 @@
-use pretty::{Arena, DocAllocator};
+use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{style::FoldStyle, util::is_comment_node, ArenaDoc, PrettyPrinter};
 
 enum Item<'a> {
+    /// Detached comments that can be put on a line.
     Comment(ArenaDoc<'a>),
+    /// List item with attached comments.
     Commented {
+        /// The list item.
         body: ArenaDoc<'a>,
-        after: ArenaDoc<'a>,
+        /// Attached comments. Leading space included.
+        after: Option<ArenaDoc<'a>>,
     },
 }
 
 pub struct ListStylist<'a> {
-    arena: &'a Arena<'a>,
     printer: &'a PrettyPrinter<'a>,
     can_attach: bool,
     free_comments: Vec<ArenaDoc<'a>>,
@@ -22,25 +25,24 @@ pub struct ListStylist<'a> {
     fold_style: FoldStyle,
 }
 
-struct ListStyle {
+pub struct ListStyle {
     /// The separator between items.
-    separator: &'static str,
+    pub separator: &'static str,
     /// The delimiter of the list.
-    delim: (&'static str, &'static str),
-    /// Whether to add an addition space inside the delimiters if the list is empty.
-    add_space_if_empty: bool,
+    pub delim: (&'static str, &'static str),
+    /// Whether to add an addition space inside the delimiters if the list is empty. Currently not used.
+    pub add_space_if_empty: bool,
     /// Whether a trailing single-line separator is need if the list contains only one item.
-    add_trailing_sep_single: bool,
+    pub add_trailing_sep_single: bool,
     /// Whether can omit the delimiter if the list contains only one item.
-    omit_delim_single: bool,
+    pub omit_delim_single: bool,
     /// Whether can omit the delimiter if the list is flat.
-    omit_delim_flat: bool,
+    pub omit_delim_flat: bool,
 }
 
 impl<'a> ListStylist<'a> {
     pub fn new(printer: &'a PrettyPrinter<'a>) -> Self {
         Self {
-            arena: &printer.arena,
             printer,
             can_attach: false,
             free_comments: Default::default(),
@@ -51,142 +53,47 @@ impl<'a> ListStylist<'a> {
         }
     }
 
-    pub fn convert_array(mut self, array: Array<'a>) -> ArenaDoc<'a> {
-        self.fold_style = self.printer.get_fold_style(array);
-        self.process_list(array.to_untyped(), |node| {
-            self.printer.convert_array_item(node)
-        });
-
-        self.pretty_commented_items(ListStyle {
-            separator: ",",
-            delim: ("(", ")"),
-            add_space_if_empty: false,
-            add_trailing_sep_single: true,
-            omit_delim_single: false,
-            omit_delim_flat: false,
-        })
-    }
-
-    pub fn convert_dict(mut self, dict: Dict<'a>) -> ArenaDoc<'a> {
-        let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
-
-        self.process_list(dict.to_untyped(), |node| {
-            self.printer.convert_dict_item(node)
-        });
-
-        self.pretty_commented_items(ListStyle {
-            separator: ",",
-            delim: (if all_spread { "(:" } else { "(" }, ")"),
-            add_space_if_empty: false,
-            add_trailing_sep_single: false,
-            omit_delim_single: false,
-            omit_delim_flat: false,
-        })
-    }
-
-    pub fn convert_destructuring(mut self, destructuring: Destructuring<'a>) -> ArenaDoc<'a> {
-        let only_one_pattern = is_only_one_and(destructuring.items(), |it| {
-            matches!(*it, DestructuringItem::Pattern(_))
-        });
-
-        self.process_list(destructuring.to_untyped(), |node| {
-            self.printer.convert_destructuring_item(node)
-        });
-
-        if only_one_pattern {
+    pub fn always_fold_if(mut self, pred: impl FnOnce() -> bool) -> Self {
+        if pred() {
             self.fold_style = FoldStyle::Always;
         }
-
-        self.pretty_commented_items(ListStyle {
-            separator: ",",
-            delim: ("(", ")"),
-            add_space_if_empty: false,
-            add_trailing_sep_single: only_one_pattern,
-            omit_delim_single: false,
-            omit_delim_flat: false,
-        })
+        self
     }
 
-    pub fn convert_params(mut self, params: Params<'a>, is_unnamed: bool) -> ArenaDoc<'a> {
-        let is_single_simple = is_unnamed
-            && is_only_one_and(params.children(), |it| {
-                matches!(
-                    *it,
-                    Param::Pos(Pattern::Normal(_)) | Param::Pos(Pattern::Placeholder(_))
-                )
-            });
-
-        self.process_list(params.to_untyped(), |node| self.printer.convert_param(node));
-
-        if is_single_simple {
-            self.fold_style = FoldStyle::Always;
-        }
-
-        self.pretty_commented_items(ListStyle {
-            separator: ",",
-            delim: ("(", ")"),
-            add_space_if_empty: false,
-            add_trailing_sep_single: false,
-            omit_delim_single: is_single_simple,
-            omit_delim_flat: false,
-        })
-    }
-
-    pub fn convert_import_items(mut self, import_items: ImportItems<'a>) -> ArenaDoc<'a> {
-        // Note that `ImportItem` does not implement `AstNode`.
-        self.process_list_impl(import_items.to_untyped(), |child| match child.kind() {
-            SyntaxKind::RenamedImportItem => child
-                .cast()
-                .map(|item| self.printer.convert_import_item_renamed(item)),
-            SyntaxKind::ImportItemPath => child
-                .cast()
-                .map(|item| self.printer.convert_import_item_path(item)),
-            _ => Option::None,
-        });
-
-        self.pretty_commented_items(ListStyle {
-            separator: ",",
-            delim: ("(", ")"),
-            add_space_if_empty: false,
-            add_trailing_sep_single: false,
-            omit_delim_single: true,
-            omit_delim_flat: true,
-        })
-    }
-
-    /// Process a list of AstNodes.
-    fn process_list<T: AstNode<'a>>(
-        &mut self,
+    /// Process a list of `AstNode`'s.
+    pub fn process_list<T: AstNode<'a>>(
+        self,
         list_node: &'a SyntaxNode,
         item_converter: impl Fn(T) -> ArenaDoc<'a>,
-    ) {
-        self.process_list_impl(list_node, |node| node.cast().map(&item_converter));
+    ) -> Self {
+        self.process_list_impl(list_node, |node| node.cast().map(&item_converter))
     }
 
-    fn process_list_impl(
-        &mut self,
+    /// Process a list of any nodes. Only use this when the node does not implement `AstNode`.
+    pub fn process_list_impl(
+        mut self,
         list_node: &'a SyntaxNode,
         item_checker: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
-    ) {
+    ) -> Self {
         // Each item can be attached with comments at the front and back.
         // Can break line after front attachments.
         // If the back attachment appears before the comma, the comma is move to its front if multiline.
 
         self.fold_style = self.printer.get_fold_style_untyped(list_node);
 
+        let arena = &self.printer.arena;
+
         for node in list_node.children() {
             if let Some(item_body) = item_checker(node) {
                 self.item_count += 1;
                 let before = if self.free_comments.is_empty() {
-                    self.arena.nil()
+                    arena.nil()
                 } else {
-                    self.arena
-                        .intersperse(self.free_comments.drain(..), self.arena.line())
-                        + self.arena.line()
+                    arena.intersperse(self.free_comments.drain(..), arena.line()) + arena.line()
                 };
                 self.items.push(Item::Commented {
                     body: (before + item_body).group(),
-                    after: self.arena.nil(),
+                    after: None,
                 });
                 self.can_attach = true;
             } else if is_comment_node(node) {
@@ -208,6 +115,8 @@ impl<'a> ListStylist<'a> {
         }
 
         self.attach_or_detach_comments();
+
+        self
     }
 
     /// Try attaching free comments. If it fails, detach them.
@@ -220,11 +129,14 @@ impl<'a> ListStylist<'a> {
     /// Attack free comments to the last item if possible.
     fn try_attach_comments(&mut self) -> bool {
         if self.can_attach && !self.free_comments.is_empty() {
-            if let Some(Item::Commented { after: cmt, .. }) = self.items.last_mut() {
-                *cmt += self.arena.space()
-                    + self
-                        .arena
-                        .intersperse(self.free_comments.drain(..), self.arena.space());
+            let arena = &self.printer.arena;
+            if let Some(Item::Commented { after, .. }) = self.items.last_mut() {
+                let added =
+                    arena.space() + arena.intersperse(self.free_comments.drain(..), arena.space());
+                match after {
+                    Some(cmt) => *cmt += added,
+                    Option::None => *after = Some(added),
+                }
                 return true;
             }
         }
@@ -237,73 +149,115 @@ impl<'a> ListStylist<'a> {
             .extend(self.free_comments.drain(..).map(Item::Comment));
     }
 
-    fn pretty_commented_items(self, sty: ListStyle) -> ArenaDoc<'a> {
+    /// Create Doc from items in self.
+    ///
+    /// For attached comments:
+    /// - break: `xxx, /* yyy */`, `xxx,`
+    /// - flat: `xxx /* yyy */, `, `xxx, `
+    pub fn print_doc(self, sty: ListStyle) -> ArenaDoc<'a> {
+        let arena = &self.printer.arena;
+
         let delim = sty.delim;
         if self.items.is_empty() {
             return if sty.add_space_if_empty {
-                self.arena.text(delim.0) + self.arena.space() + delim.1
+                arena.text(delim.0) + arena.space() + delim.1
             } else {
-                self.arena.text(delim.0) + delim.1
+                arena.text(delim.0) + delim.1
             };
         }
-        let (open, close) = delim;
-        let multi = || {
-            let mut inner = self.arena.nil();
-            for item in self.items.iter() {
-                match item {
-                    Item::Comment(cmt) => inner += cmt.clone() + self.arena.hardline(),
-                    Item::Commented { body, after } => {
-                        inner +=
-                            body.clone() + sty.separator + after.clone() + self.arena.hardline();
-                    }
-                }
-            }
-            (self.arena.hardline() + inner).nest(2).enclose(open, close)
-        };
-        let flat = || {
-            let mut inner = self.arena.nil();
-            let mut cnt = 0;
-            for (i, item) in self.items.iter().enumerate() {
-                match item {
-                    Item::Comment(cmt) => inner += cmt.clone(),
-                    Item::Commented { body, after } => {
-                        cnt += 1;
-                        inner += body.clone() + after.clone();
-                        if i != self.items.len() - 1 {
-                            inner += self.arena.text(sty.separator) + self.arena.space();
-                        } else if cnt == 1 && sty.add_trailing_sep_single {
-                            // trailing comma for one-size array
-                            inner += sty.separator;
-                        }
-                    }
-                }
-            }
-            if cnt == 1 && sty.omit_delim_single || sty.omit_delim_flat {
-                inner
-            } else if sty.add_space_if_empty {
-                inner.enclose(
-                    self.arena.text(open) + self.arena.space(),
-                    self.arena.space() + close,
-                )
-            } else {
-                inner.enclose(open, close)
-            }
-        };
+
+        let is_single = self.item_count == 1;
+        let sep = arena.text(sty.separator);
         let fold_style = if self.has_line_comment {
             FoldStyle::Never
         } else {
             self.fold_style
         };
         match fold_style {
-            FoldStyle::Never => multi(),
-            FoldStyle::Fit => multi().flat_alt(flat()).group(),
-            FoldStyle::Always => flat(),
+            FoldStyle::Never => {
+                let mut inner = arena.nil();
+                for item in self.items.into_iter() {
+                    match item {
+                        Item::Comment(cmt) => inner += cmt + arena.hardline(),
+                        Item::Commented { body, after } => {
+                            inner += body + sep.clone() + after + arena.hardline();
+                        }
+                    }
+                }
+                (arena.hardline() + inner).nest(2).enclose(delim.0, delim.1)
+            }
+            FoldStyle::Always => {
+                let mut inner = arena.nil();
+                for (i, item) in self.items.into_iter().enumerate() {
+                    match item {
+                        Item::Comment(cmt) => inner += cmt,
+                        Item::Commented { body, after } => {
+                            inner += body + after;
+                            if i != self.item_count - 1 {
+                                inner += sep.clone() + arena.space();
+                            } else if is_single && sty.add_trailing_sep_single {
+                                // trailing comma for one-size array
+                                inner += sep.clone();
+                            }
+                        }
+                    }
+                }
+                if is_single && sty.omit_delim_single || sty.omit_delim_flat {
+                    inner
+                } else {
+                    inner.enclose(delim.0, delim.1)
+                }
+            }
+            FoldStyle::Fit => {
+                let mut inner = arena.nil();
+                for (i, item) in self.items.into_iter().enumerate() {
+                    let is_last = i == self.item_count - 1;
+                    match item {
+                        Item::Comment(cmt) => inner += cmt + arena.line(),
+                        Item::Commented {
+                            body,
+                            after: Option::None,
+                        } => {
+                            let follow = if is_single && sty.add_trailing_sep_single || !is_last {
+                                sep.clone()
+                            } else {
+                                sep.clone().flat_alt(arena.nil())
+                            };
+                            let ln = if is_last { arena.line_() } else { arena.line() };
+                            inner += body + follow + ln;
+                        }
+                        Item::Commented {
+                            body,
+                            after: Some(after),
+                        } => {
+                            let follow_break = sep.clone() + after.clone();
+                            let follow_flat =
+                                if !is_last || is_single && sty.add_trailing_sep_single {
+                                    after + sep.clone()
+                                } else {
+                                    after
+                                };
+                            let ln = if is_last { arena.line_() } else { arena.line() };
+                            inner += body + follow_break.flat_alt(follow_flat) + ln;
+                        }
+                    }
+                }
+                if is_single && sty.omit_delim_single {
+                    inner
+                } else {
+                    inner = (arena.line_() + inner).nest(2);
+                    if sty.omit_delim_flat {
+                        inner
+                            .enclose(
+                                arena.text(delim.0).flat_alt(arena.nil()),
+                                arena.text(delim.1).flat_alt(arena.nil()),
+                            )
+                            .group()
+                    } else {
+                        inner.group().enclose(delim.0, delim.1)
+                    }
+                }
+            }
         }
     }
-}
-
-fn is_only_one_and<T>(mut iterator: impl Iterator<Item = T>, f: impl FnOnce(&T) -> bool) -> bool {
-    iterator
-        .next()
-        .is_some_and(|first| f(&first) && iterator.next().is_none())
 }
