@@ -1,6 +1,15 @@
 use ecow::EcoString;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
+pub fn is_only_one_and<T>(
+    mut iterator: impl Iterator<Item = T>,
+    f: impl FnOnce(&T) -> bool,
+) -> bool {
+    iterator
+        .next()
+        .is_some_and(|first| f(&first) && iterator.next().is_none())
+}
+
 pub fn is_comment_node(node: &SyntaxNode) -> bool {
     matches!(
         node.kind(),

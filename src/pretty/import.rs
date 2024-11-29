@@ -1,7 +1,7 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
-use super::{flow::FlowItem, list::ListStylist, ArenaDoc, PrettyPrinter};
+use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
@@ -24,10 +24,6 @@ impl<'a> PrettyPrinter<'a> {
                 FlowItem::none()
             }
         })
-    }
-
-    fn convert_import_items(&'a self, import_items: ImportItems<'a>) -> ArenaDoc<'a> {
-        ListStylist::new(self).convert_import_items(import_items)
     }
 
     pub(super) fn convert_import_item_path(
