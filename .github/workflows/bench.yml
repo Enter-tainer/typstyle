@@ -17,7 +17,7 @@ jobs:
       - name: rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Run benchmark
-        run: cargo bench --output-format bencher | tee output.txt
+        run: cargo bench -- --output-format bencher | tee output.txt
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
