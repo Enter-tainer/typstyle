@@ -1,5 +1,40 @@
 # Changelog
 
+## v0.12.5 - [2024-11-29]
+
+- Typstyle can format comments appears in most places. Previously it simply gives up when it encounters comments in these places. Now it can format them correctly.
+
+For example, this code:
+```typst
+#let conf(
+  title: none,   //comments
+  authors:      (),
+  abstract: [],
+  lang: "zh",   // language
+  doctype: "book",  //comments
+  doc  // my docs
+) = {
+    doc }
+```
+
+Previously typstyle will not format it. Now it will be formatted as:
+```typst
+#let conf(
+  title: none, //comments
+  authors: (),
+  abstract: [],
+  lang: "zh", // language
+  doctype: "book", //comments
+  doc, // my docs
+) = {
+  doc
+}
+```
+
+However, there are still some limitations. For more information, see [Limitation](https://enter-tainer.github.io/typstyle/limitations/#expressions-with-comments).
+
+- Fix typstyle previously would format parenthesized patterns incorrectly into `none`. Now it is fixed.
+
 ## v0.12.4 - [2024-11-26]
 
 - Performance improvement(#158, #159 by @QuadnucYard): Typstyle now becomes 10-100x faster than before. Previously formatting tablex source code takes ~500ms, but now it only takes less than 5ms.
