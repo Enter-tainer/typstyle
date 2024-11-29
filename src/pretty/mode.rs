@@ -25,13 +25,13 @@ impl PrettyPrinter<'_> {
 pub(super) struct ModeGuard<'a>(&'a PrettyPrinter<'a>);
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn with_mode(&'a self, mode: Mode) -> ModeGuard {
+    pub(super) fn with_mode(&'a self, mode: Mode) -> ModeGuard<'a> {
         self.push_mode(mode);
         ModeGuard(self)
     }
 }
 
-impl<'a> Drop for ModeGuard<'a> {
+impl Drop for ModeGuard<'_> {
     fn drop(&mut self) {
         self.0.pop_mode();
     }

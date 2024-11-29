@@ -162,7 +162,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn format_disabled(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
-        return self.arena.text(node.clone().into_text().to_string());
+        self.arena.text(node.clone().into_text().to_string())
     }
 
     fn convert_expr(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
