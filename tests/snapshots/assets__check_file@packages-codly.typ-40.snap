@@ -1768,7 +1768,7 @@ snapshot_kind: text
           columns: if has-annotations {
             (1fr, annot-width)
           } else {
-            (1fr)
+            1fr
           },
           inset: padding
             .pairs()

@@ -1360,7 +1360,7 @@ snapshot_kind: text
           columns: if has-annotations {
             (1fr, annot-width)
           } else {
-            (1fr)
+            1fr
           },
           inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
           stroke: none,

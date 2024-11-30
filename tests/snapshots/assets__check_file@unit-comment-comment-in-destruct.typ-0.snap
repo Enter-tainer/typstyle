@@ -69,7 +69,9 @@ snapshot_kind: text
     d: 5,
   ),
 )
-#let (a /* 11 */,) = (
+#let (
+  a, /* 11 */
+) = (
   a: 1,
   b: (
     c: 4,

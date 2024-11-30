@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/cetz-manual.typ
+snapshot_kind: text
 ---
 #import "doc/util.typ": *
 #import "doc/example.typ": example
@@ -921,7 +922,7 @@ plot.plot(
 ===== Keys
 #doc-style.show-parameter-block(
   "orientation",
-  ("direction"),
+  "direction",
   default: ttb,
   [
     The direction the legend items get laid out to.
@@ -937,7 +938,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "layer",
-  ("number"),
+  "number",
   default: 1,
   [
     The layer index the legend gets drawn at, see on-layer.
@@ -945,7 +946,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "fill",
-  ("paint"),
+  "paint",
   default: rgb(255, 255, 255, 200),
   [
     The legends frame background color.
@@ -953,7 +954,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "stroke",
-  ("stroke"),
+  "stroke",
   default: black,
   [
     The legends frame stroke style.
@@ -961,7 +962,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "padding",
-  ("float"),
+  "float",
   default: .1,
   [
     The legends frame padding, that is the distance added between its items and its frame.
@@ -969,7 +970,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "offset",
-  ("tuple"),
+  "tuple",
   default: (0, 0),
   [
     An offset tuple (x and y coordinates) to add to the legends position.
@@ -977,7 +978,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "spacing",
-  ("number"),
+  "number",
   default: .1,
   [
     The spacing between the legend position and its frame.
@@ -985,7 +986,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "item.spacing",
-  ("number"),
+  "number",
   default: .05,
   [
     The spacing between two legend items in canvas units.
@@ -993,7 +994,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "item.preview.width",
-  ("number"),
+  "number",
   default: .75,
   [
     The width of a legend items preview picture, a small preview of the graph the legend item belongs to.
@@ -1001,7 +1002,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "item.preview.height",
-  ("number"),
+  "number",
   default: .3,
   [
     The height of a legend items preview picture.
@@ -1009,7 +1010,7 @@ plot.plot(
 )
 #doc-style.show-parameter-block(
   "item.preview.margin",
-  ("number"),
+  "number",
   default: .1,
   [
     Margin between the preview picture and the item label.

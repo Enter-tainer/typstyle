@@ -11,13 +11,13 @@ snapshot_kind: text
 
 #{
   let x = (1, 2, 3.4)
-  let ((a, b, ..)) = x
+  let (a, b, ..) = x
   a + b
 }
 
 #{
   let x = (1, 2, 3.4)
-  let ((a, b, ..)) = x
+  let (a, b, ..) = x
   a + b
 }
 
@@ -57,5 +57,9 @@ snapshot_kind: text
   }
 }
 
-#let (((a),)) = (((1),))
-#let (((a),)) = (((1),))
+#let ((a),) = (1,)
+#let ((a),) = (1,)
+
+#let a = (b: (c: 3))
+#let a = { true }
+#let a = [()]
