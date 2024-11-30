@@ -243,7 +243,7 @@ impl<'a> ListStylist<'a> {
                     }
                 }
                 if is_single && sty.omit_delim_single {
-                    inner
+                    inner.group()
                 } else {
                     inner = (arena.line_() + inner).nest(2);
                     if sty.omit_delim_flat {

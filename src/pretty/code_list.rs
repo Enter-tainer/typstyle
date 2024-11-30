@@ -2,7 +2,7 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
     list::{ListStyle, ListStylist},
-    util::is_only_one_and,
+    util::{has_comment_children, is_only_one_and},
     ArenaDoc, PrettyPrinter,
 };
 
@@ -11,6 +11,20 @@ impl<'a> PrettyPrinter<'a> {
         &'a self,
         parenthesized: Parenthesized<'a>,
     ) -> ArenaDoc<'a> {
+        // NOTE: This is a safe cast. The parentheses for patterns are all optional.
+        // For safety, we don't remove parentheses around idents. See `paren-in-key.typ`.
+        let expr = parenthesized.expr();
+        let can_omit = (expr.is_literal()
+            || matches!(
+                expr.to_untyped().kind(),
+                SyntaxKind::Array
+                    | SyntaxKind::Dict
+                    | SyntaxKind::Destructuring
+                    | SyntaxKind::CodeBlock
+                    | SyntaxKind::ContentBlock
+            ))
+            && !has_comment_children(parenthesized.to_untyped());
+
         ListStylist::new(self)
             .process_list(parenthesized.to_untyped(), |node| {
                 self.convert_pattern(node)
@@ -21,7 +35,7 @@ impl<'a> PrettyPrinter<'a> {
                 add_space_if_empty: false,
                 add_trailing_sep_single: false,
                 omit_delim_single: false,
-                omit_delim_flat: false,
+                omit_delim_flat: can_omit,
             })
     }
 
@@ -65,7 +79,9 @@ impl<'a> PrettyPrinter<'a> {
             .process_list(destructuring.to_untyped(), |node| {
                 self.convert_destructuring_item(node)
             })
-            .always_fold_if(|| only_one_pattern)
+            .always_fold_if(|| {
+                only_one_pattern && !has_comment_children(destructuring.to_untyped())
+            })
             .print_doc(ListStyle {
                 separator: ",",
                 delim: ("(", ")"),
@@ -87,7 +103,7 @@ impl<'a> PrettyPrinter<'a> {
 
         ListStylist::new(self)
             .process_list(params.to_untyped(), |node| self.convert_param(node))
-            .always_fold_if(|| is_single_simple)
+            .always_fold_if(|| is_single_simple && !has_comment_children(params.to_untyped()))
             .print_doc(ListStyle {
                 separator: ",",
                 delim: ("(", ")"),

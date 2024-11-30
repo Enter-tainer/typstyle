@@ -3,7 +3,7 @@ use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-use super::{util::is_comment_node, ArenaDoc};
+use super::{util::has_comment_children, ArenaDoc};
 
 impl<'a> PrettyPrinter<'a> {
     /// We do not care whether it is `Pattern` or `Expr`.
@@ -14,7 +14,7 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let pattern = parenthesized.pattern();
         if let Pattern::Parenthesized(paren) = pattern {
-            if !parenthesized.to_untyped().children().any(is_comment_node) {
+            if !has_comment_children(parenthesized.to_untyped()) {
                 // Remove a layer of paren if no comment inside.
                 return self.convert_parenthesized(paren);
             }

@@ -17,6 +17,10 @@ pub fn is_comment_node(node: &SyntaxNode) -> bool {
     )
 }
 
+pub fn has_comment_children(node: &SyntaxNode) -> bool {
+    node.children().any(is_comment_node)
+}
+
 pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
     node.callee()
         .to_untyped()
