@@ -100,7 +100,9 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let mut flow = FlowStylist::new(self);
         for child in node.children() {
-            if child.kind().is_keyword() {
+            if child.kind().is_keyword()
+                && !matches!(child.kind(), SyntaxKind::None | SyntaxKind::Auto)
+            {
                 flow.push_doc(self.arena.text(child.text().as_str()), true, true);
             } else if is_comment_node(child) {
                 flow.push_comment(child);
