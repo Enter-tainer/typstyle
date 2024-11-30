@@ -17,9 +17,14 @@ impl<'a> PrettyPrinter<'a> {
             } else if let Some(expr) = child.cast() {
                 // source
                 FlowItem::spaced(self.convert_expr(expr))
-            } else if let Some(import_items) = child.cast() {
+            } else if let Some(import_items) = child.cast::<ImportItems>() {
                 // imports
-                FlowItem::spaced(self.convert_import_items(import_items))
+                if import_items.iter().count() > 0 {
+                    FlowItem::spaced(self.convert_import_items(import_items))
+                } else {
+                    // We should avoid a space after `:` if the import items are empty.
+                    FlowItem::none()
+                }
             } else {
                 FlowItem::none()
             }
