@@ -53,18 +53,16 @@ libtest-mimic = "0.8.1"
 pathdiff = "0.2.2"
 pretty_assertions = "1.4.1"
 walkdir = "2"
-reflexo = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
-  "typst",
+reflexo = { version = "0.5.0", default-features = false, features = ["typst"] }
+reflexo-typst-shim = { version = "0.5.0", default-features = false, features = [
 ] }
-reflexo-typst-shim = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
-] }
-reflexo-world = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+reflexo-world = { version = "0.5.0", default-features = false, features = [
   "system",
 ] }
-reflexo-vfs = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+reflexo-vfs = { version = "0.5.0", default-features = false, features = [
   "system",
 ] }
-reflexo-typst = { git = "https://github.com/ParaN3xus/typst.ts", branch = "tinymist-typst-0.12.0-rc2", default-features = false, features = [
+reflexo-typst = { version = "0.5.0", default-features = false, features = [
   "system",
   "no-content-hint",
 ] }

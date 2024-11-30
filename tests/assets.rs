@@ -200,7 +200,7 @@ fn compile_typst_src(content: &str) -> Result<Arc<Document>, EcoVec<SourceDiagno
         .unwrap();
     let compiler = PhantomData;
     let mut driver = CompileDriver::new(compiler, univ);
-    driver.compile(&mut Default::default())
+    driver.compile(&mut Default::default()).map(|x| x.output)
 }
 
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {

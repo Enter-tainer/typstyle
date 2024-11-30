@@ -278,8 +278,10 @@ fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
     }
     let mut driver = CompileDriver::new(PhantomData, world);
     let mut formatted_driver = CompileDriver::new(PhantomData, formatted_world);
-    let doc = driver.compile(&mut Default::default());
-    let formatted_doc = formatted_driver.compile(&mut Default::default());
+    let doc = driver.compile(&mut Default::default()).map(|x| x.output);
+    let formatted_doc = formatted_driver
+        .compile(&mut Default::default())
+        .map(|x| x.output);
     compare_docs(
         &testcase.name,
         doc,
