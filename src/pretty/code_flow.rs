@@ -80,6 +80,47 @@ impl<'a> PrettyPrinter<'a> {
         })
     }
 
+    pub(super) fn convert_closure(&'a self, closure: Closure<'a>) -> ArenaDoc<'a> {
+        enum LookAhead {
+            Name,
+            Params,
+            Body,
+        }
+        let is_named = closure.name().is_some();
+        let mut look_ahead = if is_named {
+            LookAhead::Name
+        } else {
+            LookAhead::Params
+        };
+        self.convert_flow_like(closure.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::Eq {
+                return FlowItem::spaced(self.arena.text("="));
+            } else if child.kind() == SyntaxKind::Arrow {
+                return FlowItem::spaced(self.arena.text("=>"));
+            }
+            match look_ahead {
+                LookAhead::Name => {
+                    if let Some(ident) = child.cast() {
+                        look_ahead = LookAhead::Params;
+                        return FlowItem::tight(self.convert_ident(ident));
+                    }
+                }
+                LookAhead::Params => {
+                    if let Some(params) = child.cast() {
+                        look_ahead = LookAhead::Body;
+                        return FlowItem::tight_spaced(self.convert_params(params, !is_named));
+                    }
+                }
+                LookAhead::Body => {
+                    if let Some(expr) = child.cast() {
+                        return FlowItem::spaced(self.convert_expr_with_optional_paren(expr));
+                    }
+                }
+            }
+            FlowItem::none()
+        })
+    }
+
     pub(super) fn convert_let_binding(&'a self, let_binding: LetBinding<'a>) -> ArenaDoc<'a> {
         self.convert_flow_like(let_binding.to_untyped(), |child| {
             if child.kind() == SyntaxKind::Eq {

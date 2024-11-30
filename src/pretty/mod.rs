@@ -520,25 +520,6 @@ impl<'a> PrettyPrinter<'a> {
         chain
     }
 
-    fn convert_closure(&'a self, closure: Closure<'a>) -> ArenaDoc<'a> {
-        if let Some(name) = closure.name() {
-            let params = self.convert_params(closure.params(), false);
-            self.convert_ident(name)
-                + params
-                + self.arena.space()
-                + self.arena.text("=")
-                + self.arena.space()
-                + self.convert_expr_with_optional_paren(closure.body())
-        } else {
-            let params = self.convert_params(closure.params(), true);
-            params
-                + self.arena.space()
-                + self.arena.text("=>")
-                + self.arena.space()
-                + self.convert_expr_with_optional_paren(closure.body())
-        }
-    }
-
     fn convert_param(&'a self, param: Param<'a>) -> ArenaDoc<'a> {
         match param {
             Param::Pos(p) => self.convert_pattern(p),
