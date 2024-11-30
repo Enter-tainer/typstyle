@@ -31,11 +31,8 @@ impl<'a> PrettyPrinter<'a> {
             })
             .print_doc(ListStyle {
                 separator: "",
-                delim: ("(", ")"),
-                add_space_if_empty: false,
-                add_trailing_sep_single: false,
-                omit_delim_single: false,
                 omit_delim_flat: can_omit,
+                ..Default::default()
             })
     }
 
@@ -43,12 +40,8 @@ impl<'a> PrettyPrinter<'a> {
         ListStylist::new(self)
             .process_list(array.to_untyped(), |node| self.convert_array_item(node))
             .print_doc(ListStyle {
-                separator: ",",
-                delim: ("(", ")"),
-                add_space_if_empty: false,
                 add_trailing_sep_single: true,
-                omit_delim_single: false,
-                omit_delim_flat: false,
+                ..Default::default()
             })
     }
 
@@ -58,12 +51,8 @@ impl<'a> PrettyPrinter<'a> {
         ListStylist::new(self)
             .process_list(dict.to_untyped(), |node| self.convert_dict_item(node))
             .print_doc(ListStyle {
-                separator: ",",
                 delim: (if all_spread { "(:" } else { "(" }, ")"),
-                add_space_if_empty: false,
-                add_trailing_sep_single: false,
-                omit_delim_single: false,
-                omit_delim_flat: false,
+                ..Default::default()
             })
     }
 
@@ -83,12 +72,8 @@ impl<'a> PrettyPrinter<'a> {
                 only_one_pattern && !has_comment_children(destructuring.to_untyped())
             })
             .print_doc(ListStyle {
-                separator: ",",
-                delim: ("(", ")"),
-                add_space_if_empty: false,
                 add_trailing_sep_single: only_one_pattern,
-                omit_delim_single: false,
-                omit_delim_flat: false,
+                ..Default::default()
             })
     }
 
@@ -105,12 +90,8 @@ impl<'a> PrettyPrinter<'a> {
             .process_list(params.to_untyped(), |node| self.convert_param(node))
             .always_fold_if(|| is_single_simple && !has_comment_children(params.to_untyped()))
             .print_doc(ListStyle {
-                separator: ",",
-                delim: ("(", ")"),
-                add_space_if_empty: false,
-                add_trailing_sep_single: false,
                 omit_delim_single: is_single_simple,
-                omit_delim_flat: false,
+                ..Default::default()
             })
     }
 
@@ -127,12 +108,9 @@ impl<'a> PrettyPrinter<'a> {
                 _ => Option::None,
             })
             .print_doc(ListStyle {
-                separator: ",",
-                delim: ("(", ")"),
-                add_space_if_empty: false,
-                add_trailing_sep_single: false,
-                omit_delim_single: false,
                 omit_delim_flat: true,
+                omit_delim_empty: true,
+                ..Default::default()
             })
     }
 }

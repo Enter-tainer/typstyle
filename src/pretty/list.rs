@@ -38,6 +38,22 @@ pub struct ListStyle {
     pub omit_delim_single: bool,
     /// Whether can omit the delimiter if the list is flat.
     pub omit_delim_flat: bool,
+    /// Whether can omit the delimiter if the list is empty.
+    pub omit_delim_empty: bool,
+}
+
+impl Default for ListStyle {
+    fn default() -> Self {
+        Self {
+            separator: ",",
+            delim: ("(", ")"),
+            add_space_if_empty: false,
+            add_trailing_sep_single: false,
+            omit_delim_single: false,
+            omit_delim_flat: false,
+            omit_delim_empty: false,
+        }
+    }
 }
 
 impl<'a> ListStylist<'a> {
@@ -159,7 +175,9 @@ impl<'a> ListStylist<'a> {
 
         let delim = sty.delim;
         if self.items.is_empty() {
-            return if sty.add_space_if_empty {
+            return if sty.omit_delim_empty {
+                arena.nil()
+            } else if sty.add_space_if_empty {
                 arena.text(delim.0) + arena.space() + delim.1
             } else {
                 arena.text(delim.0) + delim.1
