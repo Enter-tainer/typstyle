@@ -67,7 +67,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "tutorial",
             "https://github.com/typst-doc-cn/tutorial",
-            "06e69d94c6ecd42a9af76c252a0a0eb47d93b6b8",
+            "3e1dcc83ca7abb314f84e985e84c15299790aaa8",
             "src/ebook.typ",
         ),
         Testcase::new(
@@ -79,7 +79,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "cetz-manual",
             "https://github.com/cetz-package/cetz",
-            "f78e2a0382442ac45584d1bed39665db6fbebc5b",
+            "8ec63845f87941d8d6b90b5d0dd52ed4e74c3694",
             "manual.typ",
         ),
         Testcase::new(
@@ -98,7 +98,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "touying-example",
             "https://github.com/touying-typ/touying",
-            "9b6dc9db5a15837696c5cbfdcc62b21f8d4f3f83",
+            "e2e20b7243733e14cfb303f3d22988e862655041",
             "examples/example.typ",
         ),
         Testcase::new(
@@ -110,7 +110,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "fletcher-manual",
             "https://github.com/Jollywatt/typst-fletcher",
-            "1859ac08998a14083ac57b73ee684c9dfa3375f7",
+            "a011539846850ad466f16fde715ab6f83a6512f4",
             "docs/manual.typ",
         )
         // tidy has weird behavior when parsing typ source code
@@ -124,7 +124,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "physica",
             "https://github.com/Leedehai/typst-physics",
-            "1d683a041d2361fc4078e419d17cb9ada60dadd7",
+            "443c963013b5cfea64818fa71990fefde9c93131",
             "physica-manual.typ",
         ),
         Testcase::new(
@@ -157,8 +157,14 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
         Testcase::new(
             "curryst",
             "https://github.com/pauladam94/curryst",
-            "0f8f1330d6a73acbf0f0d03f2e9073af0dcee173",
+            "1ffd5f41a22cf3a2ea1d48f65c959c1883fe08b3",
             "examples/natural-deduction.typ",
+        ),
+        Testcase::new(
+            "derive-it",
+            "https://github.com/0rphee/derive-it",
+            "e56a25def12082b8c9c6d54026c426434a5610e8",
+            "examples/example.typ",
         ),
     ];
     Ok(cases
