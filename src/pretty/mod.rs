@@ -9,7 +9,6 @@ mod dot_chain;
 mod flow;
 mod func_call;
 mod import;
-mod items;
 mod list;
 mod markup;
 mod mode;
@@ -21,7 +20,6 @@ use std::cell::RefCell;
 
 use config::PrinterConfig;
 use doc_ext::DocExt;
-use items::pretty_items;
 use itertools::Itertools;
 use mode::Mode;
 use pretty::{Arena, DocAllocator, DocBuilder};
@@ -395,77 +393,6 @@ impl<'a> PrettyPrinter<'a> {
         } else {
             self.convert_trivia_untyped(node)
         }
-    }
-
-    fn convert_code_block(&'a self, code_block: CodeBlock<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::Code);
-        let mut code_nodes = vec![];
-        let mut has_comment = false;
-        for node in code_block.to_untyped().children() {
-            if let Some(code) = node.cast::<Code>() {
-                code_nodes.extend(code.to_untyped().children());
-            } else if node.kind() == SyntaxKind::Space {
-                code_nodes.push(node);
-            } else if is_comment_node(node) {
-                code_nodes.push(node);
-                has_comment = true;
-            }
-        }
-        let codes = self.convert_code(code_nodes);
-        let doc = pretty_items(
-            &self.arena,
-            &codes,
-            self.arena.text(";") + self.arena.space(),
-            self.arena.nil(),
-            (self.arena.text("{"), self.arena.text("}")),
-            true,
-            if codes.len() == 1 && !has_comment {
-                self.get_fold_style(code_block)
-            } else {
-                FoldStyle::Never
-            },
-        );
-        doc
-    }
-
-    fn convert_code(&'a self, code: Vec<&'a SyntaxNode>) -> Vec<ArenaDoc<'a>> {
-        let mut code = &code[..];
-
-        // Strip trailing empty lines
-        while (code.last()).is_some_and(|last| last.kind() == SyntaxKind::Space) {
-            code = &code[..code.len() - 1];
-        }
-
-        let mut codes: Vec<_> = vec![];
-        let mut can_attach_comment = false; // Whether a comment can follow the next node.
-        for node in code {
-            if let Some(expr) = node.cast::<Expr>() {
-                let expr_doc = self.convert_expr(expr);
-                codes.push(expr_doc);
-                can_attach_comment = true;
-            } else if is_comment_node(node) {
-                if can_attach_comment {
-                    let last = codes.pop().unwrap();
-                    codes.push(last + self.arena.space() + self.convert_comment(node));
-                } else {
-                    codes.push(self.convert_comment(node));
-                }
-                can_attach_comment = false;
-            } else if node.kind() == SyntaxKind::Space {
-                let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
-                if newline_cnt > 0 {
-                    // Ensures no leading empty line.
-                    if !codes.is_empty() {
-                        for _ in 0..(newline_cnt - 1).min(self.config.blank_lines_upper_bound) {
-                            codes.push(self.arena.nil());
-                        }
-                    }
-                    can_attach_comment = false;
-                }
-            }
-        }
-
-        codes
     }
 
     fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
