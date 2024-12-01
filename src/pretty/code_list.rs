@@ -2,11 +2,44 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
     list::{ListStyle, ListStylist},
+    mode::Mode,
+    style::FoldStyle,
     util::{has_comment_children, is_only_one_and},
     ArenaDoc, PrettyPrinter,
 };
 
 impl<'a> PrettyPrinter<'a> {
+    pub(super) fn convert_code_block(&'a self, code_block: CodeBlock<'a>) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::Code);
+
+        let mut nodes = vec![];
+        for child in code_block.to_untyped().children() {
+            if let Some(code) = child.cast::<Code>() {
+                nodes.extend(code.to_untyped().children());
+            } else {
+                nodes.push(child);
+            }
+        }
+
+        let can_fold = code_block.body().exprs().count() <= 1
+            && !has_comment_children(code_block.to_untyped());
+        ListStylist::new(self)
+            .disallow_front_comment()
+            .with_fold_style(if can_fold {
+                self.get_fold_style(code_block)
+            } else {
+                FoldStyle::Never
+            })
+            .keep_linebreak(self.config.blank_lines_upper_bound)
+            .process_iterable(nodes.into_iter(), |expr| self.convert_expr(expr))
+            .print_doc(ListStyle {
+                separator: "",
+                delim: ("{", "}"),
+                add_delim_space: true,
+                ..Default::default()
+            })
+    }
+
     pub(super) fn convert_parenthesized_impl(
         &'a self,
         parenthesized: Parenthesized<'a>,
