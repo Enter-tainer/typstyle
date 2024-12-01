@@ -40,12 +40,12 @@ snapshot_kind: text
       cetz.draw.content(
         node.pos.xyz,
         box(
-					// wrapping label in a box allows user to control its alignment
-					align(center + horizon, node.label),
-					stroke: if debug >= 3 { DEBUG_COLOR2 + 0.25pt },
-					width:  node.size.at(0) - 2*node.inset,
-					height: node.size.at(1) - 2*node.inset,
-				),
+          // wrapping label in a box allows user to control its alignment
+          align(center + horizon, node.label),
+          stroke: if debug >= 3 { DEBUG_COLOR2 + 0.25pt },
+          width: node.size.at(0) - 2 * node.inset,
+          height: node.size.at(1) - 2 * node.inset,
+        ),
         anchor: "center",
       )
     }
@@ -632,12 +632,10 @@ snapshot_kind: text
   let θ = angle-between(from, to)
   let θs = (θ + edge.bend, θ - edge.bend + 180deg)
 
-  let dummy-lines = (from, to).zip(θs).map(((point, φ)) => cetz
-    .draw
-    .line(
-			point,
-			vector.add(point, vector-polar(10cm, φ)), // ray emanating from node
-		))
+  let dummy-lines = (from, to).zip(θs).map(((point, φ)) => cetz.draw.line(
+    point,
+    vector.add(point, vector-polar(10cm, φ)), // ray emanating from node
+  ))
 
   let intersection-objects = nodes.zip(dummy-lines).map(((nodes, dummy-line)) => {
     for node in nodes {

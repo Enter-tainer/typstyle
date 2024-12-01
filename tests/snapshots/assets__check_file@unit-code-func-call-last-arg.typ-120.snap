@@ -1,0 +1,29 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/code/func-call-last-arg.typ
+snapshot_kind: text
+---
+#fun(
+  aaaaaaaa,
+  bbbbbbbbbb,
+  () => { },
+)
+
+#fun(aaaaaaaa, bbbbbbbbbb, () => { })
+
+#fun(
+  aaaaaaaa,
+  bbbbbbbbbb,
+  () => {
+    // something
+  },
+)
+
+#fun(
+  aaaaaaaa,
+  bbbbbbbbbb,
+  {
+    // something
+  },
+)

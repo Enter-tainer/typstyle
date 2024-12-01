@@ -15,8 +15,6 @@ snapshot_kind: text
   doc
 }
 
-#set heading( /* 1 */ numbering   /* 2 */:/* 3 */ (/* 4 */../* 5 */num/* 6 */) /* 1 */   =>      none)
-
 #let f() /* 0 */ = /* 1 */ (
   () => /* 2 */ (
     none

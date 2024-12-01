@@ -1273,12 +1273,17 @@ snapshot_kind: text
   }
 
   box(
-        width: width, height: height,
-        inset: inset, fill: cell_fill,
-        // avoid #set problems
-        baseline: 0pt,
-        outset: 0pt, radius: 0pt, stroke: none,
-        aligned_cell_content)
+    width: width,
+    height: height,
+    inset: inset,
+    fill: cell_fill,
+    // avoid #set problems
+    baseline: 0pt,
+    outset: 0pt,
+    radius: 0pt,
+    stroke: none,
+    aligned_cell_content,
+  )
 }
 
 // Sums the sizes of fixed-size tracks (cols/rows). Anything else
@@ -1860,15 +1865,16 @@ snapshot_kind: text
   gutter.col = columns_res.gutter
 
   let rows_res = determine-row-sizes(
-        grid: grid,
-        page_height: page_height, styles: styles,
-        columns: columns,  // so we consider available width
-        rows: rows,
-        inset: inset,
-        align: align,
-        row-gutter: gutter.row,
-        fit-spans: fit-spans
-    )
+    grid: grid,
+    page_height: page_height,
+    styles: styles,
+    columns: columns, // so we consider available width
+    rows: rows,
+    inset: inset,
+    align: align,
+    row-gutter: gutter.row,
+    fit-spans: fit-spans,
+  )
   rows = rows_res.rows
   gutter.row = rows_res.gutter
 
