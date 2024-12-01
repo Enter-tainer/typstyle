@@ -23,6 +23,7 @@ pub struct ListStylist<'a> {
     free_comments: Vec<ArenaDoc<'a>>,
     items: Vec<Item<'a>>,
     item_count: usize,
+    has_comment: bool,
     has_line_comment: bool,
     fold_style: FoldStyle,
     disallow_front_comment: bool,
@@ -69,6 +70,7 @@ impl<'a> ListStylist<'a> {
             free_comments: Default::default(),
             items: Default::default(),
             item_count: 0,
+            has_comment: false,
             has_line_comment: false,
             fold_style: FoldStyle::Fit,
             disallow_front_comment: false,
@@ -91,8 +93,9 @@ impl<'a> ListStylist<'a> {
         self
     }
 
+    /// Force to fold if the predicate is true. Has no effect the list contains any comment.
     pub fn always_fold_if(mut self, pred: impl FnOnce() -> bool) -> Self {
-        if pred() {
+        if !self.has_comment && pred() {
             self.fold_style = FoldStyle::Always;
         }
         self
@@ -142,11 +145,11 @@ impl<'a> ListStylist<'a> {
             if let Some(item_body) = item_checker(node) {
                 self.add_item(item_body);
             } else {
-                self.meet_trivia(node);
+                self.process_trivia(node);
             }
         }
 
-        self.windup();
+        self.process_windup();
 
         self
     }
@@ -171,8 +174,9 @@ impl<'a> ListStylist<'a> {
     }
 
     /// Handle non-items.
-    fn meet_trivia(&mut self, node: &'a SyntaxNode) {
+    fn process_trivia(&mut self, node: &'a SyntaxNode) {
         if is_comment_node(node) {
+            self.has_comment = true;
             // Line comment cannot appear in single line block
             if node.kind() == SyntaxKind::LineComment {
                 self.has_line_comment = true;
@@ -196,7 +200,7 @@ impl<'a> ListStylist<'a> {
     }
 
     /// Process remaining free comments and trailing lines.
-    fn windup(&mut self) {
+    fn process_windup(&mut self) {
         self.attach_or_detach_comments();
         while let Some(Item::Linebreak(_)) = self.items.last() {
             self.items.pop();

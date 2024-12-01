@@ -32,6 +32,7 @@ pub(super) fn func_name(node: FuncCall<'_>) -> EcoString {
     node.callee().to_untyped().clone().into_text()
 }
 
+/// Like `f()`, `f(x, y)`, not `f[]`
 pub(super) fn has_parenthesized_args(node: Args<'_>) -> bool {
     node.to_untyped()
         .children()

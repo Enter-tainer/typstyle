@@ -69,12 +69,21 @@ snapshot_kind: text
           .pos
           .xyz,
         box(
-					// wrapping label in a box allows user to control its alignment
-					align(center + horizon, node.label),
-					stroke: if debug >= 3 { DEBUG_COLOR2 + 0.25pt },
-					width:  node.size.at(0) - 2*node.inset,
-					height: node.size.at(1) - 2*node.inset,
-				),
+          // wrapping label in a box allows user to control its alignment
+          align(
+            center + horizon,
+            node.label,
+          ),
+          stroke: if debug >= 3 {
+            DEBUG_COLOR2 + 0.25pt
+          },
+          width: node
+            .size
+            .at(0) - 2 * node.inset,
+          height: node
+            .size
+            .at(1) - 2 * node.inset,
+        ),
         anchor: "center",
       )
     }
@@ -1185,9 +1194,15 @@ snapshot_kind: text
   ) => cetz
     .draw
     .line(
-			point,
-			vector.add(point, vector-polar(10cm, φ)), // ray emanating from node
-		))
+    point,
+    vector.add(
+      point,
+      vector-polar(
+        10cm,
+        φ,
+      ),
+    ), // ray emanating from node
+  ))
 
   let intersection-objects = nodes
     .zip(dummy-lines)

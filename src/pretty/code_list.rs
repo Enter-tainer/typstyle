@@ -101,9 +101,7 @@ impl<'a> PrettyPrinter<'a> {
             .process_list(destructuring.to_untyped(), |node| {
                 self.convert_destructuring_item(node)
             })
-            .always_fold_if(|| {
-                only_one_pattern && !has_comment_children(destructuring.to_untyped())
-            })
+            .always_fold_if(|| only_one_pattern)
             .print_doc(ListStyle {
                 add_trailing_sep_single: only_one_pattern,
                 ..Default::default()
@@ -121,7 +119,7 @@ impl<'a> PrettyPrinter<'a> {
 
         ListStylist::new(self)
             .process_list(params.to_untyped(), |node| self.convert_param(node))
-            .always_fold_if(|| is_single_simple && !has_comment_children(params.to_untyped()))
+            .always_fold_if(|| is_single_simple)
             .print_doc(ListStyle {
                 omit_delim_single: is_single_simple,
                 ..Default::default()

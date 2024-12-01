@@ -1,9 +1,11 @@
-use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::doc_ext::DocExt;
-use super::{style::FoldStyle, PrettyPrinter};
+use super::list::{ListStyle, ListStylist};
+use super::mode::Mode;
+use super::util::is_only_one_and;
+use super::PrettyPrinter;
 
 use super::{
     table,
@@ -12,52 +14,13 @@ use super::{
 };
 
 #[derive(Debug)]
-pub(super) enum ParenthesizedFuncCallArg<'a> {
+enum ParenthesizedFuncCallArg<'a> {
     Argument(Arg<'a>),
     Comma,
     Space,
     Newline(usize),
     LineComment(&'a SyntaxNode),
     BlockComment(&'a SyntaxNode),
-}
-
-impl ParenthesizedFuncCallArg<'_> {
-    #[allow(unused)]
-    pub fn is_comment(&self) -> bool {
-        matches!(
-            self,
-            ParenthesizedFuncCallArg::LineComment(_) | ParenthesizedFuncCallArg::BlockComment(_)
-        )
-    }
-
-    pub fn is_function_call(&self) -> bool {
-        if let ParenthesizedFuncCallArg::Argument(arg) = self {
-            let inner = match arg {
-                Arg::Pos(p) => *p,
-                Arg::Named(n) => n.expr(),
-                Arg::Spread(s) => s.expr(),
-            };
-            matches!(inner, Expr::FuncCall(_))
-        } else {
-            false
-        }
-    }
-
-    #[allow(unused)]
-    pub fn is_newline(&self) -> Option<usize> {
-        if let ParenthesizedFuncCallArg::Newline(count) = self {
-            Some(*count)
-        } else {
-            None
-        }
-    }
-
-    pub fn is_trivial(&self) -> bool {
-        matches!(
-            self,
-            ParenthesizedFuncCallArg::Space | ParenthesizedFuncCallArg::Comma
-        )
-    }
 }
 
 impl<'a> ParenthesizedFuncCallArg<'a> {
@@ -82,21 +45,26 @@ impl<'a> ParenthesizedFuncCallArg<'a> {
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.convert_expr(func_call.callee());
-        if let Some(res) = self.check_unformattable(func_call.args().to_untyped()) {
-            return doc + res;
+        self.convert_expr(func_call.callee())
+            + self.convert_func_call_args(func_call, func_call.args())
+    }
+
+    fn convert_func_call_args(&'a self, func_call: FuncCall<'a>, args: Args<'a>) -> ArenaDoc<'a> {
+        if self.current_mode() == Mode::Math {
+            return self.format_disabled(args.to_untyped());
         }
-        let has_parenthesized_args = has_parenthesized_args(func_call.args());
+        let mut doc = self.arena.nil();
+        let has_parenthesized_args = has_parenthesized_args(args);
         if table::is_table(func_call) {
             if let Some(cols) = table::is_formatable_table(func_call) {
                 doc += self.convert_table(func_call, cols);
             } else if has_parenthesized_args {
-                doc += self.convert_parenthesized_args_as_is(func_call.args());
+                doc += self.convert_parenthesized_args_as_is(args);
             }
         } else if has_parenthesized_args {
-            doc += self.convert_parenthesized_args(func_call.args());
+            doc += self.convert_parenthesized_args(args);
         };
-        doc + self.convert_additional_args(func_call.args(), has_parenthesized_args)
+        doc + self.convert_additional_args(args, has_parenthesized_args)
     }
 
     pub(super) fn convert_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
@@ -110,55 +78,39 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(args.to_untyped()) {
-            return res;
-        }
-        let args = parse_args(args).collect_vec();
-        let is_multiline = {
-            let mut is_multiline = false;
-            for arg in &args {
-                if let ParenthesizedFuncCallArg::Space = arg {
-                    break;
+        // let always_fold = is_only_one_and(args.items(), |item| {
+        //     matches!(item, Arg::Pos(Expr::Code(_)) | Arg::Pos(Expr::Content(_)))
+        // });
+        let arg_count = args
+            .to_untyped()
+            .children()
+            .take_while(|it| it.kind() != SyntaxKind::RightParen)
+            .filter(|it| it.is::<Arg>())
+            .count();
+        let always_fold = is_only_one_and(args.items().take(arg_count), |arg| {
+            let inner = match arg {
+                Arg::Pos(p) => *p,
+                Arg::Named(n) => n.expr(),
+                Arg::Spread(s) => s.expr(),
+            };
+            !matches!(inner, Expr::FuncCall(_))
+        });
+        let mut closed = false;
+        ListStylist::new(self)
+            .keep_linebreak(self.config.blank_lines_upper_bound)
+            .process_list_impl(args.to_untyped(), |child| {
+                // We should ignore additional args here.
+                if child.kind() == SyntaxKind::RightParen {
+                    closed = true;
+                } else if !closed {
+                    return child.cast().map(|arg| self.convert_arg(arg));
                 }
-                if let ParenthesizedFuncCallArg::Newline(_) = arg {
-                    is_multiline = true;
-                    break;
-                }
-            }
-            is_multiline
-        };
-        let prefer_tighter = {
-            let real_args = args
-                .iter()
-                .filter(|x| matches!(x, ParenthesizedFuncCallArg::Argument(_)))
-                .collect_vec();
-            real_args.is_empty() || (real_args.len() == 1 && !real_args[0].is_function_call())
-        };
-        let non_trivial_args = args.into_iter().filter(|x| !x.is_trivial());
-        let doc = if prefer_tighter {
-            non_trivial_args
-                .into_iter()
-                .find(|x| matches!(x, ParenthesizedFuncCallArg::Argument(_)))
-                .map(|x| x.into_doc(self, None))
-                .unwrap_or_else(|| self.arena.nil())
-                .parens()
-        } else {
-            // remove trailing newlines
-            let mut args = non_trivial_args.collect_vec();
-            while let Some(ParenthesizedFuncCallArg::Newline(_)) = args.last() {
-                args.pop();
-            }
-            comma_seprated_args(
-                self,
-                args.into_iter(),
-                if is_multiline {
-                    FoldStyle::Never
-                } else {
-                    FoldStyle::Fit
-                },
-            )
-        };
-        doc
+                Option::None
+            })
+            .always_fold_if(|| always_fold)
+            .print_doc(ListStyle {
+                ..Default::default()
+            })
     }
 
     pub(super) fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
@@ -167,9 +119,10 @@ impl<'a> PrettyPrinter<'a> {
         inner.nest(2).parens()
     }
 
+    /// Handle additional content blocks
     fn convert_additional_args(&'a self, args: Args<'a>, has_paren: bool) -> ArenaDoc<'a> {
-        let node = args.to_untyped();
-        let args = node
+        let args = args
+            .to_untyped()
             .children()
             .skip_while(|node| {
                 if has_paren {
@@ -178,9 +131,9 @@ impl<'a> PrettyPrinter<'a> {
                     node.kind() != SyntaxKind::ContentBlock
                 }
             })
-            .filter_map(|node| node.cast::<Arg>());
+            .filter_map(|node| node.cast::<ContentBlock>());
         self.arena
-            .concat(args.map(|arg| self.convert_arg(arg)))
+            .concat(args.map(|arg| self.convert_content_block(arg)))
             .group()
     }
 
@@ -208,48 +161,4 @@ fn parse_args(args: Args<'_>) -> impl Iterator<Item = ParenthesizedFuncCallArg<'
         SyntaxKind::BlockComment => ParenthesizedFuncCallArg::BlockComment(node),
         _ => ParenthesizedFuncCallArg::Argument(node.cast::<Arg>().unwrap()),
     })
-}
-
-fn comma_seprated_args<'a, I>(
-    pp: &'a PrettyPrinter<'a>,
-    args: I,
-    fold_style: FoldStyle,
-) -> ArenaDoc<'a>
-where
-    I: Iterator<Item = ParenthesizedFuncCallArg<'a>> + ExactSizeIterator,
-{
-    if args.len() == 0 {
-        return pp.arena.nil().parens();
-    }
-    let format_inner = |sep: ArenaDoc<'a>, comma_: ArenaDoc<'a>| {
-        let mut inner = pp.arena.nil();
-        for (pos, arg) in args.with_position() {
-            let need_sep = matches!(arg, ParenthesizedFuncCallArg::Argument(_));
-            inner += arg.into_doc(pp, Some(1));
-            if matches!(
-                pos,
-                itertools::Position::First | itertools::Position::Middle
-            ) && need_sep
-            {
-                inner += sep.clone();
-            }
-        }
-        inner + comma_
-    };
-    match fold_style {
-        FoldStyle::Fit | FoldStyle::Always => {
-            let comma_ = pp.arena.text(",").flat_alt(pp.arena.nil());
-            let sep = pp.arena.text(",") + pp.arena.line();
-            let inner = format_inner(sep, comma_);
-            ((pp.arena.line_() + inner).nest(2) + pp.arena.line_())
-                .group()
-                .parens()
-        }
-        FoldStyle::Never => {
-            let sep = pp.arena.text(",") + pp.arena.hardline();
-            let comma_ = pp.arena.text(",");
-            let inner = format_inner(sep, comma_);
-            ((pp.arena.hardline() + inner).nest(2) + pp.arena.hardline()).parens()
-        }
-    }
 }
