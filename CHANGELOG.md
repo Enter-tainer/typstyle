@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.12.6 - [2024-12-02]
+
+- Parenthesized expressions with comments can be formatted by typstyle now.
+- Closure with comments can be formatted by typstyle now.
+- Typstyle will removes unnecessary parentheses if the inner expression is literal, array, dict, destructuring, block, or pattern. For safety, parens around idents are kept.
+- Destructuring and params with comments are no longer forced to fold into one line.
+
 ## v0.12.5 - [2024-11-29]
 
 - Typstyle can format comments appears in most places. Previously it simply gives up when it encounters comments in these places. Now it can format them correctly.
