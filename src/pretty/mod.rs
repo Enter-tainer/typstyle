@@ -54,7 +54,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn get_fold_style_untyped(&self, node: &'a SyntaxNode) -> FoldStyle {
-        if self.attr_store.is_node_multiline(node) {
+        if self.attr_store.is_multiline_flavor(node) {
             FoldStyle::Never
         } else {
             FoldStyle::Fit
@@ -144,7 +144,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn check_disabled(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
-        if self.attr_store.is_node_format_disabled(node) {
+        if self.attr_store.is_format_disabled(node) {
             Some(self.format_disabled(node))
         } else {
             None
@@ -152,7 +152,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn check_unformattable(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
-        if self.attr_store.is_node_unformattable(node) {
+        if self.attr_store.is_unformattable(node) {
             Some(self.format_disabled(node))
         } else {
             None
@@ -327,7 +327,7 @@ impl<'a> PrettyPrinter<'a> {
         let _g = self.with_mode(Mode::Math);
         let mut doc = self.convert_math(equation.body());
         if equation.block() {
-            let is_multi_line = self.attr_store.is_node_multiline(equation.to_untyped());
+            let is_multi_line = self.attr_store.is_multiline(equation.to_untyped());
             let block_sep = if is_multi_line {
                 self.arena.hardline()
             } else {

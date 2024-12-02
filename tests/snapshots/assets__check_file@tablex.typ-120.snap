@@ -254,9 +254,7 @@ snapshot_kind: text
   let max_explicit_y = items.filter(c => c.y != auto).fold(
     0,
     (acc, cell) => {
-      if (
-        is-tablex-cell(cell) and type(cell.y) in (_int-type, _float-type) and cell.y > acc
-      ) {
+      if (is-tablex-cell(cell) and type(cell.y) in (_int-type, _float-type) and cell.y > acc) {
         cell.y
       } else {
         acc
@@ -1915,9 +1913,7 @@ snapshot_kind: text
           or h.end >= cell.x + cell.colspan // ends at or after this cell
         )
 
-        (
-          in_top_or_bottom and hline_hasnt_already_ended
-        )
+        (in_top_or_bottom and hline_hasnt_already_ended)
       })
     .map(h => {
         // get the intersection between the hline and the cell's x-span.
@@ -1943,9 +1939,7 @@ snapshot_kind: text
           or v.end >= cell.y + cell.rowspan // ends at or after this cell
         )
 
-        (
-          at_left_or_right and vline_hasnt_already_ended
-        )
+        (at_left_or_right and vline_hasnt_already_ended)
       })
     .map(v => {
         // get the intersection between the hline and the cell's x-span.

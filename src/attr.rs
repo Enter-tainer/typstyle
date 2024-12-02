@@ -11,20 +11,31 @@ struct State {
 
 #[derive(Debug, Clone, Default)]
 pub struct Attributes {
-    /// Manually marked `@typstyle off` or always ignored.
-    pub format_disabled: bool,
-    /// Has a child of comment.
-    pub commented: bool,
-    /// If (a) the first space child contains a newline, (b) one of the children is a multiline
-    pub multiline: bool,
+    /// Indicates whether formatting is explicitly disabled (`@typstyle off`) or always ignored.
+    pub(self) is_format_disabled: bool,
+
+    /// Indicates whether any child node contains a comment.
+    pub(self) has_comment: bool,
+
+    /// Indicates whether the node text contains a linebreak.
+    /// Currently, it is only used for equations.
+    pub(self) is_multiline: bool,
+
+    /// Indicates whether the node has a multiline "flavor",
+    /// determined by the first space child containing a linebreak.
+    pub(self) is_multiline_flavor: bool,
 }
 
+/// A storage structure that manages formatting attributes for syntax nodes.
 #[derive(Debug, Default)]
 pub struct AttrStore {
+    /// A mapping between syntax node spans and their associated attributes.
     attr_map: FxHashMap<Span, Attributes>,
 }
 
 impl AttrStore {
+    /// Creates a new `AttrStore` by computing formatting-related attributes
+    /// for all descendants of the given syntax node.
     pub fn new(node: &SyntaxNode) -> AttrStore {
         let mut store = AttrStore {
             attr_map: Default::default(),
@@ -34,56 +45,73 @@ impl AttrStore {
         store
     }
 
-    pub fn is_node_commented(&self, node: &SyntaxNode) -> bool {
-        self.attr_map
-            .get(&node.span())
-            .is_some_and(|attr| attr.commented)
+    /// Checks if a given syntax node contains a comment.
+    pub fn has_comment(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.has_comment)
     }
 
-    pub fn is_node_multiline(&self, node: &SyntaxNode) -> bool {
-        self.attr_map
-            .get(&node.span())
-            .is_some_and(|attr| attr.multiline)
+    /// Checks if a given syntax node or any of its descendants contains a linebreak.
+    pub fn is_multiline(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.is_multiline)
     }
 
-    pub fn is_node_format_disabled(&self, node: &SyntaxNode) -> bool {
-        self.attr_map
-            .get(&node.span())
-            .is_some_and(|attr| attr.format_disabled)
+    /// Checks if a given syntax node has a multiline flavor.
+    pub fn is_multiline_flavor(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.is_multiline_flavor)
     }
 
-    pub fn is_node_unformattable(&self, node: &SyntaxNode) -> bool {
-        self.attr_map
-            .get(&node.span())
-            .is_some_and(|attr| attr.format_disabled || attr.commented)
+    /// Checks if formatting is explicitly disabled for a given syntax node.
+    pub fn is_format_disabled(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.is_format_disabled)
     }
 
+    /// Checks if a node is unformattable, defined as having formatting disabled
+    /// or containing a comment.
+    pub fn is_unformattable(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.is_format_disabled || attr.has_comment)
+    }
+
+    fn check_node_attr(&self, node: &SyntaxNode, pred: impl FnOnce(&Attributes) -> bool) -> bool {
+        self.attr_map.get(&node.span()).is_some_and(pred)
+    }
+}
+
+impl AttrStore {
     fn compute_multiline(&mut self, root: &SyntaxNode) {
         self.compute_multiline_impl(root);
     }
 
     fn compute_multiline_impl(&mut self, node: &SyntaxNode) {
-        if self.is_node_multiline(node) {
+        if self.is_multiline(node) {
             return;
         }
         if node.children().count() == 0 {
             return;
         }
-        if let Some(space) = node.cast_first_match::<Space>() {
-            if space.to_untyped().text().contains('\n') {
-                self.set_multiline(node);
-            }
+        if node
+            .cast_first_match::<Space>()
+            .is_some_and(|space| space.to_untyped().text().contains('\n'))
+        {
+            self.set_multiline(node);
+            self.set_multiline_flavor(node);
         }
         for child in node.children() {
             self.compute_multiline_impl(child);
-            if self.is_node_multiline(child) {
+            if self.is_multiline(child) {
                 self.set_multiline(node);
             }
         }
     }
 
     fn set_multiline(&mut self, node: &SyntaxNode) {
-        self.attr_map.entry(node.span()).or_default().multiline = true;
+        self.attr_map.entry(node.span()).or_default().is_multiline = true;
+    }
+
+    fn set_multiline_flavor(&mut self, node: &SyntaxNode) {
+        self.attr_map
+            .entry(node.span())
+            .or_default()
+            .is_multiline_flavor = true;
     }
 
     fn compute_no_format(&mut self, root: &SyntaxNode) {
@@ -92,7 +120,7 @@ impl AttrStore {
     }
 
     fn compute_no_format_impl(&mut self, node: &SyntaxNode, state: &mut State) {
-        if self.is_node_format_disabled(node) {
+        if self.is_format_disabled(node) {
             return;
         }
         let mut format_disabled = false;
@@ -146,11 +174,11 @@ impl AttrStore {
         self.attr_map
             .entry(node.span())
             .or_default()
-            .format_disabled = true;
+            .is_format_disabled = true;
     }
 
     fn set_commented(&mut self, node: &SyntaxNode) {
-        self.attr_map.entry(node.span()).or_default().commented = true;
+        self.attr_map.entry(node.span()).or_default().has_comment = true;
     }
 }
 
