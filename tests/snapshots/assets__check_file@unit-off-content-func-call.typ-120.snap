@@ -7,7 +7,7 @@ snapshot_kind: text
 #table(
   columns: /* @typstyle off */ (1fr,
 auto, auto),
-  inset: 10pt, align: horizon,[],
+  inset: 10pt, align: horizon, [],
   [*Area*],
   [*Parameters*],
   [Some image],

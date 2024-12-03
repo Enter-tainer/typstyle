@@ -1,9 +1,9 @@
 use pretty::DocAllocator;
-use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
+use typst_syntax::{ast::*, SyntaxKind};
 
-use super::doc_ext::DocExt;
 use super::list::{ListStyle, ListStylist};
 use super::mode::Mode;
+use super::plain::PlainStylist;
 use super::util::is_only_one_and;
 use super::PrettyPrinter;
 
@@ -12,36 +12,6 @@ use super::{
     util::{get_parenthesized_args_untyped, has_parenthesized_args},
     ArenaDoc,
 };
-
-#[derive(Debug)]
-enum ParenthesizedFuncCallArg<'a> {
-    Argument(Arg<'a>),
-    Comma,
-    Space,
-    Newline(usize),
-    LineComment(&'a SyntaxNode),
-    BlockComment(&'a SyntaxNode),
-}
-
-impl<'a> ParenthesizedFuncCallArg<'a> {
-    pub fn into_doc(
-        self,
-        printer: &'a PrettyPrinter<'a>,
-        reduce_newline: Option<usize>,
-    ) -> ArenaDoc<'a> {
-        match self {
-            ParenthesizedFuncCallArg::Argument(arg) => printer.convert_arg(arg),
-            ParenthesizedFuncCallArg::Comma => printer.arena.text(","),
-            ParenthesizedFuncCallArg::Space => printer.arena.space(),
-            ParenthesizedFuncCallArg::Newline(count) => {
-                let line_count = count - reduce_newline.unwrap_or(0);
-                printer.arena.hardline().repeat_n(line_count)
-            }
-            ParenthesizedFuncCallArg::LineComment(cmt)
-            | ParenthesizedFuncCallArg::BlockComment(cmt) => printer.convert_comment(cmt),
-        }
-    }
-}
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
@@ -114,8 +84,11 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
-        let args = parse_args(args);
-        let inner = self.arena.concat(args.map(|arg| arg.into_doc(self, None)));
+        let inner = PlainStylist::new(self)
+            .process_iterable(get_parenthesized_args_untyped(args), |child| {
+                self.convert_arg(child)
+            })
+            .print_doc();
         inner.nest(2).parens()
     }
 
@@ -144,21 +117,4 @@ impl<'a> PrettyPrinter<'a> {
             Arg::Spread(s) => self.convert_spread(s),
         }
     }
-}
-
-fn parse_args(args: Args<'_>) -> impl Iterator<Item = ParenthesizedFuncCallArg<'_>> {
-    get_parenthesized_args_untyped(args).map(|node| match node.kind() {
-        SyntaxKind::Comma => ParenthesizedFuncCallArg::Comma,
-        SyntaxKind::Space => {
-            let newline_count = node.text().chars().filter(|&c| c == '\n').count();
-            if newline_count > 0 {
-                ParenthesizedFuncCallArg::Newline(newline_count)
-            } else {
-                ParenthesizedFuncCallArg::Space
-            }
-        }
-        SyntaxKind::LineComment => ParenthesizedFuncCallArg::LineComment(node),
-        SyntaxKind::BlockComment => ParenthesizedFuncCallArg::BlockComment(node),
-        _ => ParenthesizedFuncCallArg::Argument(node.cast::<Arg>().unwrap()),
-    })
 }
