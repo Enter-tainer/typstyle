@@ -2,6 +2,8 @@
 #[doc(hidden)]
 pub mod attr;
 #[doc(hidden)]
+pub mod ext;
+#[doc(hidden)]
 pub mod pretty;
 
 #[doc(hidden)]

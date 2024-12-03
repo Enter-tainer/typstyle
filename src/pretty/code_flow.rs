@@ -1,7 +1,9 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
-use super::{flow::FlowItem, util::BoolExt, ArenaDoc, PrettyPrinter};
+use crate::ext::BoolExt;
+
+use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_named(&'a self, named: Named<'a>) -> ArenaDoc<'a> {
