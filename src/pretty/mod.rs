@@ -13,6 +13,7 @@ mod list;
 mod markup;
 mod mode;
 mod parened_expr;
+mod plain;
 mod table;
 mod util;
 
