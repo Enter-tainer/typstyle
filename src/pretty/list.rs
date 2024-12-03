@@ -1,6 +1,8 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
+use crate::ext::StrExt;
+
 use super::{doc_ext::DocExt, style::FoldStyle, util::is_comment_node, ArenaDoc, PrettyPrinter};
 
 enum Item<'a> {
@@ -186,7 +188,7 @@ impl<'a> ListStylist<'a> {
         } else if node.kind() == SyntaxKind::Comma {
             self.try_attach_comments();
         } else if node.kind() == SyntaxKind::Space {
-            let newline_cnt = node.text().chars().filter(|c| *c == '\n').count();
+            let newline_cnt = node.text().count_linebreaks();
             if newline_cnt > 0 {
                 self.attach_or_detach_comments();
                 self.can_attach = false;

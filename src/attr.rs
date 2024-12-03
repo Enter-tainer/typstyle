@@ -5,6 +5,8 @@ use typst_syntax::{
     Span, SyntaxKind, SyntaxNode,
 };
 
+use crate::ext::StrExt;
+
 struct State {
     is_math: bool,
 }
@@ -90,7 +92,7 @@ impl AttrStore {
         }
         if node
             .cast_first_match::<Space>()
-            .is_some_and(|space| space.to_untyped().text().contains('\n'))
+            .is_some_and(|space| space.to_untyped().text().has_linebreak())
         {
             self.set_multiline(node);
             self.set_multiline_flavor(node);

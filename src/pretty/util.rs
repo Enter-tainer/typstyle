@@ -68,15 +68,3 @@ pub(super) fn has_additional_args(node: Args<'_>) -> bool {
         .filter_map(|node| node.cast::<'_, Arg>());
     args.count() > 1
 }
-
-pub trait BoolExt {
-    fn replace(&mut self, value: Self) -> Self;
-}
-
-impl BoolExt for bool {
-    fn replace(&mut self, value: Self) -> Self {
-        let old = *self;
-        *self = value;
-        old
-    }
-}

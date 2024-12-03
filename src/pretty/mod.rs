@@ -27,7 +27,7 @@ use pretty::{Arena, DocAllocator, DocBuilder};
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use util::is_comment_node;
 
-use crate::AttrStore;
+use crate::{ext::StrExt, AttrStore};
 use style::FoldStyle;
 
 type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
@@ -84,11 +84,11 @@ impl<'a> PrettyPrinter<'a> {
             for node in root.to_untyped().children() {
                 let mut break_line = false;
                 if let Some(space) = node.cast::<Space>() {
-                    if space.to_untyped().text().contains('\n') {
+                    if space.to_untyped().text().has_linebreak() {
                         break_line = true;
                     }
                 } else if let Some(pb) = node.cast::<Parbreak>() {
-                    if pb.to_untyped().text().contains('\n') {
+                    if pb.to_untyped().text().has_linebreak() {
                         break_line = true;
                     }
                 } else if node.kind().is_stmt() {
@@ -245,7 +245,7 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_space(&'a self, space: Space<'a>) -> ArenaDoc<'a> {
         let node = space.to_untyped();
-        if node.text().contains('\n') {
+        if node.text().has_linebreak() {
             self.arena.hardline()
         } else {
             self.arena.space()
@@ -257,12 +257,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_parbreak(&'a self, parbreak: Parbreak<'a>) -> ArenaDoc<'a> {
-        let newline_count = parbreak
-            .to_untyped()
-            .text()
-            .chars()
-            .filter(|c| *c == '\n')
-            .count();
+        let newline_count = parbreak.to_untyped().text().count_linebreaks();
         self.arena.hardline().repeat_n(newline_count)
     }
 
@@ -298,7 +293,7 @@ impl<'a> PrettyPrinter<'a> {
             } else if let Some(line) = child.cast::<Text>() {
                 doc += self.convert_trivia(line);
             } else if child.kind() == SyntaxKind::RawTrimmed {
-                if child.text().contains('\n') {
+                if child.text().has_linebreak() {
                     doc += self.arena.hardline();
                 } else {
                     doc += self.arena.space();
@@ -389,7 +384,7 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_str(&'a self, str: Str<'a>) -> ArenaDoc<'a> {
         let node = str.to_untyped();
-        if node.text().contains('\n') {
+        if node.text().has_linebreak() {
             self.arena.text(node.text().as_str())
         } else {
             self.convert_trivia_untyped(node)
