@@ -29,13 +29,15 @@ snapshot_kind: text
   let (
     title,
     _,
-  ) = query(heading.where(level: 1))
+  ) = query(
+    heading.where(level: 1),
+  )
     .map(e => (
-        e.body,
-        e
-          .location()
-          .page(),
-      ))
+      e.body,
+      e
+        .location()
+        .page(),
+    ))
     .rev()
     .find((
     (
@@ -70,12 +72,12 @@ snapshot_kind: text
   padding
     .pairs()
     .map((
-        k,
-        x,
-      ) => (
-        k,
-        x * 1.5,
-      ))
+      k,
+      x,
+    ) => (
+      k,
+      x * 1.5,
+    ))
     .to-dict()
 }
 #{

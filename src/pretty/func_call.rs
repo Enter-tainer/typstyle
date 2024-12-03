@@ -40,7 +40,7 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
         let has_parenthesized_args = has_parenthesized_args(args);
         let parenthesized = if has_parenthesized_args {
-            self.convert_parenthesized_args_as_is(args)
+            self.convert_parenthesized_args(args)
         } else {
             self.arena.nil()
         };

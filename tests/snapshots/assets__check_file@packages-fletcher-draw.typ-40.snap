@@ -367,10 +367,10 @@ snapshot_kind: text
   // Draw arc(s), one for each extrusion shift
   for shift in edge.extrude {
     // Adjust arc angles to accommodate for cap offsets
-    let (
-      δ-start,
-      δ-stop,
-    ) = cap-offsets(edge, shift).map(arclen => (
+    let (δ-start, δ-stop) = cap-offsets(
+      edge,
+      shift,
+    ).map(arclen => (
       -bend-dir * arclen / radius * 1rad
     ))
 
@@ -507,7 +507,10 @@ snapshot_kind: text
 
   let rounded-corners
   if edge.corner-radius != none {
-    rounded-corners = range(1, θs.len()).map(calculate-rounded-corner)
+    rounded-corners = range(
+      1,
+      θs.len(),
+    ).map(calculate-rounded-corner)
   }
 
   let lerp-scale(t, i) = {
@@ -640,12 +643,12 @@ snapshot_kind: text
     marks += edge
       .marks
       .map(mark => {
-          mark.pos = lerp-scale(
-            mark.pos,
-            i,
-          )
-          mark
-        })
+        mark.pos = lerp-scale(
+          mark.pos,
+          i,
+        )
+        mark
+      })
       .filter(mark => mark.pos != none)
 
     let label-pos = lerp-scale(
@@ -721,12 +724,12 @@ snapshot_kind: text
     let anchor-points = anchor-names
       .map(calculate-anchors)
       .map(point => {
-          // funky disagreement between coordinate systems??
-          point.at(1) *= -1
-          vector-2d(
-            vector.scale(point, 1cm),
-          )
-        })
+        // funky disagreement between coordinate systems??
+        point.at(1) *= -1
+        vector-2d(
+          vector.scale(point, 1cm),
+        )
+      })
       .sorted(key: point => vector-len(
       vector.sub(point, target),
     ))
@@ -1308,7 +1311,10 @@ snapshot_kind: text
   for edge in edges {
     let snap-to-nodes = edge
       .snap-to
-      .zip(first-last(edge.vertices), first-last(edge.final-vertices))
+      .zip(
+        first-last(edge.vertices),
+        first-last(edge.final-vertices),
+      )
       .enumerate()
       .map(((i, (given, raw, xyz))) => {
       let key = map-auto(
@@ -1363,16 +1369,16 @@ snapshot_kind: text
   seq
     .children
     .map(child => {
-        if child.func() == metadata {
-          let value = child.value
-          value.post = cetz
-            .draw
-            .hide
-            .with(bounds: bounds)
-          metadata(value)
-        } else {
-          child
-        }
-      })
+      if child.func() == metadata {
+        let value = child.value
+        value.post = cetz
+          .draw
+          .hide
+          .with(bounds: bounds)
+        metadata(value)
+      } else {
+        child
+      }
+    })
     .join()
 }

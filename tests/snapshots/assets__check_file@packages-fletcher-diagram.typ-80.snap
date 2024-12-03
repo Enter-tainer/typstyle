@@ -532,12 +532,12 @@ snapshot_kind: text
 
     let vertices-affecting-grid = edges
       .map(edge => {
-          resolve-edge-vertices(
-            edge,
-            ctx: ctx-with-uv-anchors + (target-system: "uv"),
-            nodes,
-          )
-        })
+        resolve-edge-vertices(
+          edge,
+          ctx: ctx-with-uv-anchors + (target-system: "uv"),
+          nodes,
+        )
+      })
       .join() + () // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
       not is-nan-vector(vert)

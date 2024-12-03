@@ -1242,19 +1242,27 @@ snapshot_kind: text
   let result = ()
   let cover-arr = ()
   let children = it
-    .split(regex("(#meanwhile;?)|(meanwhile)"))
+    .split(
+      regex("(#meanwhile;?)|(meanwhile)"),
+    )
     .intersperse("touying-meanwhile")
     .map(s => s
-        .split(regex("(#pause;?)|(pause)"))
-        .intersperse("touying-pause"))
+      .split(
+        regex("(#pause;?)|(pause)"),
+      )
+      .intersperse("touying-pause"))
     .flatten()
     .map(s => s
-        .split(regex("(\\\\\\s)|(\\\\\\n)"))
-        .intersperse("\\\n"))
+      .split(
+        regex("(\\\\\\s)|(\\\\\\n)"),
+      )
+      .intersperse("\\\n"))
     .flatten()
     .map(s => s
-        .split(regex("&"))
-        .intersperse("&"))
+      .split(
+        regex("&"),
+      )
+      .intersperse("&"))
     .flatten()
   for child in (
     children
@@ -1368,19 +1376,27 @@ snapshot_kind: text
   let result = ()
   let cover-arr = ()
   let children = it
-    .split(regex("\\\\meanwhile"))
+    .split(
+      regex("\\\\meanwhile"),
+    )
     .intersperse("touying-meanwhile")
     .map(s => s
-        .split(regex("\\\\pause"))
-        .intersperse("touying-pause"))
+      .split(
+        regex("\\\\pause"),
+      )
+      .intersperse("touying-pause"))
     .flatten()
     .map(s => s
-        .split(regex("(\\\\\\\\\s)|(\\\\\\\\\n)"))
-        .intersperse("\\\\\n"))
+      .split(
+        regex("(\\\\\\\\\s)|(\\\\\\\\\n)"),
+      )
+      .intersperse("\\\\\n"))
     .flatten()
     .map(s => s
-        .split(regex("&"))
-        .intersperse("&"))
+      .split(
+        regex("&"),
+      )
+      .intersperse("&"))
     .flatten()
   for child in (
     children
@@ -2609,7 +2625,10 @@ snapshot_kind: text
         hide({
           set heading(offset: 0)
           let headings = self
-            .at("headings", default: ())
+            .at(
+              "headings",
+              default: (),
+            )
             .map(it => if it.has("label") {
             if str(it.label) in (
               "touying:hidden",
@@ -2723,47 +2742,55 @@ snapshot_kind: text
         context {
           self
             .frozen-states
-            .zip(utils
+            .zip(
+              utils
                 .saved-frozen-states
-                .get())
+                .get(),
+            )
             .map(pair => pair
-                .at(0)
-                .update(
-                pair.at(1),
-              ))
+              .at(0)
+              .update(
+              pair.at(1),
+            ))
             .sum(default: none)
           self
             .default-frozen-states
-            .zip(utils
+            .zip(
+              utils
                 .saved-default-frozen-states
-                .get())
+                .get(),
+            )
             .map(pair => pair
-                .at(0)
-                .update(
-                pair.at(1),
-              ))
+              .at(0)
+              .update(
+              pair.at(1),
+            ))
             .sum(default: none)
           self
             .frozen-counters
-            .zip(utils
+            .zip(
+              utils
                 .saved-frozen-counters
-                .get())
+                .get(),
+            )
             .map(pair => pair
-                .at(0)
-                .update(
-                pair.at(1),
-              ))
+              .at(0)
+              .update(
+              pair.at(1),
+            ))
             .sum(default: none)
           self
             .default-frozen-counters
-            .zip(utils
+            .zip(
+              utils
                 .saved-default-frozen-counters
-                .get())
+                .get(),
+            )
             .map(pair => pair
-                .at(0)
-                .update(
-                pair.at(1),
-              ))
+              .at(0)
+              .update(
+              pair.at(1),
+            ))
             .sum(default: none)
         }
       }
