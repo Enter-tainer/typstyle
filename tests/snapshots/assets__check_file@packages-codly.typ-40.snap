@@ -192,7 +192,10 @@ snapshot_kind: text
   position,
   length,
 ) = {
-  state("codly-skips", ()).update(skips => {
+  state(
+    "codly-skips",
+    (),
+  ).update(skips => {
     if skips == none {
       skips = ()
     }
@@ -303,9 +306,12 @@ snapshot_kind: text
   )(if "highlight-stroke" in extra {
     extra.highlight-stroke
   } else {
-    state("codly-highlight-stroke", __codly-args
+    state(
+      "codly-highlight-stroke",
+      __codly-args
         .highlight-stroke
-        .default).get()
+        .default,
+    ).get()
   })
 
   let highlight-fill = (
@@ -315,9 +321,12 @@ snapshot_kind: text
   )(if "highlight-fill" in extra {
     extra.highlight-fill
   } else {
-    state("codly-highlight-fill", __codly-args
+    state(
+      "codly-highlight-fill",
+      __codly-args
         .highlight-fill
-        .default).get()
+        .default,
+    ).get()
   })
 
   let highlight-radius = (
@@ -327,9 +336,12 @@ snapshot_kind: text
   )(if "highlight-radius" in extra {
     extra.highlight-radius
   } else {
-    state("codly-highlight-radius", __codly-args
+    state(
+      "codly-highlight-radius",
+      __codly-args
         .highlight-radius
-        .default).get()
+        .default,
+    ).get()
   })
 
   let highlight-inset = (
@@ -339,9 +351,12 @@ snapshot_kind: text
   )(if "highlight-inset" in extra {
     extra.highlight-inset
   } else {
-    state("codly-highlight-inset", __codly-args
+    state(
+      "codly-highlight-inset",
+      __codly-args
         .highlight-inset
-        .default).get()
+        .default,
+    ).get()
   })
 
   let default-color = (
@@ -351,9 +366,12 @@ snapshot_kind: text
   )(if "default-color" in extra {
     extra.default-color
   } else {
-    state("codly-default-color", __codly-args
+    state(
+      "codly-default-color",
+      __codly-args
         .default-color
-        .default).get()
+        .default,
+    ).get()
   })
 
   let highlights = {
@@ -362,9 +380,10 @@ snapshot_kind: text
     )(if "highlights" in extra {
       extra.highlights
     } else {
-      state("codly-highlights", __codly-args
-          .highlights
-          .default).get()
+      state(
+        "codly-highlights",
+        __codly-args.highlights.default,
+      ).get()
     })
     if highlights == none {
       ()
@@ -403,9 +422,10 @@ snapshot_kind: text
   )(if "smart-indent" in extra {
     extra.smart-indent
   } else {
-    state("codly-smart-indent", __codly-args
-        .smart-indent
-        .default).get()
+    state(
+      "codly-smart-indent",
+      __codly-args.smart-indent.default,
+    ).get()
   })
   let body = if it
     .body
@@ -544,9 +564,9 @@ snapshot_kind: text
       } else if elem.has("child") and elem.has("styles") {
         get-flattened-body(elem.child)
           .map(x => (elem.func())(
-              x,
-              elem.styles,
-            ))
+            x,
+            elem.styles,
+          ))
           .flatten()
       } else if elem.has("text") {
         // Separate the whitespaces at the start of text
@@ -608,9 +628,12 @@ snapshot_kind: text
         )(if "reference-by" in extra {
           extra.reference-by
         } else {
-          state("codly-reference-by", __codly-args
+          state(
+            "codly-reference-by",
+            __codly-args
               .reference-by
-              .default).get()
+              .default,
+          ).get()
         })
         let reference-sep = (
           __codly-args
@@ -619,9 +642,12 @@ snapshot_kind: text
         )(if "reference-sep" in extra {
           extra.reference-sep
         } else {
-          state("codly-reference-sep", __codly-args
+          state(
+            "codly-reference-sep",
+            __codly-args
               .reference-sep
-              .default).get()
+              .default,
+          ).get()
         })
 
         let referenced = if reference-by == "line" {
@@ -632,9 +658,12 @@ snapshot_kind: text
           )(if "reference-number-format" in extra {
             extra.reference-number-format
           } else {
-            state("codly-reference-number-format", __codly-args
+            state(
+              "codly-reference-number-format",
+              __codly-args
                 .reference-number-format
-                .default).get()
+                .default,
+            ).get()
           })
 
           reference-number-format(it.number)
@@ -770,9 +799,10 @@ snapshot_kind: text
   )(if "enabled" in extra {
     extra.enabled
   } else {
-    state("codly-enabled", __codly-args
-        .enabled
-        .default).get()
+    state(
+      "codly-enabled",
+      __codly-args.enabled.default,
+    ).get()
   })
 
   if not enabled {
@@ -785,9 +815,10 @@ snapshot_kind: text
   )(if "range" in extra {
     extra.range
   } else {
-    state("codly-range", __codly-args
-        .range
-        .default).get()
+    state(
+      "codly-range",
+      __codly-args.range.default,
+    ).get()
   })
 
   let ranges = (
@@ -795,9 +826,10 @@ snapshot_kind: text
   )(if "ranges" in extra {
     extra.ranges
   } else {
-    state("codly-ranges", __codly-args
-        .ranges
-        .default).get()
+    state(
+      "codly-ranges",
+      __codly-args.ranges.default,
+    ).get()
   })
 
   if ranges == none and range != none {
@@ -843,9 +875,10 @@ snapshot_kind: text
   )(if "display-name" in extra {
     extra.display-name
   } else {
-    state("codly-display-name", __codly-args
-        .display-name
-        .default).get()
+    state(
+      "codly-display-name",
+      __codly-args.display-name.default,
+    ).get()
   })
 
   let display-icons = (
@@ -853,9 +886,10 @@ snapshot_kind: text
   )(if "display-icon" in extra {
     extra.display-icon
   } else {
-    state("codly-display-icon", __codly-args
-        .display-icon
-        .default).get()
+    state(
+      "codly-display-icon",
+      __codly-args.display-icon.default,
+    ).get()
   })
 
   let lang-outset = (
@@ -863,9 +897,10 @@ snapshot_kind: text
   )(if "lang-outset" in extra {
     extra.lang-outset
   } else {
-    state("codly-lang-outset", __codly-args
-        .lang-outset
-        .default).get()
+    state(
+      "codly-lang-outset",
+      __codly-args.lang-outset.default,
+    ).get()
   })
 
   let language-block = {
@@ -876,9 +911,12 @@ snapshot_kind: text
     )(if "lang-format" in extra {
       extra.lang-format
     } else {
-      state("codly-lang-format", __codly-args
+      state(
+        "codly-lang-format",
+        __codly-args
           .lang-format
-          .default).get()
+          .default,
+      ).get()
     })
 
     if fn == none {
@@ -896,9 +934,12 @@ snapshot_kind: text
   )(if "default-color" in extra {
     extra.default-color
   } else {
-    state("codly-default-color", __codly-args
+    state(
+      "codly-default-color",
+      __codly-args
         .default-color
-        .default).get()
+        .default,
+    ).get()
   })
 
   let radius = (
@@ -906,9 +947,10 @@ snapshot_kind: text
   )(if "radius" in extra {
     extra.radius
   } else {
-    state("codly-radius", __codly-args
-        .radius
-        .default).get()
+    state(
+      "codly-radius",
+      __codly-args.radius.default,
+    ).get()
   })
 
   let offset = (
@@ -916,9 +958,10 @@ snapshot_kind: text
   )(if "offset" in extra {
     extra.offset
   } else {
-    state("codly-offset", __codly-args
-        .offset
-        .default).get()
+    state(
+      "codly-offset",
+      __codly-args.offset.default,
+    ).get()
   })
 
   let stroke = (
@@ -926,9 +969,10 @@ snapshot_kind: text
   )(if "stroke" in extra {
     extra.stroke
   } else {
-    state("codly-stroke", __codly-args
-        .stroke
-        .default).get()
+    state(
+      "codly-stroke",
+      __codly-args.stroke.default,
+    ).get()
   })
 
   let zebra-color = (
@@ -936,9 +980,10 @@ snapshot_kind: text
   )(if "zebra-fill" in extra {
     extra.zebra-fill
   } else {
-    state("codly-zebra-fill", __codly-args
-        .zebra-fill
-        .default).get()
+    state(
+      "codly-zebra-fill",
+      __codly-args.zebra-fill.default,
+    ).get()
   })
 
   let numbers-format = (
@@ -948,9 +993,12 @@ snapshot_kind: text
   )(if "number-format" in extra {
     extra.number-format
   } else {
-    state("codly-number-format", __codly-args
+    state(
+      "codly-number-format",
+      __codly-args
         .number-format
-        .default).get()
+        .default,
+    ).get()
   })
 
   let numbers-alignment = (
@@ -958,9 +1006,10 @@ snapshot_kind: text
   )(if "number-align" in extra {
     extra.number-align
   } else {
-    state("codly-number-align", __codly-args
-        .number-align
-        .default).get()
+    state(
+      "codly-number-align",
+      __codly-args.number-align.default,
+    ).get()
   })
 
   let padding = __codly-inset(
@@ -969,9 +1018,10 @@ snapshot_kind: text
     )(if "inset" in extra {
       extrainset
     } else {
-      state("codly-inset", __codly-args
-          .inset
-          .default).get()
+      state(
+        "codly-inset",
+        __codly-args.inset.default,
+      ).get()
     }),
   )
 
@@ -980,9 +1030,10 @@ snapshot_kind: text
   )(if "breakable" in extra {
     extra.breakable
   } else {
-    state("codly-breakable", __codly-args
-        .breakable
-        .default).get()
+    state(
+      "codly-breakable",
+      __codly-args.breakable.default,
+    ).get()
   })
 
   let fill = (
@@ -990,9 +1041,10 @@ snapshot_kind: text
   )(if "fill" in extra {
     extra.fill
   } else {
-    state("codly-fill", __codly-args
-        .fill
-        .default).get()
+    state(
+      "codly-fill",
+      __codly-args.fill.default,
+    ).get()
   })
 
   let skips = {
@@ -1001,9 +1053,10 @@ snapshot_kind: text
     )(if "skips" in extra {
       extra.skips
     } else {
-      state("codly-skips", __codly-args
-          .skips
-          .default).get()
+      state(
+        "codly-skips",
+        __codly-args.skips.default,
+      ).get()
     })
     if skips == none {
       ()
@@ -1019,9 +1072,10 @@ snapshot_kind: text
   )(if "skip-line" in extra {
     extra.skip-line
   } else {
-    state("codly-skip-line", __codly-args
-        .skip-line
-        .default).get()
+    state(
+      "codly-skip-line",
+      __codly-args.skip-line.default,
+    ).get()
   })
 
   let skip-number = (
@@ -1029,9 +1083,10 @@ snapshot_kind: text
   )(if "skip-number" in extra {
     extra.skip-number
   } else {
-    state("codly-skip-number", __codly-args
-        .skip-number
-        .default).get()
+    state(
+      "codly-skip-number",
+      __codly-args.skip-number.default,
+    ).get()
   })
 
   let reference-by = (
@@ -1039,9 +1094,10 @@ snapshot_kind: text
   )(if "reference-by" in extra {
     extra.reference-by
   } else {
-    state("codly-reference-by", __codly-args
-        .reference-by
-        .default).get()
+    state(
+      "codly-reference-by",
+      __codly-args.reference-by.default,
+    ).get()
   })
 
   if not reference-by in (
@@ -1058,9 +1114,12 @@ snapshot_kind: text
   )(if "reference-sep" in extra {
     extra.reference-sep
   } else {
-    state("codly-reference-sep", __codly-args
+    state(
+      "codly-reference-sep",
+      __codly-args
         .reference-sep
-        .default).get()
+        .default,
+    ).get()
   })
 
   let reference-number-format = (
@@ -1070,9 +1129,12 @@ snapshot_kind: text
   )(if "reference-number-format" in extra {
     extra.reference-number-format
   } else {
-    state("codly-reference-number-format", __codly-args
+    state(
+      "codly-reference-number-format",
+      __codly-args
         .reference-number-format
-        .default).get()
+        .default,
+    ).get()
   })
 
   let annotation-format = {
@@ -1083,9 +1145,12 @@ snapshot_kind: text
     )(if "annotation-format" in extra {
       extra.annotation-format
     } else {
-      state("codly-annotation-format", __codly-args
+      state(
+        "codly-annotation-format",
+        __codly-args
           .annotation-format
-          .default).get()
+          .default,
+      ).get()
     })
     if fn == none {
       _ => none
@@ -1102,9 +1167,12 @@ snapshot_kind: text
     )(if "annotations" in extra {
       extra.annotations
     } else {
-      state("codly-annotations", __codly-args
+      state(
+        "codly-annotations",
+        __codly-args
           .annotations
-          .default).get()
+          .default,
+      ).get()
     })
     annotations = if annotations == none {
       ()
@@ -1161,9 +1229,9 @@ snapshot_kind: text
   )
   let lr-width = if annotations.len() > 0 {
     measure(math.lr(
-        "}",
-        size: 5em,
-      ) + num).width
+      "}",
+      size: 5em,
+    ) + num).width
   } else {
     0pt
   }
@@ -1180,7 +1248,7 @@ snapshot_kind: text
       1,
       "Hello, World!",
       [Hello, World!],
-    )
+    ),
   ).height + padding.top + padding.bottom
 
   let items = ()
@@ -1195,9 +1263,10 @@ snapshot_kind: text
   )(if "header" in extra {
     extra.header
   } else {
-    state("codly-header", __codly-args
-        .header
-        .default).get()
+    state(
+      "codly-header",
+      __codly-args.header.default,
+    ).get()
   })
   let header-repeat = (
     __codly-args
@@ -1206,9 +1275,12 @@ snapshot_kind: text
   )(if "header-repeat" in extra {
     extra.header-repeat
   } else {
-    state("codly-header-repeat", __codly-args
+    state(
+      "codly-header-repeat",
+      __codly-args
         .header-repeat
-        .default).get()
+        .default,
+    ).get()
   })
 
   // The language block (icon + name)
@@ -1217,9 +1289,10 @@ snapshot_kind: text
   )(if "languages" in extra {
     extra.languages
   } else {
-    state("codly-languages", __codly-args
-        .languages
-        .default).get()
+    state(
+      "codly-languages",
+      __codly-args.languages.default,
+    ).get()
   })
   let language-block = if it.lang == none {
     none
@@ -1251,9 +1324,12 @@ snapshot_kind: text
       )(if "lang-radius" in extra {
         extra.lang-radius
       } else {
-        state("codly-lang-radius", __codly-args
+        state(
+          "codly-lang-radius",
+          __codly-args
             .lang-radius
-            .default).get()
+            .default,
+        ).get()
       })
       let padding = __codly-inset(
         (
@@ -1263,9 +1339,12 @@ snapshot_kind: text
         )(if "lang-inset" in extra {
           extra.lang-inset
         } else {
-          state("codly-lang-inset", __codly-args
+          state(
+            "codly-lang-inset",
+            __codly-args
               .lang-inset
-              .default).get()
+              .default,
+          ).get()
         }),
       )
 
@@ -1276,9 +1355,12 @@ snapshot_kind: text
       )(if "lang-stroke" in extra {
         extra.lang-stroke
       } else {
-        state("codly-lang-stroke", __codly-args
+        state(
+          "codly-lang-stroke",
+          __codly-args
             .lang-stroke
-            .default).get()
+            .default,
+        ).get()
       })
       let lang-fill = (
         __codly-args
@@ -1287,9 +1369,12 @@ snapshot_kind: text
       )(if "lang-fill" in extra {
         extra.lang-fill
       } else {
-        state("codly-lang-fill", __codly-args
+        state(
+          "codly-lang-fill",
+          __codly-args
             .lang-fill
-            .default).get()
+            .default,
+        ).get()
       })
 
       let fill = if type(lang-fill) == function {
@@ -1340,9 +1425,12 @@ snapshot_kind: text
       )(if "lang-radius" in extra {
         extra.lang-radius
       } else {
-        state("codly-lang-radius", __codly-args
+        state(
+          "codly-lang-radius",
+          __codly-args
             .lang-radius
-            .default).get()
+            .default,
+        ).get()
       })
 
       let padding = __codly-inset(
@@ -1353,9 +1441,12 @@ snapshot_kind: text
         )(if "lang-inset" in extra {
           extra.lang-inset
         } else {
-          state("codly-lang-inset", __codly-args
+          state(
+            "codly-lang-inset",
+            __codly-args
               .lang-inset
-              .default).get()
+              .default,
+          ).get()
         }),
       )
 
@@ -1366,9 +1457,12 @@ snapshot_kind: text
       )(if "lang-stroke" in extra {
         extra.lang-stroke
       } else {
-        state("codly-lang-stroke", __codly-args
+        state(
+          "codly-lang-stroke",
+          __codly-args
             .lang-stroke
-            .default).get()
+            .default,
+        ).get()
       })
 
       let lang-fill = (
@@ -1378,9 +1472,12 @@ snapshot_kind: text
       )(if "lang-fill" in extra {
         extra.lang-fill
       } else {
-        state("codly-lang-fill", __codly-args
+        state(
+          "codly-lang-fill",
+          __codly-args
             .lang-fill
-            .default).get()
+            .default,
+        ).get()
       })
 
       let fill = if type(lang-fill) == function {
@@ -1441,9 +1538,12 @@ snapshot_kind: text
     )(if "header-cell-args" in extra {
       extra.header-cell-args
     } else {
-      state("codly-header-cell-args", __codly-args
+      state(
+        "codly-header-cell-args",
+        __codly-args
           .header-cell-args
-          .default).get()
+          .default,
+      ).get()
     })
     let transform = (
       __codly-args
@@ -1452,9 +1552,12 @@ snapshot_kind: text
     )(if "header-transform" in extra {
       extra.header-transform
     } else {
-      state("codly-header-transform", __codly-args
+      state(
+        "codly-header-transform",
+        __codly-args
           .header-transform
-          .default).get()
+          .default,
+      ).get()
     })
     (
       grid.header(
@@ -1621,9 +1724,10 @@ snapshot_kind: text
   )(if "footer" in extra {
     extra.footer
   } else {
-    state("codly-footer", __codly-args
-        .footer
-        .default).get()
+    state(
+      "codly-footer",
+      __codly-args.footer.default,
+    ).get()
   })
   let footer-repeat = (
     __codly-args
@@ -1632,9 +1736,12 @@ snapshot_kind: text
   )(if "footer-repeat" in extra {
     extra.footer-repeat
   } else {
-    state("codly-footer-repeat", __codly-args
+    state(
+      "codly-footer-repeat",
+      __codly-args
         .footer-repeat
-        .default).get()
+        .default,
+    ).get()
   })
   let footer = if footer != none {
     let footer-args = (
@@ -1644,9 +1751,12 @@ snapshot_kind: text
     )(if "footer-cell-args" in extra {
       extra.footer-cell-args
     } else {
-      state("codly-footer-cell-args", __codly-args
+      state(
+        "codly-footer-cell-args",
+        __codly-args
           .footer-cell-args
-          .default).get()
+          .default,
+      ).get()
     })
     let transform = (
       __codly-args
@@ -1655,9 +1765,12 @@ snapshot_kind: text
     )(if "footer-transform" in extra {
       extra.footer-transform
     } else {
-      state("codly-footer-transform", __codly-args
+      state(
+        "codly-footer-transform",
+        __codly-args
           .footer-transform
-          .default).get()
+          .default,
+      ).get()
     })
     (
       grid.footer(
@@ -1702,9 +1815,9 @@ snapshot_kind: text
             inset: padding
               .pairs()
               .map(((k, x)) => (
-                  k,
-                  x * 1.5,
-                ))
+                k,
+                x * 1.5,
+              ))
               .to-dict(),
             fill: (
               x,
@@ -1735,9 +1848,9 @@ snapshot_kind: text
           inset: padding
             .pairs()
             .map(((k, x)) => (
-                k,
-                x * 1.5,
-              ))
+              k,
+              x * 1.5,
+            ))
             .to-dict(),
           stroke: none,
           align: (
@@ -1773,9 +1886,9 @@ snapshot_kind: text
           inset: padding
             .pairs()
             .map(((k, x)) => (
-                k,
-                x * 1.5,
-              ))
+              k,
+              x * 1.5,
+            ))
             .to-dict(),
           stroke: none,
           align: (
@@ -1857,9 +1970,12 @@ snapshot_kind: text
     )(if "reference-sep" in extra {
       extra.reference-sep
     } else {
-      state("codly-reference-sep", __codly-args
+      state(
+        "codly-reference-sep",
+        __codly-args
           .reference-sep
-          .default).get()
+          .default,
+      ).get()
     })
     let (
       tag,
@@ -1885,9 +2001,12 @@ snapshot_kind: text
     )(if "reference-sep" in extra {
       extra.reference-sep
     } else {
-      state("codly-reference-sep", __codly-args
+      state(
+        "codly-reference-sep",
+        __codly-args
           .reference-sep
-          .default).get()
+          .default,
+      ).get()
     })
     let (
       num,
@@ -1920,9 +2039,12 @@ snapshot_kind: text
     )(if "reference-sep" in extra {
       extra.reference-sep
     } else {
-      state("codly-reference-sep", __codly-args
+      state(
+        "codly-reference-sep",
+        __codly-args
           .reference-sep
-          .default).get()
+          .default,
+      ).get()
     })
 
     let reference-number-format = (
@@ -1932,9 +2054,12 @@ snapshot_kind: text
     )(if "reference-number-format" in extra {
       extra.reference-number-format
     } else {
-      state("codly-reference-number-format", __codly-args
+      state(
+        "codly-reference-number-format",
+        __codly-args
           .reference-number-format
-          .default).get()
+          .default,
+      ).get()
     })
 
     link(
@@ -2011,8 +2136,14 @@ snapshot_kind: text
   if nested {
     let extra = args.named()
     context {
-      let current = state("codly-extra-args", (:)).get()
-      state("codly-extra-args", (:)).update(old => {
+      let current = state(
+        "codly-extra-args",
+        (:),
+      ).get()
+      state(
+        "codly-extra-args",
+        (:),
+      ).update(old => {
         old + extra
       })
 

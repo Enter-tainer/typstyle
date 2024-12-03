@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/cetz-manual.typ
+snapshot_kind: text
 ---
 #import "doc/util.typ": *
 #import "doc/example.typ": (
@@ -302,9 +303,12 @@ Marks are arrow tips that can be added to the end of path based elements that su
         (
           raw(name),
           name-to-mnemonic
-            .at(name, default: (
+            .at(
+              name,
+              default: (
                 [],
-              ))
+              ),
+            )
             .join([, ]),
           cetz.canvas(
             cetz

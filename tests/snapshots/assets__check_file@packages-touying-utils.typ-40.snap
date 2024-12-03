@@ -661,8 +661,8 @@ snapshot_kind: text
           .text
           .split("\n")
           .map(l => (
-              "\n" + indent * " " + l
-            ))
+            "\n" + indent * " " + l
+          ))
           .sum(default: "") + "\n" + indent * " " + "```"
       } else {
         "`" + it.text + "`"
@@ -1522,7 +1522,10 @@ snapshot_kind: text
     let raw-text = if type(note) == content and note.has("text") {
       note.text
     } else {
-      markup-text(note, mode: mode).trim()
+      markup-text(
+        note,
+        mode: mode,
+      ).trim()
     }
     pdfpc.speaker-note(raw-text)
   }

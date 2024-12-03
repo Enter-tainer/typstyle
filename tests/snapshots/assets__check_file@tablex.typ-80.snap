@@ -492,7 +492,10 @@ snapshot_kind: text
     let em = len.em
     // Measure with abs (and later multiply by the sign) so negative em works.
     // Otherwise it would return 0pt, and we would need to measure again with abs.
-    let measured-em = calc-sign(em) * measure(box(width: calc.abs(em) * 1em), styles).width
+    let measured-em = calc-sign(em) * measure(
+      box(width: calc.abs(em) * 1em),
+      styles,
+    ).width
 
     return pt + measured-em
   }
@@ -1475,7 +1478,10 @@ snapshot_kind: text
               align_default: auto,
             )
 
-            let width = measure(cell-box, styles).width // + 2*cell_inset // the box already considers inset
+            let width = measure(
+              cell-box,
+              styles,
+            ).width // + 2*cell_inset // the box already considers inset
 
             // here, we are excluding from the width of this cell
             // at this column all width that was already covered by
@@ -1736,7 +1742,10 @@ snapshot_kind: text
             // measure the cell's actual height,
             // with its calculated width
             // and with other constraints
-            let height = measure(cell-box, styles).height // + 2*cell_inset (box already considers inset)
+            let height = measure(
+              cell-box,
+              styles,
+            ).height // + 2*cell_inset (box already considers inset)
 
             // here, we are excluding from the height of this cell
             // at this row all height that was already covered by
@@ -2018,66 +2027,66 @@ snapshot_kind: text
 
   let hlines = hlines
     .filter(h => {
-        let y = h.y
+      let y = h.y
 
-        let in_top_or_bottom = y in (cell.y, cell.y + cell.rowspan)
+      let in_top_or_bottom = y in (cell.y, cell.y + cell.rowspan)
 
-        let hline_hasnt_already_ended = (
-          h.end in (auto, none) // always goes towards the right
-          or h.end >= cell.x + cell.colspan // ends at or after this cell
-        )
+      let hline_hasnt_already_ended = (
+        h.end in (auto, none) // always goes towards the right
+        or h.end >= cell.x + cell.colspan // ends at or after this cell
+      )
 
-        (in_top_or_bottom and hline_hasnt_already_ended)
-      })
+      (in_top_or_bottom and hline_hasnt_already_ended)
+    })
     .map(h => {
-        // get the intersection between the hline and the cell's x-span.
-        let span = get-included-span(
-          h.start,
-          h.end,
-          start: cell.x,
-          end: cell.x + cell.colspan,
-          limit: x_limit,
-        )
+      // get the intersection between the hline and the cell's x-span.
+      let span = get-included-span(
+        h.start,
+        h.end,
+        start: cell.x,
+        end: cell.x + cell.colspan,
+        limit: x_limit,
+      )
 
-        if span == none {
-          // no intersection!
-          none
-        } else {
-          v-or-hline-with-span(h, start: span.at(0), end: span.at(1))
-        }
-      })
+      if span == none {
+        // no intersection!
+        none
+      } else {
+        v-or-hline-with-span(h, start: span.at(0), end: span.at(1))
+      }
+    })
     .filter(x => x != none)
 
   let vlines = vlines
     .filter(v => {
-        let x = v.x
+      let x = v.x
 
-        let at_left_or_right = x in (cell.x, cell.x + cell.colspan)
+      let at_left_or_right = x in (cell.x, cell.x + cell.colspan)
 
-        let vline_hasnt_already_ended = (
-          v.end in (auto, none) // always goes towards the bottom
-          or v.end >= cell.y + cell.rowspan // ends at or after this cell
-        )
+      let vline_hasnt_already_ended = (
+        v.end in (auto, none) // always goes towards the bottom
+        or v.end >= cell.y + cell.rowspan // ends at or after this cell
+      )
 
-        (at_left_or_right and vline_hasnt_already_ended)
-      })
+      (at_left_or_right and vline_hasnt_already_ended)
+    })
     .map(v => {
-        // get the intersection between the hline and the cell's x-span.
-        let span = get-included-span(
-          v.start,
-          v.end,
-          start: cell.y,
-          end: cell.y + cell.rowspan,
-          limit: y_limit,
-        )
+      // get the intersection between the hline and the cell's x-span.
+      let span = get-included-span(
+        v.start,
+        v.end,
+        start: cell.y,
+        end: cell.y + cell.rowspan,
+        limit: y_limit,
+      )
 
-        if span == none {
-          // no intersection!
-          none
-        } else {
-          v-or-hline-with-span(v, start: span.at(0), end: span.at(1))
-        }
-      })
+      if span == none {
+        // no intersection!
+        none
+      } else {
+        v-or-hline-with-span(v, start: span.at(0), end: span.at(1))
+      }
+    })
     .filter(x => x != none)
 
   (

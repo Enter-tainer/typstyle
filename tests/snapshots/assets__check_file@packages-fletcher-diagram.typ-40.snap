@@ -214,9 +214,11 @@ snapshot_kind: text
     .zip(grid.cell-sizes, grid.spacing)
     .map(((sizes, spacing)) => {
     array
-      .zip(cumsum(sizes), sizes, range(
-          sizes.len(),
-        ))
+      .zip(
+        cumsum(sizes),
+        sizes,
+        range(sizes.len()),
+      )
       .map(((end, size, i)) => (
       end - size / 2 + spacing * i
     ))
@@ -328,10 +330,10 @@ snapshot_kind: text
   for (y, row) in matrix.enumerate() {
     for (x, item) in row.enumerate() {
       if not is-space(item) {
-        nodes.push(node((
-            x,
-            y,
-          ), $item$).value)
+        nodes.push(node(
+          (x, y),
+          $item$,
+        ).value)
       }
     }
   }
@@ -611,7 +613,9 @@ snapshot_kind: text
   box(context {
     let options = options
 
-    options.em-size = measure(h(1em)).width
+    options.em-size = measure(
+      h(1em),
+    ).width
     let to-pt(len) = to-abs-length(
       len,
       options.em-size,
@@ -657,8 +661,8 @@ snapshot_kind: text
     // nodes and edges whose uv coordinates can be resolved without knowing the grid
     let rects-affecting-grid = nodes
       .filter(node => (
-          not is-nan-vector(node.pos.uv)
-        ))
+        not is-nan-vector(node.pos.uv)
+      ))
       .map(node => (
       center: node.pos.uv,
       size: node.size,
@@ -666,14 +670,14 @@ snapshot_kind: text
 
     let vertices-affecting-grid = edges
       .map(edge => {
-          resolve-edge-vertices(
-            edge,
-            ctx: ctx-with-uv-anchors + (
-              target-system: "uv",
-            ),
-            nodes,
-          )
-        })
+        resolve-edge-vertices(
+          edge,
+          ctx: ctx-with-uv-anchors + (
+            target-system: "uv",
+          ),
+          nodes,
+        )
+      })
       .join() + () // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
       not is-nan-vector(vert)

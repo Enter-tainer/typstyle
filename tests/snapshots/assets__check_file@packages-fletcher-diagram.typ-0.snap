@@ -283,7 +283,10 @@ snapshot_kind: text
 ) = {
   // (x: (c1x, c2x, ...), y: ...)
   let centers = array
-    .zip(grid.cell-sizes, grid.spacing)
+    .zip(
+      grid.cell-sizes,
+      grid.spacing,
+    )
     .map((
     (
       sizes,
@@ -291,9 +294,13 @@ snapshot_kind: text
     ),
   ) => {
     array
-      .zip(cumsum(sizes), sizes, range(
+      .zip(
+        cumsum(sizes),
+        sizes,
+        range(
           sizes.len(),
-        ))
+        ),
+      )
       .map((
       (
         end,
@@ -306,7 +313,10 @@ snapshot_kind: text
   })
 
   let bounding-size = array
-    .zip(centers, grid.cell-sizes)
+    .zip(
+      centers,
+      grid.cell-sizes,
+    )
     .map((
     (
       centers,
@@ -468,10 +478,13 @@ snapshot_kind: text
       item,
     ) in row.enumerate() {
       if not is-space(item) {
-        nodes.push(node((
+        nodes.push(node(
+          (
             x,
             y,
-          ), $item$).value)
+          ),
+          $item$,
+        ).value)
       }
     }
   }
@@ -764,7 +777,9 @@ snapshot_kind: text
   box(context {
     let options = options
 
-    options.em-size = measure(h(1em)).width
+    options.em-size = measure(
+      h(1em),
+    ).width
     let to-pt(
       len,
     ) = to-abs-length(
@@ -812,10 +827,10 @@ snapshot_kind: text
     // nodes and edges whose uv coordinates can be resolved without knowing the grid
     let rects-affecting-grid = nodes
       .filter(node => (
-          not is-nan-vector(node
-            .pos
-            .uv)
-        ))
+        not is-nan-vector(node
+          .pos
+          .uv)
+      ))
       .map(node => (
       center: node
         .pos
@@ -825,14 +840,14 @@ snapshot_kind: text
 
     let vertices-affecting-grid = edges
       .map(edge => {
-          resolve-edge-vertices(
-            edge,
-            ctx: ctx-with-uv-anchors + (
-              target-system: "uv",
-            ),
-            nodes,
-          )
-        })
+        resolve-edge-vertices(
+          edge,
+          ctx: ctx-with-uv-anchors + (
+            target-system: "uv",
+          ),
+          nodes,
+        )
+      })
       .join() + () // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
       not is-nan-vector(vert)

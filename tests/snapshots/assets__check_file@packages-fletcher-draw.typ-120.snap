@@ -468,9 +468,9 @@ snapshot_kind: text
     marks += edge
       .marks
       .map(mark => {
-          mark.pos = lerp-scale(mark.pos, i)
-          mark
-        })
+        mark.pos = lerp-scale(mark.pos, i)
+        mark
+      })
       .filter(mark => mark.pos != none)
 
     let label-pos = lerp-scale(edge.label-pos, i)
@@ -522,10 +522,10 @@ snapshot_kind: text
     let anchor-points = anchor-names
       .map(calculate-anchors)
       .map(point => {
-          // funky disagreement between coordinate systems??
-          point.at(1) *= -1
-          vector-2d(vector.scale(point, 1cm))
-        })
+        // funky disagreement between coordinate systems??
+        point.at(1) *= -1
+        vector-2d(vector.scale(point, 1cm))
+      })
       .sorted(key: point => vector-len(vector.sub(point, target)))
 
     let anchor = anchor-points.at(-1, default: target)
@@ -884,13 +884,13 @@ snapshot_kind: text
   seq
     .children
     .map(child => {
-        if child.func() == metadata {
-          let value = child.value
-          value.post = cetz.draw.hide.with(bounds: bounds)
-          metadata(value)
-        } else {
-          child
-        }
-      })
+      if child.func() == metadata {
+        let value = child.value
+        value.post = cetz.draw.hide.with(bounds: bounds)
+        metadata(value)
+      } else {
+        child
+      }
+    })
     .join()
 }

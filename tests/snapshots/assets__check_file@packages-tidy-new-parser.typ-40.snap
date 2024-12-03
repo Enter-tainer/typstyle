@@ -39,7 +39,10 @@ snapshot_kind: text
     is-named,
   ) = {
     if is-named {
-      return split-once(arg, ":").map(str.trim)
+      return split-once(
+        arg,
+        ":",
+      ).map(str.trim)
     } else {
       return (arg.trim(),)
     }
@@ -64,7 +67,10 @@ snapshot_kind: text
           let (
             name,
             value,
-          ) = split-once(arg, ":").map(str.trim)
+          ) = split-once(
+            arg,
+            ":",
+          ).map(str.trim)
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -84,7 +90,10 @@ snapshot_kind: text
           let (
             name,
             value,
-          ) = split-once(arg, ":").map(str.trim)
+          ) = split-once(
+            arg,
+            ":",
+          ).map(str.trim)
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -158,7 +167,9 @@ snapshot_kind: text
 ) = {
   let description = lines
     .enumerate(start: first-line-number)
-    .map(eval-doc-comment-test.with(label-prefix: label-prefix))
+    .map(
+      eval-doc-comment-test.with(label-prefix: label-prefix),
+    )
     .join("\n")
 
   if description == none {
