@@ -3,7 +3,7 @@ use typst_syntax::ast::*;
 
 use crate::PrettyPrinter;
 
-use super::{util::has_comment_children, ArenaDoc};
+use super::{mode::Mode, util::has_comment_children, ArenaDoc};
 
 impl<'a> PrettyPrinter<'a> {
     /// We do not care whether it is `Pattern` or `Expr`.
@@ -12,6 +12,8 @@ impl<'a> PrettyPrinter<'a> {
         &'a self,
         parenthesized: Parenthesized<'a>,
     ) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         let pattern = parenthesized.pattern();
         if let Pattern::Parenthesized(paren) = pattern {
             if !has_comment_children(parenthesized.to_untyped()) {
@@ -29,28 +31,36 @@ impl<'a> PrettyPrinter<'a> {
     /// the expression will be converted without parentheses.
     /// Otherwise, the expression will be converted with parentheses if it is layouted on multiple lines.
     pub(super) fn convert_expr_with_optional_paren(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
-        if matches!(
-            expr,
-            Expr::Parenthesized(_)
-                | Expr::Code(_)
-                | Expr::Content(_)
-                | Expr::FuncCall(_)
-                | Expr::Array(_)
-                | Expr::Dict(_)
-                | Expr::Conditional(_)
-                | Expr::For(_)
-                | Expr::Contextual(_)
-        ) {
+        if !is_paren_needed(expr) {
             return self.convert_expr(expr);
         }
-        let body_expr = self.convert_expr(expr);
-        optional_paren(&self.arena, body_expr)
+        // SAFETY:
+        // - If without paren, the entire expression is in one line, thus safe.
+        // - If with paren, surely safe.
+        let _g = self.with_mode(Mode::CodeCont);
+        optional_paren(&self.arena, self.convert_expr(expr))
     }
 }
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
 pub(super) fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>) -> ArenaDoc<'a> {
-    let left_paren_or_nil = (arena.text("(") + arena.line()).flat_alt(arena.nil());
-    let right_paren_or_nil = (arena.line() + arena.text(")")).flat_alt(arena.nil());
-    ((left_paren_or_nil + body).nest(2) + right_paren_or_nil).group()
+    let open = (arena.text("(") + arena.line()).flat_alt(arena.nil());
+    let close = (arena.line() + arena.text(")")).flat_alt(arena.nil());
+    ((open + body).nest(2) + close).group()
+}
+
+/// Checks if parentheses are needed for an expression that may span multiple lines.
+pub fn is_paren_needed(expr: Expr<'_>) -> bool {
+    !matches!(
+        expr,
+        Expr::Parenthesized(_)
+            | Expr::Code(_)
+            | Expr::Content(_)
+            | Expr::FuncCall(_)
+            | Expr::Array(_)
+            | Expr::Dict(_)
+            | Expr::Conditional(_)
+            | Expr::For(_)
+            | Expr::Contextual(_)
+    )
 }

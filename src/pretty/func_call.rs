@@ -2,6 +2,7 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
 use super::list::{ListStyle, ListStylist};
+use super::mode::Mode;
 use super::plain::PlainStylist;
 use super::util::is_only_one_and;
 use super::PrettyPrinter;
@@ -27,6 +28,8 @@ impl<'a> PrettyPrinter<'a> {
         if self.current_mode().is_math() {
             return self.format_disabled(args.to_untyped());
         }
+        let _g = self.with_mode(Mode::CodeCont);
+
         let mut doc = self.arena.nil();
         let has_parenthesized_args = has_parenthesized_args(args);
         if table::is_table(func_call) {
