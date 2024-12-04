@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.12.7 - [2024-12-04]
+
+- Dot chain related improvement:
+  - Previously if the last item of a dot chain is a function call, typstyle doesn't indent it correctly. Now it is fixed.
+  - Previously typstyle formats function calls in dot chains in a very conversative way. Now it is the same as normal function calls.
+- Function calls with comments are made formattable.
+
+For example, the following code is not formattable by typstyle previously:
+```typst
+#{
+  let x = f(
+  cetz.draw.super-long-name.line(
+    start: (0, 0),
+    end: (1, 1),      // note
+  ) // my comment
+)
+}
+```
+
+Now it will be formatted as:
+```typst
+#{
+  let x = f(
+    cetz
+      .draw
+      .super-long-name
+      .line(
+        start: (0, 0),
+        end: (1, 1), // note
+      ), // my comment
+  )
+}
+```
+
 ## v0.12.6 - [2024-12-02]
 
 - Parenthesized expressions with comments can be formatted by typstyle now.
