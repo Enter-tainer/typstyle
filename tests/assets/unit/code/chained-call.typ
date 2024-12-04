@@ -1,3 +1,7 @@
+#{    a
+  .b(1)(2)
+ .c   .d(3)}
+
 #{
   a.bbbbbbbbbbbbb().c().ddddddddddddddddddddddd
 }
