@@ -483,9 +483,13 @@ snapshot_kind: text
 
       if collection != none {
         collection.push(child)
-      } else if collection == none and (
-        i >= hl.start or i + len >= hl.start
-      ) and (i < hl.end) {
+      } else if (
+        collection == none
+          and (
+            i >= hl.start or i + len >= hl.start
+          )
+          and (i < hl.end)
+      ) {
         collection = (child,)
       } else {
         children.push(child)
@@ -544,10 +548,13 @@ snapshot_kind: text
           let col = collection.join()
           let height-col = measure(col).height
           let height-tag = measure(tag).height
-          let max-height = calc.max(
-            height-col,
-            height-tag,
-          ) + 2 * highlight-inset
+          let max-height = (
+            calc.max(
+              height-col,
+              height-tag,
+            )
+              + 2 * highlight-inset
+          )
           let hl-box = box(
             radius: (
               top-right: 0pt,
@@ -925,15 +932,24 @@ snapshot_kind: text
     0pt
   }
 
-  let annot-width = annot-bodies-width.fold(
-    0pt,
-    (a, b) => calc.max(a, b),
-  ) + padding.left + padding.right + lr-width
+  let annot-width = (
+    annot-bodies-width.fold(
+      0pt,
+      (a, b) => calc.max(a, b),
+    )
+      + padding.left
+      + padding.right
+      + lr-width
+  )
 
   // Get the height of an individual line.
-  let line-height = measure(
-    raw.line(1, 1, "Hello, World!", [Hello, World!]),
-  ).height + padding.top + padding.bottom
+  let line-height = (
+    measure(
+      raw.line(1, 1, "Hello, World!", [Hello, World!]),
+    ).height
+      + padding.top
+      + padding.bottom
+  )
 
   let items = ()
   let height = measure[1].height
@@ -1232,8 +1248,11 @@ snapshot_kind: text
         )<codly-highlighted>]
     }
 
-    if line.number != start or (
-      display-names != true and display-icons != true
+    if (
+      line.number != start
+        or (
+          display-names != true and display-icons != true
+        )
     ) {
       items = (..items, l, ..annot())
       continue
@@ -1302,9 +1321,10 @@ snapshot_kind: text
 
   // If the fill or zebra color is a gradient, we will draw it on a separate layer.
   let is-complex-fill = (
-    (type(fill) != color and fill != none) or (
-      type(zebra-color) != color and zebra-color != none
-    )
+    (type(fill) != color and fill != none)
+      or (
+        type(zebra-color) != color and zebra-color != none
+      )
   )
 
   block(
@@ -1586,7 +1606,8 @@ snapshot_kind: text
       baseline: 0.1em,
       inset: 0pt,
       outset: 0pt,
-    ) + h(0.2em),
+    )
+      + h(0.2em),
     color: rgb("#239DAD"),
   ),
   typc: (
@@ -1596,7 +1617,8 @@ snapshot_kind: text
       baseline: 0.1em,
       inset: 0pt,
       outset: 0pt,
-    ) + h(0.2em),
+    )
+      + h(0.2em),
     color: rgb("#239DAD"),
   ),
 )

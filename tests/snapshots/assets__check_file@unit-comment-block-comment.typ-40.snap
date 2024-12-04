@@ -17,7 +17,9 @@ Our study design is as follows:
   ) => {
     let (a, b) = (
       source-name + "." + direction,
-      target-name + "." + opposite-dir.at(direction),
+      target-name
+        + "."
+        + opposite-dir.at(direction),
     )
     /* see this */
     draw.line(a, b)

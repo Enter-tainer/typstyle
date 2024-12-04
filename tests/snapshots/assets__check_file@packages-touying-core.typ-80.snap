@@ -102,9 +102,13 @@ snapshot_kind: text
     self.new-section-slide-fn
   } else if last-heading-depth == 2 and self.new-subsection-slide-fn != none {
     self.new-subsection-slide-fn
-  } else if last-heading-depth == 3 and self.new-subsubsection-slide-fn != none {
+  } else if (
+    last-heading-depth == 3 and self.new-subsubsection-slide-fn != none
+  ) {
     self.new-subsubsection-slide-fn
-  } else if last-heading-depth == 4 and self.new-subsubsubsection-slide-fn != none {
+  } else if (
+    last-heading-depth == 4 and self.new-subsubsubsection-slide-fn != none
+  ) {
     self.new-subsubsubsection-slide-fn
   } else {
     if default == auto {
@@ -223,10 +227,10 @@ snapshot_kind: text
   for child in children {
     // Handle horizontal-line
     // split content when we have a horizontal line
-    if horizontal-line-to-pagebreak and horizontal-line and child not in (
-      [—],
-      [–],
-      [-],
+    if (
+      horizontal-line-to-pagebreak
+        and horizontal-line
+        and child not in ([—], [–], [-])
     ) {
       current-slide = utils.trim(current-slide)
       (
@@ -248,10 +252,13 @@ snapshot_kind: text
     // Main logic
     if utils.is-kind(child, "touying-slide-wrapper") {
       current-slide = utils.trim(current-slide)
-      if current-slide != () or _get-slide-fn(
-        self + (headings: current-headings),
-        default: none,
-      ) != none {
+      if (
+        current-slide != ()
+          or _get-slide-fn(
+            self + (headings: current-headings),
+            default: none,
+          ) != none
+      ) {
         (
           cont,
           recaller-map,
@@ -330,22 +337,29 @@ snapshot_kind: text
     } else if horizontal-line-to-pagebreak and child == [—] {
       horizontal-line = true
       continue
-    } else if horizontal-line-to-pagebreak and horizontal-line and child in (
-      [–],
-      [-],
+    } else if (
+      horizontal-line-to-pagebreak and horizontal-line and child in ([–], [-])
     ) {
       continue
     } else if utils.is-heading(child, depth: slide-level) {
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
-      if _get-slide-fn(
-        self + (headings: current-headings),
-        default: none,
-      ) != none or child.depth <= last-heading-depth or current-slide != () or (
-        child.depth == 1 and new-section-slide-fn != none
-      ) or (child.depth == 2 and new-subsection-slide-fn != none) or (
-        child.depth == 3 and new-subsubsection-slide-fn != none
-      ) or (child.depth == 4 and new-subsubsubsection-slide-fn != none) {
+      if (
+        _get-slide-fn(
+          self + (headings: current-headings),
+          default: none,
+        ) != none
+          or child.depth <= last-heading-depth
+          or current-slide != ()
+          or (
+            child.depth == 1 and new-section-slide-fn != none
+          )
+          or (child.depth == 2 and new-subsection-slide-fn != none)
+          or (
+            child.depth == 3 and new-subsubsection-slide-fn != none
+          )
+          or (child.depth == 4 and new-subsubsubsection-slide-fn != none)
+      ) {
         current-slide = utils.trim(current-slide)
         if current-slide != () or current-headings != () {
           (
@@ -368,11 +382,15 @@ snapshot_kind: text
       current-headings.push(child)
       new-start = true
 
-      if not child.has("label") or str(child.label) not in (
-        "touying:hidden",
-        "touying:skip",
+      if (
+        not child.has("label")
+          or str(child.label) not in ("touying:hidden", "touying:skip")
       ) {
-        if child.depth == 1 and new-section-slide-fn != none and not self.receive-body-for-new-section-slide-fn {
+        if (
+          child.depth == 1
+            and new-section-slide-fn != none
+            and not self.receive-body-for-new-section-slide-fn
+        ) {
           (
             cont,
             recaller-map,
@@ -387,7 +405,11 @@ snapshot_kind: text
             recaller-map,
           )
           result.push(cont)
-        } else if child.depth == 2 and new-subsection-slide-fn != none and not self.receive-body-for-new-subsection-slide-fn {
+        } else if (
+          child.depth == 2
+            and new-subsection-slide-fn != none
+            and not self.receive-body-for-new-subsection-slide-fn
+        ) {
           (
             cont,
             recaller-map,
@@ -402,7 +424,11 @@ snapshot_kind: text
             recaller-map,
           )
           result.push(cont)
-        } else if child.depth == 3 and new-subsubsection-slide-fn != none and not self.receive-body-for-new-subsubsection-slide-fn {
+        } else if (
+          child.depth == 3
+            and new-subsubsection-slide-fn != none
+            and not self.receive-body-for-new-subsubsection-slide-fn
+        ) {
           (
             cont,
             recaller-map,
@@ -417,7 +443,11 @@ snapshot_kind: text
             recaller-map,
           )
           result.push(cont)
-        } else if child.depth == 4 and new-subsubsubsection-slide-fn != none and not self.receive-body-for-new-subsubsubsection-slide-fn {
+        } else if (
+          child.depth == 4
+            and new-subsubsubsection-slide-fn != none
+            and not self.receive-body-for-new-subsubsubsection-slide-fn
+        ) {
           (
             cont,
             recaller-map,
@@ -434,10 +464,10 @@ snapshot_kind: text
           result.push(cont)
         }
       }
-    } else if self.at(
-      "auto-offset-for-heading",
-      default: true,
-    ) and utils.is-heading(child) {
+    } else if (
+      self.at("auto-offset-for-heading", default: true)
+        and utils.is-heading(child)
+    ) {
       let fields = child.fields()
       let lbl = fields.remove("label", default: none)
       let _ = fields.remove("body", default: none)
@@ -1058,17 +1088,20 @@ snapshot_kind: text
     supplement: eqt.supplement,
     eval(
       "$" + result.sum(default: "") + "$",
-      scope: eqt.scope + (
-        cover: (..args) => {
-          let cover = eqt.scope.at("cover", default: cover)
-          if args.pos().len() != 0 {
-            cover(args.pos().first())
-          }
-        },
-      ),
+      scope: eqt.scope
+        + (
+          cover: (..args) => {
+            let cover = eqt.scope.at("cover", default: cover)
+            if args.pos().len() != 0 {
+              cover(args.pos().first())
+            }
+          },
+        ),
     ),
   )
-  if eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark> {
+  if (
+    eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark>
+  ) {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
   result-arr.push(equation)
@@ -1146,7 +1179,9 @@ snapshot_kind: text
     supplement: eqt.supplement,
     result.sum(default: ""),
   )
-  if eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark> {
+  if (
+    eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark>
+  ) {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
   result-arr.push(equation)
@@ -1166,7 +1201,11 @@ snapshot_kind: text
   let result = ()
   let cover-arr = ()
   for child in reducer.args.flatten() {
-    if type(child) == content and child.func() == metadata and type(child.value) == dictionary {
+    if (
+      type(child) == content
+        and child.func() == metadata
+        and type(child.value) == dictionary
+    ) {
       let kind = child.value.at("kind", default: none)
       if kind == "touying-pause" {
         repetitions += 1
@@ -1225,7 +1264,11 @@ snapshot_kind: text
 ) = {
   let labeled(func) = {
     return not (
-      "repeat" in self and "subslide" in self and "label-only-on-last-subslide" in self and func in self.label-only-on-last-subslide and self.subslide != self.repeat
+      "repeat" in self
+        and "subslide" in self
+        and "label-only-on-last-subslide" in self
+        and func in self.label-only-on-last-subslide
+        and self.subslide != self.repeat
     )
   }
   let bodies = bodies.pos()
@@ -1240,9 +1283,11 @@ snapshot_kind: text
   for it in bodies {
     // a hack for code like #table([A], pause, [B])
     if type(it) == content and it.func() in (table.cell, grid.cell) {
-      if type(it.body) == content and it.body.func() == metadata and type(it
-        .body
-        .value) == dictionary {
+      if (
+        type(it.body) == content
+          and it.body.func() == metadata
+          and type(it.body.value) == dictionary
+      ) {
         let kind = it.body.value.at("kind", default: none)
         if kind == "touying-pause" {
           repetitions += 1
@@ -1269,7 +1314,11 @@ snapshot_kind: text
       (it,)
     }
     for child in children {
-      if type(child) == content and child.func() == metadata and type(child.value) == dictionary {
+      if (
+        type(child) == content
+          and child.func() == metadata
+          and type(child.value) == dictionary
+      ) {
         let kind = child.value.at("kind", default: none)
         if kind == "touying-pause" {
           repetitions += 1
@@ -1416,11 +1465,9 @@ snapshot_kind: text
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
-      } else if type(child) == content and child.func() in (
-        list.item,
-        enum.item,
-        align,
-        link,
+      } else if (
+        type(child) == content
+          and child.func() in (list.item, enum.item, align, link)
       ) {
         // handle the list item
         let (
@@ -1446,10 +1493,8 @@ snapshot_kind: text
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
-      } else if type(child) == content and child.func() in (
-        table,
-        grid,
-        stack,
+      } else if (
+        type(child) == content and child.func() in (table, grid, stack)
       ) {
         // handle the table-like
         let (
@@ -1482,33 +1527,36 @@ snapshot_kind: text
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
-      } else if type(child) == content and child.func() in (
-        pad,
-        figure,
-        quote,
-        strong,
-        emph,
-        footnote,
-        highlight,
-        overline,
-        underline,
-        strike,
-        smallcaps,
-        sub,
-        super,
-        box,
-        block,
-        hide,
-        move,
-        scale,
-        circle,
-        ellipse,
-        rect,
-        square,
-        table.cell,
-        grid.cell,
-        math.equation,
-        heading,
+      } else if (
+        type(child) == content
+          and child.func() in (
+            pad,
+            figure,
+            quote,
+            strong,
+            emph,
+            footnote,
+            highlight,
+            overline,
+            underline,
+            strike,
+            smallcaps,
+            sub,
+            super,
+            box,
+            block,
+            hide,
+            move,
+            scale,
+            circle,
+            ellipse,
+            rect,
+            square,
+            table.cell,
+            grid.cell,
+            math.equation,
+            heading,
+          )
       ) {
         let (
           conts,
@@ -1674,7 +1722,11 @@ snapshot_kind: text
 // get negative pad for header and footer
 #let _get-negative-pad(self) = {
   let margin = self.page.margin
-  if type(margin) != dictionary and type(margin) != length and type(margin) != relative {
+  if (
+    type(margin) != dictionary
+      and type(margin) != length
+      and type(margin) != relative
+  ) {
     return it => it
   }
   let cell = block.with(
@@ -1706,9 +1758,8 @@ snapshot_kind: text
 // get bottom pad for footer
 #let _get-bottom-pad(self) = {
   assert(
-    self.page.paper == "presentation-16-9" or self
-      .page
-      .paper == "presentation-4-3",
+    self.page.paper == "presentation-16-9"
+      or self.page.paper == "presentation-4-3",
     message: "The paper of page should be presentation-16-9 or presentation-4-3",
   )
   let cell = block.with(
@@ -1731,9 +1782,8 @@ snapshot_kind: text
   if self.show-notes-on-second-screen in (bottom, right) {
     let margin = self.page.margin
     assert(
-      self.page.paper == "presentation-16-9" or self
-        .page
-        .paper == "presentation-4-3",
+      self.page.paper == "presentation-16-9"
+        or self.page.paper == "presentation-4-3",
       message: "The paper of page should be presentation-16-9 or presentation-4-3",
     )
     let page-width = if self.page.paper == "presentation-16-9" {
@@ -1746,7 +1796,11 @@ snapshot_kind: text
     } else {
       595.28pt
     }
-    if type(margin) != dictionary and type(margin) != length and type(margin) != relative {
+    if (
+      type(margin) != dictionary
+        and type(margin) != length
+        and type(margin) != relative
+    ) {
       return (:)
     }
     if type(margin) == length or type(margin) == relative {
@@ -1798,9 +1852,8 @@ snapshot_kind: text
   // speaker note
   if self.show-notes-on-second-screen in (bottom, right) {
     assert(
-      self.page.paper == "presentation-16-9" or self
-        .page
-        .paper == "presentation-4-3",
+      self.page.paper == "presentation-16-9"
+        or self.page.paper == "presentation-4-3",
       message: "The paper of page should be presentation-16-9 or presentation-4-3",
     )
     let page-width = if self.page.paper == "presentation-16-9" {
@@ -1974,10 +2027,11 @@ snapshot_kind: text
       slide-preamble(self)
     }
     [#metadata((kind: "touying-new-subslide")) <touying-metadata>]
-    if self.at(
-      "enable-frozen-states-and-counters",
-      default: true,
-    ) and not self.handout and self.repeat > 1 {
+    if (
+      self.at("enable-frozen-states-and-counters", default: true)
+        and not self.handout
+        and self.repeat > 1
+    ) {
       if self.subslide == 1 {
         // save the states and counters
         context {
@@ -2074,7 +2128,8 @@ snapshot_kind: text
     )
     header = page-preamble(self) + header
     set page(..(self.page + page-extra-args + (header: header, footer: footer)))
-    setting-with-auto-offset-for-heading(subslide-preamble(self) + composer-with-side-by-side(..conts))
+    setting-with-auto-offset-for-heading(subslide-preamble(self)
+      + composer-with-side-by-side(..conts))
   } else {
     // render all the subslides
     let result = ()
@@ -2097,7 +2152,8 @@ snapshot_kind: text
         set page(..(
           self.page + page-extra-args + (header: new-header, footer: footer)
         ))
-        setting-with-auto-offset-for-heading(subslide-preamble(self) + composer-with-side-by-side(..conts))
+        setting-with-auto-offset-for-heading(subslide-preamble(self)
+          + composer-with-side-by-side(..conts))
       })
     }
     // return the result

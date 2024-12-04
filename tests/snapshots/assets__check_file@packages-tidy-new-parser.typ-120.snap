@@ -106,7 +106,15 @@ snapshot_kind: text
 
 #let eval-doc-comment-test((line-number, line), label-prefix: "") = {
   if line.starts-with(" >>> ") {
-    return " #test(`" + line.slice(8) + "`, source-location: (module: \"" + parse-info.label-prefix + "\", line: " + str(line-number) + "))"
+    return (
+      " #test(`"
+        + line.slice(8)
+        + "`, source-location: (module: \""
+        + parse-info.label-prefix
+        + "\", line: "
+        + str(line-number)
+        + "))"
+    )
   }
   line
 }

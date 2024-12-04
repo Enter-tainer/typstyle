@@ -19,8 +19,12 @@ Our study design is as follows:
       a,
       b,
     ) = (
-      source-name + "." + direction,
-      target-name + "." + opposite-dir.at(direction),
+      source-name
+        + "."
+        + direction,
+      target-name
+        + "."
+        + opposite-dir.at(direction),
     )
     /* see this */
     draw.line(

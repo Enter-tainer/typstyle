@@ -110,7 +110,15 @@ snapshot_kind: text
 
 #let eval-doc-comment-test((line-number, line), label-prefix: "") = {
   if line.starts-with(" >>> ") {
-    return " #test(`" + line.slice(8) + "`, source-location: (module: \"" + parse-info.label-prefix + "\", line: " + str(line-number) + "))"
+    return (
+      " #test(`"
+        + line.slice(8)
+        + "`, source-location: (module: \""
+        + parse-info.label-prefix
+        + "\", line: "
+        + str(line-number)
+        + "))"
+    )
   }
   line
 }
@@ -254,8 +262,9 @@ snapshot_kind: text
         )
       }
     }
-    if args.len() > 0 and (
-      state.unfinished-param.ends-with(",") or state.state == "finished"
+    if (
+      args.len() > 0
+        and (state.unfinished-param.ends-with(",") or state.state == "finished")
     ) {
       state
         .params

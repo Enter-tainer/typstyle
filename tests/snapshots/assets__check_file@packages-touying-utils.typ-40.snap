@@ -23,11 +23,15 @@ snapshot_kind: text
 #let add-dicts(dict-a, dict-b) = {
   let res = dict-a
   for key in dict-b.keys() {
-    if key in res and type(
-      res.at(key),
-    ) == dictionary and type(
-      dict-b.at(key),
-    ) == dictionary {
+    if (
+      key in res
+        and type(
+          res.at(key),
+        ) == dictionary
+        and type(
+          dict-b.at(key),
+        ) == dictionary
+    ) {
       res.insert(
         key,
         add-dicts(
@@ -78,11 +82,12 @@ snapshot_kind: text
     }
     let ratio = calc.min(
       1.0,
-      slide-counter
-        .get()
-        .first() / last-slide-counter
-        .final()
-        .first(),
+      (
+        slide-counter.get().first()
+          / last-slide-counter
+            .final()
+            .first()
+      ),
     )
     callback(ratio)
   }
@@ -133,10 +138,16 @@ snapshot_kind: text
 ) = {
   let i = 0
   let j = arr.len() - 1
-  while i != arr.len() and arr.at(i) in empty-contents {
+  while (
+    i != arr.len()
+      and arr.at(i) in empty-contents
+  ) {
     i += 1
   }
-  while j != i - 1 and arr.at(j) in empty-contents {
+  while (
+    j != i - 1
+      and arr.at(j) in empty-contents
+  ) {
     j -= 1
   }
   arr.slice(i, j + 1)
@@ -254,7 +265,10 @@ snapshot_kind: text
 ///
 /// Example: `is-sequence([a])` returns `true`
 #let is-sequence(it) = {
-  type(it) == content and it.func() == typst-builtin-sequence
+  (
+    type(it) == content
+      and it.func() == typst-builtin-sequence
+  )
 }
 
 
@@ -264,7 +278,10 @@ snapshot_kind: text
 ///
 /// Example: `is-styled(text(fill: red)[Red])` returns `true`
 #let is-styled(it) = {
-  type(it) == content and it.func() == typst-builtin-styled
+  (
+    type(it) == content
+      and it.func() == typst-builtin-styled
+  )
 }
 
 
@@ -288,21 +305,35 @@ snapshot_kind: text
 ///
 /// Example: `is-metadata(metadata((a: 1)))` returns `true`
 #let is-metadata(it) = {
-  type(it) == content and it.func() == metadata
+  (
+    type(it) == content
+      and it.func() == metadata
+  )
 }
 
 
 /// Determine if a content is a metadata with a specific kind
 #let is-kind(it, kind) = {
-  is-metadata(it) and type(it.value) == dictionary and it
-    .value
-    .at("kind", default: none) == kind
+  (
+    is-metadata(it)
+      and type(it.value) == dictionary
+      and it
+        .value
+        .at(
+          "kind",
+          default: none,
+        ) == kind
+  )
 }
 
 
 /// Determine if a content is a heading in a specific depth
 #let is-heading(it, depth: 9999) = {
-  type(it) == content and it.func() == heading and it.depth <= depth
+  (
+    type(it) == content
+      and it.func() == heading
+      and it.depth <= depth
+  )
 }
 
 
@@ -333,7 +364,8 @@ snapshot_kind: text
     message: "self must be a dictionary",
   )
   assert(
-    "methods" in self and type(self.methods) == dictionary,
+    "methods" in self
+      and type(self.methods) == dictionary,
     message: "self.methods must be a dictionary",
   )
   let methods = (:)
@@ -368,9 +400,10 @@ snapshot_kind: text
     return s
   }
   let lowercase = lower(s)
-  upper(
-    lowercase.at(0),
-  ) + lowercase.slice(1)
+  (
+    upper(lowercase.at(0))
+      + lowercase.slice(1)
+  )
 }
 
 
@@ -395,7 +428,9 @@ snapshot_kind: text
     return
   }
   let convert-label-to-short-heading = if (
-    type(self) == dictionary and "methods" in self and "convert-label-to-short-heading" in self.methods
+    type(self) == dictionary
+      and "methods" in self
+      and "convert-label-to-short-heading" in self.methods
   ) {
     self
       .methods
@@ -410,7 +445,8 @@ snapshot_kind: text
   }
   convert-label-to-short-heading = convert-label-to-short-heading.with(self: self)
   assert(
-    type(it) == content and it.func() == heading,
+    type(it) == content
+      and it.func() == heading,
     message: "it must be a heading",
   )
   if not it.has("label") {
@@ -438,7 +474,9 @@ snapshot_kind: text
     let headings = query(heading).filter(h => (
       h
         .location()
-        .page() <= current-page and h.level <= depth and h.level == level
+        .page() <= current-page
+        and h.level <= depth
+        and h.level == level
     ))
     return headings.at(
       -1,
@@ -446,9 +484,8 @@ snapshot_kind: text
     )
   }
   let headings = query(heading).filter(h => (
-    h
-      .location()
-      .page() <= current-page and h.level <= depth
+    h.location().page() <= current-page
+      and h.level <= depth
   ))
   if headings == () {
     return
@@ -460,7 +497,10 @@ snapshot_kind: text
     .last()
     .level
   let current-heading = headings.pop()
-  while headings.len() > 0 and level < current-level {
+  while (
+    headings.len() > 0
+      and level < current-level
+  ) {
     current-level = headings
       .last()
       .level
@@ -496,13 +536,19 @@ snapshot_kind: text
     numbered: true,
     current-heading,
   ) => setting({
-    if numbered and current-heading.numbering != none {
-      _typst-builtin-numbering(
-        current-heading.numbering,
-        ..counter(heading).at(
-          current-heading.location(),
-        ),
-      ) + h(.3em)
+    if (
+      numbered
+        and current-heading.numbering != none
+    ) {
+      (
+        _typst-builtin-numbering(
+          current-heading.numbering,
+          ..counter(heading).at(
+            current-heading.location(),
+          ),
+        )
+          + h(.3em)
+      )
     }
     current-heading.body
   }),
@@ -549,14 +595,21 @@ snapshot_kind: text
       hierachical: hierachical,
       depth: depth,
     )
-    if current-heading != none and numbering == auto and current-heading.numbering != none {
+    if (
+      current-heading != none
+        and numbering == auto
+        and current-heading.numbering != none
+    ) {
       _typst-builtin-numbering(
         current-heading.numbering,
         ..counter(heading).at(
           current-heading.location(),
         ),
       )
-    } else if current-heading != none and numbering != auto {
+    } else if (
+      current-heading != none
+        and numbering != auto
+    ) {
       _typst-builtin-numbering(
         numbering,
         ..counter(heading).at(
@@ -660,31 +713,61 @@ snapshot_kind: text
   } else if type(it) == content {
     if it.func() == raw {
       if it.block {
-        "\n" + indent * " " + "```" + it.lang + it
-          .text
-          .split("\n")
-          .map(l => (
-            "\n" + indent * " " + l
-          ))
-          .sum(default: "") + "\n" + indent * " " + "```"
+        (
+          "\n"
+            + indent * " "
+            + "```"
+            + it.lang
+            + it
+              .text
+              .split("\n")
+              .map(l => (
+                "\n" + indent * " " + l
+              ))
+              .sum(default: "")
+            + "\n"
+            + indent * " "
+            + "```"
+        )
       } else {
         "`" + it.text + "`"
       }
     } else if it == [ ] {
       " "
     } else if it.func() == enum.item {
-      "\n" + indent * " " + "+ " + indent-markup-text(it.body)
+      (
+        "\n"
+          + indent * " "
+          + "+ "
+          + indent-markup-text(it.body)
+      )
     } else if it.func() == list.item {
-      "\n" + indent * " " + "- " + indent-markup-text(it.body)
+      (
+        "\n"
+          + indent * " "
+          + "- "
+          + indent-markup-text(it.body)
+      )
     } else if it.func() == terms.item {
-      "\n" + indent * " " + "/ " + markup-text(it.term) + ": " + indent-markup-text(it.description)
+      (
+        "\n"
+          + indent * " "
+          + "/ "
+          + markup-text(it.term)
+          + ": "
+          + indent-markup-text(it.description)
+      )
     } else if it.func() == linebreak {
       "\n" + indent * " "
     } else if it.func() == parbreak {
       "\n\n" + indent * " "
     } else if it.func() == strong {
       if mode == "md" {
-        "**" + markup-text(it.body) + "**"
+        (
+          "**"
+            + markup-text(it.body)
+            + "**"
+        )
       } else {
         "*" + markup-text(it.body) + "*"
       }
@@ -694,17 +777,42 @@ snapshot_kind: text
       } else {
         "_" + markup-text(it.body) + "_"
       }
-    } else if it.func() == link and type(it.dest) == str {
+    } else if (
+      it.func() == link
+        and type(it.dest) == str
+    ) {
       if mode == "md" {
-        "[" + markup-text(it.body) + "](" + it.dest + ")"
+        (
+          "["
+            + markup-text(it.body)
+            + "]("
+            + it.dest
+            + ")"
+        )
       } else {
-        "#link(\"" + it.dest + "\")[" + markup-text(it.body) + "]"
+        (
+          "#link(\""
+            + it.dest
+            + "\")["
+            + markup-text(it.body)
+            + "]"
+        )
       }
     } else if it.func() == heading {
       if mode == "md" {
-        it.depth * "#" + " " + markup-text(it.body) + "\n"
+        (
+          it.depth * "#"
+            + " "
+            + markup-text(it.body)
+            + "\n"
+        )
       } else {
-        it.depth * "=" + " " + markup-text(it.body) + "\n"
+        (
+          it.depth * "="
+            + " "
+            + markup-text(it.body)
+            + "\n"
+        )
       }
     } else if it.has("children") {
       it
@@ -743,7 +851,9 @@ snapshot_kind: text
 ) = {
   let to-convert = size
   if type(size) == ratio {
-    to-convert = container-dimension * size
+    to-convert = (
+      container-dimension * size
+    )
   }
   measure(v(to-convert)).height
 }
@@ -829,7 +939,9 @@ snapshot_kind: text
       .location()
       .position()
 
-    let available-height = after-pos.y - before-pos.y
+    let available-height = (
+      after-pos.y - before-pos.y
+    )
 
     layout(container-size => {
       // Helper function to more easily grab absolute units
@@ -862,22 +974,30 @@ snapshot_kind: text
       )
 
       let size = measure(boxed-content)
-      if size.height == 0pt or size.width == 0pt {
+      if (
+        size.height == 0pt
+          or size.width == 0pt
+      ) {
         return body
       }
-      let h-ratio = available-height / size.height
-      let w-ratio = mutable-width / size.width
-      let ratio = calc.min(
-        h-ratio,
-        w-ratio,
-      ) * 100%
+      let h-ratio = (
+        available-height / size.height
+      )
+      let w-ratio = (
+        mutable-width / size.width
+      )
+      let ratio = (
+        calc.min(h-ratio, w-ratio)
+          * 100%
+      )
 
       if (
-        (shrink and (ratio < 100%)) or (
-          grow and (ratio > 100%)
-        )
+        (shrink and (ratio < 100%))
+          or (grow and (ratio > 100%))
       ) {
-        let new-width = size.width * ratio
+        let new-width = (
+          size.width * ratio
+        )
         v(-available-height)
         // If not boxed, the content can overflow to the next page even though it will
         // fit. This is because scale doesn't update the layout information.
@@ -926,19 +1046,25 @@ snapshot_kind: text
       layout-size.width,
     )
     if (
-      content-width != 0pt and (
-        (
-          shrink and (
-            width < content-width
+      content-width != 0pt
+        and (
+          (
+            shrink
+              and (
+                width < content-width
+              )
           )
-        ) or (
-          grow and (
-            width > content-width
-          )
+            or (
+              grow
+                and (
+                  width > content-width
+                )
+            )
         )
-      )
     ) {
-      let ratio = width / content-width * 100%
+      let ratio = (
+        width / content-width * 100%
+      )
       // The first box keeps content from prematurely wrapping
       let scaled = scale(
         box(
@@ -954,7 +1080,8 @@ snapshot_kind: text
       box(
         scaled,
         width: width,
-        height: content-size.height * ratio,
+        height: content-size.height
+          * ratio,
       )
     } else {
       content
@@ -981,7 +1108,8 @@ snapshot_kind: text
   body,
 ) = {
   if fill == auto {
-    panic("`auto` fill value is not supported until typst provides utilities to" + " retrieve the current page background")
+    panic("`auto` fill value is not supported until typst provides utilities to"
+      + " retrieve the current page background")
   }
   if type(fill) == str {
     fill = rgb(fill)
@@ -1158,7 +1286,8 @@ snapshot_kind: text
       // assert(parsed > 0, "parsed idx is non-positive")
       parsed
     } else {
-      panic("failed to parse visible slide idx:" + part)
+      panic("failed to parse visible slide idx:"
+        + part)
     }
   }
   parts.map(parse-part)
@@ -1196,7 +1325,10 @@ snapshot_kind: text
   } else if type(visible-subslides) == str {
     let parts = _parse-subslide-indices(visible-subslides)
     check-visible(idx, parts)
-  } else if type(visible-subslides) == content and visible-subslides.has("text") {
+  } else if (
+    type(visible-subslides) == content
+      and visible-subslides.has("text")
+  ) {
     let parts = _parse-subslide-indices(visible-subslides.text)
     check-visible(idx, parts)
   } else if type(visible-subslides) == dictionary {
@@ -1521,7 +1653,10 @@ snapshot_kind: text
     "enable-pdfpc",
     default: true,
   ) {
-    let raw-text = if type(note) == content and note.has("text") {
+    let raw-text = if (
+      type(note) == content
+        and note.has("text")
+    ) {
       note.text
     } else {
       markup-text(

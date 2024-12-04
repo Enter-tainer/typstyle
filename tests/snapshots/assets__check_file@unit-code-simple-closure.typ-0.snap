@@ -35,7 +35,14 @@ snapshot_kind: text
   none
 ))
 
-#show raw.where(block: false): it => if it.text.starts-with("<") and it.text.ends-with(">") { }
+#show raw.where(block: false): it => if (
+  it
+    .text
+    .starts-with("<")
+    and it
+      .text
+      .ends-with(">")
+) { }
 
 #let show-palette(
   p,

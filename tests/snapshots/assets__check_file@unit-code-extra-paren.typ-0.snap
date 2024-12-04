@@ -6,7 +6,8 @@ snapshot_kind: text
 ---
 #{
   let a = (
-    1 + 2
+    1
+      + 2
   )
   a
 }
@@ -24,7 +25,10 @@ snapshot_kind: text
       ..,
     )
   ) = x
-  a + b
+  (
+    a
+      + b
+  )
 }
 
 #{
@@ -40,13 +44,17 @@ snapshot_kind: text
       ..,
     )
   ) = x
-  a + b
+  (
+    a
+      + b
+  )
 }
 
 
 #{
   if (
-    1 + 2 == 3
+    1
+      + 2 == 3
   ) {
     1
   } else {
@@ -57,7 +65,8 @@ snapshot_kind: text
 
 #{
   if (
-    1 + 2 == 3
+    1
+      + 2 == 3
   ) {
     1
   } else {

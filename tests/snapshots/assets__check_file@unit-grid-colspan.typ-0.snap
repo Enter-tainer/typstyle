@@ -14,13 +14,15 @@ snapshot_kind: text
 )
 
 #table(
-  columns: 6 * (
-    1fr,
-  ),
+  columns: 6
+    * (
+      1fr,
+    ),
   align: (
     x,
     y,
-  ) => if x == 0 or y == 0 {
+  ) => if x == 0
+    or y == 0 {
     left
   } else {
     center
@@ -30,7 +32,8 @@ snapshot_kind: text
     y,
   ) => (
     // Separate black cells with white strokes.
-    left: if y == 0 and x > 0 {
+    left: if y == 0
+      and x > 0 {
       white
     } else {
       black
@@ -78,9 +81,10 @@ snapshot_kind: text
 )
 
 #table(
-  columns: 4 * (
-    1fr,
-  ),
+  columns: 4
+    * (
+      1fr,
+    ),
 
   [a], [b], [c], [d],
   fill: (

@@ -123,12 +123,15 @@ snapshot_kind: text
   let θ-normal = θ + if edge.label-side == right { +90deg } else { -90deg }
 
   if type(edge.label-angle) == alignment {
-    edge.label-angle = θ - (
-      right: 0deg,
-      top: 90deg,
-      left: 180deg,
-      bottom: 270deg,
-    ).at(repr(edge.label-angle))
+    edge.label-angle = (
+      θ
+        - (
+          right: 0deg,
+          top: 90deg,
+          left: 180deg,
+          bottom: 270deg,
+        ).at(repr(edge.label-angle))
+    )
   } else if edge.label-angle == auto {
     edge.label-angle = θ
     if calc.abs(edge.label-angle) > 90deg {
@@ -365,7 +368,9 @@ snapshot_kind: text
     let dir = if Δθ > 0deg { +1 } else { -1 } // +1 if ccw, -1 if cw
 
 
-    let θ-normal = θs.at(i - 1) + Δθ / 2 + 90deg // direction to center of curvature
+    let θ-normal = (
+      θs.at(i - 1) + Δθ / 2 + 90deg
+    ) // direction to center of curvature
 
     let radius = edge.corner-radius
     // radius *= 90deg/calc.max(calc.abs(Δθ), 45deg) // visual adjustment so that tighter bends have smaller radii
@@ -396,7 +401,8 @@ snapshot_kind: text
         arc-radius: radius,
         start: θs.at(i - 1) - 90deg,
         delta: wrap-angle-180(Δθ),
-        line-shift: radius * calc.tan(Δθ / 2), // distance from vertex to beginning of arc
+        line-shift: radius
+          * calc.tan(Δθ / 2), // distance from vertex to beginning of arc
       )
     }
   }
@@ -419,11 +425,12 @@ snapshot_kind: text
   // to ensure continuity between segments
   let phase = 0pt
   let stroke-with-phase(phase) = (
-    stroke-to-dict(edge.stroke) + (
-      dash: if type(edge.stroke.dash) == dictionary {
-        (array: edge.stroke.dash.array, phase: phase)
-      },
-    )
+    stroke-to-dict(edge.stroke)
+      + (
+        dash: if type(edge.stroke.dash) == dictionary {
+          (array: edge.stroke.dash.array, phase: phase)
+        },
+      )
   )
 
   // draw each segment
@@ -528,12 +535,14 @@ snapshot_kind: text
 
 
     draw-edge-line(
-      edge + (
-        kind: "line",
-        final-vertices: (from, to),
-        marks: marks,
-        stroke: stroke-with-phase(phase),
-      ) + label-options,
+      edge
+        + (
+          kind: "line",
+          final-vertices: (from, to),
+          marks: marks,
+          stroke: stroke-with-phase(phase),
+        )
+        + label-options,
       debug: debug,
     )
 
@@ -682,9 +691,10 @@ snapshot_kind: text
     (from, to),
     anchors => {
       let obj = draw-edge-line(
-        edge + (
-          final-vertices: anchors,
-        ),
+        edge
+          + (
+            final-vertices: anchors,
+          ),
         debug: debug,
       )
       (edge.post)(obj) // post-process (e.g., hide)

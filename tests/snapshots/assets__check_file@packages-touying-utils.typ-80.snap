@@ -23,9 +23,11 @@ snapshot_kind: text
 #let add-dicts(dict-a, dict-b) = {
   let res = dict-a
   for key in dict-b.keys() {
-    if key in res and type(res.at(key)) == dictionary and type(
-      dict-b.at(key),
-    ) == dictionary {
+    if (
+      key in res
+        and type(res.at(key)) == dictionary
+        and type(dict-b.at(key)) == dictionary
+    ) {
       res.insert(key, add-dicts(res.at(key), dict-b.at(key)))
     } else {
       res.insert(key, dict-b.at(key))
@@ -223,9 +225,11 @@ snapshot_kind: text
 
 /// Determine if a content is a metadata with a specific kind
 #let is-kind(it, kind) = {
-  is-metadata(it) and type(it.value) == dictionary and it
-    .value
-    .at("kind", default: none) == kind
+  (
+    is-metadata(it)
+      and type(it.value) == dictionary
+      and it.value.at("kind", default: none) == kind
+  )
 }
 
 
@@ -304,7 +308,9 @@ snapshot_kind: text
     return
   }
   let convert-label-to-short-heading = if (
-    type(self) == dictionary and "methods" in self and "convert-label-to-short-heading" in self.methods
+    type(self) == dictionary
+      and "methods" in self
+      and "convert-label-to-short-heading" in self.methods
   ) {
     self.methods.convert-label-to-short-heading
   } else {
@@ -336,9 +342,9 @@ snapshot_kind: text
   let current-page = here().page()
   if not hierachical and level != auto {
     let headings = query(heading).filter(h => (
-      h
-        .location()
-        .page() <= current-page and h.level <= depth and h.level == level
+      h.location().page() <= current-page
+        and h.level <= depth
+        and h.level == level
     ))
     return headings.at(-1, default: none)
   }
@@ -384,10 +390,13 @@ snapshot_kind: text
   depth: 9999,
   style: (setting: body => body, numbered: true, current-heading) => setting({
     if numbered and current-heading.numbering != none {
-      _typst-builtin-numbering(
-        current-heading.numbering,
-        ..counter(heading).at(current-heading.location()),
-      ) + h(.3em)
+      (
+        _typst-builtin-numbering(
+          current-heading.numbering,
+          ..counter(heading).at(current-heading.location()),
+        )
+          + h(.3em)
+      )
     }
     current-heading.body
   }),
@@ -431,7 +440,11 @@ snapshot_kind: text
       hierachical: hierachical,
       depth: depth,
     )
-    if current-heading != none and numbering == auto and current-heading.numbering != none {
+    if (
+      current-heading != none
+        and numbering == auto
+        and current-heading.numbering != none
+    ) {
       _typst-builtin-numbering(
         current-heading.numbering,
         ..counter(heading).at(current-heading.location()),
@@ -511,11 +524,20 @@ snapshot_kind: text
   } else if type(it) == content {
     if it.func() == raw {
       if it.block {
-        "\n" + indent * " " + "```" + it.lang + it
-          .text
-          .split("\n")
-          .map(l => "\n" + indent * " " + l)
-          .sum(default: "") + "\n" + indent * " " + "```"
+        (
+          "\n"
+            + indent * " "
+            + "```"
+            + it.lang
+            + it
+              .text
+              .split("\n")
+              .map(l => "\n" + indent * " " + l)
+              .sum(default: "")
+            + "\n"
+            + indent * " "
+            + "```"
+        )
       } else {
         "`" + it.text + "`"
       }
@@ -526,7 +548,14 @@ snapshot_kind: text
     } else if it.func() == list.item {
       "\n" + indent * " " + "- " + indent-markup-text(it.body)
     } else if it.func() == terms.item {
-      "\n" + indent * " " + "/ " + markup-text(it.term) + ": " + indent-markup-text(it.description)
+      (
+        "\n"
+          + indent * " "
+          + "/ "
+          + markup-text(it.term)
+          + ": "
+          + indent-markup-text(it.description)
+      )
     } else if it.func() == linebreak {
       "\n" + indent * " "
     } else if it.func() == parbreak {
@@ -722,11 +751,11 @@ snapshot_kind: text
     let content-width = content-size.width
     let width = _size-to-pt(width, layout-size.width)
     if (
-      content-width != 0pt and (
-        (shrink and (width < content-width)) or (
-          grow and (width > content-width)
+      content-width != 0pt
+        and (
+          (shrink and (width < content-width))
+            or (grow and (width > content-width))
         )
-      )
     ) {
       let ratio = width / content-width * 100%
       // The first box keeps content from prematurely wrapping
@@ -759,7 +788,8 @@ snapshot_kind: text
 /// - `body` is the content to cover.
 #let cover-with-rect(..cover-args, fill: auto, inline: true, body) = {
   if fill == auto {
-    panic("`auto` fill value is not supported until typst provides utilities to" + " retrieve the current page background")
+    panic("`auto` fill value is not supported until typst provides utilities to"
+      + " retrieve the current page background")
   }
   if type(fill) == str {
     fill = rgb(fill)
@@ -906,7 +936,9 @@ snapshot_kind: text
   } else if type(visible-subslides) == str {
     let parts = _parse-subslide-indices(visible-subslides)
     check-visible(idx, parts)
-  } else if type(visible-subslides) == content and visible-subslides.has("text") {
+  } else if (
+    type(visible-subslides) == content and visible-subslides.has("text")
+  ) {
     let parts = _parse-subslide-indices(visible-subslides.text)
     check-visible(idx, parts)
   } else if type(visible-subslides) == dictionary {

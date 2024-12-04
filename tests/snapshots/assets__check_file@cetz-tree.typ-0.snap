@@ -69,8 +69,12 @@ snapshot_kind: text
         a,
         b,
       ) = (
-        source-name + "." + direction,
-        target-name + "." + opposite-dir.at(direction),
+        source-name
+          + "."
+          + direction,
+        target-name
+          + "."
+          + opposite-dir.at(direction),
       )
 
       draw.line(
@@ -95,8 +99,11 @@ snapshot_kind: text
     ) => { }
   }
 
-  if draw-node == auto or draw-node in (
-    "rect",
+  if (
+    draw-node == auto
+      or draw-node in (
+        "rect",
+      )
   ) {
     draw-node = (
       node,
@@ -110,10 +117,16 @@ snapshot_kind: text
         int,
       ) {
         content = $#content$
-      } else if type(content) == dictionary and "content" in content {
+      } else if (
+        type(content) == dictionary
+          and "content" in content
+      ) {
         content = content.content
       } else if type(content) != typst-content {
-        panic("Unsupported content type " + type(content) + "! " + "Provide your own `draw-node` implementation.")
+        panic("Unsupported content type "
+          + type(content)
+          + "! "
+          + "Provide your own `draw-node` implementation.")
       }
 
       if content != none {
@@ -172,7 +185,8 @@ snapshot_kind: text
           ),
         ) => build-node(
           c,
-          depth: depth + 1,
+          depth: depth
+            + 1,
           sibling: n,
         ))
       cnt = tree.at(0)
@@ -182,7 +196,8 @@ snapshot_kind: text
 
     return (
       x: 0,
-      y: depth * grow,
+      y: depth
+        * grow,
       n: sibling,
       depth: depth,
       children: children,
@@ -282,9 +297,14 @@ snapshot_kind: text
       if parent-position == "begin" {
         node.x = left
       } else {
-        node.x = left + (
-          right - left
-        ) / 2
+        node.x = (
+          left
+            + (
+              right
+                - left
+            )
+              / 2
+        )
       }
 
       node.direct-min-x = left
@@ -355,7 +375,10 @@ snapshot_kind: text
 
     let d = (:)
     d.insert(
-      parent-path + str(node.n),
+      (
+        parent-path
+          + str(node.n)
+      ),
       node-position(node),
     )
     for child in (
@@ -363,7 +386,8 @@ snapshot_kind: text
     ) {
       d += anchors(
         child,
-        parent-path + str(node.n),
+        parent-path
+          + str(node.n),
       )
     }
     return d
@@ -373,7 +397,12 @@ snapshot_kind: text
     node,
     parent-name,
   ) = {
-    let name = "node-" + str(node.depth) + "-" + str(node.n)
+    let name = (
+      "node-"
+        + str(node.depth)
+        + "-"
+        + str(node.n)
+    )
 
     let cmds = ()
     cmds += draw.group(

@@ -34,23 +34,37 @@ impl<'a> PrettyPrinter<'a> {
         if !is_paren_needed(expr) {
             return self.convert_expr(expr);
         }
+        let _g = self.with_mode(Mode::CodeCont);
+        optional_paren(&self.arena, self.convert_expr(expr))
+    }
+
+    /// Parenthesize the body if necessary.
+    ///
+    /// We must enter continued-code mode before evaluating body.
+    pub(super) fn parenthesize_if_necessary(
+        &'a self,
+        body: impl FnOnce() -> ArenaDoc<'a>,
+    ) -> ArenaDoc<'a> {
+        if self.current_mode().is_code_continued() {
+            return body();
+        }
         // SAFETY:
         // - If without paren, the entire expression is in one line, thus safe.
         // - If with paren, surely safe.
         let _g = self.with_mode(Mode::CodeCont);
-        optional_paren(&self.arena, self.convert_expr(expr))
+        optional_paren(&self.arena, body())
     }
 }
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
-pub(super) fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>) -> ArenaDoc<'a> {
+fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>) -> ArenaDoc<'a> {
     let open = (arena.text("(") + arena.line()).flat_alt(arena.nil());
     let close = (arena.line() + arena.text(")")).flat_alt(arena.nil());
     ((open + body).nest(2) + close).group()
 }
 
 /// Checks if parentheses are needed for an expression that may span multiple lines.
-pub fn is_paren_needed(expr: Expr<'_>) -> bool {
+fn is_paren_needed(expr: Expr<'_>) -> bool {
     !matches!(
         expr,
         Expr::Parenthesized(_)

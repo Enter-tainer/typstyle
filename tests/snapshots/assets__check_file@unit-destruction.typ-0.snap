@@ -16,10 +16,11 @@ snapshot_kind: text
 #grid(
   columns: (
     1fr,
-  ) * calc.min(
-    3,
-    authors.len(),
-  ),
+  )
+    * calc.min(
+      3,
+      authors.len(),
+    ),
   gutter: 1em,
   ..authors.map(author => align(
     center,

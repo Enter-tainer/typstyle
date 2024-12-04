@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use pretty::DocAllocator;
 use std::iter;
-use typst_syntax::{SyntaxKind, SyntaxNode};
+use typst_syntax::SyntaxNode;
 
 use super::{ArenaDoc, PrettyPrinter};
 
@@ -13,6 +13,7 @@ pub struct ChainStylist<'a> {
     printer: &'a PrettyPrinter<'a>,
     items: Vec<ChainItem<'a>>,
     chain_len: usize,
+    op_space: bool,
 }
 
 #[derive(Default)]
@@ -27,26 +28,38 @@ impl<'a> ChainStylist<'a> {
             printer,
             items: Default::default(),
             chain_len: 0,
+            op_space: false,
         }
+    }
+
+    pub fn space_around_op(mut self) -> Self {
+        self.op_space = true;
+        self
     }
 
     pub fn process_resolved(
         self,
         nodes: impl Iterator<Item = &'a SyntaxNode>,
-        item_kind: SyntaxKind,
+        operand_pred: impl Fn(&'a SyntaxNode) -> bool,
         op_pred: impl Fn(&'a SyntaxNode) -> bool,
         rhs_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
         fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
         let mut nodes = nodes.collect_vec();
         nodes.reverse();
-        self.process(nodes, item_kind, op_pred, rhs_converter, fallback_converter)
+        self.process(
+            nodes,
+            operand_pred,
+            op_pred,
+            rhs_converter,
+            fallback_converter,
+        )
     }
 
     pub fn process(
         mut self,
         nodes: Vec<&'a SyntaxNode>,
-        item_kind: SyntaxKind,
+        operand_pred: impl Fn(&'a SyntaxNode) -> bool,
         op_pred: impl Fn(&'a SyntaxNode) -> bool,
         rhs_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
         fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
@@ -55,14 +68,18 @@ impl<'a> ChainStylist<'a> {
 
         let mut doc = arena.nil();
         for node in nodes {
-            if node.kind() == item_kind {
+            if operand_pred(node) {
                 self.chain_len += 1;
                 let mut seen_op = false;
                 for child in node.children() {
                     if op_pred(child) {
                         seen_op = true;
                         self.items.push(ChainItem::Commented { body: doc });
-                        doc = arena.text(child.text().as_str());
+                        doc = if self.op_space {
+                            arena.text(child.text().as_str()) + " "
+                        } else {
+                            arena.text(child.text().as_str())
+                        };
                     } else if seen_op {
                         if let Some(rhs) = rhs_converter(child) {
                             doc += rhs;
@@ -88,12 +105,17 @@ impl<'a> ChainStylist<'a> {
             }
         }
 
+        let op_sep = if self.op_space {
+            arena.line()
+        } else {
+            arena.line_()
+        };
         let first_doc = docs.remove(0);
-        let follow_docs = arena.intersperse(docs, arena.line_());
+        let follow_docs = arena.intersperse(docs, op_sep.clone());
         if self.chain_len == 1 && sty.no_break_single {
             (first_doc + follow_docs).group()
         } else {
-            (first_doc + (arena.line_() + follow_docs).nest(2)).group()
+            (first_doc + (op_sep + follow_docs).nest(2)).group()
         }
     }
 }
