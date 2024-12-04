@@ -2,6 +2,7 @@ pub mod config;
 pub mod doc_ext;
 pub mod style;
 
+mod chain;
 mod code_chain;
 mod code_flow;
 mod code_list;
@@ -152,6 +153,7 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
+    #[allow(dead_code)]
     fn check_unformattable(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
         if self.attr_store.is_unformattable(node) {
             Some(self.format_disabled(node))
