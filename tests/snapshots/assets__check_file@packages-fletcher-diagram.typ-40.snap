@@ -95,16 +95,20 @@ snapshot_kind: text
         rect
           .center
           .at(axis) = calc.floor(coord)
-        rect.size.at(axis) = size * (
-          calc.ceil(coord) - coord
+        rect.size.at(axis) = (
+          size
+            * (calc.ceil(coord) - coord)
         )
         new-rects.push(rect)
 
         rect
           .center
           .at(axis) = calc.ceil(coord)
-        rect.size.at(axis) = size * (
-          coord - calc.floor(coord)
+        rect.size.at(axis) = (
+          size
+            * (
+              coord - calc.floor(coord)
+            )
         )
         new-rects.push(rect)
       }
@@ -356,10 +360,9 @@ snapshot_kind: text
     )
   }
 
-  let positional-args = args
-    .pos()
-    .flatten()
-    .join() + [] // join to ensure sequence
+  let positional-args = (
+    args.pos().flatten().join() + []
+  ) // join to ensure sequence
   let objects = positional-args.children
 
   let nodes = ()
@@ -670,17 +673,19 @@ snapshot_kind: text
         size: node.size,
       ))
 
-    let vertices-affecting-grid = edges
-      .map(edge => {
-        resolve-edge-vertices(
-          edge,
-          ctx: ctx-with-uv-anchors + (
-            target-system: "uv",
-          ),
-          nodes,
-        )
-      })
-      .join() + () // coerce none to ()
+    let vertices-affecting-grid = (
+      edges
+        .map(edge => {
+          resolve-edge-vertices(
+            edge,
+            ctx: ctx-with-uv-anchors
+              + (target-system: "uv"),
+            nodes,
+          )
+        })
+        .join()
+        + ()
+    ) // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
       not is-nan-vector(vert)
     ))
@@ -732,10 +737,11 @@ snapshot_kind: text
     edges = edges.map(edge => {
       edge.final-vertices = resolve-edge-vertices(
         edge,
-        ctx: ctx-with-xyz-anchors + (
-          target-system: "xyz",
-          grid: grid,
-        ),
+        ctx: ctx-with-xyz-anchors
+          + (
+            target-system: "xyz",
+            grid: grid,
+          ),
         nodes,
       )
 

@@ -16,7 +16,11 @@ snapshot_kind: text
     depth: 0,
     sibling: 1,
   ) = {
-    repr(tree) + repr(depth) + repr(sibling)
+    (
+      repr(tree)
+        + repr(depth)
+        + repr(sibling)
+    )
   }
   let children
   children = tree
@@ -29,7 +33,8 @@ snapshot_kind: text
       ),
     ) => build-node(
       c,
-      depth: depth + 1,
+      depth: depth
+        + 1,
       sibling: n,
     ))
   children

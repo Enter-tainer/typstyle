@@ -86,7 +86,10 @@ snapshot_kind: text
       } else if type(content) == dictionary and "content" in content {
         content = content.content
       } else if type(content) != typst-content {
-        panic("Unsupported content type " + type(content) + "! " + "Provide your own `draw-node` implementation.")
+        panic("Unsupported content type "
+          + type(content)
+          + "! "
+          + "Provide your own `draw-node` implementation.")
       }
 
       if content != none {

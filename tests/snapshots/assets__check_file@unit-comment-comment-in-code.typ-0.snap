@@ -35,8 +35,14 @@ snapshot_kind: text
 }
 
 #{
-  -1 - +7 + (
-    +7 * -3 - 6
+  (
+    -1
+      - +7
+      + (
+        +7
+          * -3
+          - 6
+      )
   )
 }
 #{
@@ -46,13 +52,21 @@ snapshot_kind: text
   )
 }
 #{
-  not a and (
-    b or c
+  (
+    not a
+      and (
+        b
+          or c
+      )
   )
 }
 #{
-  not true and (
-    false or true
+  (
+    not true
+      and (
+        false
+          or true
+      )
   )
 }
 #{

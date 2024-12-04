@@ -60,7 +60,9 @@ snapshot_kind: text
 #let cell(
   lhs,
   rhs,
-) = box(lhs + enspace + rhs)
+) = box(lhs
+  + enspace
+  + rhs)
 // Grid for code blocks
 #set grid(columns: (
   2em,
@@ -69,7 +71,10 @@ snapshot_kind: text
 // Table for math-code listing
 #set table(
   stroke: none,
-  align: horizon + left,
+  align: (
+    horizon
+      + left
+  ),
   inset: 0pt,
   row-gutter: 0.45em,
 )
@@ -86,11 +91,16 @@ snapshot_kind: text
   let T = "T"
   let E = text(
     normalsize,
-    baseline: e.height / 2,
+    baseline: e.height
+      / 2,
     "E",
   )
   let X = "X"
-  box(T + kern(-0.1667em) + E + kern(-0.125em) + X)
+  box(T
+    + kern(-0.1667em)
+    + E
+    + kern(-0.125em)
+    + X)
 })
 #let LaTeX = style(styles => {
   let l = measure(
@@ -110,10 +120,15 @@ snapshot_kind: text
   let L = "L"
   let A = text(
     7pt,
-    baseline: a.height - l.height,
+    baseline: a.height
+      - l.height,
     "A",
   )
-  box(L + kern(-0.36em) + A + kern(-0.15em) + TeX)
+  box(L
+    + kern(-0.36em)
+    + A
+    + kern(-0.15em)
+    + TeX)
 })
 
 // Unavailable (last check version)
@@ -156,7 +171,8 @@ snapshot_kind: text
   size: normalsize,
   weight: "bold",
   fill: headcolor,
-  it.body + h(0.67em),
+  it.body
+    + h(0.67em),
 )
 
 // Black raw code
@@ -955,8 +971,10 @@ Fences scale by default if entered directly as codepoints, and don't scale autom
   table(
     columns: 2,
     align: (
-      right + horizon,
-      left + horizon,
+      right
+        + horizon,
+      left
+        + horizon,
     ),
     column-gutter: 1em,
     [$

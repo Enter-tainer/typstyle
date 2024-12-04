@@ -266,10 +266,9 @@ snapshot_kind: text
     error("Unexpected named argument(s) #..0.", args.named().keys())
   }
 
-  let positional-args = args
-    .pos()
-    .flatten()
-    .join() + [] // join to ensure sequence
+  let positional-args = (
+    args.pos().flatten().join() + []
+  ) // join to ensure sequence
   let objects = positional-args.children
 
   let nodes = ()
@@ -531,15 +530,18 @@ snapshot_kind: text
       .filter(node => not is-nan-vector(node.pos.uv))
       .map(node => (center: node.pos.uv, size: node.size))
 
-    let vertices-affecting-grid = edges
-      .map(edge => {
-        resolve-edge-vertices(
-          edge,
-          ctx: ctx-with-uv-anchors + (target-system: "uv"),
-          nodes,
-        )
-      })
-      .join() + () // coerce none to ()
+    let vertices-affecting-grid = (
+      edges
+        .map(edge => {
+          resolve-edge-vertices(
+            edge,
+            ctx: ctx-with-uv-anchors + (target-system: "uv"),
+            nodes,
+          )
+        })
+        .join()
+        + ()
+    ) // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
       not is-nan-vector(vert)
     ))

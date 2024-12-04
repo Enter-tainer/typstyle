@@ -67,7 +67,9 @@ snapshot_kind: text
     ) => {
       let (a, b) = (
         source-name + "." + direction,
-        target-name + "." + opposite-dir.at(direction),
+        target-name
+          + "."
+          + opposite-dir.at(direction),
       )
 
       draw.line(a, b)
@@ -87,8 +89,9 @@ snapshot_kind: text
     draw-edge = (..) => { }
   }
 
-  if draw-node == auto or draw-node in (
-    "rect",
+  if (
+    draw-node == auto
+      or draw-node in ("rect",)
   ) {
     draw-node = (node, parent-name) => {
       let content = node.content
@@ -99,10 +102,16 @@ snapshot_kind: text
         int,
       ) {
         content = $#content$
-      } else if type(content) == dictionary and "content" in content {
+      } else if (
+        type(content) == dictionary
+          and "content" in content
+      ) {
         content = content.content
       } else if type(content) != typst-content {
-        panic("Unsupported content type " + type(content) + "! " + "Provide your own `draw-node` implementation.")
+        panic("Unsupported content type "
+          + type(content)
+          + "! "
+          + "Provide your own `draw-node` implementation.")
       }
 
       if content != none {
@@ -226,9 +235,9 @@ snapshot_kind: text
       if parent-position == "begin" {
         node.x = left
       } else {
-        node.x = left + (
-          right - left
-        ) / 2
+        node.x = (
+          left + (right - left) / 2
+        )
       }
 
       node.direct-min-x = left
@@ -285,7 +294,12 @@ snapshot_kind: text
   }
 
   let render(node, parent-name) = {
-    let name = "node-" + str(node.depth) + "-" + str(node.n)
+    let name = (
+      "node-"
+        + str(node.depth)
+        + "-"
+        + str(node.n)
+    )
 
     let cmds = ()
     cmds += draw.group(

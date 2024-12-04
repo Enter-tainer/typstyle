@@ -3,7 +3,10 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use crate::ext::BoolExt;
 
-use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
+use super::{
+    code_chain::resolve_binary_chain, flow::FlowItem, util::has_comment_children, ArenaDoc,
+    PrettyPrinter,
+};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_named(&'a self, named: Named<'a>) -> ArenaDoc<'a> {
@@ -71,6 +74,13 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_binary(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
+        if matches!(
+            binary.op(),
+            BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div | BinOp::And | BinOp::Or
+        ) && !resolve_binary_chain(binary).any(has_comment_children)
+        {
+            return self.parenthesize_if_necessary(|| self.convert_binary_chain(binary));
+        }
         self.convert_flow_like(binary.to_untyped(), |child| {
             if BinOp::from_kind(child.kind()).is_some() {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))

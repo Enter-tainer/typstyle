@@ -344,10 +344,13 @@ snapshot_kind: text
   depth: 9999,
   style: (setting: body => body, numbered: true, current-heading) => setting({
     if numbered and current-heading.numbering != none {
-      _typst-builtin-numbering(
-        current-heading.numbering,
-        ..counter(heading).at(current-heading.location()),
-      ) + h(.3em)
+      (
+        _typst-builtin-numbering(
+          current-heading.numbering,
+          ..counter(heading).at(current-heading.location()),
+        )
+          + h(.3em)
+      )
     }
     current-heading.body
   }),
@@ -448,11 +451,16 @@ snapshot_kind: text
   } else if type(it) == content {
     if it.func() == raw {
       if it.block {
-        "\n" + indent * " " + "```" + it.lang + it
-          .text
-          .split("\n")
-          .map(l => "\n" + indent * " " + l)
-          .sum(default: "") + "\n" + indent * " " + "```"
+        (
+          "\n"
+            + indent * " "
+            + "```"
+            + it.lang
+            + it.text.split("\n").map(l => "\n" + indent * " " + l).sum(default: "")
+            + "\n"
+            + indent * " "
+            + "```"
+        )
       } else {
         "`" + it.text + "`"
       }
@@ -690,7 +698,8 @@ snapshot_kind: text
 /// - `body` is the content to cover.
 #let cover-with-rect(..cover-args, fill: auto, inline: true, body) = {
   if fill == auto {
-    panic("`auto` fill value is not supported until typst provides utilities to" + " retrieve the current page background")
+    panic("`auto` fill value is not supported until typst provides utilities to"
+      + " retrieve the current page background")
   }
   if type(fill) == str {
     fill = rgb(fill)

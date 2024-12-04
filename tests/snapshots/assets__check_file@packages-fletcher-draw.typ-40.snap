@@ -23,7 +23,10 @@ snapshot_kind: text
 
 #let draw-node(node, debug: 0) = {
   let result = {
-    if node.stroke != none or node.fill != none {
+    if (
+      node.stroke != none
+        or node.fill != none
+    ) {
       cetz
         .draw
         .group({
@@ -60,12 +63,10 @@ snapshot_kind: text
             stroke: if debug >= 3 {
               DEBUG_COLOR2 + 0.25pt
             },
-            width: node
-              .size
-              .at(0) - 2 * node.inset,
-            height: node
-              .size
-              .at(1) - 2 * node.inset,
+            width: node.size.at(0)
+              - 2 * node.inset,
+            height: node.size.at(1)
+              - 2 * node.inset,
           ),
           anchor: "center",
         )
@@ -117,7 +118,9 @@ snapshot_kind: text
         cetz
           .draw
           .set-style(
-            stroke: DEBUG_COLOR2 + 0.25pt,
+            stroke: (
+              DEBUG_COLOR2 + 0.25pt
+            ),
             fill: none,
           )
         (node.shape)(node, node.outset)
@@ -147,7 +150,8 @@ snapshot_kind: text
   debug: 0,
 ) = {
   let curve-point = curve(edge.label-pos)
-  let curve-point-ε = curve(edge.label-pos + 1e-3)
+  let curve-point-ε = curve(edge.label-pos
+    + 1e-3)
 
   let θ = wrap-angle-180(
     angle-between(
@@ -155,17 +159,23 @@ snapshot_kind: text
       curve-point-ε,
     ),
   )
-  let θ-normal = θ + if edge.label-side == right {
-    +90deg
-  } else { -90deg }
+  let θ-normal = (
+    θ
+      + if edge.label-side == right {
+        +90deg
+      } else { -90deg }
+  )
 
   if type(edge.label-angle) == alignment {
-    edge.label-angle = θ - (
-      right: 0deg,
-      top: 90deg,
-      left: 180deg,
-      bottom: 270deg,
-    ).at(repr(edge.label-angle))
+    edge.label-angle = (
+      θ
+        - (
+          right: 0deg,
+          top: 90deg,
+          left: 180deg,
+          bottom: 270deg,
+        ).at(repr(edge.label-angle))
+    )
   } else if edge.label-angle == auto {
     edge.label-angle = θ
     if calc.abs(edge.label-angle) > 90deg {
@@ -174,7 +184,8 @@ snapshot_kind: text
   }
 
   if edge.label-anchor == auto {
-    edge.label-anchor = angle-to-anchor(θ-normal - edge.label-angle)
+    edge.label-anchor = angle-to-anchor(θ-normal
+      - edge.label-angle)
   }
 
   let label-pos = (
@@ -266,12 +277,18 @@ snapshot_kind: text
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
   decor = decor.with(
-    start: if has-mark-at(0) {
-      0.1
-    } else { ε } * 100%,
-    stop: if has-mark-at(1) {
-      0.9
-    } else { 1 - ε } * 100%,
+    start: (
+      if has-mark-at(0) { 0.1 } else {
+        ε
+      }
+        * 100%
+    ),
+    stop: (
+      if has-mark-at(1) { 0.9 } else {
+        1 - ε
+      }
+        * 100%
+    ),
   )
 
   decor(path)
@@ -485,13 +502,16 @@ snapshot_kind: text
   // round corners
   let calculate-rounded-corner(i) = {
     let pt = verts.at(i)
-    let Δθ = wrap-angle-180(θs.at(i) - θs.at(i - 1))
+    let Δθ = wrap-angle-180(θs.at(i)
+      - θs.at(i - 1))
     let dir = if Δθ > 0deg { +1 } else {
       -1
     } // +1 if ccw, -1 if cw
 
 
-    let θ-normal = θs.at(i - 1) + Δθ / 2 + 90deg // direction to center of curvature
+    let θ-normal = (
+      θs.at(i - 1) + Δθ / 2 + 90deg
+    ) // direction to center of curvature
 
     let radius = edge.corner-radius
     // radius *= 90deg/calc.max(calc.abs(Δθ), 45deg) // visual adjustment so that tighter bends have smaller radii
@@ -513,11 +533,14 @@ snapshot_kind: text
         arc-radius: 0 * radius,
         start: θs.at(i - 1) - 90deg,
         delta: wrap-angle-180(Δθ),
-        line-shift: 0 * radius, // distance from vertex to beginning of arc
+        line-shift: 0
+          * radius, // distance from vertex to beginning of arc
       )
     } else {
       // distance from vertex to center of curvature
-      let dist = radius / calc.cos(Δθ / 2)
+      let dist = (
+        radius / calc.cos(Δθ / 2)
+      )
 
       (
         arc-center: vector.add(
@@ -527,7 +550,9 @@ snapshot_kind: text
         arc-radius: radius,
         start: θs.at(i - 1) - 90deg,
         delta: wrap-angle-180(Δθ),
-        line-shift: radius * calc.tan(Δθ / 2), // distance from vertex to beginning of arc
+        line-shift: radius
+          * calc.tan(Δθ
+            / 2), // distance from vertex to beginning of arc
       )
     }
   }
@@ -542,29 +567,36 @@ snapshot_kind: text
 
   let lerp-scale(t, i) = {
     let τ = t * n-segments - i
-    if 0 < τ and τ <= 1 or i == 0 and τ <= 0 or i == n-segments - 1 and 1 < τ {
-      τ
-    }
+    if (
+      0 < τ and τ <= 1
+        or i == 0 and τ <= 0
+        or i == n-segments - 1 and 1 < τ
+    ) { τ }
   }
 
-  let debug-stroke = edge
-    .stroke
-    .thickness / 4 + DEBUG_COLOR2
+  let debug-stroke = (
+    edge.stroke.thickness / 4
+      + DEBUG_COLOR2
+  )
 
   // phase keeps track of how to offset dash patterns
   // to ensure continuity between segments
   let phase = 0pt
   let stroke-with-phase(phase) = (
-    stroke-to-dict(edge.stroke) + (
-      dash: if type(edge
-        .stroke
-        .dash) == dictionary {
-        (
-          array: edge.stroke.dash.array,
-          phase: phase,
-        )
-      },
-    )
+    stroke-to-dict(edge.stroke)
+      + (
+        dash: if type(edge
+          .stroke
+          .dash) == dictionary {
+          (
+            array: edge
+              .stroke
+              .dash
+              .array,
+            phase: phase,
+          )
+        },
+      )
   )
 
   // draw each segment
@@ -606,7 +638,9 @@ snapshot_kind: text
 
       if i > 0 {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at(i - 1)
+        let (line-shift,) = rounded-corners.at((
+          i - 1
+        ))
         from = vector.add(
           from,
           vector-polar(
@@ -646,7 +680,8 @@ snapshot_kind: text
                 start: start,
                 delta: delta,
                 anchor: "origin",
-                stroke: stroke-with-phase(phase + Δphase),
+                stroke: stroke-with-phase(phase
+                  + Δphase),
               )
           }
 
@@ -659,14 +694,18 @@ snapshot_kind: text
                   .draw
                   .circle(
                     arc-center,
-                    radius: arc-radius - d,
+                    radius: (
+                      arc-radius - d
+                    ),
                     stroke: debug-stroke,
                   ),
               )
           }
         }
 
-        Δphase += delta / 1rad * arc-radius
+        Δphase += (
+          delta / 1rad * arc-radius
+        )
       }
     }
 
@@ -699,12 +738,14 @@ snapshot_kind: text
 
 
     draw-edge-line(
-      edge + (
-        kind: "line",
-        final-vertices: (from, to),
-        marks: marks,
-        stroke: stroke-with-phase(phase),
-      ) + label-options,
+      edge
+        + (
+          kind: "line",
+          final-vertices: (from, to),
+          marks: marks,
+          stroke: stroke-with-phase(phase),
+        )
+        + label-options,
       debug: debug,
     )
 
@@ -850,11 +891,13 @@ snapshot_kind: text
     calc.max(
       0pt,
       node.size.at(0) / 2 * (1 - 1 / μ),
-    ) * calc.cos(θ),
+    )
+      * calc.cos(θ),
     calc.max(
       0pt,
       node.size.at(1) / 2 * (1 - μ / 1),
-    ) * calc.sin(θ),
+    )
+      * calc.sin(θ),
   )
 }
 
@@ -865,10 +908,9 @@ snapshot_kind: text
   debug: 0,
 ) = {
   let (from, to) = edge.final-vertices
-  let θ = angle-between(
-    from,
-    to,
-  ) + 90deg
+  let θ = (
+    angle-between(from, to) + 90deg
+  )
 
   // TODO: do defocus adjustment sensibly
   if nodes.at(0).len() == 1 {
@@ -922,9 +964,10 @@ snapshot_kind: text
     (from, to),
     anchors => {
       let obj = draw-edge-line(
-        edge + (
-          final-vertices: anchors,
-        ),
+        edge
+          + (
+            final-vertices: anchors,
+          ),
         debug: debug,
       )
       (
@@ -984,9 +1027,8 @@ snapshot_kind: text
     (from, to),
     anchors => {
       let obj = draw-edge-arc(
-        edge + (
-          final-vertices: anchors,
-        ),
+        edge
+          + (final-vertices: anchors),
         debug: debug,
       )
       (
@@ -1124,14 +1166,12 @@ snapshot_kind: text
     x-lims,
     y-lims,
   ) = range(2).map(axis => (
-    grid.centers.at(axis).at(0) - grid
-      .cell-sizes
-      .at(axis)
-      .at(0) / 2,
-    grid.centers.at(axis).at(-1) + grid
-      .cell-sizes
-      .at(axis)
-      .at(-1) / 2,
+    grid.centers.at(axis).at(0)
+      - grid.cell-sizes.at(axis).at(0)
+        / 2,
+    grid.centers.at(axis).at(-1)
+      + grid.cell-sizes.at(axis).at(-1)
+        / 2,
   ))
 
   let (u-min, v-min) = grid.origin
@@ -1318,7 +1358,10 @@ snapshot_kind: text
     ))
   }
 
-  if type(key) == array and key.len() == 2 {
+  if (
+    type(key) == array
+      and key.len() == 2
+  ) {
     let xy-pos = key
     let candidates = nodes.filter(node => {
       if node.snap == false {

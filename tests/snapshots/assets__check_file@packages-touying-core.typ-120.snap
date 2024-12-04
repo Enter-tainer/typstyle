@@ -260,14 +260,22 @@ snapshot_kind: text
     } else if utils.is-heading(child, depth: slide-level) {
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
-      if _get-slide-fn(
-        self + (headings: current-headings),
-        default: none,
-      ) != none or child.depth <= last-heading-depth or current-slide != () or (
-        child.depth == 1 and new-section-slide-fn != none
-      ) or (child.depth == 2 and new-subsection-slide-fn != none) or (
-        child.depth == 3 and new-subsubsection-slide-fn != none
-      ) or (child.depth == 4 and new-subsubsubsection-slide-fn != none) {
+      if (
+        _get-slide-fn(
+          self + (headings: current-headings),
+          default: none,
+        ) != none
+          or child.depth <= last-heading-depth
+          or current-slide != ()
+          or (
+            child.depth == 1 and new-section-slide-fn != none
+          )
+          or (child.depth == 2 and new-subsection-slide-fn != none)
+          or (
+            child.depth == 3 and new-subsubsection-slide-fn != none
+          )
+          or (child.depth == 4 and new-subsubsubsection-slide-fn != none)
+      ) {
         current-slide = utils.trim(current-slide)
         if current-slide != () or current-headings != () {
           (cont, recaller-map, current-headings, current-slide, new-start, is-first-slide) = call-slide-fn-and-reset(
@@ -292,7 +300,9 @@ snapshot_kind: text
             recaller-map,
           )
           result.push(cont)
-        } else if child.depth == 2 and new-subsection-slide-fn != none and not self.receive-body-for-new-subsection-slide-fn {
+        } else if (
+          child.depth == 2 and new-subsection-slide-fn != none and not self.receive-body-for-new-subsection-slide-fn
+        ) {
           (cont, recaller-map, current-headings, current-slide, new-start, is-first-slide) = call-slide-fn-and-reset(
             self + (headings: current-headings, is-first-slide: is-first-slide),
             new-subsection-slide-fn,
@@ -300,7 +310,11 @@ snapshot_kind: text
             recaller-map,
           )
           result.push(cont)
-        } else if child.depth == 3 and new-subsubsection-slide-fn != none and not self.receive-body-for-new-subsubsection-slide-fn {
+        } else if (
+          child.depth == 3
+            and new-subsubsection-slide-fn != none
+            and not self.receive-body-for-new-subsubsection-slide-fn
+        ) {
           (cont, recaller-map, current-headings, current-slide, new-start, is-first-slide) = call-slide-fn-and-reset(
             self + (headings: current-headings, is-first-slide: is-first-slide),
             new-subsubsection-slide-fn,
@@ -308,7 +322,11 @@ snapshot_kind: text
             recaller-map,
           )
           result.push(cont)
-        } else if child.depth == 4 and new-subsubsubsection-slide-fn != none and not self.receive-body-for-new-subsubsubsection-slide-fn {
+        } else if (
+          child.depth == 4
+            and new-subsubsubsection-slide-fn != none
+            and not self.receive-body-for-new-subsubsubsection-slide-fn
+        ) {
           (cont, recaller-map, current-headings, current-slide, new-start, is-first-slide) = call-slide-fn-and-reset(
             self + (headings: current-headings, is-first-slide: is-first-slide),
             new-subsubsubsection-slide-fn,
@@ -872,14 +890,15 @@ snapshot_kind: text
     supplement: eqt.supplement,
     eval(
       "$" + result.sum(default: "") + "$",
-      scope: eqt.scope + (
-        cover: (..args) => {
-          let cover = eqt.scope.at("cover", default: cover)
-          if args.pos().len() != 0 {
-            cover(args.pos().first())
-          }
-        },
-      ),
+      scope: eqt.scope
+        + (
+          cover: (..args) => {
+            let cover = eqt.scope.at("cover", default: cover)
+            if args.pos().len() != 0 {
+              cover(args.pos().first())
+            }
+          },
+        ),
     ),
   )
   if eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark> {
@@ -1033,7 +1052,11 @@ snapshot_kind: text
 ) = {
   let labeled(func) = {
     return not (
-      "repeat" in self and "subslide" in self and "label-only-on-last-subslide" in self and func in self.label-only-on-last-subslide and self.subslide != self.repeat
+      "repeat" in self
+        and "subslide" in self
+        and "label-only-on-last-subslide" in self
+        and func in self.label-only-on-last-subslide
+        and self.subslide != self.repeat
     )
   }
   let bodies = bodies.pos()
@@ -1241,33 +1264,36 @@ snapshot_kind: text
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
-      } else if type(child) == content and child.func() in (
-        pad,
-        figure,
-        quote,
-        strong,
-        emph,
-        footnote,
-        highlight,
-        overline,
-        underline,
-        strike,
-        smallcaps,
-        sub,
-        super,
-        box,
-        block,
-        hide,
-        move,
-        scale,
-        circle,
-        ellipse,
-        rect,
-        square,
-        table.cell,
-        grid.cell,
-        math.equation,
-        heading,
+      } else if (
+        type(child) == content
+          and child.func() in (
+            pad,
+            figure,
+            quote,
+            strong,
+            emph,
+            footnote,
+            highlight,
+            overline,
+            underline,
+            strike,
+            smallcaps,
+            sub,
+            super,
+            box,
+            block,
+            hide,
+            move,
+            scale,
+            circle,
+            ellipse,
+            rect,
+            square,
+            table.cell,
+            grid.cell,
+            math.equation,
+            heading,
+          )
       ) {
         let (
           conts,

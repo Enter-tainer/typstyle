@@ -39,7 +39,9 @@ snapshot_kind: text
 #let using-typst-v080-or-later = str(type(_str-type)) == "type"
 
 // Attachments use "t" and "b" instead of "top" and "bottom" since v0.3.0.
-#let using-typst-v030-or-later = using-typst-v080-or-later or $a^b$.body.has("t")
+#let using-typst-v030-or-later = (
+  using-typst-v080-or-later or $a^b$.body.has("t")
+)
 
 // This is true if types have fields in the current Typst version.
 // This means we can use stroke.thickness, length.em, and so on.
@@ -91,15 +93,21 @@ snapshot_kind: text
   if type(fit-spans) == _dict-type {
     assert(
       fit-spans.len() > 0,
-      message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must not be empty.",
+      message: "Tablex error:"
+        + error-prefix
+        + " 'fit-spans', if a dictionary, must not be empty.",
     )
     assert(
       fit-spans.keys().all(k => k in ("x", "y")),
-      message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must only have the keys x and y.",
+      message: "Tablex error:"
+        + error-prefix
+        + " 'fit-spans', if a dictionary, must only have the keys x and y.",
     )
     assert(
       fit-spans.values().all(v => type(v) == _bool-type),
-      message: "Tablex error:" + error-prefix + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
+      message: "Tablex error:"
+        + error-prefix
+        + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
     )
     for key in ("x", "y") {
       if key in default and key not in fit-spans {
@@ -107,9 +115,11 @@ snapshot_kind: text
       }
     }
   } else {
-    panic("Tablex error:" + error-prefix + " Expected 'fit-spans' to be either a boolean or dictionary, found '" + str(
-      type(fit-spans),
-    ) + "'")
+    panic("Tablex error:"
+      + error-prefix
+      + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
+      + str(type(fit-spans))
+      + "'")
   }
   fit-spans
 }
@@ -261,10 +271,9 @@ snapshot_kind: text
       0,
       (acc, cell) => {
         if (
-          is-tablex-cell(cell) and type(cell.y) in (
-            _int-type,
-            _float-type,
-          ) and cell.y > acc
+          is-tablex-cell(cell)
+            and type(cell.y) in (_int-type, _float-type)
+            and cell.y > acc
         ) {
           cell.y
         } else {
@@ -293,12 +302,10 @@ snapshot_kind: text
 
 // Check if this length is infinite.
 #let is-infinite-len(len) = {
-  type(len) in (
-    _ratio-type,
-    _fraction-type,
-    _rel-len-type,
-    _length-type,
-  ) and "inf" in repr(len)
+  (
+    type(len) in (_ratio-type, _fraction-type, _rel-len-type, _length-type)
+      and "inf" in repr(len)
+  )
 }
 
 // Check if this is a valid color (color, gradient or pattern).
@@ -340,14 +347,16 @@ snapshot_kind: text
   }
 
   let col_row_is_valid(col_row) = (
-    (not is-infinite-len(col_row)) and (
-      col_row == auto or type(col_row) in (
-        _fraction-type,
-        _length-type,
-        _rel-len-type,
-        _ratio-type,
+    (not is-infinite-len(col_row))
+      and (
+        col_row == auto
+          or type(col_row) in (
+            _fraction-type,
+            _length-type,
+            _rel-len-type,
+            _ratio-type,
+          )
       )
-    )
   )
 
   if not columns.all(col_row_is_valid) {
@@ -494,10 +503,9 @@ snapshot_kind: text
     let em = len.em
     // Measure with abs (and later multiply by the sign) so negative em works.
     // Otherwise it would return 0pt, and we would need to measure again with abs.
-    let measured-em = calc-sign(em) * measure(
-      box(width: calc.abs(em) * 1em),
-      styles,
-    ).width
+    let measured-em = (
+      calc-sign(em) * measure(box(width: calc.abs(em) * 1em), styles).width
+    )
 
     return pt + measured-em
   }
@@ -557,8 +565,8 @@ snapshot_kind: text
   }
 
   (
-    (len / 1%) / 100
-  ) * page-size + 0pt // e.g. 100% / 1% = 100; / 100 = 1; 1 * page-size
+    ((len / 1%) / 100) * page-size + 0pt
+  ) // e.g. 100% / 1% = 100; / 100 = 1; 1 * page-size
 }
 
 // Convert a fraction type length to pt
@@ -596,10 +604,10 @@ snapshot_kind: text
   if typst-fields-supported or eval(repr(0.00005em)) != 0.00005em {
     // em repr changed in 0.11.0 => need to use fields here
     // or use fields if they're supported anyway
-    return convert-ratio-type-to-pt(
-      len.ratio,
-      page-size,
-    ) + convert-length-type-to-pt(len.length, styles: styles)
+    return (
+      convert-ratio-type-to-pt(len.ratio, page-size)
+        + convert-length-type-to-pt(len.length, styles: styles)
+    )
   }
 
   // We will need to draw a line for measurement later,
@@ -701,7 +709,13 @@ snapshot_kind: text
     // - 2pt / 2em / 2cm / 2in   + color
     // - 2.5pt / 2.5em / ...  + color
     // - 2pt + 3em   + color
-    let len-regex = "(?:" + NUMBER-REGEX-STRING + "(?:em|pt|cm|in|%)(?:\\s+\\+\\s+" + NUMBER-REGEX-STRING + "em)?)"
+    let len-regex = (
+      "(?:"
+        + NUMBER-REGEX-STRING
+        + "(?:em|pt|cm|in|%)(?:\\s+\\+\\s+"
+        + NUMBER-REGEX-STRING
+        + "em)?)"
+    )
     let r = regex("^" + len-regex)
     let s = repr(stroke).find(r)
 
@@ -961,7 +975,9 @@ snapshot_kind: text
             // in the meantime
 
             if prev_x > x_limit + 1 {
-              panic("Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most " + str(x_limit + 1) + " empty cells or vlines before the first cell of the table.")
+              panic("Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most "
+                + str(x_limit + 1)
+                + " empty cells or vlines before the first cell of the table.")
             }
           } else if row_wrapped {
             item.x = x_limit // allow v_line at the last column
@@ -996,10 +1012,11 @@ snapshot_kind: text
     }
 
     if this_x == none or this_y == none {
-      panic("Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: " + repr((
-        prev_x,
-        prev_y,
-      )) + ", new cell: " + repr(cell) + ")")
+      panic("Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: "
+        + repr((prev_x, prev_y))
+        + ", new cell: "
+        + repr(cell)
+        + ")")
     }
 
     cell.x = this_x
@@ -1038,10 +1055,8 @@ snapshot_kind: text
     }
 
     if type(this_x) != _int-type or type(this_y) != _int-type {
-      panic("Error: Cell coordinates must be integers. Invalid pair: " + repr((
-        this_x,
-        this_y,
-      )))
+      panic("Error: Cell coordinates must be integers. Invalid pair: "
+        + repr((this_x, this_y)))
     }
 
     cell.content = content
@@ -1062,17 +1077,17 @@ snapshot_kind: text
     let max_y = this_y + cell.rowspan - 1
 
     if this_x >= x_limit {
-      panic("Error: Cell at " + repr((
-        this_x,
-        this_y,
-      )) + " is placed at an inexistent column.")
+      panic("Error: Cell at "
+        + repr((this_x, this_y))
+        + " is placed at an inexistent column.")
     }
 
     if max_x >= x_limit {
-      panic("Error: Cell at " + repr((
-        this_x,
-        this_y,
-      )) + " has a colspan of " + repr(cell.colspan) + ", which would exceed the available columns.")
+      panic("Error: Cell at "
+        + repr((this_x, this_y))
+        + " has a colspan of "
+        + repr(cell.colspan)
+        + ", which would exceed the available columns.")
     }
 
     let cell_positions = positions-spanned-by(
@@ -1090,13 +1105,12 @@ snapshot_kind: text
       if currently_there != none {
         let parent_cell = get-parent-cell(currently_there, grid: grid)
 
-        panic("Error: Multiple cells attempted to occupy the cell position at " + repr((
-          px,
-          py,
-        )) + ": one starting at " + repr((
-          this_x,
-          this_y,
-        )) + ", and one starting at " + repr((parent_cell.x, parent_cell.y)))
+        panic("Error: Multiple cells attempted to occupy the cell position at "
+          + repr((px, py))
+          + ": one starting at "
+          + repr((this_x, this_y))
+          + ", and one starting at "
+          + repr((parent_cell.x, parent_cell.y)))
       }
 
       // initial position => assign it to the cell's x/y
@@ -1113,10 +1127,8 @@ snapshot_kind: text
         let index = grid-index-at(this_x, this_y)
 
         if index > grid.items.len() {
-          panic("Internal tablex error: Could not expand grid to include cell at " + repr((
-            this_x,
-            this_y,
-          )))
+          panic("Internal tablex error: Could not expand grid to include cell at "
+            + repr((this_x, this_y)))
         }
         grid.items.at(index) = cell
         items.at(i) = cell
@@ -1260,9 +1272,8 @@ snapshot_kind: text
     }
   }
 
-  if cell_align != auto and type(cell_align) not in (
-    _align-type,
-    _2d-align-type,
+  if (
+    cell_align != auto and type(cell_align) not in (_align-type, _2d-align-type)
   ) {
     panic("Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').")
   }
@@ -1433,12 +1444,16 @@ snapshot_kind: text
           ) // in case this is a colspan
           let last-auto-col = get-colspan-last-auto-col(pcell, columns: columns)
 
-          let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
+          let fit-this-span = if (
+            "fit-spans" in pcell and pcell.fit-spans != auto
+          ) {
             pcell.fit-spans.x
           } else {
             fit-spans.x
           }
-          let this-cell-can-expand-columns = pcell.colspan == 1 or not fit-this-span
+          let this-cell-can-expand-columns = (
+            pcell.colspan == 1 or not fit-this-span
+          )
 
           // only expand the last auto column of a colspan,
           // and only the amount necessary that isn't already
@@ -1447,10 +1462,18 @@ snapshot_kind: text
           // `fit-spans.x == true` (it requests to not expand
           // columns).
           if last-auto-col == i and this-cell-can-expand-columns {
-            let cell-spans-all-frac-columns = pcell.colspan > 1 and all-frac-columns.len() > 0 and all-frac-columns.all(i => (
-              pcell.x <= i and i < (pcell.x + pcell.colspan)
-            ))
-            if cell-spans-all-frac-columns and page-width != 0pt and not is-infinite-len(page-width) {
+            let cell-spans-all-frac-columns = (
+              pcell.colspan > 1
+                and all-frac-columns.len() > 0
+                and all-frac-columns.all(i => (
+                  pcell.x <= i and i < (pcell.x + pcell.colspan)
+                ))
+            )
+            if (
+              cell-spans-all-frac-columns
+                and page-width != 0pt
+                and not is-infinite-len(page-width)
+            ) {
               // HEURISTIC (only effective when the page width isn't 'auto' / infinite):
               // If this cell can expand auto cols, but it already
               // spans all fractional columns, then don't expand
@@ -1613,8 +1636,8 @@ snapshot_kind: text
     0pt
   }
 
-  let total_fixed_size = sum-fixed-size-tracks(columns) + fixed-size-gutter * (
-    columns.len() - 1
+  let total_fixed_size = (
+    sum-fixed-size-tracks(columns) + fixed-size-gutter * (columns.len() - 1)
   )
 
   let available_size = page_width - total_fixed_size
@@ -1714,12 +1737,16 @@ snapshot_kind: text
           ) // in case this is a rowspan
           let last-auto-row = get-rowspan-last-auto-row(pcell, rows: rows)
 
-          let fit-this-span = if "fit-spans" in pcell and pcell.fit-spans != auto {
+          let fit-this-span = if (
+            "fit-spans" in pcell and pcell.fit-spans != auto
+          ) {
             pcell.fit-spans.y
           } else {
             fit-spans.y
           }
-          let this-cell-can-expand-rows = pcell.rowspan == 1 or not fit-this-span
+          let this-cell-can-expand-rows = (
+            pcell.rowspan == 1 or not fit-this-span
+          )
 
           // only expand the last auto row of a rowspan,
           // and only the amount necessary that isn't already
@@ -1815,8 +1842,11 @@ snapshot_kind: text
     0pt
   }
 
-  let remaining = page_height - sum-fixed-size-tracks(rows) - auto_size - fixed-size-gutter * (
-    rows.len() - 1
+  let remaining = (
+    page_height
+      - sum-fixed-size-tracks(rows)
+      - auto_size
+      - fixed-size-gutter * (rows.len() - 1)
   )
 
   if remaining >= 0pt {
@@ -2100,7 +2130,12 @@ snapshot_kind: text
 // Are two hlines the same?
 // (Check to avoid double drawing)
 #let is-same-hline(a, b) = (
-  is-tablex-hline(a) and is-tablex-hline(b) and a.y == b.y and a.start == b.start and a.end == b.end and a.gutter-restrict == b.gutter-restrict
+  is-tablex-hline(a)
+    and is-tablex-hline(b)
+    and a.y == b.y
+    and a.start == b.start
+    and a.end == b.end
+    and a.gutter-restrict == b.gutter-restrict
 )
 
 #let _largest-stroke-among-lines(lines, stroke-auto: 1pt, styles: none) = (
@@ -2147,13 +2182,16 @@ snapshot_kind: text
 #let parse-stroke(stroke) = {
   if is-color(stroke) {
     stroke + 1pt
-  } else if type(stroke) in (
-    _length-type,
-    _rel-len-type,
-    _ratio-type,
-    _stroke-type,
-    _dict-type,
-  ) or stroke in (none, auto) {
+  } else if (
+    type(stroke) in (
+      _length-type,
+      _rel-len-type,
+      _ratio-type,
+      _stroke-type,
+      _dict-type,
+    )
+      or stroke in (none, auto)
+  ) {
     stroke
   } else {
     panic("Invalid stroke '" + repr(stroke) + "'.")
@@ -2225,10 +2263,13 @@ snapshot_kind: text
     columns.len(),
   ) { return }
 
-  if gutter != none and gutter.row != none and (
-    (pre-gutter and hline.gutter-restrict == bottom) or (
-      not pre-gutter and hline.gutter-restrict == top
-    )
+  if (
+    gutter != none
+      and gutter.row != none
+      and (
+        (pre-gutter and hline.gutter-restrict == bottom)
+          or (not pre-gutter and hline.gutter-restrict == top)
+      )
   ) {
     return
   }
@@ -2243,12 +2284,12 @@ snapshot_kind: text
       stroke-auto: stroke-auto,
       styles: styles,
     )
-    left-expand += largest-stroke(
-      default-if-auto-or-none(start, 0),
-    ) / 2 // expand to the left to close stroke gap
-    right-expand += largest-stroke(
-      default-if-auto-or-none(end, columns.len()),
-    ) / 2 // close stroke gap to the right
+    left-expand += (
+      largest-stroke(default-if-auto-or-none(start, 0)) / 2
+    ) // expand to the left to close stroke gap
+    right-expand += (
+      largest-stroke(default-if-auto-or-none(end, columns.len())) / 2
+    ) // close stroke gap to the right
   }
 
   let y = height-between(
@@ -2258,20 +2299,26 @@ snapshot_kind: text
     gutter: gutter,
     pre-gutter: pre-gutter,
   )
-  let start_x = width-between(
-    start: initial_x,
-    end: start,
-    columns: columns,
-    gutter: gutter,
-    pre-gutter: false,
-  ) - left-expand
-  let end_x = width-between(
-    start: initial_x,
-    end: end,
-    columns: columns,
-    gutter: gutter,
-    pre-gutter: hline.stop-pre-gutter == true,
-  ) + right-expand
+  let start_x = (
+    width-between(
+      start: initial_x,
+      end: start,
+      columns: columns,
+      gutter: gutter,
+      pre-gutter: false,
+    )
+      - left-expand
+  )
+  let end_x = (
+    width-between(
+      start: initial_x,
+      end: end,
+      columns: columns,
+      gutter: gutter,
+      pre-gutter: hline.stop-pre-gutter == true,
+    )
+      + right-expand
+  )
 
   if end_x - start_x < 0pt {
     return // negative length
@@ -2327,10 +2374,13 @@ snapshot_kind: text
     rows.len(),
   ) { return }
 
-  if gutter != none and gutter.col != none and (
-    (pre-gutter and vline.gutter-restrict == right) or (
-      not pre-gutter and vline.gutter-restrict == left
-    )
+  if (
+    gutter != none
+      and gutter.col != none
+      and (
+        (pre-gutter and vline.gutter-restrict == right)
+          or (not pre-gutter and vline.gutter-restrict == left)
+      )
   ) {
     return
   }
@@ -2345,12 +2395,12 @@ snapshot_kind: text
       stroke-auto: stroke-auto,
       styles: styles,
     )
-    top-expand += largest-stroke(
-      default-if-auto-or-none(start, 0),
-    ) / 2 // close stroke gap to the top
-    bottom-expand += largest-stroke(
-      default-if-auto-or-none(end, rows.len()),
-    ) / 2 // close stroke gap to the bottom
+    top-expand += (
+      largest-stroke(default-if-auto-or-none(start, 0)) / 2
+    ) // close stroke gap to the top
+    bottom-expand += (
+      largest-stroke(default-if-auto-or-none(end, rows.len())) / 2
+    ) // close stroke gap to the bottom
   }
 
   let x = width-between(
@@ -2360,19 +2410,20 @@ snapshot_kind: text
     gutter: gutter,
     pre-gutter: pre-gutter,
   )
-  let start_y = height-between(
-    start: initial_y,
-    end: start,
-    rows: rows,
-    gutter: gutter,
-  ) - top-expand
-  let end_y = height-between(
-    start: initial_y,
-    end: end,
-    rows: rows,
-    gutter: gutter,
-    pre-gutter: stop-before-row-gutter or vline.stop-pre-gutter == true,
-  ) + bottom-expand
+  let start_y = (
+    height-between(start: initial_y, end: start, rows: rows, gutter: gutter)
+      - top-expand
+  )
+  let end_y = (
+    height-between(
+      start: initial_y,
+      end: end,
+      rows: rows,
+      gutter: gutter,
+      pre-gutter: stop-before-row-gutter or vline.stop-pre-gutter == true,
+    )
+      + bottom-expand
+  )
 
   if end_y - start_y < 0pt {
     return // negative length
@@ -2545,10 +2596,15 @@ snapshot_kind: text
         if page_turned and at_top and not is-header {
           if repeat-header != false {
             header-pages-state.update(l => l + (page,))
-            if (repeat-header == true) or (
-              type(repeat-header) == _int-type and rel_page <= repeat-header
-            ) or (
-              type(repeat-header) == _array-type and rel_page in repeat-header
+            if (
+              (repeat-header == true)
+                or (
+                  type(repeat-header) == _int-type and rel_page <= repeat-header
+                )
+                or (
+                  type(repeat-header) == _array-type
+                    and rel_page in repeat-header
+                )
             ) {
               let measures = measure(first-row-group.content, styles)
               place(top + left, first-row-group.content) // add header
@@ -2610,11 +2666,14 @@ snapshot_kind: text
           first_row = false
         }
 
-        let row_group_height = row_heights + added_header_height + (
-          row_gutter_dy * group-rows.len()
+        let row_group_height = (
+          row_heights + added_header_height + (row_gutter_dy * group-rows.len())
         )
 
-        let is_last_row = not is-infinite-len(max-pos.y) and pos.y + row_group_height + row_gutter_dy >= max-pos.y
+        let is_last_row = (
+          not is-infinite-len(max-pos.y)
+            and pos.y + row_group_height + row_gutter_dy >= max-pos.y
+        )
 
         if is_last_row {
           row_group_height -= row_gutter_dy
@@ -2657,7 +2716,11 @@ snapshot_kind: text
         // do not have priority (thus are not drawn by them,
         // otherwise they'd repeat on every page), then
         // we draw its hlines for the header, below it.
-        let hlines = if not header-hlines-have-priority and not is-header and start-y == header_last_y + 1 {
+        let hlines = if (
+          not header-hlines-have-priority
+            and not is-header
+            and start-y == header_last_y + 1
+        ) {
           let hlines_below_header = first-row-group
             .row_group
             .hlines
@@ -2684,13 +2747,21 @@ snapshot_kind: text
             // these if's are to check if we should indeed
             // draw this hline, or if the previous row /
             // the header should take care of it.
-            if not header-hlines-have-priority and not is-header and start-y == header_last_y + 1 {
+            if (
+              not header-hlines-have-priority
+                and not is-header
+                and start-y == header_last_y + 1
+            ) {
               // second row (after header, and it has no hline priority).
               draw-hline(hline, pre-gutter: false)
             } else if hline.y == 0 {
               // hline at the very top of the table.
               draw-hline(hline, pre-gutter: false)
-            } else if not page_turned and gutter.row != none and hline.gutter-restrict != top {
+            } else if (
+              not page_turned
+                and gutter.row != none
+                and hline.gutter-restrict != top
+            ) {
               // this hline, at the top of this row group,
               // isn't restricted to a pre-gutter position,
               // so let's draw it right above us.
@@ -2699,17 +2770,22 @@ snapshot_kind: text
               // was repeated and its own hlines have
               // priority.
               draw-hline(hline, pre-gutter: false)
-            } else if page_turned and (
-              added_header_height == 0pt or not header-hlines-have-priority
+            } else if (
+              page_turned
+                and (
+                  added_header_height == 0pt or not header-hlines-have-priority
+                )
             ) {
               draw-hline(hline, pre-gutter: false)
               // no header repeated, but still at the top of the current page
             }
           } else {
-            if hline.y == end-y + 1 and (
-              (is-header and not header-hlines-have-priority) or (
-                gutter.row != none and hline.gutter-restrict == bottom
-              )
+            if (
+              hline.y == end-y + 1
+                and (
+                  (is-header and not header-hlines-have-priority)
+                    or (gutter.row != none and hline.gutter-restrict == bottom)
+                )
             ) {
               // this hline is after all cells
               // in the row group, and either
@@ -2735,7 +2811,12 @@ snapshot_kind: text
             // place the hline above it, so that
             // lines break properly between pages),
             // or the last row in the whole table.
-            if gutter.row != none and hline.y < rows.len() and hline.y < end-y + 1 and not is_last_row {
+            if (
+              gutter.row != none
+                and hline.y < rows.len()
+                and hline.y < end-y + 1
+                and not is_last_row
+            ) {
               draw-hline(hline, pre-gutter: false)
             }
           }
@@ -3100,11 +3181,11 @@ snapshot_kind: text
       }
 
       if cells.len() != original-cells.len() {
-        panic("Tablex error: 'map-rows' returned " + str(
-          cells.len(),
-        ) + " cells, when it should have returned exactly " + str(
-          original-cells.len(),
-        ) + ".")
+        panic("Tablex error: 'map-rows' returned "
+          + str(cells.len())
+          + " cells, when it should have returned exactly "
+          + str(original-cells.len())
+          + ".")
       }
 
       for (i, cell) in cells.enumerate() {
@@ -3121,7 +3202,14 @@ snapshot_kind: text
         let x = cell.x
         let y = cell.y
 
-        if type(x) != _int-type or type(y) != _int-type or x < 0 or y < 0 or x >= col-len or y >= row-len {
+        if (
+          type(x) != _int-type
+            or type(y) != _int-type
+            or x < 0
+            or y < 0
+            or x >= col-len
+            or y >= row-len
+        ) {
           panic("Tablex error: 'map-rows' returned a cell with invalid coordinates.")
         }
 
@@ -3129,7 +3217,9 @@ snapshot_kind: text
           panic("Tablex error: 'map-rows' returned a cell in a different row (the 'y' must be kept the same).")
         }
 
-        if cell.colspan != orig-cell.colspan or cell.rowspan != orig-cell.rowspan {
+        if (
+          cell.colspan != orig-cell.colspan or cell.rowspan != orig-cell.rowspan
+        ) {
           panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-rows'.")
         }
 
@@ -3156,11 +3246,11 @@ snapshot_kind: text
       }
 
       if cells.len() != original-cells.len() {
-        panic("Tablex error: 'map-cols' returned " + str(
-          cells.len(),
-        ) + " cells, when it should have returned exactly " + str(
-          original-cells.len(),
-        ) + ".")
+        panic("Tablex error: 'map-cols' returned "
+          + str(cells.len())
+          + " cells, when it should have returned exactly "
+          + str(original-cells.len())
+          + ".")
       }
 
       for (i, cell) in cells.enumerate() {
@@ -3177,13 +3267,22 @@ snapshot_kind: text
         let x = cell.x
         let y = cell.y
 
-        if type(x) != _int-type or type(y) != _int-type or x < 0 or y < 0 or x >= col-len or y >= row-len {
+        if (
+          type(x) != _int-type
+            or type(y) != _int-type
+            or x < 0
+            or y < 0
+            or x >= col-len
+            or y >= row-len
+        ) {
           panic("Tablex error: 'map-cols' returned a cell with invalid coordinates.")
         }
         if x != column {
           panic("Tablex error: 'map-cols' returned a cell in a different column (the 'x' must be kept the same).")
         }
-        if cell.colspan != orig-cell.colspan or cell.rowspan != orig-cell.rowspan {
+        if (
+          cell.colspan != orig-cell.colspan or cell.rowspan != orig-cell.rowspan
+        ) {
           panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-cols'.")
         }
 
@@ -3215,9 +3314,10 @@ snapshot_kind: text
 
   if type(repeat-header) not in (_bool-type, _int-type, _array-type) {
     panic("Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).")
-  } else if type(repeat-header) == _array-type and repeat-header.any(i => (
-    type(i) != _int-type
-  )) {
+  } else if (
+    type(repeat-header) == _array-type
+      and repeat-header.any(i => type(i) != _int-type)
+  ) {
     panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
   }
 

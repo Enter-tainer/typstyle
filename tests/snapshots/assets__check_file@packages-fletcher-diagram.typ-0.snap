@@ -118,8 +118,12 @@ snapshot_kind: text
           .at(axis) = calc.floor(coord)
         rect
           .size
-          .at(axis) = size * (
-          calc.ceil(coord) - coord
+          .at(axis) = (
+          size
+            * (
+              calc.ceil(coord)
+                - coord
+            )
         )
         new-rects.push(rect)
 
@@ -128,8 +132,12 @@ snapshot_kind: text
           .at(axis) = calc.ceil(coord)
         rect
           .size
-          .at(axis) = size * (
-          coord - calc.floor(coord)
+          .at(axis) = (
+          size
+            * (
+              coord
+                - calc.floor(coord)
+            )
         )
         new-rects.push(rect)
       }
@@ -198,15 +206,20 @@ snapshot_kind: text
     y-min,
   )
   let bounding-dims = (
-    x-max - x-min + 1,
-    y-max - y-min + 1,
+    x-max
+      - x-min
+      + 1,
+    y-max
+      - y-min
+      + 1,
   )
 
   // Initialise row and column sizes
   let cell-sizes = bounding-dims.map(n => (
     (
       0pt,
-    ) * n
+    )
+      * n
   ))
 
   // Expand cells to fit rects
@@ -220,12 +233,18 @@ snapshot_kind: text
     if grid
       .flip
       .x {
-      indices.at(0) = -1 - indices.at(0)
+      indices.at(0) = (
+        -1
+          - indices.at(0)
+      )
     }
     if grid
       .flip
       .y {
-      indices.at(1) = -1 - indices.at(1)
+      indices.at(1) = (
+        -1
+          - indices.at(1)
+      )
     }
     for axis in (
       0,
@@ -240,7 +259,10 @@ snapshot_kind: text
       } else {
         rect
           .size
-          .at(1 - axis)
+          .at((
+            1
+              - axis
+          ))
       }
       cell-sizes
         .at(axis)
@@ -308,7 +330,11 @@ snapshot_kind: text
             i,
           ),
         ) => (
-          end - size / 2 + spacing * i
+          end
+            - size
+              / 2
+            + spacing
+              * i
         ))
     })
 
@@ -323,7 +349,9 @@ snapshot_kind: text
         sizes,
       ),
     ) => (
-      centers.at(-1) + sizes.at(-1) / 2
+      centers.at(-1)
+        + sizes.at(-1)
+          / 2
     ))
 
   (
@@ -379,7 +407,10 @@ snapshot_kind: text
   eq,
 ) = {
   assert(eq.func() == math.equation)
-  let terms = eq.body + []
+  let terms = (
+    eq.body
+      + []
+  )
 
   let edges = ()
   let nodes = ()
@@ -511,10 +542,13 @@ snapshot_kind: text
     )
   }
 
-  let positional-args = args
-    .pos()
-    .flatten()
-    .join() + [] // join to ensure sequence
+  let positional-args = (
+    args
+      .pos()
+      .flatten()
+      .join()
+      + []
+  ) // join to ensure sequence
   let objects = positional-args.children
 
   let nodes = ()
@@ -838,17 +872,21 @@ snapshot_kind: text
         size: node.size,
       ))
 
-    let vertices-affecting-grid = edges
-      .map(edge => {
-        resolve-edge-vertices(
-          edge,
-          ctx: ctx-with-uv-anchors + (
-            target-system: "uv",
-          ),
-          nodes,
-        )
-      })
-      .join() + () // coerce none to ()
+    let vertices-affecting-grid = (
+      edges
+        .map(edge => {
+          resolve-edge-vertices(
+            edge,
+            ctx: ctx-with-uv-anchors
+              + (
+                target-system: "uv",
+              ),
+            nodes,
+          )
+        })
+        .join()
+        + ()
+    ) // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
       not is-nan-vector(vert)
     ))
@@ -900,10 +938,11 @@ snapshot_kind: text
     edges = edges.map(edge => {
       edge.final-vertices = resolve-edge-vertices(
         edge,
-        ctx: ctx-with-xyz-anchors + (
-          target-system: "xyz",
-          grid: grid,
-        ),
+        ctx: ctx-with-xyz-anchors
+          + (
+            target-system: "xyz",
+            grid: grid,
+          ),
         nodes,
       )
 

@@ -28,7 +28,10 @@ snapshot_kind: text
   debug: 0,
 ) = {
   let result = {
-    if node.stroke != none or node.fill != none {
+    if (
+      node.stroke != none
+        or node.fill != none
+    ) {
       cetz
         .draw
         .group({
@@ -71,18 +74,26 @@ snapshot_kind: text
           box(
             // wrapping label in a box allows user to control its alignment
             align(
-              center + horizon,
+              center
+                + horizon,
               node.label,
             ),
             stroke: if debug >= 3 {
-              DEBUG_COLOR2 + 0.25pt
+              (
+                DEBUG_COLOR2
+                  + 0.25pt
+              )
             },
             width: node
               .size
-              .at(0) - 2 * node.inset,
+              .at(0)
+              - 2
+                * node.inset,
             height: node
               .size
-              .at(1) - 2 * node.inset,
+              .at(1)
+              - 2
+                * node.inset,
           ),
           anchor: "center",
         )
@@ -117,7 +128,10 @@ snapshot_kind: text
       )
   }
 
-  if debug >= 2 and node.radius != 0pt {
+  if (
+    debug >= 2
+      and node.radius != 0pt
+  ) {
     // node bounding rectangle
     cetz
       .draw
@@ -128,7 +142,10 @@ snapshot_kind: text
             .xyz,
           node.size,
         ),
-        stroke: DEBUG_COLOR + .1pt,
+        stroke: (
+          DEBUG_COLOR
+            + .1pt
+        ),
       )
 
     // node anchoring outline (what edges snap to)
@@ -143,7 +160,10 @@ snapshot_kind: text
         cetz
           .draw
           .set-style(
-            stroke: DEBUG_COLOR2 + 0.25pt,
+            stroke: (
+              DEBUG_COLOR2
+                + 0.25pt
+            ),
             fill: none,
           )
         (
@@ -178,7 +198,8 @@ snapshot_kind: text
   debug: 0,
 ) = {
   let curve-point = curve(edge.label-pos)
-  let curve-point-ε = curve(edge.label-pos + 1e-3)
+  let curve-point-ε = curve(edge.label-pos
+    + 1e-3)
 
   let θ = wrap-angle-180(
     angle-between(
@@ -186,20 +207,26 @@ snapshot_kind: text
       curve-point-ε,
     ),
   )
-  let θ-normal = θ + if edge.label-side == right {
-    +90deg
-  } else {
-    -90deg
-  }
+  let θ-normal = (
+    θ
+      + if edge.label-side == right {
+        +90deg
+      } else {
+        -90deg
+      }
+  )
 
   if type(edge.label-angle) == alignment {
-    edge.label-angle = θ - (
-      right: 0deg,
-      top: 90deg,
-      left: 180deg,
-      bottom: 270deg,
-    ).at(
-      repr(edge.label-angle),
+    edge.label-angle = (
+      θ
+        - (
+          right: 0deg,
+          top: 90deg,
+          left: 180deg,
+          bottom: 270deg,
+        ).at(
+          repr(edge.label-angle),
+        )
     )
   } else if edge.label-angle == auto {
     edge.label-angle = θ
@@ -209,7 +236,8 @@ snapshot_kind: text
   }
 
   if edge.label-anchor == auto {
-    edge.label-anchor = angle-to-anchor(θ-normal - edge.label-angle)
+    edge.label-anchor = angle-to-anchor(θ-normal
+      - edge.label-angle)
   }
 
   let label-pos = (
@@ -232,7 +260,10 @@ snapshot_kind: text
           )(edge)
         },
         stroke: if debug >= 2 {
-          DEBUG_COLOR2 + 0.25pt
+          (
+            DEBUG_COLOR2
+              + 0.25pt
+          )
         },
       ),
       angle: edge.label-angle,
@@ -269,7 +300,8 @@ snapshot_kind: text
     let mark = edge
       .marks
       .find(mark => (
-        calc.abs(mark.pos - pos) < 1e-3
+        calc.abs(mark.pos
+          - pos) < 1e-3
       ))
     if mark == none {
       return 0pt
@@ -285,12 +317,15 @@ snapshot_kind: text
     }
 
     let x = cap-offset(
-      mark + (
-        tip: is-tip,
-      ),
-      sign * y / edge
-        .stroke
-        .thickness,
+      mark
+        + (
+          tip: is-tip,
+        ),
+      sign
+        * y
+        / edge
+          .stroke
+          .thickness,
     )
 
     let origin = if is-tip {
@@ -298,11 +333,18 @@ snapshot_kind: text
     } else {
       mark.tail-origin
     }
-    x -= origin * float(mark.scale)
+    x -= (
+      origin
+        * float(mark.scale)
+    )
 
-    sign * x * edge
-      .stroke
-      .thickness
+    (
+      sign
+        * x
+        * edge
+          .stroke
+          .thickness
+    )
   })
 }
 
@@ -320,7 +362,8 @@ snapshot_kind: text
     edge
       .marks
       .find(mark => (
-        calc.abs(mark.pos - t) < 1e-3
+        calc.abs(mark.pos
+          - t) < 1e-3
       )) != none
   )
 
@@ -331,16 +374,25 @@ snapshot_kind: text
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
   decor = decor.with(
-    start: if has-mark-at(0) {
-      0.1
-    } else {
-      ε
-    } * 100%,
-    stop: if has-mark-at(1) {
-      0.9
-    } else {
-      1 - ε
-    } * 100%,
+    start: (
+      if has-mark-at(0) {
+        0.1
+      } else {
+        ε
+      }
+        * 100%
+    ),
+    stop: (
+      if has-mark-at(1) {
+        0.9
+      } else {
+        (
+          1
+            - ε
+        )
+      }
+        * 100%
+    ),
   )
 
   decor(path)
@@ -392,7 +444,8 @@ snapshot_kind: text
         // Shift line sideways (for multi-stroke effect)
         point = (
           rel: (
-            θ + 90deg,
+            θ
+              + 90deg,
             shift,
           ),
           to: point,
@@ -512,16 +565,28 @@ snapshot_kind: text
       edge,
       shift,
     ).map(arclen => (
-      -bend-dir * arclen / radius * 1rad
+      -bend-dir
+        * arclen
+        / radius
+        * 1rad
     ))
 
     let obj = cetz
       .draw
       .arc(
         center,
-        radius: radius + shift,
-        start: start + δ-start,
-        stop: stop + δ-stop,
+        radius: (
+          radius
+            + shift
+        ),
+        start: (
+          start
+            + δ-start
+        ),
+        stop: (
+          stop
+            + δ-stop
+        ),
         anchor: "origin",
         stroke: edge.stroke,
       )
@@ -595,7 +660,10 @@ snapshot_kind: text
   debug: 0,
 ) = {
   let verts = edge.final-vertices
-  let n-segments = verts.len() - 1
+  let n-segments = (
+    verts.len()
+      - 1
+  )
 
   // angles of each segment
   let θs = range(n-segments).map(i => {
@@ -604,7 +672,8 @@ snapshot_kind: text
       vert-next,
     ) = (
       verts.at(i),
-      verts.at(i + 1),
+      verts.at(i
+        + 1),
     )
     assert(
       vert != vert-next,
@@ -622,7 +691,9 @@ snapshot_kind: text
     i,
   ) = {
     let pt = verts.at(i)
-    let Δθ = wrap-angle-180(θs.at(i) - θs.at(i - 1))
+    let Δθ = wrap-angle-180(θs.at(i)
+      - θs.at(i
+        - 1))
     let dir = if Δθ > 0deg {
       +1
     } else {
@@ -630,11 +701,20 @@ snapshot_kind: text
     } // +1 if ccw, -1 if cw
 
 
-    let θ-normal = θs.at(i - 1) + Δθ / 2 + 90deg // direction to center of curvature
+    let θ-normal = (
+      θs.at(i
+        - 1)
+        + Δθ
+          / 2
+        + 90deg
+    ) // direction to center of curvature
 
     let radius = edge.corner-radius
     // radius *= 90deg/calc.max(calc.abs(Δθ), 45deg) // visual adjustment so that tighter bends have smaller radii
-    radius *= 1 + calc.cos(Δθ)
+    radius *= (
+      1
+        + calc.cos(Δθ)
+    )
     // skip correcting the corner radius for extruded strokes if there's no stroke at all
     if edge.extrude != () {
       radius += if dir > 0 {
@@ -649,14 +729,22 @@ snapshot_kind: text
       // singular line; skip arc
       (
         arc-center: pt,
-        arc-radius: 0 * radius,
-        start: θs.at(i - 1) - 90deg,
+        arc-radius: 0
+          * radius,
+        start: θs.at(i
+          - 1)
+          - 90deg,
         delta: wrap-angle-180(Δθ),
-        line-shift: 0 * radius, // distance from vertex to beginning of arc
+        line-shift: 0
+          * radius, // distance from vertex to beginning of arc
       )
     } else {
       // distance from vertex to center of curvature
-      let dist = radius / calc.cos(Δθ / 2)
+      let dist = (
+        radius
+          / calc.cos(Δθ
+            / 2)
+      )
 
       (
         arc-center: vector.add(
@@ -667,9 +755,13 @@ snapshot_kind: text
           ),
         ),
         arc-radius: radius,
-        start: θs.at(i - 1) - 90deg,
+        start: θs.at(i
+          - 1)
+          - 90deg,
         delta: wrap-angle-180(Δθ),
-        line-shift: radius * calc.tan(Δθ / 2), // distance from vertex to beginning of arc
+        line-shift: radius
+          * calc.tan(Δθ
+            / 2), // distance from vertex to beginning of arc
       )
     }
   }
@@ -686,15 +778,31 @@ snapshot_kind: text
     t,
     i,
   ) = {
-    let τ = t * n-segments - i
-    if 0 < τ and τ <= 1 or i == 0 and τ <= 0 or i == n-segments - 1 and 1 < τ {
+    let τ = (
+      t
+        * n-segments
+        - i
+    )
+    if (
+      0 < τ
+        and τ <= 1
+        or i == 0
+          and τ <= 0
+        or i == n-segments
+          - 1
+          and 1 < τ
+    ) {
       τ
     }
   }
 
-  let debug-stroke = edge
-    .stroke
-    .thickness / 4 + DEBUG_COLOR2
+  let debug-stroke = (
+    edge
+      .stroke
+      .thickness
+      / 4
+      + DEBUG_COLOR2
+  )
 
   // phase keeps track of how to offset dash patterns
   // to ensure continuity between segments
@@ -702,19 +810,20 @@ snapshot_kind: text
   let stroke-with-phase(
     phase,
   ) = (
-    stroke-to-dict(edge.stroke) + (
-      dash: if type(edge
-        .stroke
-        .dash) == dictionary {
-        (
-          array: edge
-            .stroke
-            .dash
-            .array,
-          phase: phase,
-        )
-      },
-    )
+    stroke-to-dict(edge.stroke)
+      + (
+        dash: if type(edge
+          .stroke
+          .dash) == dictionary {
+          (
+            array: edge
+              .stroke
+              .dash
+              .array,
+            phase: phase,
+          )
+        },
+      )
   )
 
   // draw each segment
@@ -724,7 +833,8 @@ snapshot_kind: text
       to,
     ) = (
       verts.at(i),
-      verts.at(i + 1),
+      verts.at(i
+        + 1),
     )
     let marks = ()
 
@@ -733,20 +843,35 @@ snapshot_kind: text
     if edge.corner-radius == none {
       // add phantom marks to ensure segment joins are clean
       if i > 0 {
-        let Δθ = θs.at(i) - θs.at(i - 1)
+        let Δθ = (
+          θs.at(i)
+            - θs.at(i
+              - 1)
+        )
         marks.push((
           inherit: "bar",
           pos: 0,
-          angle: 90deg - Δθ / 2,
+          angle: 90deg
+            - Δθ
+              / 2,
           hide: true,
         ))
       }
-      if i < θs.len() - 1 {
-        let Δθ = θs.at(i + 1) - θs.at(i)
+      if i < (
+        θs.len()
+          - 1
+      ) {
+        let Δθ = (
+          θs.at(i
+            + 1)
+            - θs.at(i)
+        )
         marks.push((
           inherit: "bar",
           pos: 1,
-          angle: 90deg + Δθ / 2,
+          angle: 90deg
+            + Δθ
+              / 2,
           hide: true,
         ))
       }
@@ -762,7 +887,10 @@ snapshot_kind: text
 
       if i > 0 {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at(i - 1)
+        let (line-shift,) = rounded-corners.at((
+          i
+            - 1
+        ))
         from = vector.add(
           from,
           vector-polar(
@@ -772,7 +900,10 @@ snapshot_kind: text
         )
       }
 
-      if i < θs.len() - 1 {
+      if i < (
+        θs.len()
+          - 1
+      ) {
         let (
           arc-center,
           arc-radius,
@@ -803,11 +934,15 @@ snapshot_kind: text
               .draw
               .arc(
                 arc-center,
-                radius: arc-radius - d,
+                radius: (
+                  arc-radius
+                    - d
+                ),
                 start: start,
                 delta: delta,
                 anchor: "origin",
-                stroke: stroke-with-phase(phase + Δphase),
+                stroke: stroke-with-phase(phase
+                  + Δphase),
               )
           }
 
@@ -820,14 +955,21 @@ snapshot_kind: text
                   .draw
                   .circle(
                     arc-center,
-                    radius: arc-radius - d,
+                    radius: (
+                      arc-radius
+                        - d
+                    ),
                     stroke: debug-stroke,
                   ),
               )
           }
         }
 
-        Δphase += delta / 1rad * arc-radius
+        Δphase += (
+          delta
+            / 1rad
+            * arc-radius
+        )
       }
     }
 
@@ -864,15 +1006,17 @@ snapshot_kind: text
 
 
     draw-edge-line(
-      edge + (
-        kind: "line",
-        final-vertices: (
-          from,
-          to,
-        ),
-        marks: marks,
-        stroke: stroke-with-phase(phase),
-      ) + label-options,
+      edge
+        + (
+          kind: "line",
+          final-vertices: (
+            from,
+            to,
+          ),
+          marks: marks,
+          stroke: stroke-with-phase(phase),
+        )
+        + label-options,
       debug: debug,
     )
 
@@ -1017,13 +1161,15 @@ snapshot_kind: text
       (
         rel: (
           θ,
-          10 * node.radius,
+          10
+            * node.radius,
         ),
       ),
     )
 
   find-farthest-intersection(
-    outline + dummy-line,
+    outline
+      + dummy-line,
     node
       .pos
       .xyz,
@@ -1057,18 +1203,28 @@ snapshot_kind: text
       0pt,
       node
         .size
-        .at(0) / 2 * (
-        1 - 1 / μ
-      ),
-    ) * calc.cos(θ),
+        .at(0)
+        / 2
+        * (
+          1
+            - 1
+              / μ
+        ),
+    )
+      * calc.cos(θ),
     calc.max(
       0pt,
       node
         .size
-        .at(1) / 2 * (
-        1 - μ / 1
-      ),
-    ) * calc.sin(θ),
+        .at(1)
+        / 2
+        * (
+          1
+            - μ
+              / 1
+        ),
+    )
+      * calc.sin(θ),
   )
 }
 
@@ -1082,10 +1238,13 @@ snapshot_kind: text
     from,
     to,
   ) = edge.final-vertices
-  let θ = angle-between(
-    from,
-    to,
-  ) + 90deg
+  let θ = (
+    angle-between(
+      from,
+      to,
+    )
+      + 90deg
+  )
 
   // TODO: do defocus adjustment sensibly
   if nodes
@@ -1097,7 +1256,8 @@ snapshot_kind: text
         nodes
           .at(0)
           .at(0),
-        θ - 90deg,
+        θ
+          - 90deg,
       ),
     )
   }
@@ -1110,7 +1270,8 @@ snapshot_kind: text
         nodes
           .at(1)
           .at(0),
-        θ + 90deg,
+        θ
+          + 90deg,
       ),
     )
   }
@@ -1156,9 +1317,10 @@ snapshot_kind: text
     ),
     anchors => {
       let obj = draw-edge-line(
-        edge + (
-          final-vertices: anchors,
-        ),
+        edge
+          + (
+            final-vertices: anchors,
+          ),
         debug: debug,
       )
       (
@@ -1183,8 +1345,11 @@ snapshot_kind: text
     to,
   )
   let θs = (
-    θ + edge.bend,
-    θ - edge.bend + 180deg,
+    θ
+      + edge.bend,
+    θ
+      - edge.bend
+      + 180deg,
   )
 
   let dummy-lines = (
@@ -1249,9 +1414,10 @@ snapshot_kind: text
     ),
     anchors => {
       let obj = draw-edge-arc(
-        edge + (
-          final-vertices: anchors,
-        ),
+        edge
+          + (
+            final-vertices: anchors,
+          ),
         debug: debug,
       )
       (
@@ -1422,17 +1588,21 @@ snapshot_kind: text
     grid
       .centers
       .at(axis)
-      .at(0) - grid
-      .cell-sizes
-      .at(axis)
-      .at(0) / 2,
+      .at(0)
+      - grid
+        .cell-sizes
+        .at(axis)
+        .at(0)
+        / 2,
     grid
       .centers
       .at(axis)
-      .at(-1) + grid
-      .cell-sizes
-      .at(axis)
-      .at(-1) / 2,
+      .at(-1)
+      + grid
+        .cell-sizes
+        .at(axis)
+        .at(-1)
+        / 2,
   ))
 
   let (
@@ -1459,11 +1629,13 @@ snapshot_kind: text
   }
   let v-range = range(
     v-min,
-    v-min + v-len,
+    v-min
+      + v-len,
   )
   let u-range = range(
     u-min,
-    u-min + u-len,
+    u-min
+      + u-len,
   )
 
   if grid
@@ -1509,7 +1681,10 @@ snapshot_kind: text
     draw.rect(
       a,
       b,
-      stroke: DEBUG_COLOR + .5pt,
+      stroke: (
+        DEBUG_COLOR
+          + .5pt
+      ),
     )
 
     draw.set-style(stroke: (
@@ -1580,7 +1755,8 @@ snapshot_kind: text
               min,
             ),
             rel: swap(
-              -size / 2,
+              -size
+                / 2,
               0,
             ),
           ),
@@ -1593,7 +1769,8 @@ snapshot_kind: text
               min,
             ),
             rel: swap(
-              +size / 2,
+              +size
+                / 2,
               -1pt,
             ),
           ),
@@ -1697,7 +1874,10 @@ snapshot_kind: text
     ))
   }
 
-  if type(key) == array and key.len() == 2 {
+  if (
+    type(key) == array
+      and key.len() == 2
+  ) {
     let xy-pos = key
     let candidates = nodes.filter(node => {
       if node.snap == false {
@@ -1834,7 +2014,10 @@ snapshot_kind: text
   if type(objects) == array {
     objects = objects.join()
   }
-  let seq = objects + []
+  let seq = (
+    objects
+      + []
+  )
   seq
     .children
     .map(child => {
