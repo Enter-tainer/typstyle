@@ -32,60 +32,60 @@ snapshot_kind: text
       cetz
         .draw
         .group({
-        cetz
-          .draw
-          .translate(node
-          .pos
-          .xyz)
-        for (
-          i,
-          extrude,
-        ) in node
-          .extrude
-          .enumerate() {
           cetz
             .draw
-            .set-style(
-            fill: if i == 0 {
-              node.fill
-            },
-            stroke: node.stroke,
-          )
-          (
-            node.shape
-          )(
-            node,
+            .translate(node
+              .pos
+              .xyz)
+          for (
+            i,
             extrude,
-          )
-        }
-      })
+          ) in node
+            .extrude
+            .enumerate() {
+            cetz
+              .draw
+              .set-style(
+                fill: if i == 0 {
+                  node.fill
+                },
+                stroke: node.stroke,
+              )
+            (
+              node.shape
+            )(
+              node,
+              extrude,
+            )
+          }
+        })
     }
 
     if node.label != none {
       cetz
         .draw
         .content(
-        node
-          .pos
-          .xyz,
-        box(
-          // wrapping label in a box allows user to control its alignment
-          align(
-            center + horizon,
-            node.label,
+          node
+            .pos
+            .xyz,
+          box(
+            // wrapping label in a box allows user to control its alignment
+            align(
+              center + horizon,
+              node.label,
+            ),
+            stroke: if debug >= 3 {
+              DEBUG_COLOR2 + 0.25pt
+            },
+            width: node
+              .size
+              .at(0) - 2 * node.inset,
+            height: node
+              .size
+              .at(1) - 2 * node.inset,
           ),
-          stroke: if debug >= 3 {
-            DEBUG_COLOR2 + 0.25pt
-          },
-          width: node
-            .size
-            .at(0) - 2 * node.inset,
-          height: node
-            .size
-            .at(1) - 2 * node.inset,
-        ),
-        anchor: "center",
-      )
+          anchor: "center",
+        )
     }
   }
 
@@ -93,9 +93,9 @@ snapshot_kind: text
     result = cetz
       .draw
       .on-layer(
-      node.layer,
-      result,
-    )
+        node.layer,
+        result,
+      )
   }
 
   (
@@ -108,13 +108,13 @@ snapshot_kind: text
     cetz
       .draw
       .circle(
-      node
-        .pos
-        .xyz,
-      radius: 0.5pt,
-      fill: DEBUG_COLOR,
-      stroke: none,
-    )
+        node
+          .pos
+          .xyz,
+        radius: 0.5pt,
+        fill: DEBUG_COLOR,
+        stroke: none,
+      )
   }
 
   if debug >= 2 and node.radius != 0pt {
@@ -122,37 +122,37 @@ snapshot_kind: text
     cetz
       .draw
       .rect(
-      ..rect-at(
-        node
-          .pos
-          .xyz,
-        node.size,
-      ),
-      stroke: DEBUG_COLOR + .1pt,
-    )
+        ..rect-at(
+          node
+            .pos
+            .xyz,
+          node.size,
+        ),
+        stroke: DEBUG_COLOR + .1pt,
+      )
 
     // node anchoring outline (what edges snap to)
     cetz
       .draw
       .group({
-      cetz
-        .draw
-        .translate(node
-        .pos
-        .xyz)
-      cetz
-        .draw
-        .set-style(
-        stroke: DEBUG_COLOR2 + 0.25pt,
-        fill: none,
-      )
-      (
-        node.shape
-      )(
-        node,
-        node.outset,
-      )
-    })
+        cetz
+          .draw
+          .translate(node
+            .pos
+            .xyz)
+        cetz
+          .draw
+          .set-style(
+            stroke: DEBUG_COLOR2 + 0.25pt,
+            fill: none,
+          )
+        (
+          node.shape
+        )(
+          node,
+          node.outset,
+        )
+      })
   }
 }
 
@@ -223,33 +223,33 @@ snapshot_kind: text
   cetz
     .draw
     .content(
-    label-pos,
-    box(
-      {
-        set text(edge.label-size)
-        (
-          edge.label-wrapper
-        )(edge)
+      label-pos,
+      box(
+        {
+          set text(edge.label-size)
+          (
+            edge.label-wrapper
+          )(edge)
+        },
+        stroke: if debug >= 2 {
+          DEBUG_COLOR2 + 0.25pt
+        },
+      ),
+      angle: edge.label-angle,
+      anchor: if edge.label-anchor != auto {
+        edge.label-anchor
       },
-      stroke: if debug >= 2 {
-        DEBUG_COLOR2 + 0.25pt
-      },
-    ),
-    angle: edge.label-angle,
-    anchor: if edge.label-anchor != auto {
-      edge.label-anchor
-    },
-  )
+    )
 
   if debug >= 2 {
     cetz
       .draw
       .circle(
-      label-pos,
-      radius: 0.75pt,
-      stroke: none,
-      fill: DEBUG_COLOR2,
-    )
+        label-pos,
+        radius: 0.75pt,
+        stroke: none,
+        fill: DEBUG_COLOR2,
+      )
   }
 }
 
@@ -269,8 +269,8 @@ snapshot_kind: text
     let mark = edge
       .marks
       .find(mark => (
-      calc.abs(mark.pos - pos) < 1e-3
-    ))
+        calc.abs(mark.pos - pos) < 1e-3
+      ))
     if mark == none {
       return 0pt
     }
@@ -320,8 +320,8 @@ snapshot_kind: text
     edge
       .marks
       .find(mark => (
-      calc.abs(mark.pos - t) < 1e-3
-    )) != none
+        calc.abs(mark.pos - t) < 1e-3
+      )) != none
   )
 
   let decor = edge
@@ -384,36 +384,36 @@ snapshot_kind: text
     )
       .zip(offsets)
       .map((
-      (
-        point,
-        offset,
-      ),
-    ) => {
-      // Shift line sideways (for multi-stroke effect)
-      point = (
-        rel: (
-          θ + 90deg,
-          shift,
-        ),
-        to: point,
-      )
-      // Shift end points lengthways depending on marks
-      point = (
-        rel: (
-          θ,
+        (
+          point,
           offset,
         ),
-        to: point,
-      )
-      point
-    })
+      ) => {
+        // Shift line sideways (for multi-stroke effect)
+        point = (
+          rel: (
+            θ + 90deg,
+            shift,
+          ),
+          to: point,
+        )
+        // Shift end points lengthways depending on marks
+        point = (
+          rel: (
+            θ,
+            offset,
+          ),
+          to: point,
+        )
+        point
+      })
 
     let obj = cetz
       .draw
       .line(
-      ..points,
-      stroke: edge.stroke,
-    )
+        ..points,
+        stroke: edge.stroke,
+      )
 
     with-decorations(
       edge,
@@ -518,13 +518,13 @@ snapshot_kind: text
     let obj = cetz
       .draw
       .arc(
-      center,
-      radius: radius + shift,
-      start: start + δ-start,
-      stop: stop + δ-stop,
-      anchor: "origin",
-      stroke: edge.stroke,
-    )
+        center,
+        radius: radius + shift,
+        start: start + δ-start,
+        stop: stop + δ-stop,
+        anchor: "origin",
+        stroke: edge.stroke,
+      )
 
     with-decorations(
       edge,
@@ -802,28 +802,28 @@ snapshot_kind: text
             cetz
               .draw
               .arc(
-              arc-center,
-              radius: arc-radius - d,
-              start: start,
-              delta: delta,
-              anchor: "origin",
-              stroke: stroke-with-phase(phase + Δphase),
-            )
+                arc-center,
+                radius: arc-radius - d,
+                start: start,
+                delta: delta,
+                anchor: "origin",
+                stroke: stroke-with-phase(phase + Δphase),
+              )
           }
 
           if debug >= 4 {
             cetz
               .draw
               .on-layer(
-              1,
-              cetz
-                .draw
-                .circle(
-                arc-center,
-                radius: arc-radius - d,
-                stroke: debug-stroke,
-              ),
-            )
+                1,
+                cetz
+                  .draw
+                  .circle(
+                    arc-center,
+                    radius: arc-radius - d,
+                    stroke: debug-stroke,
+                  ),
+              )
           }
         }
 
@@ -844,8 +844,8 @@ snapshot_kind: text
         mark
       })
       .filter(mark => (
-      mark.pos != none
-    ))
+        mark.pos != none
+      ))
 
     let label-pos = lerp-scale(
       edge.label-pos,
@@ -884,9 +884,9 @@ snapshot_kind: text
     cetz
       .draw
       .line(
-      ..verts,
-      stroke: debug-stroke,
-    )
+        ..verts,
+        stroke: debug-stroke,
+      )
   }
 }
 
@@ -914,48 +914,48 @@ snapshot_kind: text
   cetz
     .draw
     .hide(
-    cetz
-      .draw
-      .intersections(
-      node-name,
-      objects,
-    ),
-  )
+      cetz
+        .draw
+        .intersections(
+          node-name,
+          objects,
+        ),
+    )
 
   cetz
     .draw
     .get-ctx(ctx => {
-    let calculate-anchors = ctx
-      .nodes
-      .at(node-name)
-      .anchors
-    let anchor-names = calculate-anchors(())
-    let anchor-points = anchor-names
-      .map(calculate-anchors)
-      .map(point => {
-        // funky disagreement between coordinate systems??
-        point.at(1) *= -1
-        vector-2d(
-          vector.scale(
+      let calculate-anchors = ctx
+        .nodes
+        .at(node-name)
+        .anchors
+      let anchor-names = calculate-anchors(())
+      let anchor-points = anchor-names
+        .map(calculate-anchors)
+        .map(point => {
+          // funky disagreement between coordinate systems??
+          point.at(1) *= -1
+          vector-2d(
+            vector.scale(
+              point,
+              1cm,
+            ),
+          )
+        })
+        .sorted(key: point => vector-len(
+          vector.sub(
             point,
-            1cm,
+            target,
           ),
-        )
-      })
-      .sorted(key: point => vector-len(
-      vector.sub(
-        point,
-        target,
-      ),
-    ))
+        ))
 
-    let anchor = anchor-points.at(
-      -1,
-      default: target,
-    )
+      let anchor = anchor-points.at(
+        -1,
+        default: target,
+      )
 
-    callback(anchor)
-  })
+      callback(anchor)
+    })
 }
 
 #let find-anchor-pair(
@@ -996,31 +996,31 @@ snapshot_kind: text
   let outline = cetz
     .draw
     .group({
-    cetz
-      .draw
-      .translate(node
-      .pos
-      .xyz)
-    (
-      node.shape
-    )(
-      node,
-      node.outset,
-    )
-  })
+      cetz
+        .draw
+        .translate(node
+          .pos
+          .xyz)
+      (
+        node.shape
+      )(
+        node,
+        node.outset,
+      )
+    })
   let dummy-line = cetz
     .draw
     .line(
-    node
-      .pos
-      .xyz,
-    (
-      rel: (
-        θ,
-        10 * node.radius,
+      node
+        .pos
+        .xyz,
+      (
+        rel: (
+          θ,
+          10 * node.radius,
+        ),
       ),
-    ),
-  )
+    )
 
   find-farthest-intersection(
     outline + dummy-line,
@@ -1119,9 +1119,9 @@ snapshot_kind: text
   let dummy-line = cetz
     .draw
     .line(
-    from,
-    to,
-  )
+      from,
+      to,
+    )
 
   let intersection-objects = nodes.map(nodes => {
     for node in (
@@ -1130,18 +1130,18 @@ snapshot_kind: text
       cetz
         .draw
         .group({
-        cetz
-          .draw
-          .translate(node
-          .pos
-          .xyz)
-        (
-          node.shape
-        )(
-          node,
-          node.outset,
-        )
-      })
+          cetz
+            .draw
+            .translate(node
+              .pos
+              .xyz)
+          (
+            node.shape
+          )(
+            node,
+            node.outset,
+          )
+        })
     }
     // if node == none { return }
     dummy-line
@@ -1193,53 +1193,53 @@ snapshot_kind: text
   )
     .zip(θs)
     .map((
-    (
-      point,
-      φ,
-    ),
-  ) => cetz
-    .draw
-    .line(
-    point,
-    vector.add(
-      point,
-      vector-polar(
-        10cm,
+      (
+        point,
         φ,
       ),
-    ), // ray emanating from node
-  ))
+    ) => cetz
+      .draw
+      .line(
+        point,
+        vector.add(
+          point,
+          vector-polar(
+            10cm,
+            φ,
+          ),
+        ), // ray emanating from node
+      ))
 
   let intersection-objects = nodes
     .zip(dummy-lines)
     .map((
-    (
-      nodes,
-      dummy-line,
-    ),
-  ) => {
-    for node in (
-      nodes
-    ) {
-      cetz
-        .draw
-        .group({
+      (
+        nodes,
+        dummy-line,
+      ),
+    ) => {
+      for node in (
+        nodes
+      ) {
         cetz
           .draw
-          .translate(node
-          .pos
-          .xyz)
-        (
-          node.shape
-        )(
-          node,
-          node.outset,
-        )
-      })
-    }
-    // if node == none { return }
-    dummy-line
-  })
+          .group({
+            cetz
+              .draw
+              .translate(node
+                .pos
+                .xyz)
+            (
+              node.shape
+            )(
+              node,
+              node.outset,
+            )
+          })
+      }
+      // if node == none { return }
+      dummy-line
+    })
 
   find-anchor-pair(
     intersection-objects,
@@ -1290,9 +1290,9 @@ snapshot_kind: text
     edge
       .final-vertices
       .slice(
-      0,
-      2,
-    ), // first two vertices
+        0,
+        2,
+      ), // first two vertices
     edge
       .final-vertices
       .slice(-2), // last two vertices
@@ -1305,33 +1305,33 @@ snapshot_kind: text
   let intersection-objects = nodes
     .zip(dummy-lines)
     .map((
-    (
-      nodes,
-      dummy-line,
-    ),
-  ) => {
-    for node in (
-      nodes
-    ) {
-      cetz
-        .draw
-        .group({
+      (
+        nodes,
+        dummy-line,
+      ),
+    ) => {
+      for node in (
+        nodes
+      ) {
         cetz
           .draw
-          .translate(node
-          .pos
-          .xyz)
-        (
-          node.shape
-        )(
-          node,
-          node.outset,
-        )
-      })
-    }
-    // if node == none { return }
-    dummy-line
-  })
+          .group({
+            cetz
+              .draw
+              .translate(node
+                .pos
+                .xyz)
+            (
+              node.shape
+            )(
+              node,
+              node.outset,
+            )
+          })
+      }
+      // if node == none { return }
+      dummy-line
+    })
 
   find-anchor-pair(
     intersection-objects,
@@ -1393,9 +1393,9 @@ snapshot_kind: text
     obj = cetz
       .draw
       .on-layer(
-      edge.layer,
-      obj,
-    )
+        edge.layer,
+        obj,
+      )
   }
 
   obj
@@ -1767,26 +1767,26 @@ snapshot_kind: text
       )
       .enumerate()
       .map((
-      (
-        i,
         (
-          given,
-          raw,
-          xyz,
+          i,
+          (
+            given,
+            raw,
+            xyz,
+          ),
         ),
-      ),
-    ) => {
-      let key = map-auto(
-        given,
-        if type(raw) == label {
-          raw
-        } else {
-          xyz
-        },
-      )
-      let node = node-finder(key)
-      node
-    })
+      ) => {
+        let key = map-auto(
+          given,
+          if type(raw) == label {
+            raw
+          } else {
+            xyz
+          },
+        )
+        let node = node-finder(key)
+        node
+      })
     draw-edge(
       edge,
       snap-to-nodes,

@@ -31,7 +31,7 @@ snapshot_kind: text
       default: 0,
     )
     .at(
-    4,
-    default: 0,
-  )
+      4,
+      default: 0,
+    )
 }

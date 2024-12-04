@@ -82,9 +82,9 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
     it
       .text
       .slice(
-      1,
-      -1,
-    ),
+        1,
+        -1,
+      ),
   )
 } else {
   it
@@ -314,15 +314,15 @@ Marks are arrow tips that can be added to the end of path based elements that su
             cetz
               .draw
               .line(
-              (),
-              (
-                1,
-                0,
+                (),
+                (
+                  1,
+                  0,
+                ),
+                mark: (
+                  end: name,
+                ),
               ),
-              mark: (
-                end: name,
-              ),
-            ),
           ),
         )
       }

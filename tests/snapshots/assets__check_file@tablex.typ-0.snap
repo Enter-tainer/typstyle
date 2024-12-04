@@ -127,19 +127,19 @@ snapshot_kind: text
       fit-spans
         .keys()
         .all(k => (
-        k in (
-          "x",
-          "y",
-        )
-      )),
+          k in (
+            "x",
+            "y",
+          )
+        )),
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must only have the keys x and y.",
     )
     assert(
       fit-spans
         .values()
         .all(v => (
-        type(v) == _bool-type
-      )),
+          type(v) == _bool-type
+        )),
       message: "Tablex error:" + error-prefix + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
     )
     for key in (
@@ -365,23 +365,23 @@ snapshot_kind: text
       c.y != auto
     ))
     .fold(
-    0,
-    (
-      acc,
-      cell,
-    ) => {
-      if (
-        is-tablex-cell(cell) and type(cell.y) in (
-          _int-type,
-          _float-type,
-        ) and cell.y > acc
-      ) {
-        cell.y
-      } else {
-        acc
-      }
-    },
-  )
+      0,
+      (
+        acc,
+        cell,
+      ) => {
+        if (
+          is-tablex-cell(cell) and type(cell.y) in (
+            _int-type,
+            _float-type,
+          ) and cell.y > acc
+        ) {
+          cell.y
+        } else {
+          acc
+        }
+      },
+    )
 
   for item in (
     items
@@ -1202,12 +1202,12 @@ snapshot_kind: text
     let cell-row = grid
       .items
       .slice(
-      first-row-pos,
-      calc.min(
-        len,
-        next-row-pos,
-      ),
-    )
+        first-row-pos,
+        calc.min(
+          len,
+          next-row-pos,
+        ),
+      )
     let cell-row-len = cell-row.len()
     if cell-row-len < grid.width {
       // the row isn't complete because the grid wasn't large enough.
@@ -1271,8 +1271,8 @@ snapshot_kind: text
     grid
       .items
       .push(
-      fill_with(grid),
-    )
+        fill_with(grid),
+      )
   }
   let new = grid-index-to-pos(
     grid,
@@ -1709,8 +1709,8 @@ snapshot_kind: text
     grid
       .items
       .push(
-      new_empty_cell(grid),
-    )
+        new_empty_cell(grid),
+      )
   }
 
   (
@@ -1894,10 +1894,10 @@ snapshot_kind: text
   let frac-tracks = tracks
     .enumerate()
     .filter(t => (
-    type(
-      t.at(1),
-    ) == _fraction-type
-  ))
+      type(
+        t.at(1),
+      ) == _fraction-type
+    ))
 
   let amount-frac = frac-tracks.fold(
     0,
@@ -2912,8 +2912,8 @@ snapshot_kind: text
       }
     })
     .filter(x => (
-    x != none
-  ))
+      x != none
+    ))
 
   let vlines = vlines
     .filter(v => {
@@ -2958,8 +2958,8 @@ snapshot_kind: text
       }
     })
     .filter(x => (
-    x != none
-  ))
+      x != none
+    ))
 
   (
     hlines: hlines,
@@ -3734,8 +3734,8 @@ snapshot_kind: text
             .row_group
             .hlines
             .filter(h => (
-            h.y == header_last_y + 1
-          ))
+              h.y == header_last_y + 1
+            ))
 
           hlines + hlines_below_header
         } else {
@@ -3999,9 +3999,9 @@ snapshot_kind: text
           .rows
           .last()
           .push((
-          cell: cell,
-          box: cell_box,
-        ))
+            cell: cell,
+            box: cell_box,
+          ))
 
         let hlines = hlines.filter(h => (
           this_row_group
@@ -4138,28 +4138,28 @@ snapshot_kind: text
           2,
         )
         .map(e => {
-        if e == none {
-          e
-        } else {
-          e = default-if-auto(
-            e,
-            0pt,
-          )
-          if type(e) not in (
-            _length-type,
-            _rel-len-type,
-            _ratio-type,
-          ) {
-            panic("'expand' argument to lines must be a pair (length, length).")
-          }
+          if e == none {
+            e
+          } else {
+            e = default-if-auto(
+              e,
+              0pt,
+            )
+            if type(e) not in (
+              _length-type,
+              _rel-len-type,
+              _ratio-type,
+            ) {
+              panic("'expand' argument to lines must be a pair (length, length).")
+            }
 
-          convert-length-to-pt(
-            e,
-            styles: styles,
-            page-size: page-size,
-          )
-        }
-      })
+            convert-length-to-pt(
+              e,
+              styles: styles,
+              page-size: page-size,
+            )
+          }
+        })
     }
 
     line
@@ -4410,12 +4410,12 @@ snapshot_kind: text
         grid
           .items
           .at(
-          grid-index-at(
-            cell.x,
-            cell.y,
-            grid: grid,
-          ),
-        ) = cell
+            grid-index-at(
+              cell.x,
+              cell.y,
+              grid: grid,
+            ),
+          ) = cell
       }
     }
   }
@@ -4482,12 +4482,12 @@ snapshot_kind: text
         grid
           .items
           .at(
-          grid-index-at(
-            cell.x,
-            cell.y,
-            grid: grid,
-          ),
-        ) = cell
+            grid-index-at(
+              cell.x,
+              cell.y,
+              grid: grid,
+            ),
+          ) = cell
       }
     }
   }

@@ -39,3 +39,32 @@
     .filter((h, _) => (h.y == header_last_y + 1))
 
 }
+
+#{
+  aaaaaaaa(bbbbbbb, ccccccc).ddddddddd()().eeeeeeeee[].ffffffffff
+
+
+let points = (
+      from,
+      to,
+    )
+      .zip(offsets)
+      .map((
+      (
+        point,
+        offset,
+      ),
+    ) => none)
+
+          (
+         (
+        1,
+           2,
+      ),
+        2,
+      3,
+    )
+    .rev()
+
+    import cetz.draw: *
+}

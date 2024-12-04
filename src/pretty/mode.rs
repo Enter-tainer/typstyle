@@ -8,6 +8,21 @@ pub enum Mode {
     Math,
 }
 
+#[allow(unused)]
+impl Mode {
+    pub fn is_markup(&self) -> bool {
+        *self == Self::Markup
+    }
+
+    pub fn is_code(&self) -> bool {
+        *self == Self::Code
+    }
+
+    pub fn is_math(&self) -> bool {
+        *self == Self::Math
+    }
+}
+
 impl PrettyPrinter<'_> {
     pub(super) fn push_mode(&self, mode: Mode) {
         self.mode.borrow_mut().push(mode);

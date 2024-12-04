@@ -255,21 +255,23 @@ snapshot_kind: text
   let len = 0
 
   // maximum explicit 'y' specified
-  let max_explicit_y = items.filter(c => c.y != auto).fold(
-    0,
-    (acc, cell) => {
-      if (
-        is-tablex-cell(cell) and type(cell.y) in (
-          _int-type,
-          _float-type,
-        ) and cell.y > acc
-      ) {
-        cell.y
-      } else {
-        acc
-      }
-    },
-  )
+  let max_explicit_y = items
+    .filter(c => c.y != auto)
+    .fold(
+      0,
+      (acc, cell) => {
+        if (
+          is-tablex-cell(cell) and type(cell.y) in (
+            _int-type,
+            _float-type,
+          ) and cell.y > acc
+        ) {
+          cell.y
+        } else {
+          acc
+        }
+      },
+    )
 
   for item in items {
     if is-tablex-cell(item) and item.x == auto and item.y == auto {
@@ -1307,9 +1309,9 @@ snapshot_kind: text
 // Calculate the size of fraction tracks (cols/rows) (1fr, 2fr, ...),
 // based on the remaining sizes (after fixed-size and auto columns)
 #let determine-frac-tracks(tracks, remaining: 0pt, gutter: none) = {
-  let frac-tracks = tracks.enumerate().filter(t => (
-    type(t.at(1)) == _fraction-type
-  ))
+  let frac-tracks = tracks
+    .enumerate()
+    .filter(t => type(t.at(1)) == _fraction-type)
 
   let amount-frac = frac-tracks.fold(0, (acc, el) => acc + (el.at(1) / 1fr))
 
@@ -2943,18 +2945,21 @@ snapshot_kind: text
     line.expand = if line.expand == none {
       none
     } else {
-      line.expand.slice(0, 2).map(e => {
-        if e == none {
-          e
-        } else {
-          e = default-if-auto(e, 0pt)
-          if type(e) not in (_length-type, _rel-len-type, _ratio-type) {
-            panic("'expand' argument to lines must be a pair (length, length).")
-          }
+      line
+        .expand
+        .slice(0, 2)
+        .map(e => {
+          if e == none {
+            e
+          } else {
+            e = default-if-auto(e, 0pt)
+            if type(e) not in (_length-type, _rel-len-type, _ratio-type) {
+              panic("'expand' argument to lines must be a pair (length, length).")
+            }
 
-          convert-length-to-pt(e, styles: styles, page-size: page-size)
-        }
-      })
+            convert-length-to-pt(e, styles: styles, page-size: page-size)
+          }
+        })
     }
 
     line

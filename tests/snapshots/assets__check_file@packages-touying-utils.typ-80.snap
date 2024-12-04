@@ -223,10 +223,9 @@ snapshot_kind: text
 
 /// Determine if a content is a metadata with a specific kind
 #let is-kind(it, kind) = {
-  is-metadata(it) and type(it.value) == dictionary and it.value.at(
-    "kind",
-    default: none,
-  ) == kind
+  is-metadata(it) and type(it.value) == dictionary and it
+    .value
+    .at("kind", default: none) == kind
 }
 
 

@@ -157,9 +157,11 @@ snapshot_kind: text
 /// -> dictionary
 #let compute-cell-centers(grid) = {
   // (x: (c1x, c2x, ...), y: ...)
-  let centers = array.zip(grid.cell-sizes, grid.spacing).map(((sizes, spacing)) => {
-    array.zip(cumsum(sizes), sizes, range(sizes.len())).map(((end, size, i)) => end - size / 2 + spacing * i)
-  })
+  let centers = array
+    .zip(grid.cell-sizes, grid.spacing)
+    .map(((sizes, spacing)) => {
+      array.zip(cumsum(sizes), sizes, range(sizes.len())).map(((end, size, i)) => end - size / 2 + spacing * i)
+    })
 
   let bounding-size = array.zip(centers, grid.cell-sizes).map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
 
@@ -184,9 +186,10 @@ snapshot_kind: text
   grid += compute-cell-sizes(grid, verts, rects)
 
   // enforce minimum cell size
-  grid.cell-sizes = grid.cell-sizes.zip(options.cell-size).map(((sizes, min-size)) => sizes.map(
-    calc.max.with(min-size),
-  ))
+  grid.cell-sizes = grid
+    .cell-sizes
+    .zip(options.cell-size)
+    .map(((sizes, min-size)) => sizes.map(calc.max.with(min-size)))
 
   grid += compute-cell-centers(grid)
 
@@ -510,10 +513,9 @@ snapshot_kind: text
 
 
     // nodes and edges whose uv coordinates can be resolved without knowing the grid
-    let rects-affecting-grid = nodes.filter(node => not is-nan-vector(node.pos.uv)).map(node => (
-      center: node.pos.uv,
-      size: node.size,
-    ))
+    let rects-affecting-grid = nodes
+      .filter(node => not is-nan-vector(node.pos.uv))
+      .map(node => (center: node.pos.uv, size: node.size))
 
     let vertices-affecting-grid = edges
       .map(edge => {

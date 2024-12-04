@@ -615,12 +615,15 @@ snapshot_kind: text
     message: "self must have an info field",
   )
   if type(self.info.date) == datetime {
-    self.info.date.display(
-      self.at(
-        "datetime-format",
-        default: auto,
-      ),
-    )
+    self
+      .info
+      .date
+      .display(
+        self.at(
+          "datetime-format",
+          default: auto,
+        ),
+      )
   } else {
     self.info.date
   }

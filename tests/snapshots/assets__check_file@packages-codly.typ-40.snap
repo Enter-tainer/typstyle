@@ -391,22 +391,22 @@ snapshot_kind: text
       highlights
         .sorted(key: x => x.line)
         .map(x => {
-        if not "start" in x or x.start == none {
-          x.insert("start", 0)
-        }
+          if not "start" in x or x.start == none {
+            x.insert("start", 0)
+          }
 
-        if not "end" in x or x.end == none {
-          x.insert("end", 999999999)
-        }
+          if not "end" in x or x.end == none {
+            x.insert("end", 999999999)
+          }
 
-        if not "fill" in x {
-          x.insert(
-            "fill",
-            default-color,
-          )
-        }
-        x
-      })
+          if not "fill" in x {
+            x.insert(
+              "fill",
+              default-color,
+            )
+          }
+          x
+        })
     }
   }
 
@@ -479,10 +479,9 @@ snapshot_kind: text
         let indent = match.end - match.start
 
         // Then measure the necessary indent.
-        let indent = first.text.slice(
-          match.start,
-          match.end,
-        )
+        let indent = first
+          .text
+          .slice(match.start, match.end)
         width = measure([#indent]).width
       }
     }
@@ -1180,24 +1179,24 @@ snapshot_kind: text
       annotations
         .sorted(key: x => x.start)
         .map(x => {
-        if (
-          not "end" in x
-        ) or x.end == none {
-          x.insert("end", x.start)
-        }
-
-        if (not "content" in x) {
-          x.insert("content", none)
-        }
-
-        if "label" in x {
-          if block-label == none {
-            panic("codly: label " + str(x.label) + " is only allowed in a figure block")
+          if (
+            not "end" in x
+          ) or x.end == none {
+            x.insert("end", x.start)
           }
-        }
 
-        x
-      })
+          if (not "content" in x) {
+            x.insert("content", none)
+          }
+
+          if "label" in x {
+            if block-label == none {
+              panic("codly: label " + str(x.label) + " is only allowed in a figure block")
+            }
+          }
+
+          x
+        })
     }
 
     // Check for overlapping annotations.

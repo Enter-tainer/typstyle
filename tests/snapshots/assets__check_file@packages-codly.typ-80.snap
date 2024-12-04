@@ -299,20 +299,22 @@ snapshot_kind: text
     if highlights == none {
       ()
     } else {
-      highlights.sorted(key: x => x.line).map(x => {
-        if not "start" in x or x.start == none {
-          x.insert("start", 0)
-        }
+      highlights
+        .sorted(key: x => x.line)
+        .map(x => {
+          if not "start" in x or x.start == none {
+            x.insert("start", 0)
+          }
 
-        if not "end" in x or x.end == none {
-          x.insert("end", 999999999)
-        }
+          if not "end" in x or x.end == none {
+            x.insert("end", 999999999)
+          }
 
-        if not "fill" in x {
-          x.insert("fill", default-color)
-        }
-        x
-      })
+          if not "fill" in x {
+            x.insert("fill", default-color)
+          }
+          x
+        })
     }
   }
 
@@ -897,23 +899,25 @@ snapshot_kind: text
     annotations = if annotations == none {
       ()
     } else {
-      annotations.sorted(key: x => x.start).map(x => {
-        if (not "end" in x) or x.end == none {
-          x.insert("end", x.start)
-        }
-
-        if (not "content" in x) {
-          x.insert("content", none)
-        }
-
-        if "label" in x {
-          if block-label == none {
-            panic("codly: label " + str(x.label) + " is only allowed in a figure block")
+      annotations
+        .sorted(key: x => x.start)
+        .map(x => {
+          if (not "end" in x) or x.end == none {
+            x.insert("end", x.start)
           }
-        }
 
-        x
-      })
+          if (not "content" in x) {
+            x.insert("content", none)
+          }
+
+          if "label" in x {
+            if block-label == none {
+              panic("codly: label " + str(x.label) + " is only allowed in a figure block")
+            }
+          }
+
+          x
+        })
     }
 
     // Check for overlapping annotations.

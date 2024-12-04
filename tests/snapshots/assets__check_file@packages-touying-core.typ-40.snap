@@ -858,8 +858,8 @@ snapshot_kind: text
       ..subslides-contents
         .pairs()
         .map(kv => utils.last-required-subslide(
-        kv.at(0),
-      )),
+          kv.at(0),
+        )),
     ),
     subslides-contents,
     position: position,
@@ -1259,10 +1259,9 @@ snapshot_kind: text
       "$" + result.sum(default: "") + "$",
       scope: eqt.scope + (
         cover: (..args) => {
-          let cover = eqt.scope.at(
-            "cover",
-            default: cover,
-          )
+          let cover = eqt
+            .scope
+            .at("cover", default: cover)
           if args.pos().len() != 0 {
             cover(args.pos().first())
           }
@@ -1402,10 +1401,9 @@ snapshot_kind: text
   let cover-arr = ()
   for child in reducer.args.flatten() {
     if type(child) == content and child.func() == metadata and type(child.value) == dictionary {
-      let kind = child.value.at(
-        "kind",
-        default: none,
-      )
+      let kind = child
+        .value
+        .at("kind", default: none)
       if kind == "touying-pause" {
         repetitions += 1
       } else if kind == "touying-meanwhile" {
@@ -1497,10 +1495,10 @@ snapshot_kind: text
         .func() == metadata and type(it
         .body
         .value) == dictionary {
-        let kind = it.body.value.at(
-          "kind",
-          default: none,
-        )
+        let kind = it
+          .body
+          .value
+          .at("kind", default: none)
         if kind == "touying-pause" {
           repetitions += 1
           continue
@@ -1530,10 +1528,9 @@ snapshot_kind: text
     }
     for child in children {
       if type(child) == content and child.func() == metadata and type(child.value) == dictionary {
-        let kind = child.value.at(
-          "kind",
-          default: none,
-        )
+        let kind = child
+          .value
+          .at("kind", default: none)
         if kind == "touying-pause" {
           repetitions += 1
         } else if kind == "touying-meanwhile" {
@@ -2241,17 +2238,15 @@ snapshot_kind: text
 #let _get-header-footer(self) = {
   let header = utils.call-or-display(
     self,
-    self.page.at(
-      "header",
-      default: none,
-    ),
+    self
+      .page
+      .at("header", default: none),
   )
   let footer = utils.call-or-display(
     self,
-    self.page.at(
-      "footer",
-      default: none,
-    ),
+    self
+      .page
+      .at("footer", default: none),
   )
   // negative padding
   if self.at(
@@ -2460,48 +2455,48 @@ snapshot_kind: text
           let headings = self
             .at("headings", default: ())
             .map(it => if it.has("label") {
-            if str(it.label) in (
-              "touying:hidden",
-              "touying:unnumbered",
-              "touying:unoutlined",
-              "touying:unbookmarked",
-            ) {
-              let fields = it.fields()
-              let _ = fields.remove(
-                "label",
-                default: none,
-              )
-              let _ = fields.remove(
-                "body",
-                default: none,
-              )
-              if str(it.label) == "touying:hidden" {
-                fields.numbering = none
-                fields.outlined = false
-                fields.bookmarked = false
+              if str(it.label) in (
+                "touying:hidden",
+                "touying:unnumbered",
+                "touying:unoutlined",
+                "touying:unbookmarked",
+              ) {
+                let fields = it.fields()
+                let _ = fields.remove(
+                  "label",
+                  default: none,
+                )
+                let _ = fields.remove(
+                  "body",
+                  default: none,
+                )
+                if str(it.label) == "touying:hidden" {
+                  fields.numbering = none
+                  fields.outlined = false
+                  fields.bookmarked = false
+                }
+                if str(it.label) == "touying:unnumbered" {
+                  fields.numbering = none
+                }
+                if str(it.label) == "touying:unoutlined" {
+                  fields.outlined = false
+                }
+                if str(it.label) == "touying:unbookmarked" {
+                  fields.bookmarked = false
+                }
+                utils.label-it(
+                  heading(
+                    ..fields,
+                    it.body,
+                  ),
+                  it.label,
+                )
+              } else {
+                it
               }
-              if str(it.label) == "touying:unnumbered" {
-                fields.numbering = none
-              }
-              if str(it.label) == "touying:unoutlined" {
-                fields.outlined = false
-              }
-              if str(it.label) == "touying:unbookmarked" {
-                fields.bookmarked = false
-              }
-              utils.label-it(
-                heading(
-                  ..fields,
-                  it.body,
-                ),
-                it.label,
-              )
             } else {
               it
-            }
-          } else {
-            it
-          })
+            })
           headings.sum(default: none)
         }),
       )
@@ -2539,31 +2534,31 @@ snapshot_kind: text
           utils
             .saved-frozen-states
             .update(
-            self
-              .frozen-states
-              .map(s => s.get()),
-          )
+              self
+                .frozen-states
+                .map(s => s.get()),
+            )
           utils
             .saved-default-frozen-states
             .update(
-            self
-              .default-frozen-states
-              .map(s => s.get()),
-          )
+              self
+                .default-frozen-states
+                .map(s => s.get()),
+            )
           utils
             .saved-frozen-counters
             .update(
-            self
-              .frozen-counters
-              .map(s => s.get()),
-          )
+              self
+                .frozen-counters
+                .map(s => s.get()),
+            )
           utils
             .saved-default-frozen-counters
             .update(
-            self
-              .default-frozen-counters
-              .map(s => s.get()),
-          )
+              self
+                .default-frozen-counters
+                .map(s => s.get()),
+            )
         }
       } else {
         // restore the states and counters

@@ -166,15 +166,15 @@ snapshot_kind: text
         .slice(1)
         .enumerate()
         .map((
-        (
-          n,
+          (
+            n,
+            c,
+          ),
+        ) => build-node(
           c,
-        ),
-      ) => build-node(
-        c,
-        depth: depth + 1,
-        sibling: n,
-      ))
+          depth: depth + 1,
+          sibling: n,
+        ))
       cnt = tree.at(0)
     } else {
       cnt = tree
@@ -423,13 +423,13 @@ snapshot_kind: text
         ctx
           .groups
           .push((
-          ctx: ctx,
-          anchors: (:),
-          tree-root: layout(
-            root,
-            ctx,
-          ),
-        ))
+            ctx: ctx,
+            anchors: (:),
+            tree-root: layout(
+              root,
+              ctx,
+            ),
+          ))
         return ctx
       },
       after: ctx => {
@@ -442,9 +442,9 @@ snapshot_kind: text
           ctx
             .nodes
             .insert(
-            name,
-            nodes.at(name),
-          )
+              name,
+              nodes.at(name),
+            )
         }
         return ctx
       },

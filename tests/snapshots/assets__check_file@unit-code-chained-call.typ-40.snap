@@ -54,13 +54,44 @@ snapshot_kind: text
     .row_group-long-long-long-long
     .hlines-long-long-long-long
     .filter(h => (
-    h.y == header_last_y + 1
-  ))
+      h.y == header_last_y + 1
+    ))
 
   let hlines_below_header = first-row-group-long-long
     .row_group-long-long-long-long
     .hlines-long-long-long-long
     .filter((h, _) => (
-    h.y == header_last_y + 1
-  ))
+      h.y == header_last_y + 1
+    ))
+}
+
+#{
+  aaaaaaaa(bbbbbbb, ccccccc)
+    .ddddddddd()()
+    .eeeeeeeee[]
+    .ffffffffff
+
+
+  let points = (
+    from,
+    to,
+  )
+    .zip(offsets)
+    .map((
+      (
+        point,
+        offset,
+      ),
+    ) => none)
+
+  (
+    (
+      1,
+      2,
+    ),
+    2,
+    3,
+  ).rev()
+
+  import cetz.draw: *
 }

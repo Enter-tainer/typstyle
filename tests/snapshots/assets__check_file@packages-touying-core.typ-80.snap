@@ -703,9 +703,9 @@ snapshot_kind: text
   touying-fn-wrapper(
     utils.alternatives-match,
     last-subslide: calc.max(
-      ..subslides-contents.pairs().map(kv => utils.last-required-subslide(
-        kv.at(0),
-      )),
+      ..subslides-contents
+        .pairs()
+        .map(kv => utils.last-required-subslide(kv.at(0))),
     ),
     subslides-contents,
     position: position,
@@ -1928,36 +1928,36 @@ snapshot_kind: text
           let headings = self
             .at("headings", default: ())
             .map(it => if it.has("label") {
-            if str(it.label) in (
-              "touying:hidden",
-              "touying:unnumbered",
-              "touying:unoutlined",
-              "touying:unbookmarked",
-            ) {
-              let fields = it.fields()
-              let _ = fields.remove("label", default: none)
-              let _ = fields.remove("body", default: none)
-              if str(it.label) == "touying:hidden" {
-                fields.numbering = none
-                fields.outlined = false
-                fields.bookmarked = false
+              if str(it.label) in (
+                "touying:hidden",
+                "touying:unnumbered",
+                "touying:unoutlined",
+                "touying:unbookmarked",
+              ) {
+                let fields = it.fields()
+                let _ = fields.remove("label", default: none)
+                let _ = fields.remove("body", default: none)
+                if str(it.label) == "touying:hidden" {
+                  fields.numbering = none
+                  fields.outlined = false
+                  fields.bookmarked = false
+                }
+                if str(it.label) == "touying:unnumbered" {
+                  fields.numbering = none
+                }
+                if str(it.label) == "touying:unoutlined" {
+                  fields.outlined = false
+                }
+                if str(it.label) == "touying:unbookmarked" {
+                  fields.bookmarked = false
+                }
+                utils.label-it(heading(..fields, it.body), it.label)
+              } else {
+                it
               }
-              if str(it.label) == "touying:unnumbered" {
-                fields.numbering = none
-              }
-              if str(it.label) == "touying:unoutlined" {
-                fields.outlined = false
-              }
-              if str(it.label) == "touying:unbookmarked" {
-                fields.bookmarked = false
-              }
-              utils.label-it(heading(..fields, it.body), it.label)
             } else {
               it
-            }
-          } else {
-            it
-          })
+            })
           headings.sum(default: none)
         }),
       )
@@ -1982,15 +1982,15 @@ snapshot_kind: text
         // save the states and counters
         context {
           utils.saved-frozen-states.update(self.frozen-states.map(s => s.get()))
-          utils.saved-default-frozen-states.update(
-            self.default-frozen-states.map(s => s.get()),
-          )
-          utils.saved-frozen-counters.update(
-            self.frozen-counters.map(s => s.get()),
-          )
-          utils.saved-default-frozen-counters.update(
-            self.default-frozen-counters.map(s => s.get()),
-          )
+          utils
+            .saved-default-frozen-states
+            .update(self.default-frozen-states.map(s => s.get()))
+          utils
+            .saved-frozen-counters
+            .update(self.frozen-counters.map(s => s.get()))
+          utils
+            .saved-default-frozen-counters
+            .update(self.default-frozen-counters.map(s => s.get()))
         }
       } else {
         // restore the states and counters
