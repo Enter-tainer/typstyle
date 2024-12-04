@@ -5,21 +5,29 @@ pub enum Mode {
     #[default]
     Markup,
     Code,
+    /// A continued code mode, where the code can freely span multiple lines.
+    /// Corresponds to [`typst_syntax::parser::NewlineMode::Continue`].
+    CodeCont,
     Math,
 }
 
 #[allow(unused)]
 impl Mode {
-    pub fn is_markup(&self) -> bool {
-        *self == Self::Markup
+    pub fn is_markup(self) -> bool {
+        self == Self::Markup
     }
 
-    pub fn is_code(&self) -> bool {
-        *self == Self::Code
+    /// Returns `true` if the current mode is either `Code` or `CodeCont`.
+    pub fn is_code(self) -> bool {
+        self == Self::Code || self == Self::CodeCont
     }
 
-    pub fn is_math(&self) -> bool {
-        *self == Self::Math
+    pub fn is_code_continued(self) -> bool {
+        self == Self::CodeCont
+    }
+
+    pub fn is_math(self) -> bool {
+        self == Self::Math
     }
 }
 

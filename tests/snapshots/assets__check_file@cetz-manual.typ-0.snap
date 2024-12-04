@@ -275,7 +275,9 @@ Marks are arrow tips that can be added to the end of path based elements that su
         name,
         item,
       ) in (
-        cetz.mark-shapes.marks
+        cetz
+          .mark-shapes
+          .marks
       ) {
         let name-to-mnemonic = (:)
         for (

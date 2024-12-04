@@ -70,6 +70,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_array(&'a self, array: Array<'a>) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         ListStylist::new(self)
             .process_list(array.to_untyped(), |node| self.convert_array_item(node))
             .print_doc(ListStyle {
@@ -79,6 +81,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_dict(&'a self, dict: Dict<'a>) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
 
         ListStylist::new(self)
@@ -93,6 +97,8 @@ impl<'a> PrettyPrinter<'a> {
         &'a self,
         destructuring: Destructuring<'a>,
     ) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         let only_one_pattern = is_only_one_and(destructuring.items(), |it| {
             matches!(*it, DestructuringItem::Pattern(_))
         });
@@ -109,6 +115,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_params(&'a self, params: Params<'a>, is_unnamed: bool) -> ArenaDoc<'a> {
+        // SAFETY: The param must be simple if the parens is optional.
+        let _g = self.with_mode(Mode::CodeCont);
+
         let is_single_simple = is_unnamed
             && is_only_one_and(params.children(), |it| {
                 matches!(

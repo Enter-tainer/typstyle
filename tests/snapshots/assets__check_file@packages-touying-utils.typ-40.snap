@@ -1058,10 +1058,9 @@ snapshot_kind: text
   color,
   alpha,
 ) = constructor(
-  ..color.components(alpha: true).slice(
-    0,
-    -1,
-  ),
+  ..color
+    .components(alpha: true)
+    .slice(0, -1),
   alpha,
 )
 

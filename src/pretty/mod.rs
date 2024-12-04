@@ -2,10 +2,10 @@ pub mod config;
 pub mod doc_ext;
 pub mod style;
 
+mod code_chain;
 mod code_flow;
 mod code_list;
 mod comment;
-mod dot_chain;
 mod flow;
 mod func_call;
 mod import;

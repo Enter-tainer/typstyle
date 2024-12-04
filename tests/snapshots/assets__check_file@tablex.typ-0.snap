@@ -1153,14 +1153,18 @@ snapshot_kind: text
     x,
     y,
     grid: grid,
-  ) < grid.items.len()
+  ) < grid
+    .items
+    .len()
 )
 
 // How many rows are in this grid? (Given its width)
 #let grid-count-rows(
   grid,
 ) = (
-  calc.floor(grid.items.len() / grid.width)
+  calc.floor(grid
+    .items
+    .len() / grid.width)
 )
 
 // Converts a grid array index to (x, y)
