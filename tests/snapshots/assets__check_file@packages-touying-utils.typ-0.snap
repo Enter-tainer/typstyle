@@ -336,9 +336,9 @@ snapshot_kind: text
   is-metadata(it) and type(it.value) == dictionary and it
     .value
     .at(
-    "kind",
-    default: none,
-  ) == kind
+      "kind",
+      default: none,
+    ) == kind
 }
 
 
@@ -489,9 +489,9 @@ snapshot_kind: text
           " ",
         )
         .replace(
-        "-",
-        " ",
-      ),
+          "-",
+          " ",
+        ),
     )
   }
   convert-label-to-short-heading = convert-label-to-short-heading.with(self: self)
@@ -719,11 +719,11 @@ snapshot_kind: text
       .info
       .date
       .display(
-      self.at(
-        "datetime-format",
-        default: auto,
-      ),
-    )
+        self.at(
+          "datetime-format",
+          default: auto,
+        ),
+      )
   } else {
     self
       .info

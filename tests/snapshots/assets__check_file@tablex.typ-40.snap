@@ -101,15 +101,17 @@ snapshot_kind: text
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must not be empty.",
     )
     assert(
-      fit-spans.keys().all(k => (
-        k in ("x", "y")
-      )),
+      fit-spans
+        .keys()
+        .all(k => k in ("x", "y")),
       message: "Tablex error:" + error-prefix + " 'fit-spans', if a dictionary, must only have the keys x and y.",
     )
     assert(
-      fit-spans.values().all(v => (
-        type(v) == _bool-type
-      )),
+      fit-spans
+        .values()
+        .all(v => (
+          type(v) == _bool-type
+        )),
       message: "Tablex error:" + error-prefix + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
     )
     for key in ("x", "y") {
@@ -316,20 +318,20 @@ snapshot_kind: text
   let max_explicit_y = items
     .filter(c => c.y != auto)
     .fold(
-    0,
-    (acc, cell) => {
-      if (
-        is-tablex-cell(cell) and type(cell.y) in (
-          _int-type,
-          _float-type,
-        ) and cell.y > acc
-      ) {
-        cell.y
-      } else {
-        acc
-      }
-    },
-  )
+      0,
+      (acc, cell) => {
+        if (
+          is-tablex-cell(cell) and type(cell.y) in (
+            _int-type,
+            _float-type,
+          ) and cell.y > acc
+        ) {
+          cell.y
+        } else {
+          acc
+        }
+      },
+    )
 
   for item in items {
     if is-tablex-cell(item) and item.x == auto and item.y == auto {
@@ -1033,10 +1035,12 @@ snapshot_kind: text
   } else {
     // position right after the last cell in this row
     let next-row-pos = first-row-pos + grid.width
-    let cell-row = grid.items.slice(
-      first-row-pos,
-      calc.min(len, next-row-pos),
-    )
+    let cell-row = grid
+      .items
+      .slice(
+        first-row-pos,
+        calc.min(len, next-row-pos),
+      )
     let cell-row-len = cell-row.len()
     if cell-row-len < grid.width {
       // the row isn't complete because the grid wasn't large enough.
@@ -1478,9 +1482,9 @@ snapshot_kind: text
     grid.items.len(),
     grid.width,
   ) != 0 {
-    grid.items.push(
-      new_empty_cell(grid),
-    )
+    grid
+      .items
+      .push(new_empty_cell(grid))
   }
 
   (
@@ -1653,8 +1657,8 @@ snapshot_kind: text
   let frac-tracks = tracks
     .enumerate()
     .filter(t => (
-    type(t.at(1)) == _fraction-type
-  ))
+      type(t.at(1)) == _fraction-type
+    ))
 
   let amount-frac = frac-tracks.fold(
     0,
@@ -3333,8 +3337,8 @@ snapshot_kind: text
             .row_group
             .hlines
             .filter(h => (
-            h.y == header_last_y + 1
-          ))
+              h.y == header_last_y + 1
+            ))
 
           hlines + hlines_below_header
         } else {
@@ -3581,9 +3585,9 @@ snapshot_kind: text
           .rows
           .last()
           .push((
-          cell: cell,
-          box: cell_box,
-        ))
+            cell: cell,
+            box: cell_box,
+          ))
 
         let hlines = hlines.filter(h => (
           this_row_group
@@ -3702,26 +3706,29 @@ snapshot_kind: text
     line.expand = if line.expand == none {
       none
     } else {
-      line.expand.slice(0, 2).map(e => {
-        if e == none {
-          e
-        } else {
-          e = default-if-auto(e, 0pt)
-          if type(e) not in (
-            _length-type,
-            _rel-len-type,
-            _ratio-type,
-          ) {
-            panic("'expand' argument to lines must be a pair (length, length).")
-          }
+      line
+        .expand
+        .slice(0, 2)
+        .map(e => {
+          if e == none {
+            e
+          } else {
+            e = default-if-auto(e, 0pt)
+            if type(e) not in (
+              _length-type,
+              _rel-len-type,
+              _ratio-type,
+            ) {
+              panic("'expand' argument to lines must be a pair (length, length).")
+            }
 
-          convert-length-to-pt(
-            e,
-            styles: styles,
-            page-size: page-size,
-          )
-        }
-      })
+            convert-length-to-pt(
+              e,
+              styles: styles,
+              page-size: page-size,
+            )
+          }
+        })
     }
 
     line
@@ -3952,13 +3959,15 @@ snapshot_kind: text
         }
 
         cell.content = [#cell.content]
-        grid.items.at(
-          grid-index-at(
-            cell.x,
-            cell.y,
-            grid: grid,
-          ),
-        ) = cell
+        grid
+          .items
+          .at(
+            grid-index-at(
+              cell.x,
+              cell.y,
+              grid: grid,
+            ),
+          ) = cell
       }
     }
   }
@@ -4020,13 +4029,15 @@ snapshot_kind: text
         }
 
         cell.content = [#cell.content]
-        grid.items.at(
-          grid-index-at(
-            cell.x,
-            cell.y,
-            grid: grid,
-          ),
-        ) = cell
+        grid
+          .items
+          .at(
+            grid-index-at(
+              cell.x,
+              cell.y,
+              grid: grid,
+            ),
+          ) = cell
       }
     }
   }

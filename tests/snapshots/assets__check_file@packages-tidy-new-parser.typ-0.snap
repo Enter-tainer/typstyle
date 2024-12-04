@@ -419,8 +419,8 @@ snapshot_kind: text
     state
       .unmatched-description
       .push(
-      line.slice(3),
-    )
+        line.slice(3),
+      )
   } else {
     state.unfinished-param += trim-trailing-comments(line)
 
@@ -455,16 +455,16 @@ snapshot_kind: text
       state
         .params
         .push((
-        name: args.first(),
-        desc-lines: state.unmatched-description,
-      ))
+          name: args.first(),
+          desc-lines: state.unmatched-description,
+        ))
       state.unmatched-description = ()
       state.params += args
         .slice(1)
         .map(arg => (
-        name: arg,
-        desc-lines: (),
-      ))
+          name: arg,
+          desc-lines: (),
+        ))
       state.unfinished-param = ""
     }
   }

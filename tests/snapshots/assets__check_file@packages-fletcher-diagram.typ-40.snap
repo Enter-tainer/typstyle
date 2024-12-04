@@ -178,12 +178,14 @@ snapshot_kind: text
       let size = if grid.flip.xy {
         rect.size.at(axis)
       } else { rect.size.at(1 - axis) }
-      cell-sizes.at(axis).at(
-        indices.at(axis),
-      ) = calc.max(
-        cell-sizes.at(axis).at(
+      cell-sizes
+        .at(axis)
+        .at(
           indices.at(axis),
-        ),
+        ) = calc.max(
+        cell-sizes
+          .at(axis)
+          .at(indices.at(axis)),
         rect.size.at(axis),
       )
     }
@@ -213,22 +215,22 @@ snapshot_kind: text
   let centers = array
     .zip(grid.cell-sizes, grid.spacing)
     .map(((sizes, spacing)) => {
-    array
-      .zip(
-        cumsum(sizes),
-        sizes,
-        range(sizes.len()),
-      )
-      .map(((end, size, i)) => (
-      end - size / 2 + spacing * i
-    ))
-  })
+      array
+        .zip(
+          cumsum(sizes),
+          sizes,
+          range(sizes.len()),
+        )
+        .map(((end, size, i)) => (
+          end - size / 2 + spacing * i
+        ))
+    })
 
   let bounding-size = array
     .zip(centers, grid.cell-sizes)
     .map(((centers, sizes)) => (
-    centers.at(-1) + sizes.at(-1) / 2
-  ))
+      centers.at(-1) + sizes.at(-1) / 2
+    ))
 
   (
     centers: centers,
@@ -263,10 +265,10 @@ snapshot_kind: text
     .cell-sizes
     .zip(options.cell-size)
     .map((
-    (sizes, min-size),
-  ) => sizes.map(
-    calc.max.with(min-size),
-  ))
+      (sizes, min-size),
+    ) => sizes.map(
+      calc.max.with(min-size),
+    ))
 
   grid += compute-cell-centers(grid)
 
@@ -664,9 +666,9 @@ snapshot_kind: text
         not is-nan-vector(node.pos.uv)
       ))
       .map(node => (
-      center: node.pos.uv,
-      size: node.size,
-    ))
+        center: node.pos.uv,
+        size: node.size,
+      ))
 
     let vertices-affecting-grid = edges
       .map(edge => {

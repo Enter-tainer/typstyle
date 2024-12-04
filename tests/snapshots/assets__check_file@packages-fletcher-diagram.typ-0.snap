@@ -245,13 +245,13 @@ snapshot_kind: text
       cell-sizes
         .at(axis)
         .at(
-        indices.at(axis),
-      ) = calc.max(
+          indices.at(axis),
+        ) = calc.max(
         cell-sizes
           .at(axis)
           .at(
-          indices.at(axis),
-        ),
+            indices.at(axis),
+          ),
         rect
           .size
           .at(axis),
@@ -288,29 +288,29 @@ snapshot_kind: text
       grid.spacing,
     )
     .map((
-    (
-      sizes,
-      spacing,
-    ),
-  ) => {
-    array
-      .zip(
-        cumsum(sizes),
-        sizes,
-        range(
-          sizes.len(),
-        ),
-      )
-      .map((
       (
-        end,
-        size,
-        i,
+        sizes,
+        spacing,
       ),
-    ) => (
-      end - size / 2 + spacing * i
-    ))
-  })
+    ) => {
+      array
+        .zip(
+          cumsum(sizes),
+          sizes,
+          range(
+            sizes.len(),
+          ),
+        )
+        .map((
+          (
+            end,
+            size,
+            i,
+          ),
+        ) => (
+          end - size / 2 + spacing * i
+        ))
+    })
 
   let bounding-size = array
     .zip(
@@ -318,13 +318,13 @@ snapshot_kind: text
       grid.cell-sizes,
     )
     .map((
-    (
-      centers,
-      sizes,
-    ),
-  ) => (
-    centers.at(-1) + sizes.at(-1) / 2
-  ))
+      (
+        centers,
+        sizes,
+      ),
+    ) => (
+      centers.at(-1) + sizes.at(-1) / 2
+    ))
 
   (
     centers: centers,
@@ -359,15 +359,15 @@ snapshot_kind: text
     .cell-sizes
     .zip(options.cell-size)
     .map((
-    (
-      sizes,
-      min-size,
-    ),
-  ) => sizes.map(
-    calc
-      .max
-      .with(min-size),
-  ))
+      (
+        sizes,
+        min-size,
+      ),
+    ) => sizes.map(
+      calc
+        .max
+        .with(min-size),
+    ))
 
   grid += compute-cell-centers(grid)
 
@@ -832,11 +832,11 @@ snapshot_kind: text
           .uv)
       ))
       .map(node => (
-      center: node
-        .pos
-        .uv,
-      size: node.size,
-    ))
+        center: node
+          .pos
+          .uv,
+        size: node.size,
+      ))
 
     let vertices-affecting-grid = edges
       .map(edge => {

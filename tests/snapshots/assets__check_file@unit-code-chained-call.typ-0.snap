@@ -40,13 +40,13 @@ snapshot_kind: text
     ))
     .rev()
     .find((
-    (
-      _,
-      v,
-    ),
-  ) => (
-    v <= page
-  ))
+      (
+        _,
+        v,
+      ),
+    ) => (
+      v <= page
+    ))
 }
 
 #a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
@@ -57,15 +57,15 @@ snapshot_kind: text
   )
     .rev()
     .map((
-    (
+      (
+        n,
+        c,
+      ),
+    ) => f(
       n,
       c,
-    ),
-  ) => f(
-    n,
-    c,
-    1,
-  ))
+      1,
+    ))
 }
 
 #{
@@ -85,16 +85,52 @@ snapshot_kind: text
     .row_group-long-long-long-long
     .hlines-long-long-long-long
     .filter(h => (
-    h.y == header_last_y + 1
-  ))
+      h.y == header_last_y + 1
+    ))
 
   let hlines_below_header = first-row-group-long-long
     .row_group-long-long-long-long
     .hlines-long-long-long-long
     .filter((
-    h,
-    _,
-  ) => (
-    h.y == header_last_y + 1
-  ))
+      h,
+      _,
+    ) => (
+      h.y == header_last_y + 1
+    ))
+}
+
+#{
+  aaaaaaaa(
+    bbbbbbb,
+    ccccccc,
+  )
+    .ddddddddd()()
+    .eeeeeeeee[]
+    .ffffffffff
+
+
+  let points = (
+    from,
+    to,
+  )
+    .zip(offsets)
+    .map((
+      (
+        point,
+        offset,
+      ),
+    ) => (
+      none
+    ))
+
+  (
+    (
+      1,
+      2,
+    ),
+    2,
+    3,
+  ).rev()
+
+  import cetz.draw: *
 }

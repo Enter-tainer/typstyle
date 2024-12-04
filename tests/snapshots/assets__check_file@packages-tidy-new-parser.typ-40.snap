@@ -315,9 +315,9 @@ snapshot_kind: text
 
 #let parameter-parser(state, line) = {
   if line.starts-with("///") {
-    state.unmatched-description.push(
-      line.slice(3),
-    )
+    state
+      .unmatched-description
+      .push(line.slice(3))
   } else {
     state.unfinished-param += trim-trailing-comments(line)
 
@@ -347,17 +347,19 @@ snapshot_kind: text
         .unfinished-param
         .ends-with(",") or state.state == "finished"
     ) {
-      state.params.push((
-        name: args.first(),
-        desc-lines: state.unmatched-description,
-      ))
+      state
+        .params
+        .push((
+          name: args.first(),
+          desc-lines: state.unmatched-description,
+        ))
       state.unmatched-description = ()
       state.params += args
         .slice(1)
         .map(arg => (
-        name: arg,
-        desc-lines: (),
-      ))
+          name: arg,
+          desc-lines: (),
+        ))
       state.unfinished-param = ""
     }
   }

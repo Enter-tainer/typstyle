@@ -411,38 +411,6 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_field_access(&'a self, field_access: FieldAccess<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(field_access.to_untyped()) {
-            return res;
-        }
-        let chain = self.resolve_dot_chain(field_access);
-        if chain.is_none() || matches!(self.current_mode(), Mode::Markup | Mode::Math) {
-            let left = self.convert_expr(field_access.target());
-            let singleline_right = self.arena.text(".") + self.convert_ident(field_access.field());
-            return left + singleline_right;
-        }
-        let mut chain = chain.unwrap();
-        if chain.len() == 2 {
-            let last = chain.pop().unwrap();
-            let first = chain.pop().unwrap();
-            return first + self.arena.text(".") + last;
-        }
-        let first_doc = chain.remove(0);
-        let other_doc = self
-            .arena
-            .intersperse(chain, self.arena.line_() + self.arena.text("."));
-        let chain = first_doc
-            + (self.arena.line_() + self.arena.text(".") + other_doc)
-                .nest(2)
-                .group();
-        // if matches!(self.current_mode(), Mode::Markup | Mode::Math) {
-        //     optional_paren(chain)
-        // } else {
-        //     chain
-        // }
-        chain
-    }
-
     fn convert_param(&'a self, param: Param<'a>) -> ArenaDoc<'a> {
         match param {
             Param::Pos(p) => self.convert_pattern(p),

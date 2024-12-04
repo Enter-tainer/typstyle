@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/code/chained-call-last-indent.typ
+snapshot_kind: text
 ---
 #{
   let tree = (1, 2, 3)
@@ -10,10 +11,9 @@ input_file: tests/assets/unit/code/chained-call-last-indent.typ
     repr(tree) + repr(depth) + repr(sibling)
   }
   let children
-  children = tree.slice(1).enumerate().map(((n, c)) => build-node(
-    c,
-    depth: depth + 1,
-    sibling: n,
-  ))
+  children = tree
+    .slice(1)
+    .enumerate()
+    .map(((n, c)) => build-node(c, depth: depth + 1, sibling: n))
   children
 }
