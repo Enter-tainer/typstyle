@@ -39,7 +39,12 @@ snapshot_kind: text
     .find(((_, v)) => v <= page)
 }
 
-#a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
+#(
+  a
+    .b()[c][d]
+    .eeeeeeeeeeeeeee()
+    .fffffffff()
+)
 
 #{
   (1,).rev().map(((n, c)) => f(n, c, 1))

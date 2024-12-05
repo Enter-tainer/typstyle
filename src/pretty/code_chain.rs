@@ -10,15 +10,37 @@ use super::{
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_field_access(&'a self, field_access: FieldAccess<'a>) -> ArenaDoc<'a> {
-        if self.current_mode().is_code() {
-            return self.convert_dot_chain(field_access.to_untyped());
+        if let Some(res) = self.try_convert_dot_chain(field_access.to_untyped()) {
+            return res;
         }
+        // Comments within field access are not allowed outside code mode
         self.convert_expr(field_access.target())
             + self.arena.text(".")
             + self.convert_ident(field_access.field())
     }
 
-    pub(super) fn convert_dot_chain(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+    /// Convert the node as dot chain, if in code, or in markup with at least two FieldAccess and one FuncCall.
+    pub(super) fn try_convert_dot_chain(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
+        if self.current_mode().is_code() {
+            return Some(self.convert_dot_chain(node));
+        } else if self.current_mode().is_markup() {
+            let mut chain_len = 0;
+            let mut has_call = false;
+            for node in resolve_dot_chain(node) {
+                if node.kind() == SyntaxKind::FieldAccess {
+                    chain_len += 1;
+                } else if node.kind() == SyntaxKind::FuncCall {
+                    has_call = true;
+                }
+            }
+            if chain_len > 1 && has_call {
+                return Some(self.parenthesize_if_necessary(|| self.convert_dot_chain(node)));
+            }
+        }
+        None
+    }
+
+    fn convert_dot_chain(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         ChainStylist::new(self)
             .process_resolved(
                 resolve_dot_chain(node),
