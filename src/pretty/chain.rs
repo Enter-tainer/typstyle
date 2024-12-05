@@ -1,25 +1,37 @@
 use itertools::Itertools;
 use pretty::DocAllocator;
 use std::iter;
-use typst_syntax::SyntaxNode;
+use typst_syntax::{SyntaxKind, SyntaxNode};
 
-use super::{ArenaDoc, PrettyPrinter};
+use crate::ext::StrExt;
 
+use super::{util::is_comment_node, ArenaDoc, PrettyPrinter};
+
+/// Intermediate representation in chain formatting.
 enum ChainItem<'a> {
-    Commented { body: ArenaDoc<'a> },
+    Body(ArenaDoc<'a>),
+    Op(ArenaDoc<'a>),
+    Comment(ArenaDoc<'a>),
+    Attached(ArenaDoc<'a>),
+    Linebreak,
 }
 
+/// A stylist that can format items as chains.
 pub struct ChainStylist<'a> {
     printer: &'a PrettyPrinter<'a>,
     items: Vec<ChainItem<'a>>,
-    chain_len: usize,
-    op_space: bool,
+    /// The number of chain operators in the chain.
+    chain_op_num: usize,
+    /// Whether the chain contains any line or block comment.
+    has_comment: bool,
 }
 
 #[derive(Default)]
 pub struct ChainStyle {
     /// Do not break line if the chain consists of only one operator.
     pub no_break_single: bool,
+    /// Add space before and after operators.
+    pub space_around_op: bool,
 }
 
 impl<'a> ChainStylist<'a> {
@@ -27,16 +39,19 @@ impl<'a> ChainStylist<'a> {
         Self {
             printer,
             items: Default::default(),
-            chain_len: 0,
-            op_space: false,
+            chain_op_num: 0,
+            has_comment: false,
         }
     }
 
-    pub fn space_around_op(mut self) -> Self {
-        self.op_space = true;
-        self
-    }
-
+    /// Processes a collection of syntax nodes directly from depth-first resolution.
+    ///
+    /// This method takes an iterator of `SyntaxNode`s, which are then processed in reverse order.
+    ///
+    /// # Parameters
+    ///
+    /// - `nodes`: An iterator over references to `SyntaxNode`s that have been resolved.
+    /// - Others: See [`Self::process`].
     pub fn process_resolved(
         self,
         nodes: impl Iterator<Item = &'a SyntaxNode>,
@@ -56,6 +71,17 @@ impl<'a> ChainStylist<'a> {
         )
     }
 
+    /// Processes a vector of syntax nodes with the provided predicates and converters
+    /// to create a structured representation.
+    ///
+    /// # Parameters
+    ///
+    /// - `nodes`: A vector of `SyntaxNode`s to be processed.
+    /// - `operand_pred`: A predicate that checks if a node is an operand.
+    /// - `op_pred`: A predicate that checks if a node is an operator.
+    /// - `rhs_converter`: A function that converts right-hand side nodes into an `Option<ArenaDoc<'a>>`.
+    /// - `fallback_converter`: A function that provides a fallback conversion for nodes that
+    ///    do not match the primary criteria. Used for sticky args and innermost expressions.
     pub fn process(
         mut self,
         nodes: Vec<&'a SyntaxNode>,
@@ -65,57 +91,129 @@ impl<'a> ChainStylist<'a> {
         fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
         let arena = &self.printer.arena;
-
-        let mut doc = arena.nil();
+        let mut can_attach = false;
         for node in nodes {
             if operand_pred(node) {
-                self.chain_len += 1;
+                self.chain_op_num += 1;
                 let mut seen_op = false;
                 for child in node.children() {
                     if op_pred(child) {
                         seen_op = true;
-                        self.items.push(ChainItem::Commented { body: doc });
-                        doc = if self.op_space {
-                            arena.text(child.text().as_str()) + " "
+                        self.items
+                            .push(ChainItem::Op(arena.text(child.text().as_str())));
+                    } else if is_comment_node(child) {
+                        let doc = self.printer.convert_comment(child);
+                        self.items.push(if can_attach {
+                            ChainItem::Attached(doc)
                         } else {
-                            arena.text(child.text().as_str())
-                        };
+                            ChainItem::Comment(doc)
+                        });
+                        self.has_comment = true;
+                    } else if child.kind() == SyntaxKind::Space {
+                        if child.text().has_linebreak() {
+                            if self.items.last().is_some_and(|last| {
+                                matches!(*last, ChainItem::Attached(_) | ChainItem::Comment(_))
+                            }) {
+                                self.items.push(ChainItem::Linebreak);
+                            }
+                            can_attach = false;
+                        }
                     } else if seen_op {
                         if let Some(rhs) = rhs_converter(child) {
-                            doc += rhs;
+                            self.items.push(ChainItem::Body(rhs));
+                            can_attach = true;
                         }
                     }
                 }
             } else if let Some(fallback) = fallback_converter(node) {
-                doc += fallback;
+                // We must use this to handle args.
+                if let Some(ChainItem::Body(body)) = self.items.last_mut() {
+                    *body += fallback;
+                } else {
+                    self.items.push(ChainItem::Body(fallback));
+                }
             }
         }
-        self.items.push(ChainItem::Commented { body: doc });
 
         self
     }
 
+    /// Create a Doc from IR and given styles.
     pub fn print_doc(self, sty: ChainStyle) -> ArenaDoc<'a> {
         let arena = &self.printer.arena;
 
-        let mut docs = vec![];
-        for item in self.items {
-            match item {
-                ChainItem::Commented { body } => docs.push(body),
-            }
-        }
-
-        let op_sep = if self.op_space {
+        let op_sep = if sty.space_around_op {
             arena.line()
         } else {
             arena.line_()
         };
+
+        let use_simple_layout = self.chain_op_num == 1 && sty.no_break_single && !self.has_comment;
+
+        let mut docs = vec![];
+        let mut has_break = false;
+        let mut leading = true;
+        let mut space_after = true;
+        for item in self.items {
+            match item {
+                ChainItem::Body(body) => {
+                    if leading {
+                        docs.push(body);
+                    } else if let Some(last) = docs.last_mut() {
+                        *last += body;
+                    }
+                    leading = false;
+                    space_after = true;
+                }
+                ChainItem::Op(op) => {
+                    if !(has_break && leading || use_simple_layout) {
+                        docs.push(op_sep.clone());
+                    }
+                    has_break = false;
+                    if sty.space_around_op {
+                        docs.push(op + " ");
+                    } else {
+                        docs.push(op);
+                    }
+                    leading = false;
+                    space_after = false;
+                }
+                ChainItem::Comment(cmt) => {
+                    if leading {
+                        docs.push(cmt);
+                    } else if let Some(last) = docs.last_mut() {
+                        *last += if space_after {
+                            arena.space() + cmt
+                        } else {
+                            cmt
+                        }
+                    }
+                    leading = false;
+                    space_after = true;
+                }
+                ChainItem::Attached(cmt) => {
+                    if let Some(last) = docs.last_mut() {
+                        *last += if space_after {
+                            arena.space() + cmt
+                        } else {
+                            cmt
+                        }
+                    }
+                }
+                ChainItem::Linebreak => {
+                    has_break = true;
+                    leading = true;
+                    docs.push(arena.hardline());
+                }
+            }
+        }
+
         let first_doc = docs.remove(0);
-        let follow_docs = arena.intersperse(docs, op_sep.clone());
-        if self.chain_len == 1 && sty.no_break_single {
+        let follow_docs = arena.concat(docs);
+        if use_simple_layout {
             (first_doc + follow_docs).group()
         } else {
-            (first_doc + (op_sep + follow_docs).nest(2)).group()
+            (first_doc + (follow_docs).nest(2)).group()
         }
     }
 }
