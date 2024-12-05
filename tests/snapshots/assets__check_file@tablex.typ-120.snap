@@ -1923,7 +1923,7 @@ snapshot_kind: text
 
       let hline_hasnt_already_ended = (
         h.end in (auto, none) // always goes towards the right
-        or h.end >= cell.x + cell.colspan // ends at or after this cell
+          or h.end >= cell.x + cell.colspan // ends at or after this cell
       )
 
       (in_top_or_bottom and hline_hasnt_already_ended)
@@ -1949,7 +1949,7 @@ snapshot_kind: text
 
       let vline_hasnt_already_ended = (
         v.end in (auto, none) // always goes towards the bottom
-        or v.end >= cell.y + cell.rowspan // ends at or after this cell
+          or v.end >= cell.y + cell.rowspan // ends at or after this cell
       )
 
       (at_left_or_right and vline_hasnt_already_ended)
