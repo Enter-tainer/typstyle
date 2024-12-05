@@ -15,10 +15,10 @@ use super::{
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
-        if self.current_mode().is_code()
-            && func_call.callee().to_untyped().kind() == SyntaxKind::FieldAccess
-        {
-            return self.convert_dot_chain(func_call.to_untyped());
+        if func_call.callee().to_untyped().kind() == SyntaxKind::FieldAccess {
+            if let Some(res) = self.try_convert_dot_chain(func_call.to_untyped()) {
+                return res;
+            }
         }
         self.convert_expr(func_call.callee())
             + self.convert_func_call_args(func_call, func_call.args())

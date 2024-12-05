@@ -8,7 +8,11 @@ snapshot_kind: text
 #let rem = [_Remote_]
 #let lea = [*On leave*]
 
-#show table.cell.where(y: 0): set text(
+#show (
+  table
+    .cell
+    .where(y: 0)
+): set text(
   fill: white,
   weight: "bold",
 )

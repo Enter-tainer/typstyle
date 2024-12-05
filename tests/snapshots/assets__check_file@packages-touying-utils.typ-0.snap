@@ -85,7 +85,11 @@ snapshot_kind: text
 // -------------------------------------
 #let slide-counter = counter("touying-slide-counter")
 #let last-slide-counter = counter("touying-last-slide-counter")
-#let last-slide-number = context last-slide-counter.final().first()
+#let last-slide-number = context (
+  last-slide-counter
+    .final()
+    .first()
+)
 
 /// Get the progress of the current slide.
 ///
