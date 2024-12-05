@@ -35,14 +35,12 @@ snapshot_kind: text
 #let interpret-axes(axes) = {
   let dirs = axes.map(direction.axis)
   let flip
-  if dirs == (
-    "horizontal",
-    "vertical",
+  if (
+    dirs == ("horizontal", "vertical")
   ) {
     flip = false
-  } else if dirs == (
-    "vertical",
-    "horizontal",
+  } else if (
+    dirs == ("vertical", "horizontal")
   ) {
     flip = true
   } else {
@@ -298,9 +296,9 @@ snapshot_kind: text
         let node = child.value
         node.pos = (raw: (x, y))
         nodes.push(node)
-      } else if child
-        .value
-        .class == "edge" {
+      } else if (
+        child.value.class == "edge"
+      ) {
         let edge = child.value
         edge.vertices.at(0) = map-auto(
           edge.vertices.at(0),
@@ -316,15 +314,16 @@ snapshot_kind: text
         edge.node-index = none
         edges.push(edge)
       }
-    } else if repr(
-      child.func(),
-    ) == "linebreak" {
+    } else if (
+      repr(child.func()) == "linebreak"
+    ) {
       y += 1
       x = 0
       matrix.push((none,))
-    } else if repr(
-      child.func(),
-    ) == "align-point" {
+    } else if (
+      repr(child.func())
+        == "align-point"
+    ) {
       x += 1
       matrix.at(-1).push(none)
     } else {
@@ -373,14 +372,16 @@ snapshot_kind: text
       if obj.value.class == "node" {
         let node = obj.value
         nodes.push(node)
-      } else if obj
-        .value
-        .class == "edge" {
+      } else if (
+        obj.value.class == "edge"
+      ) {
         let edge = obj.value
         edge.node-index = nodes.len()
         edges.push(edge)
       }
-    } else if obj.func() == math.equation {
+    } else if (
+      obj.func() == math.equation
+    ) {
       let result = extract-nodes-and-edges-from-equation(obj)
       nodes += result.nodes
       edges += result.edges

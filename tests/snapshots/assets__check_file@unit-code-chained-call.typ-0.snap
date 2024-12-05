@@ -52,7 +52,8 @@ snapshot_kind: text
         v,
       ),
     ) => (
-      v <= page
+      v
+        <= page
     ))
 }
 
@@ -93,8 +94,9 @@ snapshot_kind: text
     .row_group-long-long-long-long
     .hlines-long-long-long-long
     .filter(h => (
-      h.y == header_last_y
-        + 1
+      h.y
+        == header_last_y
+          + 1
     ))
 
   let hlines_below_header = first-row-group-long-long
@@ -104,8 +106,9 @@ snapshot_kind: text
       h,
       _,
     ) => (
-      h.y == header_last_y
-        + 1
+      h.y
+        == header_last_y
+          + 1
     ))
 }
 

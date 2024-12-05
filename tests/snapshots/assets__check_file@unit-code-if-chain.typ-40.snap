@@ -10,24 +10,24 @@ snapshot_kind: text
   (true, false)
 } else { none }
 
-#if a < b {
-  true
-} else if c < d [ false ] else if (
-  1 + 2
-) == 3 [*strong*] else { none }
+#if a < b { true } else if (
+  c < d
+) [ false ] else if (
+  1 + 2 == 3
+) [*strong*] else { none }
 
 #if a < b { true } else if c < d [
   false ] else if (
-  1 + 2
-) == 3 [*strong*] else {
+  1 + 2 == 3
+) [*strong*] else {
   none
 }
 
 #if a < b {
   true
 } else if c < d [ false ] else if (
-  1 + 2
-) == 3 [
+  1 + 2 == 3
+) [
   *strong*] else { none }
 
 #{
@@ -37,24 +37,24 @@ snapshot_kind: text
     (true, false)
   } else { none }
 
-  if a < b {
-    true
-  } else if c < d [ false ] else if (
-    1 + 2
-  ) == 3 [*strong*] else { none }
+  if a < b { true } else if (
+    c < d
+  ) [ false ] else if (
+    1 + 2 == 3
+  ) [*strong*] else { none }
 
   if a < b { true } else if c < d [
     false ] else if (
-    1 + 2
-  ) == 3 [*strong*] else {
+    1 + 2 == 3
+  ) [*strong*] else {
     none
   }
 
   if a < b {
     true
   } else if c < d [ false ] else if (
-    1 + 2
-  ) == 3 [
+    1 + 2 == 3
+  ) [
     *strong*] else { none }
 }
 
@@ -62,8 +62,8 @@ snapshot_kind: text
   true
   false
 } else if c < d [ false ] else if (
-  1 + 2
-) == 3 [*strong*] else {
+  1 + 2 == 3
+) [*strong*] else {
   a = 3
   none
 }
@@ -73,8 +73,8 @@ snapshot_kind: text
   false
 } else if c < d [
   false ] else if (
-  1 + 2
-) == 3 [*strong*] else if false {
+  1 + 2 == 3
+) [*strong*] else if false {
   if 0 < 1 { true }
 } else {
   a = 3

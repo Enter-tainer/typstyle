@@ -39,14 +39,20 @@ snapshot_kind: text
 ) = {
   let dirs = axes.map(direction.axis)
   let flip
-  if dirs == (
-    "horizontal",
-    "vertical",
+  if (
+    dirs
+      == (
+        "horizontal",
+        "vertical",
+      )
   ) {
     flip = false
-  } else if dirs == (
-    "vertical",
-    "horizontal",
+  } else if (
+    dirs
+      == (
+        "vertical",
+        "horizontal",
+      )
   ) {
     flip = true
   } else {
@@ -58,14 +64,16 @@ snapshot_kind: text
 
   (
     flip: (
-      x: axes.at(0) in (
-        rtl,
-        ttb,
-      ),
-      y: axes.at(1) in (
-        rtl,
-        ttb,
-      ),
+      x: axes.at(0)
+        in (
+          rtl,
+          ttb,
+        ),
+      y: axes.at(1)
+        in (
+          rtl,
+          ttb,
+        ),
       xy: flip,
     ),
   )
@@ -107,7 +115,10 @@ snapshot_kind: text
         .size
         .at(axis)
 
-      if calc.fract(coord) == 0 {
+      if (
+        calc.fract(coord)
+          == 0
+      ) {
         rect
           .center
           .at(axis) = calc.trunc(coord)
@@ -172,7 +183,10 @@ snapshot_kind: text
   ))
   points += verts
 
-  if points.len() == 0 {
+  if (
+    points.len()
+      == 0
+  ) {
     points.push((
       0,
       0,
@@ -406,7 +420,8 @@ snapshot_kind: text
 #let extract-nodes-and-edges-from-equation(
   eq,
 ) = {
-  assert(eq.func() == math.equation)
+  assert(eq.func()
+    == math.equation)
   let terms = (
     eq.body
       + []
@@ -431,10 +446,16 @@ snapshot_kind: text
   for child in (
     terms.children
   ) {
-    if child.func() == metadata {
-      if child
-        .value
-        .class == "node" {
+    if (
+      child.func()
+        == metadata
+    ) {
+      if (
+        child
+          .value
+          .class
+          == "node"
+      ) {
         let node = child.value
         node.pos = (
           raw: (
@@ -443,9 +464,12 @@ snapshot_kind: text
           ),
         )
         nodes.push(node)
-      } else if child
-        .value
-        .class == "edge" {
+      } else if (
+        child
+          .value
+          .class
+          == "edge"
+      ) {
         let edge = child.value
         edge
           .vertices
@@ -458,7 +482,10 @@ snapshot_kind: text
             y,
           ),
         )
-        if edge.label != none {
+        if (
+          edge.label
+            != none
+        ) {
           edge.label = $edge.label$
         } // why is this needed?
         edge
@@ -477,17 +504,23 @@ snapshot_kind: text
         edge.node-index = none
         edges.push(edge)
       }
-    } else if repr(
-      child.func(),
-    ) == "linebreak" {
+    } else if (
+      repr(
+        child.func(),
+      )
+        == "linebreak"
+    ) {
       y += 1
       x = 0
       matrix.push((
         none,
       ))
-    } else if repr(
-      child.func(),
-    ) == "align-point" {
+    } else if (
+      repr(
+        child.func(),
+      )
+        == "align-point"
+    ) {
       x += 1
       matrix
         .at(-1)
@@ -531,9 +564,12 @@ snapshot_kind: text
 #let interpret-diagram-args(
   args,
 ) = {
-  if args
-    .named()
-    .len() > 0 {
+  if (
+    args
+      .named()
+      .len()
+      > 0
+  ) {
     error(
       "Unexpected named argument(s) #..0.",
       args
@@ -557,20 +593,32 @@ snapshot_kind: text
   for obj in (
     objects
   ) {
-    if obj.func() == metadata {
-      if obj
-        .value
-        .class == "node" {
+    if (
+      obj.func()
+        == metadata
+    ) {
+      if (
+        obj
+          .value
+          .class
+          == "node"
+      ) {
         let node = obj.value
         nodes.push(node)
-      } else if obj
-        .value
-        .class == "edge" {
+      } else if (
+        obj
+          .value
+          .class
+          == "edge"
+      ) {
         let edge = obj.value
         edge.node-index = nodes.len()
         edges.push(edge)
       }
-    } else if obj.func() == math.equation {
+    } else if (
+      obj.func()
+        == math.equation
+    ) {
       let result = extract-nodes-and-edges-from-equation(obj)
       nodes += result.nodes
       edges += result.edges

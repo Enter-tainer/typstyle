@@ -56,7 +56,7 @@ impl<'a> ChainStylist<'a> {
         self,
         nodes: impl Iterator<Item = &'a SyntaxNode>,
         operand_pred: impl Fn(&'a SyntaxNode) -> bool,
-        op_pred: impl Fn(&'a SyntaxNode) -> bool,
+        op_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
         rhs_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
         fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
@@ -65,7 +65,7 @@ impl<'a> ChainStylist<'a> {
         self.process(
             nodes,
             operand_pred,
-            op_pred,
+            op_converter,
             rhs_converter,
             fallback_converter,
         )
@@ -78,29 +78,27 @@ impl<'a> ChainStylist<'a> {
     ///
     /// - `nodes`: A vector of `SyntaxNode`s to be processed.
     /// - `operand_pred`: A predicate that checks if a node is an operand.
-    /// - `op_pred`: A predicate that checks if a node is an operator.
-    /// - `rhs_converter`: A function that converts right-hand side nodes into an `Option<ArenaDoc<'a>>`.
+    /// - `op_converter`: A function that converts operators into Docs (if some).
+    /// - `rhs_converter`: A function that converts right-hand side nodes into Docs (if some).
     /// - `fallback_converter`: A function that provides a fallback conversion for nodes that
     ///    do not match the primary criteria. Used for sticky args and innermost expressions.
     pub fn process(
         mut self,
         nodes: Vec<&'a SyntaxNode>,
         operand_pred: impl Fn(&'a SyntaxNode) -> bool,
-        op_pred: impl Fn(&'a SyntaxNode) -> bool,
+        op_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
         rhs_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
         fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
-        let arena = &self.printer.arena;
         let mut can_attach = false;
         for node in nodes {
             if operand_pred(node) {
                 self.chain_op_num += 1;
                 let mut seen_op = false;
                 for child in node.children() {
-                    if op_pred(child) {
+                    if let Some(op) = op_converter(child) {
                         seen_op = true;
-                        self.items
-                            .push(ChainItem::Op(arena.text(child.text().as_str())));
+                        self.items.push(ChainItem::Op(op));
                     } else if is_comment_node(child) {
                         let doc = self.printer.convert_comment(child);
                         self.items.push(if can_attach {

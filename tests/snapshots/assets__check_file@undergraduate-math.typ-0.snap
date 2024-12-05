@@ -17,7 +17,10 @@ snapshot_kind: text
 #set page(
   margin: 0.5in,
   footer: context {
-    if counter(page).display() == "2" {
+    if (
+      counter(page).display()
+        == "2"
+    ) {
       grid(
         columns: (
           1fr,

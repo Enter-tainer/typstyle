@@ -23,7 +23,13 @@ impl<'a> PrettyPrinter<'a> {
             .process_resolved(
                 resolve_dot_chain(node),
                 |node| node.kind() == SyntaxKind::FieldAccess,
-                |child| child.kind() == SyntaxKind::Dot,
+                |child| {
+                    if child.kind() == SyntaxKind::Dot {
+                        Some(self.arena.text("."))
+                    } else {
+                        None
+                    }
+                },
                 |child| child.cast().map(|ident| self.convert_ident(ident)),
                 |node| {
                     if let Some(func_call) = node.cast::<FuncCall>() {
@@ -41,7 +47,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_binary_chain(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
-        let prec = binary.op().precedence();
+        let op = binary.op();
+        let prec = op.precedence();
         ChainStylist::new(self)
             .process_resolved(
                 resolve_binary_chain(binary),
@@ -49,7 +56,13 @@ impl<'a> PrettyPrinter<'a> {
                     node.cast::<Binary>()
                         .is_some_and(|binary| binary.op().precedence() == prec)
                 },
-                |child| BinOp::from_kind(child.kind()).is_some(),
+                |child| {
+                    if child.kind() == SyntaxKind::In && op == BinOp::NotIn {
+                        Some(self.arena.text(op.as_str()))
+                    } else {
+                        BinOp::from_kind(child.kind()).map(|op| self.arena.text(op.as_str()))
+                    }
+                },
                 |child| child.cast().map(|expr| self.convert_expr(expr)),
                 |node| node.cast().map(|expr| self.convert_expr(expr)),
             )

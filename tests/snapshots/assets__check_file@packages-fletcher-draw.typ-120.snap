@@ -841,9 +841,9 @@ snapshot_kind: text
       let (u-label, v-label) = if grid.flip.xy { ($arrow$, $arrow.t.twohead$) } else { ($u$, $v$) }
 
       let dir-to-arrow(dir) = {
-        if dir == ltr { $arrow.r$ } else if dir == rtl { $arrow.l$ } else if dir == ttb {
-          $arrow.b$
-        } else if dir == btt { $arrow.t$ }
+        if dir == ltr { $arrow.r$ } else if dir == rtl { $arrow.l$ } else if dir == ttb { $arrow.b$ } else if (
+          dir == btt
+        ) { $arrow.t$ }
       }
 
       draw.content(

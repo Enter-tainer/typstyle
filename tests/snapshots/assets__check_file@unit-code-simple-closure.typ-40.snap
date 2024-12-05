@@ -18,9 +18,9 @@ snapshot_kind: text
   it
 }
 
-#set heading(numbering: (
-  ..num,
-) => if num.pos().len() < 4 {
+#set heading(numbering: (..num) => if (
+  num.pos().len() < 4
+) {
   numbering("1.1", ..num)
 })
 

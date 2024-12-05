@@ -350,12 +350,13 @@ snapshot_kind: text
     (not is-infinite-len(col_row))
       and (
         col_row == auto
-          or type(col_row) in (
-            _fraction-type,
-            _length-type,
-            _rel-len-type,
-            _ratio-type,
-          )
+          or type(col_row)
+            in (
+              _fraction-type,
+              _length-type,
+              _rel-len-type,
+              _ratio-type,
+            )
       )
   )
 
@@ -2183,13 +2184,8 @@ snapshot_kind: text
   if is-color(stroke) {
     stroke + 1pt
   } else if (
-    type(stroke) in (
-      _length-type,
-      _rel-len-type,
-      _ratio-type,
-      _stroke-type,
-      _dict-type,
-    )
+    type(stroke)
+      in (_length-type, _rel-len-type, _ratio-type, _stroke-type, _dict-type)
       or stroke in (none, auto)
   ) {
     stroke
@@ -2258,9 +2254,9 @@ snapshot_kind: text
   let stroke = default-if-auto(hline.stroke, stroke)
   let stroke = parse-stroke(stroke)
 
-  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
-    end,
-    columns.len(),
+  if (
+    default-if-auto-or-none(start, 0)
+      == default-if-auto-or-none(end, columns.len())
   ) { return }
 
   if (
@@ -2369,9 +2365,9 @@ snapshot_kind: text
   let stroke = default-if-auto(vline.stroke, stroke)
   let stroke = parse-stroke(stroke)
 
-  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(
-    end,
-    rows.len(),
+  if (
+    default-if-auto-or-none(start, 0)
+      == default-if-auto-or-none(end, rows.len())
   ) { return }
 
   if (

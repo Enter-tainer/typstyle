@@ -29,8 +29,10 @@ snapshot_kind: text
 ) = {
   let result = {
     if (
-      node.stroke != none
-        or node.fill != none
+      node.stroke
+        != none
+        or node.fill
+          != none
     ) {
       cetz
         .draw
@@ -49,7 +51,10 @@ snapshot_kind: text
             cetz
               .draw
               .set-style(
-                fill: if i == 0 {
+                fill: if (
+                  i
+                    == 0
+                ) {
                   node.fill
                 },
                 stroke: node.stroke,
@@ -64,7 +69,10 @@ snapshot_kind: text
         })
     }
 
-    if node.label != none {
+    if (
+      node.label
+        != none
+    ) {
       cetz
         .draw
         .content(
@@ -78,7 +86,8 @@ snapshot_kind: text
                 + horizon,
               node.label,
             ),
-            stroke: if debug >= 3 {
+            stroke: if debug
+              >= 3 {
               (
                 DEBUG_COLOR2
                   + 0.25pt
@@ -100,7 +109,10 @@ snapshot_kind: text
     }
   }
 
-  if node.layer != 0 {
+  if (
+    node.layer
+      != 0
+  ) {
     result = cetz
       .draw
       .on-layer(
@@ -114,7 +126,10 @@ snapshot_kind: text
   )(result) // post-process (e.g., hide)
 
   // Draw debug stuff
-  if debug >= 1 {
+  if (
+    debug
+      >= 1
+  ) {
     // dot at node anchor
     cetz
       .draw
@@ -129,8 +144,10 @@ snapshot_kind: text
   }
 
   if (
-    debug >= 2
-      and node.radius != 0pt
+    debug
+      >= 2
+      and node.radius
+        != 0pt
   ) {
     // node bounding rectangle
     cetz
@@ -209,14 +226,18 @@ snapshot_kind: text
   )
   let θ-normal = (
     θ
-      + if edge.label-side == right {
+      + if edge.label-side
+        == right {
         +90deg
       } else {
         -90deg
       }
   )
 
-  if type(edge.label-angle) == alignment {
+  if (
+    type(edge.label-angle)
+      == alignment
+  ) {
     edge.label-angle = (
       θ
         - (
@@ -228,14 +249,23 @@ snapshot_kind: text
           repr(edge.label-angle),
         )
     )
-  } else if edge.label-angle == auto {
+  } else if (
+    edge.label-angle
+      == auto
+  ) {
     edge.label-angle = θ
-    if calc.abs(edge.label-angle) > 90deg {
+    if (
+      calc.abs(edge.label-angle)
+        > 90deg
+    ) {
       edge.label-angle += 180deg
     }
   }
 
-  if edge.label-anchor == auto {
+  if (
+    edge.label-anchor
+      == auto
+  ) {
     edge.label-anchor = angle-to-anchor(θ-normal
       - edge.label-angle)
   }
@@ -259,7 +289,8 @@ snapshot_kind: text
             edge.label-wrapper
           )(edge)
         },
-        stroke: if debug >= 2 {
+        stroke: if debug
+          >= 2 {
           (
             DEBUG_COLOR2
               + 0.25pt
@@ -267,12 +298,18 @@ snapshot_kind: text
         },
       ),
       angle: edge.label-angle,
-      anchor: if edge.label-anchor != auto {
+      anchor: if (
+        edge.label-anchor
+          != auto
+      ) {
         edge.label-anchor
       },
     )
 
-  if debug >= 2 {
+  if (
+    debug
+      >= 2
+  ) {
     cetz
       .draw
       .circle(
@@ -301,15 +338,23 @@ snapshot_kind: text
       .marks
       .find(mark => (
         calc.abs(mark.pos
-          - pos) < 1e-3
+          - pos)
+          < 1e-3
       ))
-    if mark == none {
+    if (
+      mark
+        == none
+    ) {
       return 0pt
     }
 
     let is-tip = (
-      pos == 0
-    ) == mark.rev
+      (
+        pos
+          == 0
+      )
+        == mark.rev
+    )
     let sign = if mark.rev {
       -1
     } else {
@@ -352,7 +397,10 @@ snapshot_kind: text
   edge,
   path,
 ) = {
-  if edge.decorations == none {
+  if (
+    edge.decorations
+      == none
+  ) {
     return path
   }
 
@@ -363,8 +411,10 @@ snapshot_kind: text
       .marks
       .find(mark => (
         calc.abs(mark.pos
-          - t) < 1e-3
-      )) != none
+          - t)
+          < 1e-3
+      ))
+      != none
   )
 
   let decor = edge
@@ -489,16 +539,26 @@ snapshot_kind: text
       mark,
       curve,
       stroke: edge.stroke,
-      debug: debug >= 3,
+      debug: debug
+        >= 3,
     )
   }
 
   // Draw label
-  if edge.label != none {
+  if (
+    edge.label
+      != none
+  ) {
     // Choose label anchor based on edge direction,
     // preferring to place labels above the edge
-    if edge.label-side == auto {
-      edge.label-side = if calc.abs(θ) < 90deg {
+    if (
+      edge.label-side
+        == auto
+    ) {
+      edge.label-side = if (
+        calc.abs(θ)
+          < 90deg
+      ) {
         left
       } else {
         right
@@ -547,7 +607,10 @@ snapshot_kind: text
     edge.bend,
   )
 
-  let bend-dir = if edge.bend > 0deg {
+  let bend-dir = if (
+    edge.bend
+      > 0deg
+  ) {
     +1
   } else {
     -1
@@ -618,15 +681,25 @@ snapshot_kind: text
       mark,
       curve,
       stroke: edge.stroke,
-      debug: debug >= 3,
+      debug: debug
+        >= 3,
     )
   }
 
   // Draw label
-  if edge.label != none {
-    if edge.label-side == auto {
+  if (
+    edge.label
+      != none
+  ) {
+    if (
+      edge.label-side
+        == auto
+    ) {
       // Choose label side to be on outside of arc
-      edge.label-side = if edge.bend > 0deg {
+      edge.label-side = if (
+        edge.bend
+          > 0deg
+      ) {
         left
       } else {
         right
@@ -676,7 +749,8 @@ snapshot_kind: text
         + 1),
     )
     assert(
-      vert != vert-next,
+      vert
+        != vert-next,
       message: "Adjacent vertices must be distinct.",
     )
     angle-between(
@@ -694,7 +768,10 @@ snapshot_kind: text
     let Δθ = wrap-angle-180(θs.at(i)
       - θs.at(i
         - 1))
-    let dir = if Δθ > 0deg {
+    let dir = if (
+      Δθ
+        > 0deg
+    ) {
       +1
     } else {
       -1
@@ -716,8 +793,14 @@ snapshot_kind: text
         + calc.cos(Δθ)
     )
     // skip correcting the corner radius for extruded strokes if there's no stroke at all
-    if edge.extrude != () {
-      radius += if dir > 0 {
+    if (
+      edge.extrude
+        != ()
+    ) {
+      radius += if (
+        dir
+          > 0
+      ) {
         calc.max(..edge.extrude)
       } else {
         -calc.min(..edge.extrude)
@@ -725,7 +808,10 @@ snapshot_kind: text
     }
     radius *= dir // ??? makes math easier or something
 
-    if calc.abs(Δθ) > 179deg {
+    if (
+      calc.abs(Δθ)
+        > 179deg
+    ) {
       // singular line; skip arc
       (
         arc-center: pt,
@@ -767,7 +853,10 @@ snapshot_kind: text
   }
 
   let rounded-corners
-  if edge.corner-radius != none {
+  if (
+    edge.corner-radius
+      != none
+  ) {
     rounded-corners = range(
       1,
       θs.len(),
@@ -784,13 +873,19 @@ snapshot_kind: text
         - i
     )
     if (
-      0 < τ
-        and τ <= 1
-        or i == 0
-          and τ <= 0
-        or i == n-segments
-          - 1
-          and 1 < τ
+      0
+        < τ
+        and τ
+          <= 1
+        or i
+          == 0
+          and τ
+            <= 0
+        or i
+          == n-segments
+            - 1
+          and 1
+            < τ
     ) {
       τ
     }
@@ -814,7 +909,8 @@ snapshot_kind: text
       + (
         dash: if type(edge
           .stroke
-          .dash) == dictionary {
+          .dash)
+          == dictionary {
           (
             array: edge
               .stroke
@@ -840,9 +936,15 @@ snapshot_kind: text
 
     let Δphase = 0pt
 
-    if edge.corner-radius == none {
+    if (
+      edge.corner-radius
+        == none
+    ) {
       // add phantom marks to ensure segment joins are clean
-      if i > 0 {
+      if (
+        i
+          > 0
+      ) {
         let Δθ = (
           θs.at(i)
             - θs.at(i
@@ -857,9 +959,10 @@ snapshot_kind: text
           hide: true,
         ))
       }
-      if i < (
-        θs.len()
-          - 1
+      if (
+        i
+          < θs.len()
+            - 1
       ) {
         let Δθ = (
           θs.at(i
@@ -885,7 +988,10 @@ snapshot_kind: text
     } else {
       // rounded corners
 
-      if i > 0 {
+      if (
+        i
+          > 0
+      ) {
         // offset start of segment to give space for previous arc
         let (line-shift,) = rounded-corners.at((
           i
@@ -900,9 +1006,10 @@ snapshot_kind: text
         )
       }
 
-      if i < (
-        θs.len()
-          - 1
+      if (
+        i
+          < θs.len()
+            - 1
       ) {
         let (
           arc-center,
@@ -929,7 +1036,10 @@ snapshot_kind: text
         for d in (
           edge.extrude
         ) {
-          if delta != 0deg {
+          if (
+            delta
+              != 0deg
+          ) {
             cetz
               .draw
               .arc(
@@ -946,7 +1056,10 @@ snapshot_kind: text
               )
           }
 
-          if debug >= 4 {
+          if (
+            debug
+              >= 4
+          ) {
             cetz
               .draw
               .on-layer(
@@ -986,14 +1099,18 @@ snapshot_kind: text
         mark
       })
       .filter(mark => (
-        mark.pos != none
+        mark.pos
+          != none
       ))
 
     let label-pos = lerp-scale(
       edge.label-pos,
       i,
     )
-    let label-options = if label-pos == none {
+    let label-options = if (
+      label-pos
+        == none
+    ) {
       (
         label: none,
       )
@@ -1024,7 +1141,10 @@ snapshot_kind: text
   }
 
 
-  if debug >= 4 {
+  if (
+    debug
+      >= 4
+  ) {
     cetz
       .draw
       .line(
@@ -1050,7 +1170,10 @@ snapshot_kind: text
   target,
   callback,
 ) = {
-  if objects == none {
+  if (
+    objects
+      == none
+  ) {
     return callback(target)
   }
 
@@ -1188,7 +1311,10 @@ snapshot_kind: text
   node,
   θ,
 ) = {
-  if node == none {
+  if (
+    node
+      == none
+  ) {
     return (
       0pt,
       0pt,
@@ -1247,9 +1373,12 @@ snapshot_kind: text
   )
 
   // TODO: do defocus adjustment sensibly
-  if nodes
-    .at(0)
-    .len() == 1 {
+  if (
+    nodes
+      .at(0)
+      .len()
+      == 1
+  ) {
     from = vector.add(
       from,
       defocus-adjustment(
@@ -1261,9 +1390,12 @@ snapshot_kind: text
       ),
     )
   }
-  if nodes
-    .at(1)
-    .len() == 1 {
+  if (
+    nodes
+      .at(1)
+      .len()
+      == 1
+  ) {
     to = vector.add(
       to,
       defocus-adjustment(
@@ -1436,7 +1568,8 @@ snapshot_kind: text
   assert(
     edge
       .vertices
-      .len() >= 2,
+      .len()
+      >= 2,
     message: "Polyline requires at least two vertices",
   )
   let verts = edge.final-vertices
@@ -1530,19 +1663,28 @@ snapshot_kind: text
   nodes,
   ..args,
 ) = {
-  let obj = if edge.kind == "line" {
+  let obj = if (
+    edge.kind
+      == "line"
+  ) {
     draw-anchored-line(
       edge,
       nodes,
       ..args,
     )
-  } else if edge.kind == "arc" {
+  } else if (
+    edge.kind
+      == "arc"
+  ) {
     draw-anchored-arc(
       edge,
       nodes,
       ..args,
     )
-  } else if edge.kind == "poly" {
+  } else if (
+    edge.kind
+      == "poly"
+  ) {
     draw-anchored-polyline(
       edge,
       nodes,
@@ -1555,7 +1697,10 @@ snapshot_kind: text
     )
   }
 
-  if edge.layer != 0 {
+  if (
+    edge.layer
+      != 0
+  ) {
     obj = cetz
       .draw
       .on-layer(
@@ -1669,7 +1814,10 @@ snapshot_kind: text
       x-lims,
       y-lims,
     )
-    if a == b {
+    if (
+      a
+        == b
+    ) {
       b = vector.add(
         b,
         (
@@ -1697,7 +1845,10 @@ snapshot_kind: text
       let swap(
         a,
         b,
-      ) = if axis != 1 {
+      ) = if (
+        axis
+          != 1
+      ) {
         (
           a,
           b,
@@ -1796,7 +1947,10 @@ snapshot_kind: text
             fill: DEBUG_COLOR,
             size: .7em,
           )[#x],
-          anchor: if axis == 0 {
+          anchor: if (
+            axis
+              == 0
+          ) {
             "north"
           } else {
             "east"
@@ -1826,13 +1980,25 @@ snapshot_kind: text
       let dir-to-arrow(
         dir,
       ) = {
-        if dir == ltr {
+        if (
+          dir
+            == ltr
+        ) {
           $arrow.r$
-        } else if dir == rtl {
+        } else if (
+          dir
+            == rtl
+        ) {
           $arrow.l$
-        } else if dir == ttb {
+        } else if (
+          dir
+            == ttb
+        ) {
           $arrow.b$
-        } else if dir == btt {
+        } else if (
+          dir
+            == btt
+        ) {
           $arrow.t$
         }
       }
@@ -1864,23 +2030,35 @@ snapshot_kind: text
   nodes,
   key,
 ) = {
-  if key == none {
+  if (
+    key
+      == none
+  ) {
     return ()
   }
 
-  if type(key) == label {
+  if (
+    type(key)
+      == label
+  ) {
     return nodes.filter(node => (
-      node.name == key
+      node.name
+        == key
     ))
   }
 
   if (
-    type(key) == array
-      and key.len() == 2
+    type(key)
+      == array
+      and key.len()
+        == 2
   ) {
     let xy-pos = key
     let candidates = nodes.filter(node => {
-      if node.snap == false {
+      if (
+        node.snap
+          == false
+      ) {
         return false
       }
       let verdict = point-is-in-rect(
@@ -1897,7 +2075,10 @@ snapshot_kind: text
     })
 
 
-    if candidates.len() > 0 {
+    if (
+      candidates.len()
+        > 0
+    ) {
       // filter out nodes with lower snap priority
       let max-snap-priority = calc.max(
         ..candidates.map(node => (
@@ -1905,7 +2086,8 @@ snapshot_kind: text
         )),
       )
       candidates = candidates.filter(node => (
-        node.snap == max-snap-priority
+        node.snap
+          == max-snap-priority
       ))
     }
 
@@ -1958,7 +2140,8 @@ snapshot_kind: text
       ) => {
         let key = map-auto(
           given,
-          if type(raw) == label {
+          if type(raw)
+            == label {
             raw
           } else {
             xyz
@@ -1983,10 +2166,14 @@ snapshot_kind: text
     )
   }
 
-  if debug >= 1 {
+  if (
+    debug
+      >= 1
+  ) {
     draw-debug-axes(
       grid,
-      debug: debug >= 2,
+      debug: debug
+        >= 2,
     )
   }
 }
@@ -2011,7 +2198,10 @@ snapshot_kind: text
   objects,
   bounds: true,
 ) = {
-  if type(objects) == array {
+  if (
+    type(objects)
+      == array
+  ) {
     objects = objects.join()
   }
   let seq = (
@@ -2021,7 +2211,10 @@ snapshot_kind: text
   seq
     .children
     .map(child => {
-      if child.func() == metadata {
+      if (
+        child.func()
+          == metadata
+      ) {
         let value = child.value
         value.post = cetz
           .draw

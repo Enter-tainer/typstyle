@@ -20,17 +20,16 @@ snapshot_kind: text
 ) = {
   assert(
     base-weight in (auto, none)
-      or type(base-weight) in (
-        str,
-        int,
-      ),
+      or type(base-weight)
+        in (str, int),
     message: "`base-weight` should be `auto`, `none`, `int` or `str` type.",
   )
-  set text(weight: base-weight) if type(base-weight) in (
-    str,
-    int,
+  set text(weight: base-weight) if (
+    type(base-weight) in (str, int)
   )
-  set text(weight: "regular") if base-weight == auto
+  set text(weight: "regular") if (
+    base-weight == auto
+  )
   set text(..params) if params != ()
   context {
     set text(stroke: (

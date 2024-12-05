@@ -166,7 +166,9 @@ snapshot_kind: text
       } else { -90deg }
   )
 
-  if type(edge.label-angle) == alignment {
+  if (
+    type(edge.label-angle) == alignment
+  ) {
     edge.label-angle = (
       θ
         - (
@@ -178,7 +180,9 @@ snapshot_kind: text
     )
   } else if edge.label-angle == auto {
     edge.label-angle = θ
-    if calc.abs(edge.label-angle) > 90deg {
+    if (
+      calc.abs(edge.label-angle) > 90deg
+    ) {
       edge.label-angle += 180deg
     }
   }
@@ -207,9 +211,9 @@ snapshot_kind: text
         },
       ),
       angle: edge.label-angle,
-      anchor: if edge.label-anchor != auto {
-        edge.label-anchor
-      },
+      anchor: if (
+        edge.label-anchor != auto
+      ) { edge.label-anchor },
     )
 
   if debug >= 2 {
@@ -267,7 +271,8 @@ snapshot_kind: text
       .marks
       .find(mark => (
         calc.abs(mark.pos - t) < 1e-3
-      )) != none
+      ))
+      != none
   )
 
   let decor = edge
@@ -361,9 +366,9 @@ snapshot_kind: text
     // Choose label anchor based on edge direction,
     // preferring to place labels above the edge
     if edge.label-side == auto {
-      edge.label-side = if calc.abs(θ) < 90deg {
-        left
-      } else { right }
+      edge.label-side = if (
+        calc.abs(θ) < 90deg
+      ) { left } else { right }
     }
 
     place-edge-label-on-curve(
@@ -451,9 +456,9 @@ snapshot_kind: text
   if edge.label != none {
     if edge.label-side == auto {
       // Choose label side to be on outside of arc
-      edge.label-side = if edge.bend > 0deg {
-        left
-      } else { right }
+      edge.label-side = if (
+        edge.bend > 0deg
+      ) { left } else { right }
     }
 
     place-edge-label-on-curve(
@@ -585,9 +590,8 @@ snapshot_kind: text
   let stroke-with-phase(phase) = (
     stroke-to-dict(edge.stroke)
       + (
-        dash: if type(edge
-          .stroke
-          .dash) == dictionary {
+        dash: if type(edge.stroke.dash)
+          == dictionary {
           (
             array: edge
               .stroke
@@ -727,9 +731,9 @@ snapshot_kind: text
       edge.label-pos,
       i,
     )
-    let label-options = if label-pos == none {
-      (label: none)
-    } else {
+    let label-options = if (
+      label-pos == none
+    ) { (label: none) } else {
       (
         label-pos: label-pos,
         label: edge.label,

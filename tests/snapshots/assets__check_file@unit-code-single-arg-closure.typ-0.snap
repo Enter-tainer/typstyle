@@ -25,9 +25,11 @@ snapshot_kind: text
   ).filter(y => (
     hlines
       .filter(h => (
-        h.y == y
+        h.y
+          == y
       ))
-      .len() == 0
+      .len()
+      == 0
   ))
   new_hlines
 }

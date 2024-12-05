@@ -21,8 +21,10 @@ snapshot_kind: text
   align: (
     x,
     y,
-  ) => if x == 0
-    or y == 0 {
+  ) => if x
+    == 0
+    or y
+      == 0 {
     left
   } else {
     center
@@ -32,8 +34,10 @@ snapshot_kind: text
     y,
   ) => (
     // Separate black cells with white strokes.
-    left: if y == 0
-      and x > 0 {
+    left: if y
+      == 0
+      and x
+        > 0 {
       white
     } else {
       black
@@ -43,7 +47,8 @@ snapshot_kind: text
   fill: (
     _,
     y,
-  ) => if y == 0 {
+  ) => if y
+    == 0 {
     black
   },
 
@@ -90,7 +95,8 @@ snapshot_kind: text
   fill: (
     _,
     y,
-  ) => if y == 0 {
+  ) => if y
+    == 0 {
     black
   },
   table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],

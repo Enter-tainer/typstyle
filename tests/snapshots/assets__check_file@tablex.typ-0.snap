@@ -43,9 +43,12 @@ snapshot_kind: text
   + left)
 
 // If types aren't strings, this means we're using 0.8.0+.
-#let using-typst-v080-or-later = str(
-  type(_str-type),
-) == "type"
+#let using-typst-v080-or-later = (
+  str(
+    type(_str-type),
+  )
+    == "type"
+)
 
 // Attachments use "t" and "b" instead of "top" and "bottom" since v0.3.0.
 #let using-typst-v030-or-later = (
@@ -87,8 +90,10 @@ snapshot_kind: text
   // For zero: true - false = 1 - 0 = 1
   // For negative: false - true = 0 - 1 = -1
   (
-    int(0 <= x)
-      - int(x < 0)
+    int(0
+      <= x)
+      - int(x
+        < 0)
   )
 }
 
@@ -122,7 +127,10 @@ snapshot_kind: text
   ),
   error-prefix: none,
 ) = {
-  if type(error-prefix) == _str-type {
+  if (
+    type(error-prefix)
+      == _str-type
+  ) {
     error-prefix = (
       " "
         + error-prefix
@@ -130,15 +138,22 @@ snapshot_kind: text
   } else {
     error-prefix = ""
   }
-  if type(fit-spans) == _bool-type {
+  if (
+    type(fit-spans)
+      == _bool-type
+  ) {
     fit-spans = (
       x: fit-spans,
       y: fit-spans,
     )
   }
-  if type(fit-spans) == _dict-type {
+  if (
+    type(fit-spans)
+      == _dict-type
+  ) {
     assert(
-      fit-spans.len() > 0,
+      fit-spans.len()
+        > 0,
       message: "Tablex error:"
         + error-prefix
         + " 'fit-spans', if a dictionary, must not be empty.",
@@ -147,10 +162,11 @@ snapshot_kind: text
       fit-spans
         .keys()
         .all(k => (
-          k in (
-            "x",
-            "y",
-          )
+          k
+            in (
+              "x",
+              "y",
+            )
         )),
       message: "Tablex error:"
         + error-prefix
@@ -160,7 +176,8 @@ snapshot_kind: text
       fit-spans
         .values()
         .all(v => (
-          type(v) == _bool-type
+          type(v)
+            == _bool-type
         )),
       message: "Tablex error:"
         + error-prefix
@@ -171,8 +188,10 @@ snapshot_kind: text
       "y",
     ) {
       if (
-        key in default
-          and key not in fit-spans
+        key
+          in default
+          and key
+            not in fit-spans
       ) {
         fit-spans.insert(
           key,
@@ -284,8 +303,10 @@ snapshot_kind: text
 #let is-tablex-dict(
   x,
 ) = (
-  type(x) == _dict-type
-    and "tablex-dict-type" in x
+  type(x)
+    == _dict-type
+    and "tablex-dict-type"
+      in x
 )
 
 #let is-tablex-dict-type(
@@ -293,7 +314,8 @@ snapshot_kind: text
   ..dict_types,
 ) = (
   is-tablex-dict(x)
-    and x.tablex-dict-type in dict_types.pos()
+    and x.tablex-dict-type
+      in dict_types.pos()
 )
 
 #let is-tablex-cell(
@@ -332,17 +354,23 @@ snapshot_kind: text
   item,
   keep_empty: true,
 ) = {
-  if type(item) == _function-type {
+  if (
+    type(item)
+      == _function-type
+  ) {
     // dynamic cell content
     cellx(item)
   } else if (
     keep_empty
-      and item == ()
+      and item
+        == ()
   ) {
     item
   } else if (
-    type(item) != _dict-type
-      or "tablex-dict-type" not in item
+    type(item)
+      != _dict-type
+      or "tablex-dict-type"
+        not in item
   ) {
     cellx[#item]
   } else {
@@ -401,7 +429,8 @@ snapshot_kind: text
   // maximum explicit 'y' specified
   let max_explicit_y = items
     .filter(c => (
-      c.y != auto
+      c.y
+        != auto
     ))
     .fold(
       0,
@@ -411,11 +440,13 @@ snapshot_kind: text
       ) => {
         if (
           is-tablex-cell(cell)
-            and type(cell.y) in (
-              _int-type,
-              _float-type,
-            )
-            and cell.y > acc
+            and type(cell.y)
+              in (
+                _int-type,
+                _float-type,
+              )
+            and cell.y
+              > acc
         ) {
           cell.y
         } else {
@@ -429,15 +460,20 @@ snapshot_kind: text
   ) {
     if (
       is-tablex-cell(item)
-        and item.x == auto
-        and item.y == auto
+        and item.x
+          == auto
+        and item.y
+          == auto
     ) {
       // cell occupies (colspan * rowspan) spaces
       len += (
         item.colspan
           * item.rowspan
       )
-    } else if type(item) == _content-type {
+    } else if (
+      type(item)
+        == _content-type
+    ) {
       len += 1
     }
   }
@@ -449,7 +485,10 @@ snapshot_kind: text
       / col_len
   ))
 
-  while rows(len) < max_explicit_y {
+  while (
+    rows(len)
+      < max_explicit_y
+  ) {
     len += col_len
   }
 
@@ -461,13 +500,15 @@ snapshot_kind: text
   len,
 ) = {
   (
-    type(len) in (
-      _ratio-type,
-      _fraction-type,
-      _rel-len-type,
-      _length-type,
-    )
-      and "inf" in repr(len)
+    type(len)
+      in (
+        _ratio-type,
+        _fraction-type,
+        _rel-len-type,
+        _length-type,
+      )
+      and "inf"
+        in repr(len)
   )
 }
 
@@ -476,13 +517,15 @@ snapshot_kind: text
   val,
 ) = {
   (
-    type(val) == _color-type
+    type(val)
+      == _color-type
       or str(
         type(val),
-      ) in (
-        "gradient",
-        "pattern",
       )
+        in (
+          "gradient",
+          "pattern",
+        )
   )
 }
 
@@ -491,9 +534,13 @@ snapshot_kind: text
   rows,
   items: (),
 ) = {
-  if type(columns) == _int-type {
+  if (
+    type(columns)
+      == _int-type
+  ) {
     assert(
-      columns >= 0,
+      columns
+        >= 0,
       message: "Error: Cannot have a negative amount of columns.",
     )
 
@@ -505,9 +552,13 @@ snapshot_kind: text
     )
   }
 
-  if type(rows) == _int-type {
+  if (
+    type(rows)
+      == _int-type
+  ) {
     assert(
-      rows >= 0,
+      rows
+        >= 0,
       message: "Error: Cannot have a negative amount of rows.",
     )
     rows = (
@@ -518,27 +569,39 @@ snapshot_kind: text
     )
   }
 
-  if type(columns) != _array-type {
+  if (
+    type(columns)
+      != _array-type
+  ) {
     columns = (
       columns,
     )
   }
 
-  if type(rows) != _array-type {
+  if (
+    type(rows)
+      != _array-type
+  ) {
     rows = (
       rows,
     )
   }
 
   // default empty column to a single auto column
-  if columns.len() == 0 {
+  if (
+    columns.len()
+      == 0
+  ) {
     columns = (
       auto,
     )
   }
 
   // default empty row to a single auto row
-  if rows.len() == 0 {
+  if (
+    rows.len()
+      == 0
+  ) {
     rows = (
       auto,
     )
@@ -551,13 +614,15 @@ snapshot_kind: text
       not is-infinite-len(col_row)
     )
       and (
-        col_row == auto
-          or type(col_row) in (
-            _fraction-type,
-            _length-type,
-            _rel-len-type,
-            _ratio-type,
-          )
+        col_row
+          == auto
+          or type(col_row)
+            in (
+              _fraction-type,
+              _length-type,
+              _rel-len-type,
+              _ratio-type,
+            )
       )
   )
 
@@ -582,7 +647,10 @@ snapshot_kind: text
   ))
 
   // more cells than expected => add rows
-  if rows.len() < expected_rows {
+  if (
+    rows.len()
+      < expected_rows
+  ) {
     let missing_rows = (
       expected_rows
         - rows.len()
@@ -618,25 +686,37 @@ snapshot_kind: text
   y_limit: none,
 ) = {
   let result = ()
-  let rowspan = if "rowspan" in cell {
+  let rowspan = if (
+    "rowspan"
+      in cell
+  ) {
     cell.rowspan
   } else {
     1
   }
-  let colspan = if "colspan" in cell {
+  let colspan = if (
+    "colspan"
+      in cell
+  ) {
     cell.colspan
   } else {
     1
   }
 
-  if rowspan < 1 {
+  if (
+    rowspan
+      < 1
+  ) {
     panic("Cell rowspan must be 1 or greater (bad cell: "
       + repr((
         x,
         y,
       ))
       + ")")
-  } else if colspan < 1 {
+  } else if (
+    colspan
+      < 1
+  ) {
     panic("Cell colspan must be 1 or greater (bad cell: "
       + repr((
         x,
@@ -654,14 +734,20 @@ snapshot_kind: text
       + rowspan
   )
 
-  if x_limit != none {
+  if (
+    x_limit
+      != none
+  ) {
     max_x = calc.min(
       x_limit,
       max_x,
     )
   }
 
-  if y_limit != none {
+  if (
+    y_limit
+      != none
+  ) {
     max_y = calc.min(
       y_limit,
       max_y,
@@ -694,7 +780,10 @@ snapshot_kind: text
 ) = {
   let nones = ()
 
-  if init_function == none {
+  if (
+    init_function
+      == none
+  ) {
     init_function = () => (
       element
     )
@@ -710,7 +799,10 @@ snapshot_kind: text
   default,
   if_isnt: none,
 ) = {
-  if x == if_isnt {
+  if (
+    x
+      == if_isnt
+  ) {
     default
   } else {
     x
@@ -741,9 +833,12 @@ snapshot_kind: text
 #let default-if-auto-or-none(
   x,
   default,
-) = if x in (
-  auto,
-  none,
+) = if (
+  x
+    in (
+      auto,
+      none,
+    )
 ) {
   default
 } else {
@@ -754,14 +849,20 @@ snapshot_kind: text
 #let max-if-not-none(
   a,
   b,
-) = if a in (
-  none,
-  auto,
+) = if (
+  a
+    in (
+      none,
+      auto,
+    )
 ) {
   b
-} else if b in (
-  none,
-  auto,
+} else if (
+  b
+    in (
+      none,
+      auto,
+    )
 ) {
   a
 } else {
@@ -778,7 +879,10 @@ snapshot_kind: text
   let previous = none
   let current = line
 
-  while current != none {
+  while (
+    current
+      != none
+  ) {
     previous = current
     current = previous.parent
   }
@@ -796,8 +900,10 @@ snapshot_kind: text
   len,
 ) = {
   (
-    type(len) == _length-type
-      and "em" not in repr(len)
+    type(len)
+      == _length-type
+      and "em"
+        not in repr(len)
   )
 }
 
@@ -843,7 +949,10 @@ snapshot_kind: text
 
   // If the measured length is positive, `len` must have overall been positive.
   // There's nothing else to be done, so return the measured length.
-  if measured-pt > 0pt {
+  if (
+    measured-pt
+      > 0pt
+  ) {
     return measured-pt
   }
 
@@ -874,7 +983,10 @@ snapshot_kind: text
 
   // At this point, we will need to draw a line for measurement,
   // so we need the styles.
-  if styles == none {
+  if (
+    styles
+      == none
+  ) {
     panic("Cannot convert length to pt ('styles' not specified).")
   }
 
@@ -896,7 +1008,10 @@ snapshot_kind: text
     message: "'page-size' should be a purely pt length",
   )
 
-  if page-size == none {
+  if (
+    page-size
+      == none
+  ) {
     panic("Cannot convert ratio to pt ('page-size' not specified).")
   }
 
@@ -931,16 +1046,23 @@ snapshot_kind: text
     message: "'frac-total' should be a purely pt length",
   )
 
-  if frac-amount == none {
+  if (
+    frac-amount
+      == none
+  ) {
     panic("Cannot convert fraction to pt ('frac-amount' not specified).")
   }
 
-  if frac-total == none {
+  if (
+    frac-total
+      == none
+  ) {
     panic("Cannot convert fraction to pt ('frac-total' not specified).")
   }
 
   if (
-    frac-amount <= 0
+    frac-amount
+      <= 0
       or is-infinite-len(frac-total)
   ) {
     return 0pt
@@ -976,7 +1098,8 @@ snapshot_kind: text
     typst-fields-supported
       or eval(
         repr(0.00005em),
-      ) != 0.00005em
+      )
+        != 0.00005em
   ) {
     // em repr changed in 0.11.0 => need to use fields here
     // or use fields if they're supported anyway
@@ -994,7 +1117,10 @@ snapshot_kind: text
 
   // We will need to draw a line for measurement later,
   // so we need the styles.
-  if styles == none {
+  if (
+    styles
+      == none
+  ) {
     panic("Cannot convert relative length to pt ('styles' not specified).")
   }
 
@@ -1010,7 +1136,10 @@ snapshot_kind: text
   let (
     em-part,
     len-minus-em,
-  ) = if em-part-repr == none {
+  ) = if (
+    em-part-repr
+      == none
+  ) {
     (
       0em,
       len,
@@ -1039,7 +1168,10 @@ snapshot_kind: text
     len-minus-em
       - pt-part
   )
-  let ratio-part-pt = if ratio-part == 0% {
+  let ratio-part-pt = if (
+    ratio-part
+      == 0%
+  ) {
     // No point doing `convert-ratio-type-to-pt` if there's no ratio component.
     0pt
   } else {
@@ -1084,23 +1216,35 @@ snapshot_kind: text
 
   if is-infinite-len(len) {
     0pt // avoid the destruction of the universe
-  } else if type(len) == _length-type {
+  } else if (
+    type(len)
+      == _length-type
+  ) {
     convert-length-type-to-pt(
       len,
       styles: styles,
     )
-  } else if type(len) == _ratio-type {
+  } else if (
+    type(len)
+      == _ratio-type
+  ) {
     convert-ratio-type-to-pt(
       len,
       page-size,
     )
-  } else if type(len) == _fraction-type {
+  } else if (
+    type(len)
+      == _fraction-type
+  ) {
     convert-fraction-type-to-pt(
       len,
       frac-amount,
       frac-total,
     )
-  } else if type(len) == _rel-len-type {
+  } else if (
+    type(len)
+      == _rel-len-type
+  ) {
     convert-relative-type-to-pt(
       len,
       styles,
@@ -1124,19 +1268,28 @@ snapshot_kind: text
     stroke,
     stroke-auto,
   )
-  if type(stroke) == _length-type {
+  if (
+    type(stroke)
+      == _length-type
+  ) {
     convert-length-to-pt(
       stroke,
       styles: styles,
     )
-  } else if type(stroke) in (
-    _rel-len-type,
-    _ratio-type,
+  } else if (
+    type(stroke)
+      in (
+        _rel-len-type,
+        _ratio-type,
+      )
   ) {
     panic(no-ratio-error)
   } else if is-color(stroke) {
     1pt
-  } else if type(stroke) == _stroke-type {
+  } else if (
+    type(stroke)
+      == _stroke-type
+  ) {
     if typst-fields-supported {
       // No need for any repr() parsing, just use the thickness field.
       let thickness = default-if-auto(
@@ -1164,7 +1317,10 @@ snapshot_kind: text
       + len-regex)
     let s = repr(stroke).find(r)
 
-    if s == none {
+    if (
+      s
+        == none
+    ) {
       // for more complex strokes, built through dictionaries
       // => "thickness: 5pt" field
       // note: on typst v0.7.0 or later, can just use 's.thickness'
@@ -1172,25 +1328,37 @@ snapshot_kind: text
         + len-regex
         + ")")
       s = repr(stroke).match(r)
-      if s != none {
+      if (
+        s
+          != none
+      ) {
         s = s
           .captures
           .first() // get the first match (the thickness)
       }
     }
 
-    if s == none {
+    if (
+      s
+        == none
+    ) {
       1pt // okay it's probably just a color then
     } else {
       let len = eval(s)
-      if type(len) == _length-type {
+      if (
+        type(len)
+          == _length-type
+      ) {
         convert-length-to-pt(
           len,
           styles: styles,
         )
-      } else if type(len) in (
-        _rel-len-type,
-        _ratio-type,
+      } else if (
+        type(len)
+          in (
+            _rel-len-type,
+            _ratio-type,
+          )
       ) {
         panic(no-ratio-error)
       } else {
@@ -1198,18 +1366,26 @@ snapshot_kind: text
       }
     }
   } else if (
-    type(stroke) == _dict-type
-      and "thickness" in stroke
+    type(stroke)
+      == _dict-type
+      and "thickness"
+        in stroke
   ) {
     let thickness = stroke.thickness
-    if type(thickness) == _length-type {
+    if (
+      type(thickness)
+        == _length-type
+    ) {
       convert-length-to-pt(
         thickness,
         styles: styles,
       )
-    } else if type(thickness) in (
-      _rel-len-type,
-      _ratio-type,
+    } else if (
+      type(thickness)
+        in (
+          _rel-len-type,
+          _ratio-type,
+        )
     ) {
       panic(no-ratio-error)
     } else {
@@ -1279,9 +1455,12 @@ snapshot_kind: text
     width: grid.width,
   )
 
-  if index < grid
-    .items
-    .len() {
+  if (
+    index
+      < grid
+        .items
+        .len()
+  ) {
     grid
       .items
       .at(index)
@@ -1301,9 +1480,10 @@ snapshot_kind: text
     x,
     y,
     grid: grid,
-  ) < grid
-    .items
-    .len()
+  )
+    < grid
+      .items
+      .len()
 )
 
 // How many rows are in this grid? (Given its width)
@@ -1345,7 +1525,10 @@ snapshot_kind: text
     y,
     grid: grid,
   )
-  if len <= first-row-pos {
+  if (
+    len
+      <= first-row-pos
+  ) {
     // grid isn't large enough, so no row to return
     (
       (
@@ -1369,7 +1552,10 @@ snapshot_kind: text
         ),
       )
     let cell-row-len = cell-row.len()
-    if cell-row-len < grid.width {
+    if (
+      cell-row-len
+        < grid.width
+    ) {
       // the row isn't complete because the grid wasn't large enough.
       let missing-cells = (
         (
@@ -1413,7 +1599,10 @@ snapshot_kind: text
   let rowws = rows
 
   // quickly add missing rows
-  while rows < y {
+  while (
+    rows
+      < y
+  ) {
     grid.items += (
       (
         fill_with(grid),
@@ -1492,13 +1681,19 @@ snapshot_kind: text
       grid,
       ..cell_pos,
     )
-    grid_cell != none
+    (
+      grid_cell
+        != none
+    )
   }
 
   while there_is_next(cell) {
     x += 1
 
-    if x >= x_limit {
+    if (
+      x
+        >= x_limit
+    ) {
       x = 0
       y += 1
     }
@@ -1508,7 +1703,10 @@ snapshot_kind: text
       y,
     )
 
-    if y >= y_limit {
+    if (
+      y
+        >= y_limit
+    ) {
       // last row reached - stop
       break
     }
@@ -1580,12 +1778,16 @@ snapshot_kind: text
 
     // allow specifying () to change vline position
     if (
-      type(item) == _array-type
-        and item.len() == 0
+      type(item)
+        == _array-type
+        and item.len()
+          == 0
     ) {
       if (
-        x == 0
-          and y == 0
+        x
+          == 0
+          and y
+            == 0
       ) {
         // increment vline's secondary counter
         prev_x += 1
@@ -1616,19 +1818,25 @@ snapshot_kind: text
 
         hlines.push(item)
       } else if is-tablex-vline(item) {
-        if item.x == auto {
+        if (
+          item.x
+            == auto
+        ) {
           if (
-            x == 0
-              and y == 0
+            x
+              == 0
+              and y
+                == 0
           ) {
             // placed before any elements
             item.x = prev_x
             prev_x += 1 // use this as a 'secondary counter'
             // in the meantime
 
-            if prev_x > (
-              x_limit
-                + 1
+            if (
+              prev_x
+                > x_limit
+                  + 1
             ) {
               panic("Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most "
                 + str(x_limit
@@ -1670,15 +1878,19 @@ snapshot_kind: text
     )
 
     if (
-      cell.x == none
-        or cell.y == none
+      cell.x
+        == none
+        or cell.y
+          == none
     ) {
       panic("Error: Received cell with 'none' as x or y.")
     }
 
     if (
-      this_x == none
-        or this_y == none
+      this_x
+        == none
+        or this_y
+          == none
     ) {
       panic("Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: "
         + repr((
@@ -1693,7 +1905,10 @@ snapshot_kind: text
     cell.x = this_x
     cell.y = this_y
 
-    if type(map-cells) == _function-type {
+    if (
+      type(map-cells)
+        == _function-type
+    ) {
       cell = table-item-convert(
         map-cells(cell),
       )
@@ -1709,7 +1924,10 @@ snapshot_kind: text
     }
 
     let content = cell.content
-    let content = if type(content) == _function-type {
+    let content = if (
+      type(content)
+        == _function-type
+    ) {
       let res = content(
         this_x,
         this_y,
@@ -1727,15 +1945,19 @@ snapshot_kind: text
     }
 
     if (
-      this_x == none
-        or this_y == none
+      this_x
+        == none
+        or this_y
+          == none
     ) {
       panic("Error: Cell with function as content returned another cell with 'none' as x or y!")
     }
 
     if (
-      type(this_x) != _int-type
-        or type(this_y) != _int-type
+      type(this_x)
+        != _int-type
+        or type(this_y)
+          != _int-type
     ) {
       panic("Error: Cell coordinates must be integers. Invalid pair: "
         + repr((
@@ -1747,9 +1969,15 @@ snapshot_kind: text
     cell.content = content
 
     // resolve 'fit-spans' option for this cell
-    if "fit-spans" not in cell {
+    if (
+      "fit-spans"
+        not in cell
+    ) {
       cell.fit-spans = auto
-    } else if cell.fit-spans != auto {
+    } else if (
+      cell.fit-spans
+        != auto
+    ) {
       cell.fit-spans = validate-fit-spans(
         cell.fit-spans,
         default: fit-spans,
@@ -1773,7 +2001,10 @@ snapshot_kind: text
         - 1
     )
 
-    if this_x >= x_limit {
+    if (
+      this_x
+        >= x_limit
+    ) {
       panic("Error: Cell at "
         + repr((
           this_x,
@@ -1782,7 +2013,10 @@ snapshot_kind: text
         + " is placed at an inexistent column.")
     }
 
-    if max_x >= x_limit {
+    if (
+      max_x
+        >= x_limit
+    ) {
       panic("Error: Cell at "
         + repr((
           this_x,
@@ -1814,7 +2048,10 @@ snapshot_kind: text
         py,
       )
 
-      if currently_there != none {
+      if (
+        currently_there
+          != none
+      ) {
         let parent_cell = get-parent-cell(
           currently_there,
           grid: grid,
@@ -1838,9 +2075,12 @@ snapshot_kind: text
       }
 
       // initial position => assign it to the cell's x/y
-      if position == (
-        this_x,
-        this_y,
+      if (
+        position
+          == (
+            this_x,
+            this_y,
+          )
       ) {
         cell.x = this_x
         cell.y = this_y
@@ -1861,9 +2101,12 @@ snapshot_kind: text
           this_y,
         )
 
-        if index > grid
-          .items
-          .len() {
+        if (
+          index
+            > grid
+              .items
+              .len()
+        ) {
           panic("Internal tablex error: Could not expand grid to include cell at "
             + repr((
               this_x,
@@ -1907,7 +2150,10 @@ snapshot_kind: text
     x = next_pos.at(0)
     y = next_pos.at(1)
 
-    if prev_y != y {
+    if (
+      prev_y
+        != y
+    ) {
       row_wrapped = true // we changed rows!
     }
   }
@@ -1919,7 +2165,10 @@ snapshot_kind: text
   ) in grid
     .items
     .enumerate() {
-    if item == none {
+    if (
+      item
+        == none
+    ) {
       grid
         .items
         .at(index) = new_empty_cell(
@@ -1930,12 +2179,15 @@ snapshot_kind: text
   }
 
   // while there are incomplete rows for some reason, add empty cells
-  while calc-mod(
-    grid
-      .items
-      .len(),
-    grid.width,
-  ) != 0 {
+  while (
+    calc-mod(
+      grid
+        .items
+        .len(),
+      grid.width,
+    )
+      != 0
+  ) {
     grid
       .items
       .push(
@@ -1970,7 +2222,10 @@ snapshot_kind: text
   align_default: left,
   fill_default: none,
 ) = {
-  let align_default = if type(align_default) == _function-type {
+  let align_default = if (
+    type(align_default)
+      == _function-type
+  ) {
     align_default(
       cell.x,
       cell.y,
@@ -1979,7 +2234,10 @@ snapshot_kind: text
     align_default
   }
 
-  let fill_default = if type(fill_default) == _function-type {
+  let fill_default = if (
+    type(fill_default)
+      == _function-type
+  ) {
     fill_default(
       cell.x,
       cell.y,
@@ -2009,14 +2267,23 @@ snapshot_kind: text
     fill_default,
   )
 
-  if type(cell_fill) == _array-type {
+  if (
+    type(cell_fill)
+      == _array-type
+  ) {
     let fill_len = cell_fill.len()
 
-    if fill_len == 0 {
+    if (
+      fill_len
+        == 0
+    ) {
       // no fill values specified
       // => no fill
       cell_fill = none
-    } else if cell.x == auto {
+    } else if (
+      cell.x
+        == auto
+    ) {
       // for some reason the cell x wasn't yet
       // determined => just take the last
       // fill value
@@ -2035,20 +2302,30 @@ snapshot_kind: text
   }
 
   if (
-    cell_fill != none
+    cell_fill
+      != none
       and not is-color(cell_fill)
   ) {
     panic("Tablex error: Invalid fill specified (must be either a function (column, row) -> fill, a color, an array of valid fill values, or 'none').")
   }
 
-  if type(cell_align) == _array-type {
+  if (
+    type(cell_align)
+      == _array-type
+  ) {
     let align_len = cell_align.len()
 
-    if align_len == 0 {
+    if (
+      align_len
+        == 0
+    ) {
       // no alignment values specified
       // => inherit from outside
       cell_align = auto
-    } else if cell.x == auto {
+    } else if (
+      cell.x
+        == auto
+    ) {
       // for some reason the cell x wasn't yet
       // determined => just take the last
       // alignment value
@@ -2067,16 +2344,21 @@ snapshot_kind: text
   }
 
   if (
-    cell_align != auto
-      and type(cell_align) not in (
-        _align-type,
-        _2d-align-type,
-      )
+    cell_align
+      != auto
+      and type(cell_align)
+        not in (
+          _align-type,
+          _2d-align-type,
+        )
   ) {
     panic("Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').")
   }
 
-  let aligned_cell_content = if cell_align == auto {
+  let aligned_cell_content = if (
+    cell_align
+      == auto
+  ) {
     [#content]
   } else {
     align(cell_align)[#content]
@@ -2111,7 +2393,10 @@ snapshot_kind: text
       acc,
       el,
     ) => {
-      if type(el) == _length-type {
+      if (
+        type(el)
+          == _length-type
+      ) {
         (
           acc
             + el
@@ -2135,7 +2420,8 @@ snapshot_kind: text
     .filter(t => (
       type(
         t.at(1),
-      ) == _fraction-type
+      )
+        == _fraction-type
     ))
 
   let amount-frac = frac-tracks.fold(
@@ -2152,7 +2438,10 @@ snapshot_kind: text
     ),
   )
 
-  if type(gutter) == _fraction-type {
+  if (
+    type(gutter)
+      == _fraction-type
+  ) {
     amount-frac += (
       (
         gutter
@@ -2166,7 +2455,8 @@ snapshot_kind: text
   }
 
   let frac-width = if (
-    amount-frac > 0
+    amount-frac
+      > 0
       and not is-infinite-len(remaining)
   ) {
     (
@@ -2177,7 +2467,10 @@ snapshot_kind: text
     0pt
   }
 
-  if type(gutter) == _fraction-type {
+  if (
+    type(gutter)
+      == _fraction-type
+  ) {
     gutter = (
       frac-width
         * (
@@ -2226,8 +2519,10 @@ snapshot_kind: text
     col,
   ) in columns.enumerate() {
     if (
-      i in cell-cols
-        and col == auto
+      i
+        in cell-cols
+        and col
+          == auto
     ) {
       last_auto_col = max-if-not-none(
         last_auto_col,
@@ -2257,8 +2552,10 @@ snapshot_kind: text
     row,
   ) in rows.enumerate() {
     if (
-      i in cell-rows
-        and row == auto
+      i
+        in cell-rows
+        and row
+          == auto
     ) {
       last_auto_row = max-if-not-none(
         last_auto_row,
@@ -2290,8 +2587,10 @@ snapshot_kind: text
     col,
   ) in columns.enumerate() {
     if (
-      i in cell-cols
-        and type(col) == _length-type
+      i
+        in cell-cols
+        and type(col)
+          == _length-type
     ) {
       size += col
     }
@@ -2319,8 +2618,10 @@ snapshot_kind: text
     row,
   ) in rows.enumerate() {
     if (
-      i in cell-rows
-        and type(row) == _length-type
+      i
+        in cell-rows
+        and type(row)
+          == _length-type
     ) {
       size += row
     }
@@ -2339,7 +2640,8 @@ snapshot_kind: text
   page-width: 0pt,
 ) = {
   assert(
-    styles != none,
+    styles
+      != none,
     message: "Cannot measure auto columns without styles",
   )
   let total_auto_size = 0pt
@@ -2351,14 +2653,18 @@ snapshot_kind: text
     .filter(i-col => (
       type(
         i-col.at(1),
-      ) == _fraction-type
+      )
+        == _fraction-type
     ))
     .map(i-col => i-col.at(0))
   for (
     i,
     col,
   ) in columns.enumerate() {
-    if col == auto {
+    if (
+      col
+        == auto
+    ) {
       // max cell width
       let col_size = grid-get-column(
         grid,
@@ -2369,7 +2675,10 @@ snapshot_kind: text
           max,
           cell,
         ) => {
-          if cell == none {
+          if (
+            cell
+              == none
+          ) {
             panic("Not enough cells specified for the given amount of rows and columns.")
           }
 
@@ -2383,8 +2692,10 @@ snapshot_kind: text
           )
 
           let fit-this-span = if (
-            "fit-spans" in pcell
-              and pcell.fit-spans != auto
+            "fit-spans"
+              in pcell
+              and pcell.fit-spans
+                != auto
           ) {
             pcell
               .fit-spans
@@ -2393,7 +2704,8 @@ snapshot_kind: text
             fit-spans.x
           }
           let this-cell-can-expand-columns = (
-            pcell.colspan == 1
+            pcell.colspan
+              == 1
               or not fit-this-span
           )
 
@@ -2404,23 +2716,29 @@ snapshot_kind: text
           // `fit-spans.x == true` (it requests to not expand
           // columns).
           if (
-            last-auto-col == i
+            last-auto-col
+              == i
               and this-cell-can-expand-columns
           ) {
             let cell-spans-all-frac-columns = (
-              pcell.colspan > 1
-                and all-frac-columns.len() > 0
+              pcell.colspan
+                > 1
+                and all-frac-columns.len()
+                  > 0
                 and all-frac-columns.all(i => (
-                  pcell.x <= i
-                    and i < (
-                      pcell.x
-                        + pcell.colspan
-                    )
+                  pcell.x
+                    <= i
+                    and i
+                      < (
+                        pcell.x
+                          + pcell.colspan
+                      )
                 ))
             )
             if (
               cell-spans-all-frac-columns
-                and page-width != 0pt
+                and page-width
+                  != 0pt
                 and not is-infinite-len(page-width)
             ) {
               // HEURISTIC (only effective when the page width isn't 'auto' / infinite):
@@ -2522,7 +2840,10 @@ snapshot_kind: text
   let remaining = available
   let auto-cols-to-resize = auto-cols.len()
 
-  if auto-cols-to-resize <= 0 {
+  if (
+    auto-cols-to-resize
+      <= 0
+  ) {
     return columns
   }
 
@@ -2550,7 +2871,8 @@ snapshot_kind: text
   // and thus there is nothing to resize.
   while (
     fair-share-should-change
-      and auto-cols-to-resize > 0
+      and auto-cols-to-resize
+        > 0
   ) {
     last-share = fair-share
     fair-share = (
@@ -2572,10 +2894,13 @@ snapshot_kind: text
       // then it wasn't already excluded in any previous
       // iterations.
       if (
-        col <= fair-share
+        col
+          <= fair-share
           and (
-            last-share == none
-              or col > last-share
+            last-share
+              == none
+              or col
+                > last-share
           )
       ) {
         remaining -= col
@@ -2592,7 +2917,10 @@ snapshot_kind: text
   ) in (
     auto-cols
   ) {
-    if col > fair-share {
+    if (
+      col
+        > fair-share
+    ) {
       columns.at(i) = fair-share
     }
   }
@@ -2611,17 +2939,23 @@ snapshot_kind: text
   fit-spans: none,
 ) = {
   let columns = columns.map(c => {
-    if type(c) in (
-      _length-type,
-      _rel-len-type,
-      _ratio-type,
+    if (
+      type(c)
+        in (
+          _length-type,
+          _rel-len-type,
+          _ratio-type,
+        )
     ) {
       convert-length-to-pt(
         c,
         styles: styles,
         page-size: page_width,
       )
-    } else if c == none {
+    } else if (
+      c
+        == none
+    ) {
       0pt
     } else {
       c
@@ -2630,7 +2964,10 @@ snapshot_kind: text
 
   // what is the fixed size of the gutter?
   // (calculate it later if it's fractional)
-  let fixed-size-gutter = if type(col-gutter) == _length-type {
+  let fixed-size-gutter = if (
+    type(col-gutter)
+      == _length-type
+  ) {
     col-gutter
   } else {
     0pt
@@ -2653,8 +2990,10 @@ snapshot_kind: text
   // page_width == 0pt => page width is 'auto'
   // so we don't have to restrict our table's size
   if (
-    available_size >= 0pt
-      or page_width == 0pt
+    available_size
+      >= 0pt
+      or page_width
+        == 0pt
   ) {
     let auto_cols_result = determine-auto-columns(
       grid: grid,
@@ -2673,7 +3012,10 @@ snapshot_kind: text
       available_size
         - total_auto_size
     )
-    if remaining_size >= 0pt {
+    if (
+      remaining_size
+        >= 0pt
+    ) {
       let frac_res = determine-frac-tracks(
         columns,
         remaining: remaining_size,
@@ -2684,7 +3026,10 @@ snapshot_kind: text
       fixed-size-gutter = frac_res.gutter
     } else {
       // don't shrink on width 'auto'
-      if page_width != 0pt {
+      if (
+        page_width
+          != 0pt
+      ) {
         columns = fit-auto-columns(
           available: available_size,
           auto-cols: auto_sizes,
@@ -2693,7 +3038,10 @@ snapshot_kind: text
       }
 
       columns = columns.map(c => {
-        if type(c) == _fraction-type {
+        if (
+          type(c)
+            == _fraction-type
+        ) {
           0pt // no space left to be divided
         } else {
           c
@@ -2703,8 +3051,10 @@ snapshot_kind: text
   } else {
     columns = columns.map(c => {
       if (
-        c == auto
-          or type(c) == _fraction-type
+        c
+          == auto
+          or type(c)
+            == _fraction-type
       ) {
         0pt // no space remaining!
       } else {
@@ -2715,7 +3065,8 @@ snapshot_kind: text
 
   (
     columns: columns,
-    gutter: if col-gutter == none {
+    gutter: if col-gutter
+      == none {
       none
     } else {
       fixed-size-gutter
@@ -2734,7 +3085,8 @@ snapshot_kind: text
   fit-spans: none,
 ) = {
   assert(
-    styles != none,
+    styles
+      != none,
     message: "Cannot measure auto rows without styles",
   )
   let total_auto_size = 0pt
@@ -2745,7 +3097,10 @@ snapshot_kind: text
     i,
     row,
   ) in rows.enumerate() {
-    if row == auto {
+    if (
+      row
+        == auto
+    ) {
       // max cell height
       let row_size = grid-get-row(
         grid,
@@ -2756,7 +3111,10 @@ snapshot_kind: text
           max,
           cell,
         ) => {
-          if cell == none {
+          if (
+            cell
+              == none
+          ) {
             panic("Not enough cells specified for the given amount of rows and columns.")
           }
 
@@ -2770,8 +3128,10 @@ snapshot_kind: text
           )
 
           let fit-this-span = if (
-            "fit-spans" in pcell
-              and pcell.fit-spans != auto
+            "fit-spans"
+              in pcell
+              and pcell.fit-spans
+                != auto
           ) {
             pcell
               .fit-spans
@@ -2780,7 +3140,8 @@ snapshot_kind: text
             fit-spans.y
           }
           let this-cell-can-expand-rows = (
-            pcell.rowspan == 1
+            pcell.rowspan
+              == 1
               or not fit-this-span
           )
 
@@ -2791,7 +3152,8 @@ snapshot_kind: text
           // `fit-spans.y == true` (it requests to not expand
           // rows).
           if (
-            last-auto-row == i
+            last-auto-row
+              == i
               and this-cell-can-expand-rows
           ) {
             let width = get-colspan-fixed-size-covered(
@@ -2873,10 +3235,13 @@ snapshot_kind: text
   fit-spans: none,
 ) = {
   let rows = rows.map(r => {
-    if type(r) in (
-      _length-type,
-      _rel-len-type,
-      _ratio-type,
+    if (
+      type(r)
+        in (
+          _length-type,
+          _rel-len-type,
+          _ratio-type,
+        )
     ) {
       convert-length-to-pt(
         r,
@@ -2903,7 +3268,10 @@ snapshot_kind: text
 
   // what is the fixed size of the gutter?
   // (calculate it later if it's fractional)
-  let fixed-size-gutter = if type(row-gutter) == _length-type {
+  let fixed-size-gutter = if (
+    type(row-gutter)
+      == _length-type
+  ) {
     row-gutter
   } else {
     0pt
@@ -2920,7 +3288,10 @@ snapshot_kind: text
         )
   )
 
-  if remaining >= 0pt {
+  if (
+    remaining
+      >= 0pt
+  ) {
     // split fractions in one page
     let frac_res = determine-frac-tracks(
       rows,
@@ -2934,14 +3305,18 @@ snapshot_kind: text
   } else {
     (
       rows: rows.map(r => {
-        if type(r) == _fraction-type {
+        if (
+          type(r)
+            == _fraction-type
+        ) {
           // no space remaining in this page or box
           0pt
         } else {
           r
         }
       }),
-      gutter: if row-gutter == none {
+      gutter: if row-gutter
+        == none {
         none
       } else {
         fixed-size-gutter
@@ -3045,7 +3420,8 @@ snapshot_kind: text
   // no gutter at the end.
   if (
     pre-gutter
-      or end == columns.len()
+      or end
+        == columns.len()
   ) {
     sum = calc.max(
       0pt,
@@ -3103,7 +3479,8 @@ snapshot_kind: text
   // no gutter at the end.
   if (
     pre-gutter
-      or end == rows.len()
+      or end
+        == rows.len()
   ) {
     sum = calc.max(
       0pt,
@@ -3171,16 +3548,22 @@ snapshot_kind: text
   end: 0,
   limit: 0,
 ) = {
-  if l_start in (
-    none,
-    auto,
+  if (
+    l_start
+      in (
+        none,
+        auto,
+      )
   ) {
     l_start = 0
   }
 
-  if l_end in (
-    none,
-    auto,
+  if (
+    l_end
+      in (
+        none,
+        auto,
+      )
   ) {
     l_end = limit
   }
@@ -3196,8 +3579,10 @@ snapshot_kind: text
 
   // ---- ====     or ==== ----
   if (
-    l_end < start
-      or l_start > end
+    l_end
+      < start
+      or l_start
+        > end
   ) {
     return none
   }
@@ -3242,19 +3627,24 @@ snapshot_kind: text
     .filter(h => {
       let y = h.y
 
-      let in_top_or_bottom = y in (
-        cell.y,
-        cell.y
-          + cell.rowspan,
+      let in_top_or_bottom = (
+        y
+          in (
+            cell.y,
+            cell.y
+              + cell.rowspan,
+          )
       )
 
       let hline_hasnt_already_ended = (
-        h.end in (
-          auto,
-          none,
-        ) // always goes towards the right
-          or h.end >= cell.x
-            + cell.colspan // ends at or after this cell
+        h.end
+          in (
+            auto,
+            none,
+          ) // always goes towards the right
+          or h.end
+            >= cell.x
+              + cell.colspan // ends at or after this cell
       )
 
       (
@@ -3273,7 +3663,10 @@ snapshot_kind: text
         limit: x_limit,
       )
 
-      if span == none {
+      if (
+        span
+          == none
+      ) {
         // no intersection!
         none
       } else {
@@ -3285,26 +3678,32 @@ snapshot_kind: text
       }
     })
     .filter(x => (
-      x != none
+      x
+        != none
     ))
 
   let vlines = vlines
     .filter(v => {
       let x = v.x
 
-      let at_left_or_right = x in (
-        cell.x,
-        cell.x
-          + cell.colspan,
+      let at_left_or_right = (
+        x
+          in (
+            cell.x,
+            cell.x
+              + cell.colspan,
+          )
       )
 
       let vline_hasnt_already_ended = (
-        v.end in (
-          auto,
-          none,
-        ) // always goes towards the bottom
-          or v.end >= cell.y
-            + cell.rowspan // ends at or after this cell
+        v.end
+          in (
+            auto,
+            none,
+          ) // always goes towards the bottom
+          or v.end
+            >= cell.y
+              + cell.rowspan // ends at or after this cell
       )
 
       (
@@ -3323,7 +3722,10 @@ snapshot_kind: text
         limit: y_limit,
       )
 
-      if span == none {
+      if (
+        span
+          == none
+      ) {
         // no intersection!
         none
       } else {
@@ -3335,7 +3737,8 @@ snapshot_kind: text
       }
     })
     .filter(x => (
-      x != none
+      x
+        != none
     ))
 
   (
@@ -3352,10 +3755,14 @@ snapshot_kind: text
 ) = (
   is-tablex-hline(a)
     and is-tablex-hline(b)
-    and a.y == b.y
-    and a.start == b.start
-    and a.end == b.end
-    and a.gutter-restrict == b.gutter-restrict
+    and a.y
+      == b.y
+    and a.start
+      == b.start
+    and a.end
+      == b.end
+    and a.gutter-restrict
+      == b.gutter-restrict
 )
 
 #let _largest-stroke-among-lines(
@@ -3381,7 +3788,8 @@ snapshot_kind: text
 ) = {
   _largest-stroke-among-lines(
     hlines.filter(h => (
-      h.y == y
+      h.y
+        == y
     )),
     stroke-auto: stroke-auto,
     styles: styles,
@@ -3396,7 +3804,8 @@ snapshot_kind: text
 ) = {
   _largest-stroke-among-lines(
     vlines.filter(v => (
-      v.x == x
+      v.x
+        == x
     )),
     stroke-auto: stroke-auto,
     styles: styles,
@@ -3416,17 +3825,19 @@ snapshot_kind: text
         + 1pt
     )
   } else if (
-    type(stroke) in (
-      _length-type,
-      _rel-len-type,
-      _ratio-type,
-      _stroke-type,
-      _dict-type,
-    )
-      or stroke in (
-        none,
-        auto,
+    type(stroke)
+      in (
+        _length-type,
+        _rel-len-type,
+        _ratio-type,
+        _stroke-type,
+        _dict-type,
       )
+      or stroke
+        in (
+          none,
+          auto,
+        )
   ) {
     stroke
   } else {
@@ -3444,24 +3855,30 @@ snapshot_kind: text
   spanned-tracks-len: 0,
 ) = {
   // TODO: better handle negative expansion
-  if line.expand in (
-    none,
-    (
-      none,
-      none,
-    ),
-    auto,
-    (
-      auto,
-      auto,
-    ),
+  if (
+    line.expand
+      in (
+        none,
+        (
+          none,
+          none,
+        ),
+        auto,
+        (
+          auto,
+          auto,
+        ),
+      )
   ) {
     return (
       none,
       none,
     )
   }
-  if type(line.expand) != _array-type {
+  if (
+    type(line.expand)
+      != _array-type
+  ) {
     line.expand = (
       line.expand,
       line.expand,
@@ -3492,7 +3909,10 @@ snapshot_kind: text
     none,
   )
 
-  if start == parent-start {
+  if (
+    start
+      == parent-start
+  ) {
     // starts where its parent starts
     expansion.at(0) = default-if-auto(
       line
@@ -3502,7 +3922,10 @@ snapshot_kind: text
     ) // => expand to the left
   }
 
-  if end == parent-end {
+  if (
+    end
+      == parent-end
+  ) {
     // ends where its parent ends
     expansion.at(1) = default-if-auto(
       line
@@ -3538,27 +3961,34 @@ snapshot_kind: text
   )
   let stroke = parse-stroke(stroke)
 
-  if default-if-auto-or-none(
-    start,
-    0,
-  ) == default-if-auto-or-none(
-    end,
-    columns.len(),
+  if (
+    default-if-auto-or-none(
+      start,
+      0,
+    )
+      == default-if-auto-or-none(
+        end,
+        columns.len(),
+      )
   ) {
     return
   }
 
   if (
-    gutter != none
-      and gutter.row != none
+    gutter
+      != none
+      and gutter.row
+        != none
       and (
         (
           pre-gutter
-            and hline.gutter-restrict == bottom
+            and hline.gutter-restrict
+              == bottom
         )
           or (
             not pre-gutter
-              and hline.gutter-restrict == top
+              and hline.gutter-restrict
+                == top
           )
       )
   ) {
@@ -3578,10 +4008,13 @@ snapshot_kind: text
     0pt,
   )
 
-  if default-if-auto(
-    hline.stroke-expand,
-    true,
-  ) == true {
+  if (
+    default-if-auto(
+      hline.stroke-expand,
+      true,
+    )
+      == true
+  ) {
     let largest-stroke = _largest-stroke-among-vlines-at-x.with(
       vlines: vlines,
       stroke-auto: stroke-auto,
@@ -3630,7 +4063,8 @@ snapshot_kind: text
       end: end,
       columns: columns,
       gutter: gutter,
-      pre-gutter: hline.stop-pre-gutter == true,
+      pre-gutter: hline.stop-pre-gutter
+        == true,
     )
       + right-expand
   )
@@ -3638,7 +4072,8 @@ snapshot_kind: text
   if (
     end_x
       - start_x
-  ) < 0pt {
+      < 0pt
+  ) {
     return // negative length
   }
 
@@ -3663,8 +4098,14 @@ snapshot_kind: text
     y,
   )
 
-  if stroke != auto {
-    if stroke != none {
+  if (
+    stroke
+      != auto
+  ) {
+    if (
+      stroke
+        != none
+    ) {
       line(
         start: start,
         end: end,
@@ -3703,27 +4144,34 @@ snapshot_kind: text
   )
   let stroke = parse-stroke(stroke)
 
-  if default-if-auto-or-none(
-    start,
-    0,
-  ) == default-if-auto-or-none(
-    end,
-    rows.len(),
+  if (
+    default-if-auto-or-none(
+      start,
+      0,
+    )
+      == default-if-auto-or-none(
+        end,
+        rows.len(),
+      )
   ) {
     return
   }
 
   if (
-    gutter != none
-      and gutter.col != none
+    gutter
+      != none
+      and gutter.col
+        != none
       and (
         (
           pre-gutter
-            and vline.gutter-restrict == right
+            and vline.gutter-restrict
+              == right
         )
           or (
             not pre-gutter
-              and vline.gutter-restrict == left
+              and vline.gutter-restrict
+                == left
           )
       )
   ) {
@@ -3743,10 +4191,13 @@ snapshot_kind: text
     0pt,
   )
 
-  if default-if-auto(
-    vline.stroke-expand,
-    true,
-  ) == true {
+  if (
+    default-if-auto(
+      vline.stroke-expand,
+      true,
+    )
+      == true
+  ) {
     let largest-stroke = _largest-stroke-among-hlines-at-y.with(
       hlines: hlines,
       stroke-auto: stroke-auto,
@@ -3795,7 +4246,8 @@ snapshot_kind: text
       rows: rows,
       gutter: gutter,
       pre-gutter: stop-before-row-gutter
-        or vline.stop-pre-gutter == true,
+        or vline.stop-pre-gutter
+          == true,
     )
       + bottom-expand
   )
@@ -3803,7 +4255,8 @@ snapshot_kind: text
   if (
     end_y
       - start_y
-  ) < 0pt {
+      < 0pt
+  ) {
     return // negative length
   }
 
@@ -3824,8 +4277,14 @@ snapshot_kind: text
     end_y,
   )
 
-  if stroke != auto {
-    if stroke != none {
+  if (
+    stroke
+      != auto
+  ) {
+    if (
+      stroke
+        != none
+    ) {
       line(
         start: start,
         end: end,
@@ -3882,7 +4341,10 @@ snapshot_kind: text
       + left,
     locate(loc => {
       page_dim_state.update(s => {
-        if s.top_left != none {
+        if (
+          s.top_left
+            != none
+        ) {
           s
         } else {
           let pos = loc.position()
@@ -3910,7 +4372,10 @@ snapshot_kind: text
       + right,
     locate(loc => {
       page_dim_state.update(s => {
-        if s.bottom_right != none {
+        if (
+          s.bottom_right
+            != none
+        ) {
           s
         } else {
           let pos = loc.position()
@@ -4001,10 +4466,16 @@ snapshot_kind: text
         + 1
     )
 
-    let at_top = pos.y == min-pos.y // to guard against re-draw issues
+    let at_top = (
+      pos.y
+        == min-pos.y
+    ) // to guard against re-draw issues
     let header_pages = header-pages-state.at(loc)
     let header_count = header_pages.len()
-    let page_turned = page not in header_pages
+    let page_turned = (
+      page
+        not in header_pages
+    )
 
     // draw row group
     block(
@@ -4021,7 +4492,10 @@ snapshot_kind: text
             and at_top
             and not is-header
         ) {
-          if repeat-header != false {
+          if (
+            repeat-header
+              != false
+          ) {
             header-pages-state.update(l => (
               l
                 + (
@@ -4030,15 +4504,20 @@ snapshot_kind: text
             ))
             if (
               (
-                repeat-header == true
+                repeat-header
+                  == true
               )
                 or (
-                  type(repeat-header) == _int-type
-                    and rel_page <= repeat-header
+                  type(repeat-header)
+                    == _int-type
+                    and rel_page
+                      <= repeat-header
                 )
                 or (
-                  type(repeat-header) == _array-type
-                    and rel_page in repeat-header
+                  type(repeat-header)
+                    == _array-type
+                    and rel_page
+                      in repeat-header
                 )
             ) {
               let measures = measure(
@@ -4165,7 +4644,8 @@ snapshot_kind: text
           not is-infinite-len(max-pos.y)
             and pos.y
               + row_group_height
-              + row_gutter_dy >= max-pos.y
+              + row_gutter_dy
+              >= max-pos.y
         )
 
         if is_last_row {
@@ -4211,7 +4691,10 @@ snapshot_kind: text
           draw-vline(..args),
         )
 
-        let header_last_y = if first-row-group != none {
+        let header_last_y = if (
+          first-row-group
+            != none
+        ) {
           first-row-group
             .row_group
             .y_span
@@ -4226,15 +4709,17 @@ snapshot_kind: text
         let hlines = if (
           not header-hlines-have-priority
             and not is-header
-            and start-y == header_last_y
-              + 1
+            and start-y
+              == header_last_y
+                + 1
         ) {
           let hlines_below_header = first-row-group
             .row_group
             .hlines
             .filter(h => (
-              h.y == header_last_y
-                + 1
+              h.y
+                == header_last_y
+                  + 1
             ))
 
           (
@@ -4250,8 +4735,14 @@ snapshot_kind: text
         ) {
           // only draw the top hline
           // if header's wasn't already drawn
-          if hline.y == start-y {
-            let header_last_y = if first-row-group != none {
+          if (
+            hline.y
+              == start-y
+          ) {
+            let header_last_y = if (
+              first-row-group
+                != none
+            ) {
               first-row-group
                 .row_group
                 .y_span
@@ -4269,15 +4760,19 @@ snapshot_kind: text
             if (
               not header-hlines-have-priority
                 and not is-header
-                and start-y == header_last_y
-                  + 1
+                and start-y
+                  == header_last_y
+                    + 1
             ) {
               // second row (after header, and it has no hline priority).
               draw-hline(
                 hline,
                 pre-gutter: false,
               )
-            } else if hline.y == 0 {
+            } else if (
+              hline.y
+                == 0
+            ) {
               // hline at the very top of the table.
               draw-hline(
                 hline,
@@ -4285,8 +4780,10 @@ snapshot_kind: text
               )
             } else if (
               not page_turned
-                and gutter.row != none
-                and hline.gutter-restrict != top
+                and gutter.row
+                  != none
+                and hline.gutter-restrict
+                  != top
             ) {
               // this hline, at the top of this row group,
               // isn't restricted to a pre-gutter position,
@@ -4302,7 +4799,8 @@ snapshot_kind: text
             } else if (
               page_turned
                 and (
-                  added_header_height == 0pt
+                  added_header_height
+                    == 0pt
                     or not header-hlines-have-priority
                 )
             ) {
@@ -4314,16 +4812,19 @@ snapshot_kind: text
             }
           } else {
             if (
-              hline.y == end-y
-                + 1
+              hline.y
+                == end-y
+                  + 1
                 and (
                   (
                     is-header
                       and not header-hlines-have-priority
                   )
                     or (
-                      gutter.row != none
-                        and hline.gutter-restrict == bottom
+                      gutter.row
+                        != none
+                        and hline.gutter-restrict
+                          == bottom
                     )
                 )
             ) {
@@ -4355,10 +4856,13 @@ snapshot_kind: text
             // lines break properly between pages),
             // or the last row in the whole table.
             if (
-              gutter.row != none
-                and hline.y < rows.len()
-                and hline.y < end-y
-                  + 1
+              gutter.row
+                != none
+                and hline.y
+                  < rows.len()
+                and hline.y
+                  < end-y
+                    + 1
                 and not is_last_row
             ) {
               draw-hline(
@@ -4381,8 +4885,10 @@ snapshot_kind: text
           // don't draw the post-col gutter vline
           // if this is the last vline
           if (
-            gutter.col != none
-              and vline.x < columns.len()
+            gutter.col
+              != none
+              and vline.x
+                < columns.len()
           ) {
             draw-vline(
               vline,
@@ -4542,11 +5048,13 @@ snapshot_kind: text
             .filter(
               is-same-hline.with(h),
             )
-            .len() == 0
+            .len()
+            == 0
         ))
 
         let vlines = vlines.filter(v => (
-          v not in this_row_group.vlines
+          v
+            not in this_row_group.vlines
         ))
 
         this_row_group.hlines += hlines
@@ -4573,8 +5081,10 @@ snapshot_kind: text
     // added all pertaining rows to the group
     // now we can draw it
     if (
-      row_group_add_counter <= 0
-        and header_rows_count <= 0
+      row_group_add_counter
+        <= 0
+        and header_rows_count
+          <= 0
     ) {
       row_group_add_counter = 1
 
@@ -4603,7 +5113,10 @@ snapshot_kind: text
         ),
       )
 
-      let is_header = first_row_group == none
+      let is_header = (
+        first_row_group
+          == none
+      )
       let content = draw-row-group(
         row-group,
         is-header: is_header,
@@ -4662,21 +5175,29 @@ snapshot_kind: text
     line,
     page-size: none,
   ) = {
-    line.stroke-expand = line.stroke-expand == true
+    line.stroke-expand = (
+      line.stroke-expand
+        == true
+    )
     line.expand = default-if-auto(
       line.expand,
       none,
     )
     if (
-      type(line.expand) != _array-type
-        and line.expand != none
+      type(line.expand)
+        != _array-type
+        and line.expand
+          != none
     ) {
       line.expand = (
         line.expand,
         line.expand,
       )
     }
-    line.expand = if line.expand == none {
+    line.expand = if (
+      line.expand
+        == none
+    ) {
       none
     } else {
       line
@@ -4686,17 +5207,23 @@ snapshot_kind: text
           2,
         )
         .map(e => {
-          if e == none {
+          if (
+            e
+              == none
+          ) {
             e
           } else {
             e = default-if-auto(
               e,
               0pt,
             )
-            if type(e) not in (
-              _length-type,
-              _rel-len-type,
-              _ratio-type,
+            if (
+              type(e)
+                not in (
+                  _length-type,
+                  _rel-len-type,
+                  _ratio-type,
+                )
             ) {
               panic("'expand' argument to lines must be a pair (length, length).")
             }
@@ -4756,9 +5283,11 @@ snapshot_kind: text
       .filter(y => (
         hlines
           .filter(h => (
-            h.y == y
+            h.y
+              == y
           ))
-          .len() == 0
+          .len()
+          == 0
       ))
       .map(y => hlinex(y: y))
   }
@@ -4774,9 +5303,11 @@ snapshot_kind: text
       .filter(x => (
         vlines
           .filter(v => (
-            v.x == x
+            v.x
+              == x
           ))
-          .len() == 0
+          .len()
+          == 0
       ))
       .map(x => vlinex(x: x))
   }
@@ -4813,10 +5344,13 @@ snapshot_kind: text
     0pt,
   )
 
-  if type(col-gutter) in (
-    _length-type,
-    _rel-len-type,
-    _ratio-type,
+  if (
+    type(col-gutter)
+      in (
+        _length-type,
+        _rel-len-type,
+        _ratio-type,
+      )
   ) {
     col-gutter = convert-length-to-pt(
       col-gutter,
@@ -4825,10 +5359,13 @@ snapshot_kind: text
     )
   }
 
-  if type(row-gutter) in (
-    _length-type,
-    _rel-len-type,
-    _ratio-type,
+  if (
+    type(row-gutter)
+      in (
+        _length-type,
+        _rel-len-type,
+        _ratio-type,
+      )
   ) {
     row-gutter = convert-length-to-pt(
       row-gutter,
@@ -4848,11 +5385,13 @@ snapshot_kind: text
   map-func,
 ) = {
   if (
-    map-func not in (
-      none,
-      auto,
-    )
-      and type(map-func) != _function-type
+    map-func
+      not in (
+        none,
+        auto,
+      )
+      and type(map-func)
+        != _function-type
   ) {
     panic("Tablex error: Map parameters, if specified (not 'none'), must be functions.")
   }
@@ -4869,7 +5408,10 @@ snapshot_kind: text
   map-rows: none,
   map-cols: none,
 ) = {
-  if type(map-vlines) == _function-type {
+  if (
+    type(map-vlines)
+      == _function-type
+  ) {
     vlines = vlines.map(vline => {
       let vline = map-vlines(vline)
       if not is-tablex-vline(vline) {
@@ -4879,7 +5421,10 @@ snapshot_kind: text
     })
   }
 
-  if type(map-hlines) == _function-type {
+  if (
+    type(map-hlines)
+      == _function-type
+  ) {
     hlines = hlines.map(hline => {
       let hline = map-hlines(hline)
       if not is-tablex-hline(hline) {
@@ -4889,8 +5434,14 @@ snapshot_kind: text
     })
   }
 
-  let should-map-rows = type(map-rows) == _function-type
-  let should-map-cols = type(map-cols) == _function-type
+  let should-map-rows = (
+    type(map-rows)
+      == _function-type
+  )
+  let should-map-cols = (
+    type(map-cols)
+      == _function-type
+  )
 
   if (
     not should-map-rows
@@ -4925,11 +5476,17 @@ snapshot_kind: text
         }),
       )
 
-      if type(cells) != _array-type {
+      if (
+        type(cells)
+          != _array-type
+      ) {
         panic("Tablex error: 'map-rows' returned something that isn't an array.")
       }
 
-      if cells.len() != original-cells.len() {
+      if (
+        cells.len()
+          != original-cells.len()
+      ) {
         panic("Tablex error: 'map-rows' returned "
           + str(
             cells.len(),
@@ -4959,23 +5516,34 @@ snapshot_kind: text
         let y = cell.y
 
         if (
-          type(x) != _int-type
-            or type(y) != _int-type
-            or x < 0
-            or y < 0
-            or x >= col-len
-            or y >= row-len
+          type(x)
+            != _int-type
+            or type(y)
+              != _int-type
+            or x
+              < 0
+            or y
+              < 0
+            or x
+              >= col-len
+            or y
+              >= row-len
         ) {
           panic("Tablex error: 'map-rows' returned a cell with invalid coordinates.")
         }
 
-        if y != row {
+        if (
+          y
+            != row
+        ) {
           panic("Tablex error: 'map-rows' returned a cell in a different row (the 'y' must be kept the same).")
         }
 
         if (
-          cell.colspan != orig-cell.colspan
-            or cell.rowspan != orig-cell.rowspan
+          cell.colspan
+            != orig-cell.colspan
+            or cell.rowspan
+              != orig-cell.rowspan
         ) {
           panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-rows'.")
         }
@@ -5013,11 +5581,17 @@ snapshot_kind: text
         }),
       )
 
-      if type(cells) != _array-type {
+      if (
+        type(cells)
+          != _array-type
+      ) {
         panic("Tablex error: 'map-cols' returned something that isn't an array.")
       }
 
-      if cells.len() != original-cells.len() {
+      if (
+        cells.len()
+          != original-cells.len()
+      ) {
         panic("Tablex error: 'map-cols' returned "
           + str(
             cells.len(),
@@ -5047,21 +5621,32 @@ snapshot_kind: text
         let y = cell.y
 
         if (
-          type(x) != _int-type
-            or type(y) != _int-type
-            or x < 0
-            or y < 0
-            or x >= col-len
-            or y >= row-len
+          type(x)
+            != _int-type
+            or type(y)
+              != _int-type
+            or x
+              < 0
+            or y
+              < 0
+            or x
+              >= col-len
+            or y
+              >= row-len
         ) {
           panic("Tablex error: 'map-cols' returned a cell with invalid coordinates.")
         }
-        if x != column {
+        if (
+          x
+            != column
+        ) {
           panic("Tablex error: 'map-cols' returned a cell in a different column (the 'x' must be kept the same).")
         }
         if (
-          cell.colspan != orig-cell.colspan
-            or cell.rowspan != orig-cell.rowspan
+          cell.colspan
+            != orig-cell.colspan
+            or cell.rowspan
+              != orig-cell.rowspan
         ) {
           panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-cols'.")
         }
@@ -5099,8 +5684,10 @@ snapshot_kind: text
   )
 
   if (
-    type(header-rows) != _int-type
-      or header-rows < 0
+    type(header-rows)
+      != _int-type
+      or header-rows
+        < 0
   ) {
     panic("Tablex error: 'header-rows' must be a (positive) integer.")
   }
@@ -5113,8 +5700,10 @@ snapshot_kind: text
   header-rows: none,
 ) = {
   if (
-    header-rows == none
-      or header-rows < 0
+    header-rows
+      == none
+      or header-rows
+        < 0
   ) {
     return false // cannot repeat an empty header
   }
@@ -5127,16 +5716,21 @@ snapshot_kind: text
     false,
   )
 
-  if type(repeat-header) not in (
-    _bool-type,
-    _int-type,
-    _array-type,
+  if (
+    type(repeat-header)
+      not in (
+        _bool-type,
+        _int-type,
+        _array-type,
+      )
   ) {
     panic("Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).")
   } else if (
-    type(repeat-header) == _array-type
+    type(repeat-header)
+      == _array-type
       and repeat-header.any(i => (
-        type(i) != _int-type
+        type(i)
+          != _int-type
       ))
   ) {
     panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
@@ -5156,7 +5750,10 @@ snapshot_kind: text
     true,
   )
 
-  if type(header-hlines-have-priority) != _bool-type {
+  if (
+    type(header-hlines-have-priority)
+      != _bool-type
+  ) {
     panic("Tablex error: 'header-hlines-have-priority' option must be a boolean.")
   }
 
@@ -5390,7 +5987,10 @@ snapshot_kind: text
 
     // When there are more rows than the user specified, we ensure they have
     // the same size as the last specified row.
-    let last-row-size = if rows.len() == 0 {
+    let last-row-size = if (
+      rows.len()
+        == 0
+    ) {
       auto
     } else {
       rows.last()

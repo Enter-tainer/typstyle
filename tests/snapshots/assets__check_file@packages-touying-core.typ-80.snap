@@ -254,10 +254,8 @@ snapshot_kind: text
       current-slide = utils.trim(current-slide)
       if (
         current-slide != ()
-          or _get-slide-fn(
-            self + (headings: current-headings),
-            default: none,
-          ) != none
+          or _get-slide-fn(self + (headings: current-headings), default: none)
+            != none
       ) {
         (
           cont,
@@ -348,7 +346,8 @@ snapshot_kind: text
         _get-slide-fn(
           self + (headings: current-headings),
           default: none,
-        ) != none
+        )
+          != none
           or child.depth <= last-heading-depth
           or current-slide != ()
           or (
@@ -1529,34 +1528,35 @@ snapshot_kind: text
         last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if (
         type(child) == content
-          and child.func() in (
-            pad,
-            figure,
-            quote,
-            strong,
-            emph,
-            footnote,
-            highlight,
-            overline,
-            underline,
-            strike,
-            smallcaps,
-            sub,
-            super,
-            box,
-            block,
-            hide,
-            move,
-            scale,
-            circle,
-            ellipse,
-            rect,
-            square,
-            table.cell,
-            grid.cell,
-            math.equation,
-            heading,
-          )
+          and child.func()
+            in (
+              pad,
+              figure,
+              quote,
+              strong,
+              emph,
+              footnote,
+              highlight,
+              overline,
+              underline,
+              strike,
+              smallcaps,
+              sub,
+              super,
+              box,
+              block,
+              hide,
+              move,
+              scale,
+              circle,
+              ellipse,
+              rect,
+              square,
+              table.cell,
+              grid.cell,
+              math.equation,
+              heading,
+            )
       ) {
         let (
           conts,
@@ -1981,11 +1981,14 @@ snapshot_kind: text
           let headings = self
             .at("headings", default: ())
             .map(it => if it.has("label") {
-              if str(it.label) in (
-                "touying:hidden",
-                "touying:unnumbered",
-                "touying:unoutlined",
-                "touying:unbookmarked",
+              if (
+                str(it.label)
+                  in (
+                    "touying:hidden",
+                    "touying:unnumbered",
+                    "touying:unoutlined",
+                    "touying:unbookmarked",
+                  )
               ) {
                 let fields = it.fields()
                 let _ = fields.remove("label", default: none)
