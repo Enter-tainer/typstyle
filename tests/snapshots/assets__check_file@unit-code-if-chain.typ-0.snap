@@ -4,16 +4,23 @@ expression: doc_string
 input_file: tests/assets/unit/code/if-chain.typ
 snapshot_kind: text
 ---
-#if a < b {
+#if (
+  a
+    < b
+) {
   true
-} else if c < d {
+} else if (
+  c
+    < d
+) {
   (
     false,
   )
 } else if (
   1
     + 2
-) == 3 {
+    == 3
+) {
   (
     true,
     false,
@@ -22,46 +29,74 @@ snapshot_kind: text
   none
 }
 
-#if a < b {
+#if (
+  a
+    < b
+) {
   true
-} else if c < d [ false ] else if (
+} else if (
+  c
+    < d
+) [ false ] else if (
   1
     + 2
-) == 3 [*strong*] else {
+    == 3
+) [*strong*] else {
   none
 }
 
-#if a < b {
+#if (
+  a
+    < b
+) {
   true
-} else if c < d [
+} else if (
+  c
+    < d
+) [
   false ] else if (
   1
     + 2
-) == 3 [*strong*] else {
+    == 3
+) [*strong*] else {
   none
 }
 
-#if a < b {
+#if (
+  a
+    < b
+) {
   true
-} else if c < d [ false ] else if (
+} else if (
+  c
+    < d
+) [ false ] else if (
   1
     + 2
-) == 3 [
+    == 3
+) [
   *strong*] else {
   none
 }
 
 #{
-  if a < b {
+  if (
+    a
+      < b
+  ) {
     true
-  } else if c < d {
+  } else if (
+    c
+      < d
+  ) {
     (
       false,
     )
   } else if (
     1
       + 2
-  ) == 3 {
+      == 3
+  ) {
     (
       true,
       false,
@@ -70,61 +105,102 @@ snapshot_kind: text
     none
   }
 
-  if a < b {
+  if (
+    a
+      < b
+  ) {
     true
-  } else if c < d [ false ] else if (
+  } else if (
+    c
+      < d
+  ) [ false ] else if (
     1
       + 2
-  ) == 3 [*strong*] else {
+      == 3
+  ) [*strong*] else {
     none
   }
 
-  if a < b {
+  if (
+    a
+      < b
+  ) {
     true
-  } else if c < d [
+  } else if (
+    c
+      < d
+  ) [
     false ] else if (
     1
       + 2
-  ) == 3 [*strong*] else {
+      == 3
+  ) [*strong*] else {
     none
   }
 
-  if a < b {
+  if (
+    a
+      < b
+  ) {
     true
-  } else if c < d [ false ] else if (
+  } else if (
+    c
+      < d
+  ) [ false ] else if (
     1
       + 2
-  ) == 3 [
+      == 3
+  ) [
     *strong*] else {
     none
   }
 }
 
-#if a < b {
+#if (
+  a
+    < b
+) {
   true
   false
-} else if c < d [ false ] else if (
+} else if (
+  c
+    < d
+) [ false ] else if (
   1
     + 2
-) == 3 [*strong*] else {
+    == 3
+) [*strong*] else {
   a = 3
   none
 }
 
-#if a < b {
+#if (
+  a
+    < b
+) {
   true
   false
-} else if c < d [
+} else if (
+  c
+    < d
+) [
   false ] else if (
   1
     + 2
-) == 3 [*strong*] else if false {
-  if 0 < 1 {
+    == 3
+) [*strong*] else if false {
+  if (
+    0
+      < 1
+  ) {
     true
   }
 } else {
   a = 3
-  if 3 > 2 {
+  if (
+    3
+      > 2
+  ) {
     for i in range(10) {
       i
     }

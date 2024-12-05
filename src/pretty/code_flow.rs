@@ -71,10 +71,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_binary(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
-        if matches!(
-            binary.op(),
-            BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div | BinOp::And | BinOp::Or
-        ) {
+        // Layout every binary expression except assignment as chain.
+        if binary.op().precedence() > BinOp::Assign.precedence() {
             return self.parenthesize_if_necessary(|| self.convert_binary_chain(binary));
         }
         self.convert_flow_like(binary.to_untyped(), |child| {

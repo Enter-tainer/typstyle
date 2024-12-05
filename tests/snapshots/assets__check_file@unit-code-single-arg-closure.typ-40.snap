@@ -14,9 +14,8 @@ snapshot_kind: text
     0,
     row_len + 1,
   ).filter(y => (
-    hlines
-      .filter(h => h.y == y)
-      .len() == 0
+    hlines.filter(h => h.y == y).len()
+      == 0
   ))
   new_hlines
 }

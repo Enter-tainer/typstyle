@@ -330,12 +330,13 @@ snapshot_kind: text
     (not is-infinite-len(col_row))
       and (
         col_row == auto
-          or type(col_row) in (
-            _fraction-type,
-            _length-type,
-            _rel-len-type,
-            _ratio-type,
-          )
+          or type(col_row)
+            in (
+              _fraction-type,
+              _length-type,
+              _rel-len-type,
+              _ratio-type,
+            )
       )
   )
 

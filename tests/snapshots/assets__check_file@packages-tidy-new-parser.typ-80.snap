@@ -42,9 +42,9 @@ snapshot_kind: text
   for c in text {
     let ignore-char = false
     if c == "\"" and previous-char != "\\" {
-      if literal-mode == none {
-        literal-mode = "\""
-      } else if literal-mode == "\"" { literal-mode = none }
+      if literal-mode == none { literal-mode = "\"" } else if (
+        literal-mode == "\""
+      ) { literal-mode = none }
     }
     if literal-mode == none {
       if c == "(" { brace-level += 1 } else if c == ")" {

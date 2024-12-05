@@ -38,17 +38,26 @@ snapshot_kind: text
   name: none,
   ..style,
 ) = {
-  assert(parent-position in (
-    "begin",
-    "center",
-  ))
-  assert(grow > 0)
-  assert(spread > 0)
+  assert(parent-position
+    in (
+      "begin",
+      "center",
+    ))
+  assert(grow
+    > 0)
+  assert(spread
+    > 0)
 
-  if direction == "down" {
+  if (
+    direction
+      == "down"
+  ) {
     direction = "bottom"
   }
-  if direction == "up" {
+  if (
+    direction
+      == "up"
+  ) {
     direction = "top"
   }
 
@@ -59,7 +68,10 @@ snapshot_kind: text
     top: "bottom",
   )
 
-  if draw-edge == auto {
+  if (
+    draw-edge
+      == auto
+  ) {
     draw-edge = (
       source-name,
       target-name,
@@ -93,43 +105,62 @@ snapshot_kind: text
       }
       */
     }
-  } else if draw-edge == none {
+  } else if (
+    draw-edge
+      == none
+  ) {
     draw-edge = (
       ..,
     ) => { }
   }
 
   if (
-    draw-node == auto
-      or draw-node in (
-        "rect",
-      )
+    draw-node
+      == auto
+      or draw-node
+        in (
+          "rect",
+        )
   ) {
     draw-node = (
       node,
       parent-name,
     ) => {
       let content = node.content
-      if type(content) == str {
+      if (
+        type(content)
+          == str
+      ) {
         content = [#content]
-      } else if type(content) in (
-        float,
-        int,
+      } else if (
+        type(content)
+          in (
+            float,
+            int,
+          )
       ) {
         content = $#content$
       } else if (
-        type(content) == dictionary
-          and "content" in content
+        type(content)
+          == dictionary
+          and "content"
+            in content
       ) {
         content = content.content
-      } else if type(content) != typst-content {
+      } else if (
+        type(content)
+          != typst-content
+      ) {
         panic("Unsupported content type "
           + type(content)
           + "! "
           + "Provide your own `draw-node` implementation.")
       }
 
-      if content != none {
+      if (
+        content
+          != none
+      ) {
         draw.content(
           (),
           content,
@@ -142,7 +173,10 @@ snapshot_kind: text
           name: "content",
         )
       }
-      if draw-node == "rect" {
+      if (
+        draw-node
+          == "rect"
+      ) {
         draw.rect(
           (
             rel: (
@@ -163,7 +197,8 @@ snapshot_kind: text
     }
   }
   assert(
-    draw-node != none,
+    draw-node
+      != none,
     message: "Node draw callback must be set!",
   )
 
@@ -174,7 +209,10 @@ snapshot_kind: text
   ) = {
     let children = ()
     let cnt = none
-    if type(tree) == array {
+    if (
+      type(tree)
+        == array
+    ) {
       children = tree
         .slice(1)
         .enumerate()
@@ -214,9 +252,12 @@ snapshot_kind: text
     shift-x,
     ctx,
   ) = {
-    if node
-      .children
-      .len() == 0 {
+    if (
+      node
+        .children
+        .len()
+        == 0
+    ) {
       node.x = shift-x
       return (
         node,
@@ -288,13 +329,19 @@ snapshot_kind: text
           child-max-x,
         )
 
-        if child-max-x > right {
+        if (
+          child-max-x
+            > right
+        ) {
           shift-x = child-max-x
         }
         shift-x += spread
       }
 
-      if parent-position == "begin" {
+      if (
+        parent-position
+          == "begin"
+      ) {
         node.x = left
       } else {
         node.x = (
@@ -338,22 +385,34 @@ snapshot_kind: text
   let node-position(
     node,
   ) = {
-    if direction == "bottom" {
+    if (
+      direction
+        == "bottom"
+    ) {
       return (
         node.x,
         -node.y,
       )
-    } else if direction == "top" {
+    } else if (
+      direction
+        == "top"
+    ) {
       return (
         node.x,
         node.y,
       )
-    } else if direction == "left" {
+    } else if (
+      direction
+        == "left"
+    ) {
       return (
         -node.y,
         node.x,
       )
-    } else if direction == "right" {
+    } else if (
+      direction
+        == "right"
+    ) {
       return (
         node.y,
         node.x,
@@ -367,7 +426,10 @@ snapshot_kind: text
     node,
     parent-path,
   ) = {
-    if parent-path != none {
+    if (
+      parent-path
+        != none
+    ) {
       parent-path += "-"
     } else {
       parent-path = ""
@@ -422,7 +484,10 @@ snapshot_kind: text
       },
     )
 
-    if parent-name != none {
+    if (
+      parent-name
+        != none
+    ) {
       cmds += draw-edge(
         parent-name,
         name,
@@ -467,7 +532,10 @@ snapshot_kind: text
           .pop()
         let nodes = ctx.nodes
         ctx = self.ctx
-        if name != none {
+        if (
+          name
+            != none
+        ) {
           ctx
             .nodes
             .insert(

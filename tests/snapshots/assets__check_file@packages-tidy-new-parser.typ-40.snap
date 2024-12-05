@@ -444,7 +444,9 @@ snapshot_kind: text
   let finished-definition = false
 
   for line in lines {
-    if param-parser.state == "finished" {
+    if (
+      param-parser.state == "finished"
+    ) {
       let curry = param-parser.at(
         "curry",
         default: none,
@@ -467,7 +469,10 @@ snapshot_kind: text
             param-parser,
             curry.rest,
           )
-          if param-parser.state == "finished" {
+          if (
+            param-parser.state
+              == "finished"
+          ) {
             finished-definition = true
             param-parser = param-parser-default
           }
@@ -482,9 +487,9 @@ snapshot_kind: text
         param-parser,
         line,
       )
-      if param-parser.state == "running" {
-        continue
-      }
+      if (
+        param-parser.state == "running"
+      ) { continue }
     }
 
     if finished-definition {
@@ -523,9 +528,9 @@ snapshot_kind: text
         let match = line.match(definition-name-regex)
         if match != none {
           name = match.captures.first()
-          if match
-            .captures
-            .at(1) != "" {
+          if (
+            match.captures.at(1) != ""
+          ) {
             // it's a function
             param-parser.state = "running"
             param-parser = parameter-parser(

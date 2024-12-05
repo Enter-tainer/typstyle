@@ -454,16 +454,17 @@ snapshot_kind: text
           }
         }
       } else if "child" in fields {
-        if "text" in fields
-          .child
-          .fields() {
+        if (
+          "text"
+            in fields.child.fields()
+        ) {
           fields.child
           break
         }
       } else if "body" in fields {
-        if "text" in fields
-          .body
-          .fields() {
+        if (
+          "text" in fields.body.fields()
+        ) {
           fields.body
           break
         }
@@ -545,7 +546,8 @@ snapshot_kind: text
 
       if (
         child.has("label")
-          and child.label == <codly-highlight>
+          and child.label
+            == <codly-highlight>
       ) {
         0
       } else if "children" in fields {
@@ -571,7 +573,8 @@ snapshot_kind: text
     let get-flattened-body(elem) = {
       if (
         elem.has("label")
-          and elem.label == <codly-highlight>
+          and elem.label
+            == <codly-highlight>
       ) {
         return (elem,)
       }
@@ -683,12 +686,15 @@ snapshot_kind: text
           ).get()
         })
 
-        let referenced = if reference-by == "line" {
+        let referenced = if (
+          reference-by == "line"
+        ) {
           let reference-number-format = (
             __codly-args
               .reference-number-format
               .type_check
-          )(if "reference-number-format" in extra {
+          )(if "reference-number-format"
+            in extra {
             extra.reference-number-format
           } else {
             state(
@@ -1148,9 +1154,8 @@ snapshot_kind: text
     ).get()
   })
 
-  if not reference-by in (
-    "line",
-    "item",
+  if not (
+    reference-by in ("line", "item")
   ) {
     panic("codly: reference-by must be either 'line' or 'item'")
   }
@@ -1174,7 +1179,8 @@ snapshot_kind: text
     __codly-args
       .reference-number-format
       .type_check
-  )(if "reference-number-format" in extra {
+  )(if "reference-number-format"
+    in extra {
     extra.reference-number-format
   } else {
     state(
@@ -1222,7 +1228,9 @@ snapshot_kind: text
           .default,
       ).get()
     })
-    annotations = if annotations == none {
+    annotations = if (
+      annotations == none
+    ) {
       ()
     } else {
       annotations
@@ -1284,7 +1292,9 @@ snapshot_kind: text
   let num = annotation-format(
     annotations.len(),
   )
-  let lr-width = if annotations.len() > 0 {
+  let lr-width = if (
+    annotations.len() > 0
+  ) {
     measure((
       math.lr("}", size: 5em) + num
     )).width
@@ -1359,7 +1369,9 @@ snapshot_kind: text
       __codly-args.languages.default,
     ).get()
   })
-  let language-block = if it.lang == none {
+  let language-block = if (
+    it.lang == none
+  ) {
     none
   } else if it.lang in languages {
     let lang = languages.at(it.lang)
@@ -1446,7 +1458,9 @@ snapshot_kind: text
         ).get()
       })
 
-      let fill = if type(lang-fill) == function {
+      let fill = if (
+        type(lang-fill) == function
+      ) {
         (lang-fill)((
           name: name,
           icon: icon,
@@ -1462,7 +1476,9 @@ snapshot_kind: text
         color
       }
 
-      let stroke = if type(lang-stroke) == function {
+      let stroke = if (
+        type(lang-stroke) == function
+      ) {
         (lang-stroke)((
           name: name,
           icon: icon,
@@ -1555,7 +1571,9 @@ snapshot_kind: text
         ).get()
       })
 
-      let fill = if type(lang-fill) == function {
+      let fill = if (
+        type(lang-fill) == function
+      ) {
         (lang-fill)((
           name: it.lang,
           icon: [],
@@ -1571,7 +1589,9 @@ snapshot_kind: text
         default-color
       }
 
-      let stroke = if type(lang-stroke) == function {
+      let stroke = if (
+        type(lang-stroke) == function
+      ) {
         (lang-stroke)((
           name: it.lang,
           icon: [],
@@ -1698,9 +1718,12 @@ snapshot_kind: text
       let num = annotation-format(annots)
       let label = if (
         "label" in current-annot
-          and current-annot.label != none
+          and current-annot.label
+            != none
       ) {
-        let referenced = if reference-by == "line" {
+        let referenced = if (
+          reference-by == "line"
+        ) {
           reference-number-format(line.number
             + offset)
         } else {
@@ -2005,10 +2028,8 @@ snapshot_kind: text
             numbers-alignment,
             left + horizon,
           ),
-          fill: (
-            x,
-            y,
-          ) => if zebra-color != none
+          fill: (x, y) => if zebra-color
+            != none
             and calc.rem(y, 2) == 0 {
             zebra-color
           } else {
@@ -2072,9 +2093,8 @@ snapshot_kind: text
   if (
     it.element != none
       and it.element.func() == heading
-      and it
-        .element
-        .level == level-highlight
+      and it.element.level
+        == level-highlight
   ) {
     let sep = (
       __codly-args
@@ -2105,9 +2125,8 @@ snapshot_kind: text
   } else if (
     it.element != none
       and it.element.func() == figure
-      and it
-        .element
-        .kind == "codly-referencer"
+      and it.element.kind
+        == "codly-referencer"
   ) {
     let sep = (
       __codly-args
@@ -2168,7 +2187,8 @@ snapshot_kind: text
       __codly-args
         .reference-number-format
         .type_check
-    )(if "reference-number-format" in extra {
+    )(if "reference-number-format"
+      in extra {
       extra.reference-number-format
     } else {
       state(

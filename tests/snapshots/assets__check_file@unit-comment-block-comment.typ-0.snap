@@ -9,7 +9,10 @@ Our study design is as follows:
 - 1000 participants.
 - 2x2 data design. */
 
-#if draw-edge == auto {
+#if (
+  draw-edge
+    == auto
+) {
   draw-edge = (
     source-name,
     target-name,

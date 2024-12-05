@@ -8,7 +8,8 @@ snapshot_kind: text
   fill: (
     x,
     y,
-  ) => if y == 0 {
+  ) => if y
+    == 0 {
     white.darken(15%)
   } else {
     none
@@ -16,7 +17,8 @@ snapshot_kind: text
   align: (
     x,
     y,
-  ) => if y == 0 {
+  ) => if y
+    == 0 {
     center
   } else {
     horizon
