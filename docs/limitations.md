@@ -16,13 +16,9 @@ Formatting in math mode is minimal and not well-implemented at this time.
 
 ### Expressions with Comments
 
-In the following scenarios, when a block comment is present as a child, the entire node is skipped for formatting:
+When a block comment is present as a child in math mode, the entire node is skipped for formatting:
 
-- Parenthesized (e.g., `((a))`)
-- Field access (e.g., `a.b.c`)
-- Function call (e.g., `f(a, b, c)`)
-
-Why: These cases require special handling to bring better reading experience. Interspersing comments within them introduces additional complexity that is not yet resolved.
+Why: This require special handling to bring better reading experience. Interspersing comments within them introduces additional complexity that is not yet resolved.
 
 We guarantee that in all formatable cases, no comments should be lost.
 If any comments are lost, please submit a PR to present the issue.

@@ -1,5 +1,45 @@
 # Changelog
 
+## v0.12.8 - [2024-12-07]
+
+- Typstyle will format binary expressions as operator chains. Parentheses are added if necessary.
+- Formatting chains with comments is supported now. This is the last piece of formatting with comments.
+- Dot chains in markup with parentheses will be broken into multiple lines, if the it contains at least two dots and one function calls.
+
+For example, [the following code](https://github.com/flaribbit/indenta/blob/a6a0c3fa45b4f16f1944b7078678fa4011bbc1fb/lib.typ#L4C1-L5C1):
+```typst
+#let _is_block(e,fn)=fn==heading or (fn==math.equation and e.block) or (fn==raw and e.has("block") and e.block) or fn==figure or fn==block or fn==list.item or fn==enum.item or fn==table or fn==grid or fn==align or (fn==quote and e.has("block") and e.block)
+```
+
+Will be formatted as this in previous versions:
+```typst
+#let _is_block(e, fn) = (
+  fn == heading or (fn == math.equation and e.block) or (
+    fn == raw and e.has("block") and e.block
+  ) or fn == figure or fn == block or fn == list.item or fn == enum.item or fn == table or fn == grid or fn == align or (
+    fn == quote and e.has("block") and e.block
+  )
+)
+```
+
+Now it will be formatted as:
+```typst
+#let _is_block(e, fn) = (
+  fn == heading
+    or (fn == math.equation and e.block)
+    or (fn == raw and e.has("block") and e.block)
+    or fn == figure
+    or fn == block
+    or fn == list.item
+    or fn == enum.item
+    or fn == table
+    or fn == grid
+    or fn == align
+    or (fn == quote and e.has("block") and e.block)
+)
+```
+
+
 ## v0.12.7 - [2024-12-04]
 
 - Dot chain related improvement:
