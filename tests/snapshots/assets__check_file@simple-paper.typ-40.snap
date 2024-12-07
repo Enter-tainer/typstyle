@@ -116,7 +116,9 @@ snapshot_kind: text
     #set text(font: body-font)
     #it
   ]
-  show strong: set text(font: strong-font)
+  show strong: set text(
+    font: strong-font,
+  )
   show emph: set text(font: emph-font)
   show ref: set text(red)
   show raw.where(block: true): block.with(
