@@ -127,9 +127,15 @@ snapshot_kind: text
     #set text(font: body-font)
     #it
   ]
-  show strong: set text(font: strong-font)
-  show emph: set text(font: emph-font)
-  show ref: set text(red)
+  show strong: set text(
+    font: strong-font,
+  )
+  show emph: set text(
+    font: emph-font,
+  )
+  show ref: set text(
+    red,
+  )
   show raw.where(block: true): block.with(
     width: 100%,
     fill: luma(240),
@@ -144,7 +150,9 @@ snapshot_kind: text
     size: 10pt,
   )
   show link: underline
-  show link: set text(blue)
+  show link: set text(
+    blue,
+  )
 
   if (
     abstract

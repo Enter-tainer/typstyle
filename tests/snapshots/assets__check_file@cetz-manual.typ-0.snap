@@ -43,7 +43,9 @@ snapshot_kind: text
     ..num,
   )
 })
-#show link: set text(blue)
+#show link: set text(
+  blue,
+)
 
 // Outline
 #{

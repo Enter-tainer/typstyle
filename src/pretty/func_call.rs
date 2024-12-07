@@ -55,23 +55,35 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
-        // let always_fold = is_only_one_and(args.items(), |item| {
-        //     matches!(item, Arg::Pos(Expr::Code(_)) | Arg::Pos(Expr::Content(_)))
-        // });
+        let is_in_show = (|| {
+            if let Some(node) = self.source.find(args.to_untyped().span()) {
+                if let Some(parent) = node.parent() {
+                    if parent.kind() == SyntaxKind::SetRule {
+                        if let Some(parent) = parent.parent() {
+                            if parent.kind() == SyntaxKind::ShowRule {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            false
+        })();
         let arg_count = args
             .to_untyped()
             .children()
             .take_while(|it| it.kind() != SyntaxKind::RightParen)
             .filter(|it| it.is::<Arg>())
             .count();
-        let always_fold = is_only_one_and(args.items().take(arg_count), |arg| {
-            let inner = match arg {
-                Arg::Pos(p) => *p,
-                Arg::Named(n) => n.expr(),
-                Arg::Spread(s) => s.expr(),
-            };
-            !matches!(inner, Expr::FuncCall(_))
-        });
+        let always_fold = !is_in_show
+            && is_only_one_and(args.items().take(arg_count), |arg| {
+                let inner = match arg {
+                    Arg::Pos(p) => *p,
+                    Arg::Named(n) => n.expr(),
+                    Arg::Spread(s) => s.expr(),
+                };
+                !matches!(inner, Expr::FuncCall(_))
+            });
         let mut closed = false;
         ListStylist::new(self)
             .keep_linebreak(self.config.blank_lines_upper_bound)
