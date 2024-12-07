@@ -64,17 +64,12 @@ impl Typstyle {
 #[doc(hidden)]
 /// Strip trailing whitespace in each line of the input string.
 pub fn strip_trailing_whitespace(s: &str) -> String {
-    let has_trailing_newline = s.ends_with('\n');
     let res = s
         .lines()
         .map(|line| line.trim_end())
         .collect::<Vec<_>>()
         .join("\n");
-    if has_trailing_newline {
-        res + "\n"
-    } else {
-        res
-    }
+    res + "\n"
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "wasm"))]
