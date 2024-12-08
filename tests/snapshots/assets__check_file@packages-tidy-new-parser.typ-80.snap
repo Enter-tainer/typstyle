@@ -243,11 +243,9 @@ snapshot_kind: text
   } else {
     state.unfinished-param += trim-trailing-comments(line)
 
-    let (
-      args,
-      brace-level,
-      processed-chars,
-    ) = parse-argument-list(state.unfinished-param)
+    let (args, brace-level, processed-chars) = parse-argument-list(
+      state.unfinished-param,
+    )
     if brace-level == -1 {
       // parentheses are already closed on this line
       state.state = "finished"

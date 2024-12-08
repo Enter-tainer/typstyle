@@ -95,7 +95,9 @@ snapshot_kind: text
       != ()
   ) {
     current-headings
-      .at(-1)
+      .at(
+        -1,
+      )
       .depth
   } else {
     0
@@ -110,11 +112,17 @@ snapshot_kind: text
       != ()
   ) {
     if current-headings
-      .at(-1)
+      .at(
+        -1,
+      )
       .has("label") {
-      str(current-headings
-        .at(-1)
-        .label)
+      str(
+        current-headings
+          .at(
+            -1,
+          )
+          .label,
+      )
     }
   }
 }
@@ -123,8 +131,12 @@ snapshot_kind: text
   self,
   default: auto,
 ) = {
-  let last-heading-depth = _get-last-heading-depth(self.headings)
-  let last-heading-label = _get-last-heading-label(self.headings)
+  let last-heading-depth = _get-last-heading-depth(
+    self.headings,
+  )
+  let last-heading-label = _get-last-heading-label(
+    self.headings,
+  )
   if (
     last-heading-label
       in (
@@ -228,14 +240,18 @@ snapshot_kind: text
   assert(
     "slide-level"
       in self
-      and type(self.slide-level)
+      and type(
+        self.slide-level,
+      )
         == int,
     message: "`self.slide-level` must be an integer",
   )
   assert(
     "slide-fn"
       in self
-      and type(self.slide-fn)
+      and type(
+        self.slide-fn,
+      )
         == function,
     message: "`self.slide-fn` must be a function",
   )
@@ -299,7 +315,9 @@ snapshot_kind: text
         current-slide-cont,
       )
     }
-    let last-heading-label = _get-last-heading-label(self.headings)
+    let last-heading-label = _get-last-heading-label(
+      self.headings,
+    )
     if (
       last-heading-label
         != none
@@ -373,7 +391,9 @@ snapshot_kind: text
             is-first-slide: is-first-slide,
           ),
         slide-fn,
-        current-slide.sum(default: none),
+        current-slide.sum(
+          default: none,
+        ),
         recaller-map,
       )
       result.push(cont)
@@ -411,7 +431,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -442,7 +464,9 @@ snapshot_kind: text
             != <touying-temporary-mark>
       ) {
         recaller-map.insert(
-          str(child.label),
+          str(
+            child.label,
+          ),
           cont,
         )
       }
@@ -472,7 +496,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -509,7 +535,9 @@ snapshot_kind: text
             is-first-slide: is-first-slide,
           ),
         slide-fn,
-        current-slide.sum(default: none),
+        current-slide.sum(
+          default: none,
+        ),
         recaller-map,
       )
       result.push(cont)
@@ -595,7 +623,9 @@ snapshot_kind: text
                 is-first-slide: is-first-slide,
               ),
             slide-fn,
-            current-slide.sum(default: none),
+            current-slide.sum(
+              default: none,
+            ),
             recaller-map,
           )
           result.push(cont)
@@ -607,7 +637,9 @@ snapshot_kind: text
 
       if (
         not child.has("label")
-          or str(child.label)
+          or str(
+            child.label,
+          )
             not in (
               "touying:hidden",
               "touying:skip",
@@ -779,7 +811,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -825,7 +859,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -903,18 +939,26 @@ snapshot_kind: text
           is-first-slide: is-first-slide,
         ),
       slide-fn,
-      current-slide.sum(default: none),
+      current-slide.sum(
+        default: none,
+      ),
       recaller-map,
     )
     result.push(cont)
   }
 
   if is-new-start {
-    return result.sum(default: none)
+    return result.sum(
+      default: none,
+    )
   } else {
     return (
-      start-part.sum(default: none),
-      result.sum(default: none),
+      start-part.sum(
+        default: none,
+      ),
+      result.sum(
+        default: none,
+      ),
     )
   }
 }
@@ -1230,7 +1274,9 @@ snapshot_kind: text
   touying-fn-wrapper(
     utils.alternatives-cases,
     last-subslide: calc.max(
-      ..cases.map(utils.last-required-subslide),
+      ..cases.map(
+        utils.last-required-subslide,
+      ),
     ),
     cases,
     fn,
@@ -1326,10 +1372,12 @@ snapshot_kind: text
       ) {
         body.text
       } else {
-        panic("Unsupported type: "
-          + str(
-            type(body),
-          ))
+        panic(
+          "Unsupported type: "
+            + str(
+              type(body),
+            ),
+        )
       }
     },
   )),
@@ -1387,10 +1435,12 @@ snapshot_kind: text
       ) {
         body.text
       } else {
-        panic("Unsupported type: "
-          + str(
-            type(body),
-          ))
+        panic(
+          "Unsupported type: "
+            + str(
+              type(body),
+            ),
+        )
       }
     },
   )),
@@ -1446,7 +1496,9 @@ snapshot_kind: text
   let cover = self
     .methods
     .cover
-    .with(self: self)
+    .with(
+      self: self,
+    )
   // get eqt body
   let it = eqt.body
   // if it is a function, then call it with self
@@ -1507,9 +1559,11 @@ snapshot_kind: text
         cover-arr.len()
           != 0
       ) {
-        result.push("cover("
-          + cover-arr.sum()
-          + ")")
+        result.push(
+          "cover("
+            + cover-arr.sum()
+            + ")",
+        )
         cover-arr = ()
       }
       // then reset the repetitions
@@ -1529,9 +1583,11 @@ snapshot_kind: text
         cover-arr.len()
           != 0
       ) {
-        result.push("cover("
-          + cover-arr.sum()
-          + ")")
+        result.push(
+          "cover("
+            + cover-arr.sum()
+            + ")",
+        )
         cover-arr = ()
       }
       result.push(child)
@@ -1552,9 +1608,11 @@ snapshot_kind: text
     cover-arr.len()
       != 0
   ) {
-    result.push("cover("
-      + cover-arr.sum()
-      + ")")
+    result.push(
+      "cover("
+        + cover-arr.sum()
+        + ")",
+    )
     cover-arr = ()
   }
   let equation = math.equation(
@@ -1563,7 +1621,9 @@ snapshot_kind: text
     supplement: eqt.supplement,
     eval(
       "$"
-        + result.sum(default: "")
+        + result.sum(
+          default: "",
+        )
         + "$",
       scope: eqt.scope
         + (
@@ -1686,9 +1746,11 @@ snapshot_kind: text
         cover-arr.len()
           != 0
       ) {
-        result.push("\\phantom{"
-          + cover-arr.sum()
-          + "}")
+        result.push(
+          "\\phantom{"
+            + cover-arr.sum()
+            + "}",
+        )
         cover-arr = ()
       }
       // then reset the repetitions
@@ -1708,9 +1770,11 @@ snapshot_kind: text
         cover-arr.len()
           != 0
       ) {
-        result.push("\\phantom{"
-          + cover-arr.sum()
-          + "}")
+        result.push(
+          "\\phantom{"
+            + cover-arr.sum()
+            + "}",
+        )
         cover-arr = ()
       }
       result.push(child)
@@ -1731,9 +1795,11 @@ snapshot_kind: text
     cover-arr.len()
       != 0
   ) {
-    result.push("\\phantom{"
-      + cover-arr.sum()
-      + "}")
+    result.push(
+      "\\phantom{"
+        + cover-arr.sum()
+        + "}",
+    )
     cover-arr = ()
   }
   let equation = (
@@ -1742,7 +1808,9 @@ snapshot_kind: text
     block: eqt.block,
     numbering: eqt.numbering,
     supplement: eqt.supplement,
-    result.sum(default: ""),
+    result.sum(
+      default: "",
+    ),
   )
   if (
     eqt-metadata.has("label")
@@ -1789,7 +1857,9 @@ snapshot_kind: text
         == content
         and child.func()
           == metadata
-        and type(child.value)
+        and type(
+          child.value,
+        )
           == dictionary
     ) {
       let kind = child
@@ -1916,7 +1986,9 @@ snapshot_kind: text
   let cover = self
     .methods
     .cover
-    .with(self: self)
+    .with(
+      self: self,
+    )
   for it in (
     bodies
   ) {
@@ -1931,15 +2003,19 @@ snapshot_kind: text
           )
     ) {
       if (
-        type(it.body)
+        type(
+          it.body,
+        )
           == content
           and it
             .body
             .func()
             == metadata
-          and type(it
-            .body
-            .value)
+          and type(
+            it
+              .body
+              .value,
+          )
             == dictionary
       ) {
         let kind = it
@@ -1995,7 +2071,9 @@ snapshot_kind: text
           == content
           and child.func()
             == metadata
-          and type(child.value)
+          and type(
+            child.value,
+          )
             == dictionary
       ) {
         let kind = child
@@ -2124,9 +2202,11 @@ snapshot_kind: text
               != none
           ) {
             if (
-              type(child
-                .value
-                .last-subslide)
+              type(
+                child
+                  .value
+                  .last-subslide,
+              )
                 == function
             ) {
               (
@@ -2190,13 +2270,17 @@ snapshot_kind: text
                 <= index
                 or not need-cover
             ) {
-              result.push(child
-                .value
-                .body)
+              result.push(
+                child
+                  .value
+                  .body,
+              )
             } else {
-              cover-arr.push(child
-                .value
-                .body)
+              cover-arr.push(
+                child
+                  .value
+                  .body,
+              )
             }
           }
         } else {
@@ -2732,7 +2816,9 @@ snapshot_kind: text
       cover-arr = ()
     }
     result-arr.push(
-      result.sum(default: []),
+      result.sum(
+        default: [],
+      ),
     )
   }
   max-repetitions = calc.max(
@@ -3062,9 +3148,11 @@ snapshot_kind: text
       height: page-height,
     )
     let margin-left = if (
-      type(self
-        .page
-        .margin)
+      type(
+        self
+          .page
+          .margin,
+      )
         != dictionary
     ) {
       self
@@ -3258,7 +3346,9 @@ snapshot_kind: text
     ) {
       place(
         hide({
-          set heading(offset: 0)
+          set heading(
+            offset: 0,
+          )
           let headings = self
             .at(
               "headings",
@@ -3266,7 +3356,9 @@ snapshot_kind: text
             )
             .map(it => if it.has("label") {
               if (
-                str(it.label)
+                str(
+                  it.label,
+                )
                   in (
                     "touying:hidden",
                     "touying:unnumbered",
@@ -3284,7 +3376,9 @@ snapshot_kind: text
                   default: none,
                 )
                 if (
-                  str(it.label)
+                  str(
+                    it.label,
+                  )
                     == "touying:hidden"
                 ) {
                   fields.numbering = none
@@ -3292,19 +3386,25 @@ snapshot_kind: text
                   fields.bookmarked = false
                 }
                 if (
-                  str(it.label)
+                  str(
+                    it.label,
+                  )
                     == "touying:unnumbered"
                 ) {
                   fields.numbering = none
                 }
                 if (
-                  str(it.label)
+                  str(
+                    it.label,
+                  )
                     == "touying:unoutlined"
                 ) {
                   fields.outlined = false
                 }
                 if (
-                  str(it.label)
+                  str(
+                    it.label,
+                  )
                     == "touying:unbookmarked"
                 ) {
                   fields.bookmarked = false
@@ -3322,7 +3422,9 @@ snapshot_kind: text
             } else {
               it
             })
-          headings.sum(default: none)
+          headings.sum(
+            default: none,
+          )
         }),
       )
     }
@@ -3414,7 +3516,9 @@ snapshot_kind: text
               .update(
                 pair.at(1),
               ))
-            .sum(default: none)
+            .sum(
+              default: none,
+            )
           self
             .default-frozen-states
             .zip(
@@ -3427,7 +3531,9 @@ snapshot_kind: text
               .update(
                 pair.at(1),
               ))
-            .sum(default: none)
+            .sum(
+              default: none,
+            )
           self
             .frozen-counters
             .zip(
@@ -3440,7 +3546,9 @@ snapshot_kind: text
               .update(
                 pair.at(1),
               ))
-            .sum(default: none)
+            .sum(
+              default: none,
+            )
           self
             .default-frozen-counters
             .zip(
@@ -3453,7 +3561,9 @@ snapshot_kind: text
               .update(
                 pair.at(1),
               ))
-            .sum(default: none)
+            .sum(
+              default: none,
+            )
         }
       }
     }
@@ -3578,8 +3688,10 @@ snapshot_kind: text
           footer: footer,
         )
     ))
-    setting-with-auto-offset-for-heading(subslide-preamble(self)
-      + composer-with-side-by-side(..conts))
+    setting-with-auto-offset-for-heading(
+      subslide-preamble(self)
+        + composer-with-side-by-side(..conts),
+    )
   } else {
     // render all the subslides
     let result = ()
@@ -3626,8 +3738,10 @@ snapshot_kind: text
               footer: footer,
             )
         ))
-        setting-with-auto-offset-for-heading(subslide-preamble(self)
-          + composer-with-side-by-side(..conts))
+        setting-with-auto-offset-for-heading(
+          subslide-preamble(self)
+            + composer-with-side-by-side(..conts),
+        )
       })
     }
     // return the result

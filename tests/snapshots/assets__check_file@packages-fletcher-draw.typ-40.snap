@@ -148,9 +148,12 @@ snapshot_kind: text
   curve,
   debug: 0,
 ) = {
-  let curve-point = curve(edge.label-pos)
-  let curve-point-ε = curve(edge.label-pos
-    + 1e-3)
+  let curve-point = curve(
+    edge.label-pos,
+  )
+  let curve-point-ε = curve(
+    edge.label-pos + 1e-3,
+  )
 
   let θ = wrap-angle-180(
     angle-between(
@@ -187,8 +190,9 @@ snapshot_kind: text
   }
 
   if edge.label-anchor == auto {
-    edge.label-anchor = angle-to-anchor(θ-normal
-      - edge.label-angle)
+    edge.label-anchor = angle-to-anchor(
+      θ-normal - edge.label-angle,
+    )
   }
 
   let label-pos = (
@@ -501,8 +505,9 @@ snapshot_kind: text
   // round corners
   let calculate-rounded-corner(i) = {
     let pt = verts.at(i)
-    let Δθ = wrap-angle-180(θs.at(i)
-      - θs.at(i - 1))
+    let Δθ = wrap-angle-180(
+      θs.at(i) - θs.at(i - 1),
+    )
     let dir = if Δθ > 0deg { +1 } else {
       -1
     } // +1 if ccw, -1 if cw
@@ -550,8 +555,9 @@ snapshot_kind: text
         start: θs.at(i - 1) - 90deg,
         delta: wrap-angle-180(Δθ),
         line-shift: radius
-          * calc.tan(Δθ
-            / 2), // distance from vertex to beginning of arc
+          * calc.tan(
+            Δθ / 2,
+          ), // distance from vertex to beginning of arc
       )
     }
   }
@@ -636,8 +642,9 @@ snapshot_kind: text
 
       if i > 0 {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at(i
-          - 1)
+        let (line-shift,) = rounded-corners.at(
+          i - 1,
+        )
         from = vector.add(
           from,
           vector-polar(
@@ -677,8 +684,9 @@ snapshot_kind: text
                 start: start,
                 delta: delta,
                 anchor: "origin",
-                stroke: stroke-with-phase(phase
-                  + Δphase),
+                stroke: stroke-with-phase(
+                  phase + Δphase,
+                ),
               )
           }
 
@@ -808,9 +816,11 @@ snapshot_kind: text
             vector.scale(point, 1cm),
           )
         })
-        .sorted(key: point => vector-len(
-          vector.sub(point, target),
-        ))
+        .sorted(
+          key: point => vector-len(
+            vector.sub(point, target),
+          ),
+        )
 
       let anchor = anchor-points.at(
         -1,
@@ -1218,11 +1228,13 @@ snapshot_kind: text
       stroke: DEBUG_COLOR + .5pt,
     )
 
-    draw.set-style(stroke: (
-      paint: DEBUG_COLOR,
-      thickness: .3pt,
-      dash: "densely-dotted",
-    ))
+    draw.set-style(
+      stroke: (
+        paint: DEBUG_COLOR,
+        thickness: .3pt,
+        dash: "densely-dotted",
+      ),
+    )
 
     for axis in range(2) {
       let swap(a, b) = if axis != 1 {

@@ -10,8 +10,10 @@ snapshot_kind: text
   ) = (
     x
   )
-  f("Unsupported content type "
-    + type(content)
-    + "! "
-    + "Provide your own `draw-node` implementation.")
+  f(
+    "Unsupported content type "
+      + type(content)
+      + "! "
+      + "Provide your own `draw-node` implementation.",
+  )
 }

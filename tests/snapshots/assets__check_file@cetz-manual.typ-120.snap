@@ -28,9 +28,11 @@ snapshot_kind: text
 
 #set terms(indent: 1em)
 #set par(justify: true)
-#set heading(numbering: (..num) => if num.pos().len() < 4 {
-  numbering("1.1", ..num)
-})
+#set heading(
+  numbering: (..num) => if num.pos().len() < 4 {
+    numbering("1.1", ..num)
+  },
+)
 #show link: set text(blue)
 
 // Outline

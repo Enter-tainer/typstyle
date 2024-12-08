@@ -31,14 +31,18 @@ snapshot_kind: text
         ),
     message: "`base-weight` should be `auto`, `none`, `int` or `str` type.",
   )
-  set text(weight: base-weight) if (
+  set text(
+    weight: base-weight,
+  ) if (
     type(base-weight)
       in (
         str,
         int,
       )
   )
-  set text(weight: "regular") if (
+  set text(
+    weight: "regular",
+  ) if (
     base-weight
       == auto
   )
@@ -47,8 +51,10 @@ snapshot_kind: text
       != ()
   )
   context {
-    set text(stroke: 0.02857em
-      + text.fill)
+    set text(
+      stroke: 0.02857em
+        + text.fill,
+    )
     s
   }
 }
@@ -76,7 +82,9 @@ snapshot_kind: text
   ..params,
 ) = {
   show text
-    .where(weight: "bold")
+    .where(
+      weight: "bold",
+    )
     .or(strong): it => {
     regex-fakebold(
       reg-exp: reg-exp,

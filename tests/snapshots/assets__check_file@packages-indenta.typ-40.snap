@@ -91,7 +91,9 @@ snapshot_kind: text
           )
       ) {
         if unsafe or _is_inline(e, fn) {
-          context h(par.first-line-indent)
+          context h(
+            par.first-line-indent,
+          )
         }
         st = 0
       }

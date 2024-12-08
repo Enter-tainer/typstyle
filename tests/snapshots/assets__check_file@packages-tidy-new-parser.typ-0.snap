@@ -29,8 +29,10 @@ snapshot_kind: text
       0,
       pos,
     ),
-    string.slice(pos
-      + 1),
+    string.slice(
+      pos
+        + 1,
+    ),
   )
 }
 
@@ -56,7 +58,9 @@ snapshot_kind: text
       return split-once(
         arg,
         ":",
-      ).map(str.trim)
+      ).map(
+        str.trim,
+      )
     } else {
       return (
         arg.trim(),
@@ -113,7 +117,9 @@ snapshot_kind: text
           ) = split-once(
             arg,
             ":",
-          ).map(str.trim)
+          ).map(
+            str.trim,
+          )
           args.push((
             name,
             value,
@@ -154,7 +160,9 @@ snapshot_kind: text
           ) = split-once(
             arg,
             ":",
-          ).map(str.trim)
+          ).map(
+            str.trim,
+          )
           args.push((
             name,
             value,
@@ -274,9 +282,13 @@ snapshot_kind: text
   first-line-number: 0,
 ) = {
   let description = lines
-    .enumerate(start: first-line-number)
+    .enumerate(
+      start: first-line-number,
+    )
     .map(
-      eval-doc-comment-test.with(label-prefix: label-prefix),
+      eval-doc-comment-test.with(
+        label-prefix: label-prefix,
+      ),
     )
     .join("\n")
 
@@ -297,7 +309,9 @@ snapshot_kind: text
         "|",
       )
       .split("|")
-      .map(str.trim)
+      .map(
+        str.trim,
+      )
     description = parts
       .slice(
         0,
@@ -399,7 +413,9 @@ snapshot_kind: text
 
 
 
-#let definition-name-regex = regex(`#?let (\w[\w\d\-_]*)\s*(\(?)`.text)
+#let definition-name-regex = regex(
+  `#?let (\w[\w\d\-_]*)\s*(\(?)`.text,
+)
 
 
 #let process-parameters(
@@ -471,7 +487,9 @@ snapshot_kind: text
     }
   } else {
     definition.return-types = types
-    definition.args = process-parameters(definition.args)
+    definition.args = process-parameters(
+      definition.args,
+    )
   }
   definition.description = description
   definition
@@ -496,7 +514,9 @@ snapshot_kind: text
       args,
       brace-level,
       processed-chars,
-    ) = parse-argument-list(state.unfinished-param)
+    ) = parse-argument-list(
+      state.unfinished-param,
+    )
     if (
       brace-level
         == -1
@@ -517,8 +537,10 @@ snapshot_kind: text
             .first(),
           rest: state
             .unfinished-param
-            .slice(processed-chars
-              + curry.end),
+            .slice(
+              processed-chars
+                + curry.end,
+            ),
         )
       }
     }
@@ -592,7 +614,9 @@ snapshot_kind: text
       + (
         "",
       )
-  ).map(str.trim)
+  ).map(
+    str.trim,
+  )
 
   let module-description = none
   let definitions = ()
@@ -694,7 +718,9 @@ snapshot_kind: text
             != none
         ) {
           definitions
-            .at(-1)
+            .at(
+              -1,
+            )
             .curry-info = curry-info
           curry-info = none
         }
@@ -745,7 +771,9 @@ snapshot_kind: text
             param-parser.state = "running"
             param-parser = parameter-parser(
               param-parser,
-              line.slice(match.end),
+              line.slice(
+                match.end,
+              ),
             )
           } else {
             // it's a variable

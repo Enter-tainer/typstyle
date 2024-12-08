@@ -60,8 +60,9 @@ snapshot_kind: text
 } else {
   (a, b) => (
     calc.floor(a)
-      - calc.floor(b
-        * calc.floor(a / b))
+      - calc.floor(
+        b * calc.floor(a / b),
+      )
   )
 }
 
@@ -137,11 +138,13 @@ snapshot_kind: text
       }
     }
   } else {
-    panic("Tablex error:"
-      + error-prefix
-      + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
-      + str(type(fit-spans))
-      + "'")
+    panic(
+      "Tablex error:"
+        + error-prefix
+        + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
+        + str(type(fit-spans))
+        + "'",
+    )
   }
   fit-spans
 }
@@ -373,8 +376,9 @@ snapshot_kind: text
     }
   }
 
-  let rows(len) = calc.ceil(len
-    / col_len)
+  let rows(len) = calc.ceil(
+    len / col_len,
+  )
 
   while rows(len) < max_explicit_y {
     len += col_len
@@ -475,8 +479,9 @@ snapshot_kind: text
     col_len: col_len,
   )
 
-  let expected_rows = calc.ceil(grid_len
-    / col_len)
+  let expected_rows = calc.ceil(
+    grid_len / col_len,
+  )
 
   // more cells than expected => add rows
   if rows.len() < expected_rows {
@@ -519,13 +524,17 @@ snapshot_kind: text
   } else { 1 }
 
   if rowspan < 1 {
-    panic("Cell rowspan must be 1 or greater (bad cell: "
-      + repr((x, y))
-      + ")")
+    panic(
+      "Cell rowspan must be 1 or greater (bad cell: "
+        + repr((x, y))
+        + ")",
+    )
   } else if colspan < 1 {
-    panic("Cell colspan must be 1 or greater (bad cell: "
-      + repr((x, y))
-      + ")")
+    panic(
+      "Cell colspan must be 1 or greater (bad cell: "
+        + repr((x, y))
+        + ")",
+    )
   }
 
   let max_x = x + colspan
@@ -663,8 +672,9 @@ snapshot_kind: text
     let measured-em = (
       calc-sign(em)
         * measure(
-          box(width: calc.abs(em)
-            * 1em),
+          box(
+            width: calc.abs(em) * 1em,
+          ),
           styles,
         ).width
     )
@@ -816,8 +826,9 @@ snapshot_kind: text
   // Note on precision: the `repr` for em components is precise, unlike
   // other length components, which are rounded to a precision of 2.
   // This is true up to Typst 0.9.0 and possibly later versions.
-  let em-regex = regex(NUMBER-REGEX-STRING
-    + "em")
+  let em-regex = regex(
+    NUMBER-REGEX-STRING + "em",
+  )
   let em-part-repr = repr(len).find(em-regex)
 
   // Calculate the length minus its em component.
@@ -910,9 +921,11 @@ snapshot_kind: text
       page-size: page-size,
     )
   } else {
-    panic("Cannot convert '"
-      + type(len)
-      + "' to length.")
+    panic(
+      "Cannot convert '"
+        + type(len)
+        + "' to length.",
+    )
   }
 }
 
@@ -972,9 +985,11 @@ snapshot_kind: text
       // for more complex strokes, built through dictionaries
       // => "thickness: 5pt" field
       // note: on typst v0.7.0 or later, can just use 's.thickness'
-      let r = regex("thickness: ("
-        + len-regex
-        + ")")
+      let r = regex(
+        "thickness: ("
+          + len-regex
+          + ")",
+      )
       s = repr(stroke).match(r)
       if s != none {
         s = s
@@ -1037,8 +1052,9 @@ snapshot_kind: text
   initial_height,
 ) = (
   tablex-dict-type: "grid",
-  items: init-array(width
-    * initial_height),
+  items: init-array(
+    width * initial_height,
+  ),
   width: width,
 )
 
@@ -1087,8 +1103,9 @@ snapshot_kind: text
 
 // How many rows are in this grid? (Given its width)
 #let grid-count-rows(grid) = (
-  calc.floor(grid.items.len()
-    / grid.width)
+  calc.floor(
+    grid.items.len() / grid.width,
+  )
 )
 
 // Converts a grid array index to (x, y)
@@ -1191,8 +1208,10 @@ snapshot_kind: text
   } else if is-tablex-cell(cell) {
     cell
   } else {
-    panic("Cannot get parent table cell of a non-cell object: "
-      + repr(cell))
+    panic(
+      "Cannot get parent table cell of a non-cell object: "
+        + repr(cell),
+    )
   }
 }
 
@@ -1248,7 +1267,9 @@ snapshot_kind: text
     y_limit,
   )
 
-  let grid-index-at = grid-index-at.with(width: x_limit)
+  let grid-index-at = grid-index-at.with(
+    width: x_limit,
+  )
 
   let hlines = ()
   let vlines = ()
@@ -1329,9 +1350,11 @@ snapshot_kind: text
             // in the meantime
 
             if prev_x > x_limit + 1 {
-              panic("Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most "
-                + str(x_limit + 1)
-                + " empty cells or vlines before the first cell of the table.")
+              panic(
+                "Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most "
+                  + str(x_limit + 1)
+                  + " empty cells or vlines before the first cell of the table.",
+              )
             }
           } else if row_wrapped {
             item.x = x_limit // allow v_line at the last column
@@ -1376,11 +1399,13 @@ snapshot_kind: text
     if (
       this_x == none or this_y == none
     ) {
-      panic("Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: "
-        + repr((prev_x, prev_y))
-        + ", new cell: "
-        + repr(cell)
-        + ")")
+      panic(
+        "Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: "
+          + repr((prev_x, prev_y))
+          + ", new cell: "
+          + repr(cell)
+          + ")",
+      )
     }
 
     cell.x = this_x
@@ -1430,8 +1455,10 @@ snapshot_kind: text
       type(this_x) != _int-type
         or type(this_y) != _int-type
     ) {
-      panic("Error: Cell coordinates must be integers. Invalid pair: "
-        + repr((this_x, this_y)))
+      panic(
+        "Error: Cell coordinates must be integers. Invalid pair: "
+          + repr((this_x, this_y)),
+      )
     }
 
     cell.content = content
@@ -1460,17 +1487,21 @@ snapshot_kind: text
     )
 
     if this_x >= x_limit {
-      panic("Error: Cell at "
-        + repr((this_x, this_y))
-        + " is placed at an inexistent column.")
+      panic(
+        "Error: Cell at "
+          + repr((this_x, this_y))
+          + " is placed at an inexistent column.",
+      )
     }
 
     if max_x >= x_limit {
-      panic("Error: Cell at "
-        + repr((this_x, this_y))
-        + " has a colspan of "
-        + repr(cell.colspan)
-        + ", which would exceed the available columns.")
+      panic(
+        "Error: Cell at "
+          + repr((this_x, this_y))
+          + " has a colspan of "
+          + repr(cell.colspan)
+          + ", which would exceed the available columns.",
+      )
     }
 
     let cell_positions = positions-spanned-by(
@@ -1495,15 +1526,17 @@ snapshot_kind: text
           grid: grid,
         )
 
-        panic("Error: Multiple cells attempted to occupy the cell position at "
-          + repr((px, py))
-          + ": one starting at "
-          + repr((this_x, this_y))
-          + ", and one starting at "
-          + repr((
-            parent_cell.x,
-            parent_cell.y,
-          )))
+        panic(
+          "Error: Multiple cells attempted to occupy the cell position at "
+            + repr((px, py))
+            + ": one starting at "
+            + repr((this_x, this_y))
+            + ", and one starting at "
+            + repr((
+              parent_cell.x,
+              parent_cell.y,
+            )),
+        )
       }
 
       // initial position => assign it to the cell's x/y
@@ -1527,8 +1560,10 @@ snapshot_kind: text
         )
 
         if index > grid.items.len() {
-          panic("Internal tablex error: Could not expand grid to include cell at "
-            + repr((this_x, this_y)))
+          panic(
+            "Internal tablex error: Could not expand grid to include cell at "
+              + repr((this_x, this_y)),
+          )
         }
         grid.items.at(index) = cell
         items.at(i) = cell
@@ -2913,9 +2948,11 @@ snapshot_kind: text
   ) {
     stroke
   } else {
-    panic("Invalid stroke '"
-      + repr(stroke)
-      + "'.")
+    panic(
+      "Invalid stroke '"
+        + repr(stroke)
+        + "'.",
+    )
   }
 }
 
@@ -3889,7 +3926,9 @@ snapshot_kind: text
     y_span: (0, 0),
   )
 
-  let total_width = width-between(end: none)
+  let total_width = width-between(
+    end: none,
+  )
 
   let row_group_add_counter = 1 // how many more rows are going to be added to the latest row group
   let current_row = 0
@@ -4110,10 +4149,14 @@ snapshot_kind: text
   }
   (
     hlines: hlines.map(
-      parse-func.with(page-size: page-width),
+      parse-func.with(
+        page-size: page-width,
+      ),
     ),
     vlines: vlines.map(
-      parse-func.with(page-size: page-height),
+      parse-func.with(
+        page-size: page-height,
+      ),
     ),
   )
 }
@@ -4320,11 +4363,13 @@ snapshot_kind: text
         cells.len()
           != original-cells.len()
       ) {
-        panic("Tablex error: 'map-rows' returned "
-          + str(cells.len())
-          + " cells, when it should have returned exactly "
-          + str(original-cells.len())
-          + ".")
+        panic(
+          "Tablex error: 'map-rows' returned "
+            + str(cells.len())
+            + " cells, when it should have returned exactly "
+            + str(original-cells.len())
+            + ".",
+        )
       }
 
       for (
@@ -4407,11 +4452,13 @@ snapshot_kind: text
         cells.len()
           != original-cells.len()
       ) {
-        panic("Tablex error: 'map-cols' returned "
-          + str(cells.len())
-          + " cells, when it should have returned exactly "
-          + str(original-cells.len())
-          + ".")
+        panic(
+          "Tablex error: 'map-cols' returned "
+            + str(cells.len())
+            + " cells, when it should have returned exactly "
+            + str(original-cells.len())
+            + ".",
+        )
       }
 
       for (
@@ -4778,8 +4825,9 @@ snapshot_kind: text
     let last-row-size = if (
       rows.len() == 0
     ) { auto } else { rows.last() }
-    for _ in range(grid_info.new_row_count
-      - row_len) {
+    for _ in range(
+      grid_info.new_row_count - row_len,
+    ) {
       rows.push(last-row-size) // add new rows (due to extra cells)
     }
 

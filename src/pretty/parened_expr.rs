@@ -74,7 +74,10 @@ fn is_paren_needed(expr: Expr<'_>) -> bool {
             | Expr::Array(_)
             | Expr::Dict(_)
             | Expr::Conditional(_)
+            | Expr::While(_)
             | Expr::For(_)
             | Expr::Contextual(_)
+            | Expr::Closure(_)
+            | Expr::Raw(_)
     )
 }

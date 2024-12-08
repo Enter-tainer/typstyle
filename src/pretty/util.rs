@@ -7,7 +7,7 @@ pub fn is_only_one_and<T>(
 ) -> bool {
     iterator
         .next()
-        .is_some_and(|first| f(&first) && iterator.next().is_none())
+        .is_some_and(|first| iterator.next().is_none() && f(&first))
 }
 
 pub fn is_comment_node(node: &SyntaxNode) -> bool {

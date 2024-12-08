@@ -4,7 +4,9 @@ expression: doc_string
 input_file: tests/assets/unit/show/show-set.typ
 snapshot_kind: text
 ---
-#show heading.where(level: 2): set heading(
+#show heading.where(
+  level: 2,
+): set heading(
   numbering: (
     ..n,
   ) => [#n.pos().at(1).],

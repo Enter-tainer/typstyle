@@ -38,15 +38,21 @@ snapshot_kind: text
   name: none,
   ..style,
 ) = {
-  assert(parent-position
-    in (
-      "begin",
-      "center",
-    ))
-  assert(grow
-    > 0)
-  assert(spread
-    > 0)
+  assert(
+    parent-position
+      in (
+        "begin",
+        "center",
+      ),
+  )
+  assert(
+    grow
+      > 0,
+  )
+  assert(
+    spread
+      > 0,
+  )
 
   if (
     direction
@@ -151,10 +157,12 @@ snapshot_kind: text
         type(content)
           != typst-content
       ) {
-        panic("Unsupported content type "
-          + type(content)
-          + "! "
-          + "Provide your own `draw-node` implementation.")
+        panic(
+          "Unsupported content type "
+            + type(content)
+            + "! "
+            + "Provide your own `draw-node` implementation.",
+        )
       }
 
       if (
@@ -418,7 +426,9 @@ snapshot_kind: text
         node.x,
       )
     } else {
-      panic(message: "Invalid tree direction.")
+      panic(
+        message: "Invalid tree direction.",
+      )
     }
   }
 
@@ -438,7 +448,9 @@ snapshot_kind: text
     let d = (:)
     d.insert(
       parent-path
-        + str(node.n),
+        + str(
+          node.n,
+        ),
       node-position(node),
     )
     for child in (
@@ -447,7 +459,9 @@ snapshot_kind: text
       d += anchors(
         child,
         parent-path
-          + str(node.n),
+          + str(
+            node.n,
+          ),
       )
     }
     return d
@@ -459,9 +473,13 @@ snapshot_kind: text
   ) = {
     let name = (
       "node-"
-        + str(node.depth)
+        + str(
+          node.depth,
+        )
         + "-"
-        + str(node.n)
+        + str(
+          node.n,
+        )
     )
 
     let cmds = ()

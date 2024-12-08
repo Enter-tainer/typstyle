@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/grid/cell.typ
+snapshot_kind: text
 ---
 #table(
   columns: 3,
@@ -15,7 +16,9 @@ input_file: tests/assets/unit/grid/cell.typ
   [Sodium Myreth Sulfate],
   [16.6], [104],
   [Potassium Hydroxide],
-  table.cell(colspan: 2)[24.7],
+  table.cell(
+    colspan: 2,
+  )[24.7],
 )
 
 
@@ -41,7 +44,9 @@ input_file: tests/assets/unit/grid/cell.typ
   [🚗],
 
   [Eat curbside hotdog],
-  cell(align: left)[🌴🚗],
+  cell(
+    align: left,
+  )[🌴🚗],
 
   cell(
     inset: 0.06em,

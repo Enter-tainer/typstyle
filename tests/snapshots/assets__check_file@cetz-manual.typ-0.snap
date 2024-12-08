@@ -20,30 +20,40 @@ snapshot_kind: text
 //   ```example
 //   /* canvas drawing code */
 //   ```
-#show raw.where(lang: "example"): example
-#show raw.where(lang: "example-vertical"): example.with(vertical: true)
+#show raw.where(
+  lang: "example",
+): example
+#show raw.where(
+  lang: "example-vertical",
+): example.with(
+  vertical: true,
+)
 
 
 
 
 #make-title()
 
-#set terms(indent: 1em)
-#set par(justify: true)
-#set heading(numbering: (
-  ..num,
-) => if num
-  .pos()
-  .len()
-  < 4 {
-  numbering(
-    "1.1",
-    ..num,
-  )
-})
-#show link: set text(
-  blue,
+#set terms(
+  indent: 1em,
 )
+#set par(
+  justify: true,
+)
+#set heading(
+  numbering: (
+    ..num,
+  ) => if num
+    .pos()
+    .len()
+    < 4 {
+    numbering(
+      "1.1",
+      ..num,
+    )
+  },
+)
+#show link: set text(blue)
 
 // Outline
 #{
@@ -55,7 +65,9 @@ snapshot_kind: text
       depth: 3,
     ),
   )
-  pagebreak(weak: true)
+  pagebreak(
+    weak: true,
+  )
 }
 
 #set page(
@@ -72,7 +84,9 @@ The name CeTZ is a recursive acronym for "CeTZ, ein Typst Zeichenpaket" (german 
 = Usage
 
 This is the minimal starting point:
-#pad(left: 1em)[```typ
+#pad(
+  left: 1em,
+)[```typ
   #import "@preview/cetz:0.2.1"
   #cetz.canvas({
     import cetz.draw: *
@@ -81,7 +95,9 @@ This is the minimal starting point:
   ```]
 Note that draw functions are imported inside the scope of the `canvas` block. This is recommended as some draw functions override Typst's function's such as `line`.
 
-#show raw.where(block: false): it => if (
+#show raw.where(
+  block: false,
+): it => if (
   it
     .text
     .starts-with("<")
@@ -1191,12 +1207,16 @@ Axis names to be used for styling:
 
 ==== Default `scientific` Style
 #raw(
-  repr(axes.default-style-scientific),
+  repr(
+    axes.default-style-scientific,
+  ),
 )
 
 ==== Default `school-book` Style
 #raw(
-  repr(axes.default-style-schoolbook),
+  repr(
+    axes.default-style-schoolbook,
+  ),
 )
 
 == Chart
@@ -1261,22 +1281,30 @@ styled the same way, see @plot.style.
 
 ==== Default `barchart` Style
 #raw(
-  repr(chart.barchart-default-style),
+  repr(
+    chart.barchart-default-style,
+  ),
 )
 
 ==== Default `columnchart` Style
 #raw(
-  repr(chart.columnchart-default-style),
+  repr(
+    chart.columnchart-default-style,
+  ),
 )
 
 ==== Default `boxwhisker` Style
 #raw(
-  repr(chart.boxwhisker-default-style),
+  repr(
+    chart.boxwhisker-default-style,
+  ),
 )
 
 ==== Default `piechart` Style
 #raw(
-  repr(chart.piechart-default-style),
+  repr(
+    chart.piechart-default-style,
+  ),
 )
 
 == Palette <palette>
@@ -1294,7 +1322,9 @@ The palette library provides some predefined palettes.
 #let show-palette(
   p,
 ) = box({
-  let p = p.with(stroke: true)
+  let p = p.with(
+    stroke: true,
+  )
   canvas(
     length: 1em,
     {
@@ -1365,7 +1395,9 @@ The `angle` function of the angle module allows drawing angles with an optional 
 
 ==== Default `angle` Style
 #raw(
-  repr(angle.default-style),
+  repr(
+    angle.default-style,
+  ),
 )
 
 == Decorations <decorations>
@@ -1453,10 +1485,14 @@ This is a dump of the style dictionary every canvas gets initialized with.
 It contains all supported keys for all elements.
 
 #[
-  #set text(size: 8pt)
+  #set text(
+    size: 8pt,
+  )
   #columns(
     raw(
-      repr(styles.default),
+      repr(
+        styles.default,
+      ),
       lang: "typc",
     ),
   )

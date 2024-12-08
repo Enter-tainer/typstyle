@@ -8,7 +8,9 @@ snapshot_kind: text
 
 #text()[123]
 
-#text(weight: "bold")[123]
+#text(
+  weight: "bold",
+)[123]
 
 #table()[123][456]
 
@@ -34,6 +36,8 @@ snapshot_kind: text
 #f(```aa
 ```)
 #f(())
-#pad(left: 1em)[```typ
+#pad(
+  left: 1em,
+)[```typ
 
   ```]

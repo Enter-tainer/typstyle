@@ -37,7 +37,9 @@ snapshot_kind: text
 #let interpret-axes(
   axes,
 ) = {
-  let dirs = axes.map(direction.axis)
+  let dirs = axes.map(
+    direction.axis,
+  )
   let flip
   if (
     dirs
@@ -273,8 +275,10 @@ snapshot_kind: text
       } else {
         rect
           .size
-          .at(1
-            - axis)
+          .at(
+            1
+              - axis,
+          )
       }
       cell-sizes
         .at(axis)
@@ -361,8 +365,12 @@ snapshot_kind: text
         sizes,
       ),
     ) => (
-      centers.at(-1)
-        + sizes.at(-1)
+      centers.at(
+        -1,
+      )
+        + sizes.at(
+          -1,
+        )
           / 2
     ))
 
@@ -387,7 +395,9 @@ snapshot_kind: text
     spacing: options.spacing,
   )
 
-  grid += interpret-axes(grid.axes)
+  grid += interpret-axes(
+    grid.axes,
+  )
   grid += compute-cell-sizes(
     grid,
     verts,
@@ -397,7 +407,9 @@ snapshot_kind: text
   // enforce minimum cell size
   grid.cell-sizes = grid
     .cell-sizes
-    .zip(options.cell-size)
+    .zip(
+      options.cell-size,
+    )
     .map((
       (
         sizes,
@@ -418,8 +430,10 @@ snapshot_kind: text
 #let extract-nodes-and-edges-from-equation(
   eq,
 ) = {
-  assert(eq.func()
-    == math.equation)
+  assert(
+    eq.func()
+      == math.equation,
+  )
   let terms = (
     eq.body
       + []
@@ -488,10 +502,14 @@ snapshot_kind: text
         } // why is this needed?
         edge
           .vertices
-          .at(-1) = map-auto(
+          .at(
+            -1,
+          ) = map-auto(
           edge
             .vertices
-            .at(-1),
+            .at(
+              -1,
+            ),
           (
             rel: (
               1,
@@ -521,12 +539,18 @@ snapshot_kind: text
     ) {
       x += 1
       matrix
-        .at(-1)
+        .at(
+          -1,
+        )
         .push(none)
     } else {
       matrix
-        .at(-1)
-        .at(-1) += child
+        .at(
+          -1,
+        )
+        .at(
+          -1,
+        ) += child
     }
   }
 
@@ -540,13 +564,15 @@ snapshot_kind: text
       item,
     ) in row.enumerate() {
       if not is-space(item) {
-        nodes.push(node(
-          (
-            x,
-            y,
-          ),
-          $item$,
-        ).value)
+        nodes.push(
+          node(
+            (
+              x,
+              y,
+            ),
+            $item$,
+          ).value,
+        )
       }
     }
   }
@@ -907,9 +933,11 @@ snapshot_kind: text
     // nodes and edges whose uv coordinates can be resolved without knowing the grid
     let rects-affecting-grid = nodes
       .filter(node => (
-        not is-nan-vector(node
-          .pos
-          .uv)
+        not is-nan-vector(
+          node
+            .pos
+            .uv,
+        )
       ))
       .map(node => (
         center: node

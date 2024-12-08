@@ -116,12 +116,10 @@ impl<'a> ListStylist<'a> {
 
     /// Process a list of any nodes. Only use this when the node does not implement `AstNode`.
     pub fn process_list_impl(
-        mut self,
+        self,
         list_node: &'a SyntaxNode,
         item_checker: impl FnMut(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
-        self.fold_style = self.printer.get_fold_style_untyped(list_node);
-
         self.process_iterable_impl(list_node.children(), item_checker)
     }
 

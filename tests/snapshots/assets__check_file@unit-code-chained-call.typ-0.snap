@@ -37,7 +37,9 @@ snapshot_kind: text
     title,
     _,
   ) = query(
-    heading.where(level: 1),
+    heading.where(
+      level: 1,
+    ),
   )
     .map(e => (
       e.body,

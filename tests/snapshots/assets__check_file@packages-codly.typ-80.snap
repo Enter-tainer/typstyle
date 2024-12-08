@@ -919,9 +919,11 @@ snapshot_kind: text
 
           if "label" in x {
             if block-label == none {
-              panic("codly: label "
-                + str(x.label)
-                + " is only allowed in a figure block")
+              panic(
+                "codly: label "
+                  + str(x.label)
+                  + " is only allowed in a figure block",
+              )
             }
           }
 
@@ -972,9 +974,7 @@ snapshot_kind: text
 
   // Get the height of an individual line.
   let line-height = (
-    measure(
-      raw.line(1, 1, "Hello, World!", [Hello, World!]),
-    ).height
+    measure(raw.line(1, 1, "Hello, World!", [Hello, World!])).height
       + padding.top
       + padding.bottom
   )

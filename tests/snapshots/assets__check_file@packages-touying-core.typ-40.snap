@@ -110,8 +110,12 @@ snapshot_kind: text
   self,
   default: auto,
 ) = {
-  let last-heading-depth = _get-last-heading-depth(self.headings)
-  let last-heading-label = _get-last-heading-label(self.headings)
+  let last-heading-depth = _get-last-heading-depth(
+    self.headings,
+  )
+  let last-heading-label = _get-last-heading-label(
+    self.headings,
+  )
   if (
     last-heading-label
       in (
@@ -255,7 +259,9 @@ snapshot_kind: text
         current-slide-cont,
       )
     }
-    let last-heading-label = _get-last-heading-label(self.headings)
+    let last-heading-label = _get-last-heading-label(
+      self.headings,
+    )
     if last-heading-label != none {
       recaller-map.insert(
         last-heading-label,
@@ -319,7 +325,9 @@ snapshot_kind: text
             is-first-slide: is-first-slide,
           ),
         slide-fn,
-        current-slide.sum(default: none),
+        current-slide.sum(
+          default: none,
+        ),
         recaller-map,
       )
       result.push(cont)
@@ -356,7 +364,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -413,7 +423,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -442,7 +454,9 @@ snapshot_kind: text
             is-first-slide: is-first-slide,
           ),
         slide-fn,
-        current-slide.sum(default: none),
+        current-slide.sum(
+          default: none,
+        ),
         recaller-map,
       )
       result.push(cont)
@@ -516,7 +530,9 @@ snapshot_kind: text
                 is-first-slide: is-first-slide,
               ),
             slide-fn,
-            current-slide.sum(default: none),
+            current-slide.sum(
+              default: none,
+            ),
             recaller-map,
           )
           result.push(cont)
@@ -685,7 +701,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -725,7 +743,9 @@ snapshot_kind: text
               is-first-slide: is-first-slide,
             ),
           slide-fn,
-          current-slide.sum(default: none),
+          current-slide.sum(
+            default: none,
+          ),
           recaller-map,
         )
         result.push(cont)
@@ -1103,7 +1123,9 @@ snapshot_kind: text
   touying-fn-wrapper(
     utils.alternatives-cases,
     last-subslide: calc.max(
-      ..cases.map(utils.last-required-subslide),
+      ..cases.map(
+        utils.last-required-subslide,
+      ),
     ),
     cases,
     fn,
@@ -1188,8 +1210,10 @@ snapshot_kind: text
       ) {
         body.text
       } else {
-        panic("Unsupported type: "
-          + str(type(body)))
+        panic(
+          "Unsupported type: "
+            + str(type(body)),
+        )
       }
     },
   )),
@@ -1240,8 +1264,10 @@ snapshot_kind: text
       ) {
         body.text
       } else {
-        panic("Unsupported type: "
-          + str(type(body)))
+        panic(
+          "Unsupported type: "
+            + str(type(body)),
+        )
       }
     },
   )),
@@ -1339,9 +1365,11 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter #meanwhile
       if cover-arr.len() != 0 {
-        result.push("cover("
-          + cover-arr.sum()
-          + ")")
+        result.push(
+          "cover("
+            + cover-arr.sum()
+            + ")",
+        )
         cover-arr = ()
       }
       // then reset the repetitions
@@ -1355,9 +1383,11 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter linebreak or parbreak
       if cover-arr.len() != 0 {
-        result.push("cover("
-          + cover-arr.sum()
-          + ")")
+        result.push(
+          "cover("
+            + cover-arr.sum()
+            + ")",
+        )
         cover-arr = ()
       }
       result.push(child)
@@ -1374,9 +1404,9 @@ snapshot_kind: text
   }
   // clear the cover-arr when end
   if cover-arr.len() != 0 {
-    result.push("cover("
-      + cover-arr.sum()
-      + ")")
+    result.push(
+      "cover(" + cover-arr.sum() + ")",
+    )
     cover-arr = ()
   }
   let equation = math.equation(
@@ -1473,9 +1503,11 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter #meanwhile
       if cover-arr.len() != 0 {
-        result.push("\\phantom{"
-          + cover-arr.sum()
-          + "}")
+        result.push(
+          "\\phantom{"
+            + cover-arr.sum()
+            + "}",
+        )
         cover-arr = ()
       }
       // then reset the repetitions
@@ -1489,9 +1521,11 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter linebreak or parbreak
       if cover-arr.len() != 0 {
-        result.push("\\phantom{"
-          + cover-arr.sum()
-          + "}")
+        result.push(
+          "\\phantom{"
+            + cover-arr.sum()
+            + "}",
+        )
         cover-arr = ()
       }
       result.push(child)
@@ -1508,9 +1542,11 @@ snapshot_kind: text
   }
   // clear the cover-arr when end
   if cover-arr.len() != 0 {
-    result.push("\\phantom{"
-      + cover-arr.sum()
-      + "}")
+    result.push(
+      "\\phantom{"
+        + cover-arr.sum()
+        + "}",
+    )
     cover-arr = ()
   }
   let equation = (eqt.mitex)(
@@ -1809,9 +1845,11 @@ snapshot_kind: text
               != none
           ) {
             if (
-              type(child
-                .value
-                .last-subslide)
+              type(
+                child
+                  .value
+                  .last-subslide,
+              )
                 == function
             ) {
               (
@@ -1861,13 +1899,13 @@ snapshot_kind: text
               repetitions <= index
                 or not need-cover
             ) {
-              result.push(child
-                .value
-                .body)
+              result.push(
+                child.value.body,
+              )
             } else {
-              cover-arr.push(child
-                .value
-                .body)
+              cover-arr.push(
+                child.value.body,
+              )
             }
           }
         } else {
@@ -3046,8 +3084,10 @@ snapshot_kind: text
           footer: footer,
         )
     ))
-    setting-with-auto-offset-for-heading(subslide-preamble(self)
-      + composer-with-side-by-side(..conts))
+    setting-with-auto-offset-for-heading(
+      subslide-preamble(self)
+        + composer-with-side-by-side(..conts),
+    )
   } else {
     // render all the subslides
     let result = ()
@@ -3086,8 +3126,10 @@ snapshot_kind: text
               footer: footer,
             )
         ))
-        setting-with-auto-offset-for-heading(subslide-preamble(self)
-          + composer-with-side-by-side(..conts))
+        setting-with-auto-offset-for-heading(
+          subslide-preamble(self)
+            + composer-with-side-by-side(..conts),
+        )
       })
     }
     // return the result

@@ -340,7 +340,9 @@ snapshot_kind: text
 }
 
 
-#let typst-builtin-styled = [#set text(fill: red)].func()
+#let typst-builtin-styled = [#set text(
+    fill: red,
+  )].func()
 
 /// Determine if a content is styled
 ///
@@ -395,7 +397,9 @@ snapshot_kind: text
 ) = {
   (
     is-metadata(it)
-      and type(it.value)
+      and type(
+        it.value,
+      )
         == dictionary
       and it
         .value
@@ -445,11 +449,9 @@ snapshot_kind: text
 #let method-wrapper(
   fn,
 ) = (
-  (
-    self: none,
-    ..args,
-  ) => fn(..args)
-)
+  self: none,
+  ..args,
+) => fn(..args)
 
 
 /// Assuming all functions in dictionary have a named `self` parameter,
@@ -467,7 +469,9 @@ snapshot_kind: text
   assert(
     "methods"
       in self
-      and type(self.methods)
+      and type(
+        self.methods,
+      )
         == dictionary,
     message: "self.methods must be a dictionary",
   )
@@ -596,7 +600,9 @@ snapshot_kind: text
         ),
     )
   }
-  convert-label-to-short-heading = convert-label-to-short-heading.with(self: self)
+  convert-label-to-short-heading = convert-label-to-short-heading.with(
+    self: self,
+  )
   assert(
     type(it)
       == content
@@ -607,7 +613,9 @@ snapshot_kind: text
   if not it.has("label") {
     return it.body
   }
-  let lbl = str(it.label)
+  let lbl = str(
+    it.label,
+  )
   return convert-label-to-short-heading(lbl)
 }
 
@@ -876,9 +884,11 @@ snapshot_kind: text
     message: "self must have an info field",
   )
   if (
-    type(self
-      .info
-      .date)
+    type(
+      self
+        .info
+        .date,
+    )
       == datetime
   ) {
     self
@@ -956,7 +966,9 @@ snapshot_kind: text
                     * " "
                   + l
               ))
-              .sum(default: "")
+              .sum(
+                default: "",
+              )
             + "\n"
             + indent
               * " "
@@ -983,7 +995,9 @@ snapshot_kind: text
           + indent
             * " "
           + "+ "
-          + indent-markup-text(it.body)
+          + indent-markup-text(
+            it.body,
+          )
       )
     } else if (
       it.func()
@@ -994,7 +1008,9 @@ snapshot_kind: text
           + indent
             * " "
           + "- "
-          + indent-markup-text(it.body)
+          + indent-markup-text(
+            it.body,
+          )
       )
     } else if (
       it.func()
@@ -1005,9 +1021,13 @@ snapshot_kind: text
           + indent
             * " "
           + "/ "
-          + markup-text(it.term)
+          + markup-text(
+            it.term,
+          )
           + ": "
-          + indent-markup-text(it.description)
+          + indent-markup-text(
+            it.description,
+          )
       )
     } else if (
       it.func()
@@ -1037,13 +1057,17 @@ snapshot_kind: text
       ) {
         (
           "**"
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "**"
         )
       } else {
         (
           "*"
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "*"
         )
       }
@@ -1057,20 +1081,26 @@ snapshot_kind: text
       ) {
         (
           "*"
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "*"
         )
       } else {
         (
           "_"
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "_"
         )
       }
     } else if (
       it.func()
         == link
-        and type(it.dest)
+        and type(
+          it.dest,
+        )
           == str
     ) {
       if (
@@ -1079,7 +1109,9 @@ snapshot_kind: text
       ) {
         (
           "["
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "]("
             + it.dest
             + ")"
@@ -1089,7 +1121,9 @@ snapshot_kind: text
           "#link(\""
             + it.dest
             + "\")["
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "]"
         )
       }
@@ -1105,7 +1139,9 @@ snapshot_kind: text
           it.depth
             * "#"
             + " "
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "\n"
         )
       } else {
@@ -1113,7 +1149,9 @@ snapshot_kind: text
           it.depth
             * "="
             + " "
-            + markup-text(it.body)
+            + markup-text(
+              it.body,
+            )
             + "\n"
         )
       }
@@ -1123,15 +1161,21 @@ snapshot_kind: text
         .map(markup-text)
         .join()
     } else if it.has("body") {
-      markup-text(it.body)
+      markup-text(
+        it.body,
+      )
     } else if it.has("text") {
       if (
-        type(it.text)
+        type(
+          it.text,
+        )
           == str
       ) {
         it.text
       } else {
-        markup-text(it.text)
+        markup-text(
+          it.text,
+        )
       }
     } else if (
       it.func()
@@ -1352,7 +1396,9 @@ snapshot_kind: text
           size.width
             * ratio
         )
-        v(-available-height)
+        v(
+          -available-height,
+        )
         // If not boxed, the content can overflow to the next page even though it will
         // fit. This is because scale doesn't update the layout information.
         // Boxing in a container without clipping will inform typst that content
@@ -1472,8 +1518,10 @@ snapshot_kind: text
     fill
       == auto
   ) {
-    panic("`auto` fill value is not supported until typst provides utilities to"
-      + " retrieve the current page background")
+    panic(
+      "`auto` fill value is not supported until typst provides utilities to"
+        + " retrieve the current page background",
+    )
   }
   if (
     type(fill)
@@ -1566,7 +1614,9 @@ snapshot_kind: text
   alpha,
 ) = constructor(
   ..color
-    .components(alpha: true)
+    .components(
+      alpha: true,
+    )
     .slice(
       0,
       -1,
@@ -1708,8 +1758,10 @@ snapshot_kind: text
       // assert(parsed > 0, "parsed idx is non-positive")
       parsed
     } else {
-      panic("failed to parse visible slide idx:"
-        + part)
+      panic(
+        "failed to parse visible slide idx:"
+          + part,
+      )
     }
   }
   parts.map(parse-part)
@@ -1767,7 +1819,9 @@ snapshot_kind: text
       == content
       and visible-subslides.has("text")
   ) {
-    let parts = _parse-subslide-indices(visible-subslides.text)
+    let parts = _parse-subslide-indices(
+      visible-subslides.text,
+    )
     check-visible(
       idx,
       parts,
@@ -1885,7 +1939,9 @@ snapshot_kind: text
   let cover = self
     .methods
     .cover
-    .with(self: self)
+    .with(
+      self: self,
+    )
   if check-visible(
     self.subslide,
     visible-subslides,
