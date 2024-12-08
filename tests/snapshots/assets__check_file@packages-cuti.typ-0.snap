@@ -47,10 +47,8 @@ snapshot_kind: text
       != ()
   )
   context {
-    set text(stroke: (
-      0.02857em
-        + text.fill
-    ))
+    set text(stroke: 0.02857em
+      + text.fill)
     s
   }
 }

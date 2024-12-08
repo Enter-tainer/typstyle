@@ -1727,13 +1727,11 @@ snapshot_kind: text
     annotations.len()
       > 0
   ) {
-    measure((
-      math.lr(
-        "}",
-        size: 5em,
-      )
-        + num
-    )).width
+    measure(math.lr(
+      "}",
+      size: 5em,
+    )
+      + num).width
   } else {
     0pt
   }

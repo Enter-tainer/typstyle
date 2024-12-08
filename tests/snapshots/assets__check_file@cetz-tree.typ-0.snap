@@ -437,10 +437,8 @@ snapshot_kind: text
 
     let d = (:)
     d.insert(
-      (
-        parent-path
-          + str(node.n)
-      ),
+      parent-path
+        + str(node.n),
       node-position(node),
     )
     for child in (
