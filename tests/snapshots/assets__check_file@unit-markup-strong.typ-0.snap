@@ -7,7 +7,5 @@ snapshot_kind: text
 This is *strong.* \
 This is #strong[too.] \
 
-#show strong: set text(
-  red,
-)
+#show strong: set text(red)
 And this is *evermore.*

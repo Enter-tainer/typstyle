@@ -39,10 +39,9 @@ snapshot_kind: text
     is-named,
   ) = {
     if is-named {
-      return split-once(
-        arg,
-        ":",
-      ).map(str.trim)
+      return split-once(arg, ":").map(
+        str.trim,
+      )
     } else {
       return (arg.trim(),)
     }
@@ -72,10 +71,9 @@ snapshot_kind: text
           let (
             name,
             value,
-          ) = split-once(
-            arg,
-            ":",
-          ).map(str.trim)
+          ) = split-once(arg, ":").map(
+            str.trim,
+          )
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -97,10 +95,9 @@ snapshot_kind: text
           let (
             name,
             value,
-          ) = split-once(
-            arg,
-            ":",
-          ).map(str.trim)
+          ) = split-once(arg, ":").map(
+            str.trim,
+          )
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -184,7 +181,9 @@ snapshot_kind: text
   let description = lines
     .enumerate(start: first-line-number)
     .map(
-      eval-doc-comment-test.with(label-prefix: label-prefix),
+      eval-doc-comment-test.with(
+        label-prefix: label-prefix,
+      ),
     )
     .join("\n")
 
@@ -267,7 +266,9 @@ snapshot_kind: text
 
 
 
-#let definition-name-regex = regex(`#?let (\w[\w\d\-_]*)\s*(\(?)`.text)
+#let definition-name-regex = regex(
+  `#?let (\w[\w\d\-_]*)\s*(\(?)`.text,
+)
 
 
 #let process-parameters(parameters) = {
@@ -321,7 +322,9 @@ snapshot_kind: text
     }
   } else {
     definition.return-types = types
-    definition.args = process-parameters(definition.args)
+    definition.args = process-parameters(
+      definition.args,
+    )
   }
   definition.description = description
   definition
@@ -341,7 +344,9 @@ snapshot_kind: text
       args,
       brace-level,
       processed-chars,
-    ) = parse-argument-list(state.unfinished-param)
+    ) = parse-argument-list(
+      state.unfinished-param,
+    )
     if brace-level == -1 {
       // parentheses are already closed on this line
       state.state = "finished"
@@ -354,8 +359,10 @@ snapshot_kind: text
           name: curry.captures.first(),
           rest: state
             .unfinished-param
-            .slice(processed-chars
-              + curry.end),
+            .slice(
+              processed-chars
+                + curry.end,
+            ),
         )
       }
     }

@@ -39,9 +39,11 @@ snapshot_kind: text
         .group({
           cetz
             .draw
-            .translate(node
-              .pos
-              .xyz)
+            .translate(
+              node
+                .pos
+                .xyz,
+            )
           for (
             i,
             extrude,
@@ -167,9 +169,11 @@ snapshot_kind: text
       .group({
         cetz
           .draw
-          .translate(node
-            .pos
-            .xyz)
+          .translate(
+            node
+              .pos
+              .xyz,
+          )
         cetz
           .draw
           .set-style(
@@ -208,9 +212,13 @@ snapshot_kind: text
   curve,
   debug: 0,
 ) = {
-  let curve-point = curve(edge.label-pos)
-  let curve-point-ε = curve(edge.label-pos
-    + 1e-3)
+  let curve-point = curve(
+    edge.label-pos,
+  )
+  let curve-point-ε = curve(
+    edge.label-pos
+      + 1e-3,
+  )
 
   let θ = wrap-angle-180(
     angle-between(
@@ -229,7 +237,9 @@ snapshot_kind: text
   )
 
   if (
-    type(edge.label-angle)
+    type(
+      edge.label-angle,
+    )
       == alignment
   ) {
     edge.label-angle = (
@@ -240,7 +250,9 @@ snapshot_kind: text
           left: 180deg,
           bottom: 270deg,
         ).at(
-          repr(edge.label-angle),
+          repr(
+            edge.label-angle,
+          ),
         )
     )
   } else if (
@@ -249,7 +261,9 @@ snapshot_kind: text
   ) {
     edge.label-angle = θ
     if (
-      calc.abs(edge.label-angle)
+      calc.abs(
+        edge.label-angle,
+      )
         > 90deg
     ) {
       edge.label-angle += 180deg
@@ -260,8 +274,10 @@ snapshot_kind: text
     edge.label-anchor
       == auto
   ) {
-    edge.label-anchor = angle-to-anchor(θ-normal
-      - edge.label-angle)
+    edge.label-anchor = angle-to-anchor(
+      θ-normal
+        - edge.label-angle,
+    )
   }
 
   let label-pos = (
@@ -278,7 +294,9 @@ snapshot_kind: text
       label-pos,
       box(
         {
-          set text(edge.label-size)
+          set text(
+            edge.label-size,
+          )
           (
             edge.label-wrapper
           )(edge)
@@ -329,8 +347,10 @@ snapshot_kind: text
     let mark = edge
       .marks
       .find(mark => (
-        calc.abs(mark.pos
-          - pos)
+        calc.abs(
+          mark.pos
+            - pos,
+        )
           < 1e-3
       ))
     if (
@@ -372,7 +392,9 @@ snapshot_kind: text
     }
     x -= (
       origin
-        * float(mark.scale)
+        * float(
+          mark.scale,
+        )
     )
 
     (
@@ -402,8 +424,10 @@ snapshot_kind: text
     edge
       .marks
       .find(mark => (
-        calc.abs(mark.pos
-          - t)
+        calc.abs(
+          mark.pos
+            - t,
+        )
           < 1e-3
       ))
       != none
@@ -411,7 +435,9 @@ snapshot_kind: text
 
   let decor = edge
     .decorations
-    .with(stroke: edge.stroke)
+    .with(
+      stroke: edge.stroke,
+    )
 
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
@@ -727,8 +753,10 @@ snapshot_kind: text
       vert-next,
     ) = (
       verts.at(i),
-      verts.at(i
-        + 1),
+      verts.at(
+        i
+          + 1,
+      ),
     )
     assert(
       vert
@@ -747,9 +775,13 @@ snapshot_kind: text
     i,
   ) = {
     let pt = verts.at(i)
-    let Δθ = wrap-angle-180(θs.at(i)
-      - θs.at(i
-        - 1))
+    let Δθ = wrap-angle-180(
+      θs.at(i)
+        - θs.at(
+          i
+            - 1,
+        ),
+    )
     let dir = if (
       Δθ
         > 0deg
@@ -761,8 +793,10 @@ snapshot_kind: text
 
 
     let θ-normal = (
-      θs.at(i
-        - 1)
+      θs.at(
+        i
+          - 1,
+      )
         + Δθ
           / 2
         + 90deg
@@ -783,9 +817,13 @@ snapshot_kind: text
         dir
           > 0
       ) {
-        calc.max(..edge.extrude)
+        calc.max(
+          ..edge.extrude,
+        )
       } else {
-        -calc.min(..edge.extrude)
+        -calc.min(
+          ..edge.extrude,
+        )
       }
     }
     radius *= dir // ??? makes math easier or something
@@ -799,8 +837,10 @@ snapshot_kind: text
         arc-center: pt,
         arc-radius: 0
           * radius,
-        start: θs.at(i
-          - 1)
+        start: θs.at(
+          i
+            - 1,
+        )
           - 90deg,
         delta: wrap-angle-180(Δθ),
         line-shift: 0
@@ -810,8 +850,10 @@ snapshot_kind: text
       // distance from vertex to center of curvature
       let dist = (
         radius
-          / calc.cos(Δθ
-            / 2)
+          / calc.cos(
+            Δθ
+              / 2,
+          )
       )
 
       (
@@ -823,13 +865,17 @@ snapshot_kind: text
           ),
         ),
         arc-radius: radius,
-        start: θs.at(i
-          - 1)
+        start: θs.at(
+          i
+            - 1,
+        )
           - 90deg,
         delta: wrap-angle-180(Δθ),
         line-shift: radius
-          * calc.tan(Δθ
-            / 2), // distance from vertex to beginning of arc
+          * calc.tan(
+            Δθ
+              / 2,
+          ), // distance from vertex to beginning of arc
       )
     }
   }
@@ -887,11 +933,15 @@ snapshot_kind: text
   let stroke-with-phase(
     phase,
   ) = (
-    stroke-to-dict(edge.stroke)
+    stroke-to-dict(
+      edge.stroke,
+    )
       + (
-        dash: if type(edge
-          .stroke
-          .dash)
+        dash: if type(
+          edge
+            .stroke
+            .dash,
+        )
           == dictionary {
           (
             array: edge
@@ -911,8 +961,10 @@ snapshot_kind: text
       to,
     ) = (
       verts.at(i),
-      verts.at(i
-        + 1),
+      verts.at(
+        i
+          + 1,
+      ),
     )
     let marks = ()
 
@@ -929,8 +981,10 @@ snapshot_kind: text
       ) {
         let Δθ = (
           θs.at(i)
-            - θs.at(i
-              - 1)
+            - θs.at(
+              i
+                - 1,
+            )
         )
         marks.push((
           inherit: "bar",
@@ -947,8 +1001,10 @@ snapshot_kind: text
             - 1
       ) {
         let Δθ = (
-          θs.at(i
-            + 1)
+          θs.at(
+            i
+              + 1,
+          )
             - θs.at(i)
         )
         marks.push((
@@ -975,8 +1031,10 @@ snapshot_kind: text
           > 0
       ) {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at(i
-          - 1)
+        let (line-shift,) = rounded-corners.at(
+          i
+            - 1,
+        )
         from = vector.add(
           from,
           vector-polar(
@@ -1029,8 +1087,10 @@ snapshot_kind: text
                 start: start,
                 delta: delta,
                 anchor: "origin",
-                stroke: stroke-with-phase(phase
-                  + Δphase),
+                stroke: stroke-with-phase(
+                  phase
+                    + Δphase,
+                ),
               )
           }
 
@@ -1185,12 +1245,14 @@ snapshot_kind: text
             ),
           )
         })
-        .sorted(key: point => vector-len(
-          vector.sub(
-            point,
-            target,
+        .sorted(
+          key: point => vector-len(
+            vector.sub(
+              point,
+              target,
+            ),
           ),
-        ))
+        )
 
       let anchor = anchor-points.at(
         -1,
@@ -1241,9 +1303,11 @@ snapshot_kind: text
     .group({
       cetz
         .draw
-        .translate(node
-          .pos
-          .xyz)
+        .translate(
+          node
+            .pos
+            .xyz,
+        )
       (
         node.shape
       )(
@@ -1401,9 +1465,11 @@ snapshot_kind: text
         .group({
           cetz
             .draw
-            .translate(node
-              .pos
-              .xyz)
+            .translate(
+              node
+                .pos
+                .xyz,
+            )
           (
             node.shape
           )(
@@ -1499,9 +1565,11 @@ snapshot_kind: text
           .group({
             cetz
               .draw
-              .translate(node
-                .pos
-                .xyz)
+              .translate(
+                node
+                  .pos
+                  .xyz,
+              )
             (
               node.shape
             )(
@@ -1558,7 +1626,9 @@ snapshot_kind: text
       .at(0),
     edge
       .final-vertices
-      .at(-1),
+      .at(
+        -1,
+      ),
   )
 
   let end-segments = (
@@ -1570,7 +1640,9 @@ snapshot_kind: text
       ), // first two vertices
     edge
       .final-vertices
-      .slice(-2), // last two vertices
+      .slice(
+        -2,
+      ), // last two vertices
   )
 
   let dummy-lines = end-segments.map(points => cetz
@@ -1593,9 +1665,11 @@ snapshot_kind: text
           .group({
             cetz
               .draw
-              .translate(node
-                .pos
-                .xyz)
+              .translate(
+                node
+                  .pos
+                  .xyz,
+              )
             (
               node.shape
             )(
@@ -1621,7 +1695,9 @@ snapshot_kind: text
         .at(0) = anchors.at(0)
       edge
         .final-vertices
-        .at(-1) = anchors.at(1)
+        .at(
+          -1,
+        ) = anchors.at(1)
       let obj = draw-edge-polyline(
         edge,
         debug: debug,
@@ -1718,11 +1794,15 @@ snapshot_kind: text
     grid
       .centers
       .at(axis)
-      .at(-1)
+      .at(
+        -1,
+      )
       + grid
         .cell-sizes
         .at(axis)
-        .at(-1)
+        .at(
+          -1,
+        )
         / 2,
   ))
 
@@ -1736,7 +1816,9 @@ snapshot_kind: text
     v-len,
   ) = grid
     .centers
-    .map(array.len)
+    .map(
+      array.len,
+    )
   if grid
     .flip
     .xy {
@@ -1809,11 +1891,13 @@ snapshot_kind: text
         + .5pt,
     )
 
-    draw.set-style(stroke: (
-      paint: DEBUG_COLOR,
-      thickness: .3pt,
-      dash: "densely-dotted",
-    ))
+    draw.set-style(
+      stroke: (
+        paint: DEBUG_COLOR,
+        thickness: .3pt,
+        dash: "densely-dotted",
+      ),
+    )
 
     for axis in range(2) {
       let swap(
@@ -2088,7 +2172,9 @@ snapshot_kind: text
     x,
   ) = (
     x.at(0),
-    x.at(-1),
+    x.at(
+      -1,
+    ),
   )
   for edge in (
     edges
@@ -2096,8 +2182,12 @@ snapshot_kind: text
     let snap-to-nodes = edge
       .snap-to
       .zip(
-        first-last(edge.vertices),
-        first-last(edge.final-vertices),
+        first-last(
+          edge.vertices,
+        ),
+        first-last(
+          edge.final-vertices,
+        ),
       )
       .enumerate()
       .map((
@@ -2191,7 +2281,9 @@ snapshot_kind: text
         value.post = cetz
           .draw
           .hide
-          .with(bounds: bounds)
+          .with(
+            bounds: bounds,
+          )
         metadata(value)
       } else {
         child

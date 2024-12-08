@@ -698,8 +698,9 @@ snapshot_kind: text
 /// - `body` is the content to cover.
 #let cover-with-rect(..cover-args, fill: auto, inline: true, body) = {
   if fill == auto {
-    panic("`auto` fill value is not supported until typst provides utilities to"
-      + " retrieve the current page background")
+    panic(
+      "`auto` fill value is not supported until typst provides utilities to" + " retrieve the current page background",
+    )
   }
   if type(fill) == str {
     fill = rgb(fill)

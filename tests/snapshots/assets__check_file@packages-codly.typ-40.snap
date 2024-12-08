@@ -276,8 +276,10 @@ snapshot_kind: text
   }
 
   if pos.len() > 0 {
-    panic("codly: unknown arguments: "
-      + pos.keys().join(", "))
+    panic(
+      "codly: unknown arguments: "
+        + pos.keys().join(", "),
+    )
   }
 }
 
@@ -520,9 +522,11 @@ snapshot_kind: text
 
     // Build a label if the code block has one.
     if block-label != none {
-      let lab = label(str(block-label)
-        + ":"
-        + str(it.number))
+      let lab = label(
+        str(block-label)
+          + ":"
+          + str(it.number),
+      )
 
       return [#l#lab]
     } else {
@@ -534,7 +538,9 @@ snapshot_kind: text
   let l = it.body
   for hl in highlights {
     let fill = highlight-fill(hl.fill)
-    let stroke = highlight-stroke(hl.fill)
+    let stroke = highlight-stroke(
+      hl.fill,
+    )
     let tag = if "tag" in hl {
       hl.tag
     } else {
@@ -705,7 +711,9 @@ snapshot_kind: text
             ).get()
           })
 
-          reference-number-format(it.number)
+          reference-number-format(
+            it.number,
+          )
         } else {
           assert(
             "tag" in hl,
@@ -813,9 +821,11 @@ snapshot_kind: text
 
   // Build a label if the code block has one.
   if block-label != none {
-    let lab = label(str(block-label)
-      + ":"
-      + str(it.number))
+    let lab = label(
+      str(block-label)
+        + ":"
+        + str(it.number),
+    )
 
     return [#l#lab]
   } else {
@@ -830,7 +840,9 @@ snapshot_kind: text
 ) = context {
   show raw
     .line
-    .where(label: <codly-highlighted>): it => codly-line(
+    .where(
+      label: <codly-highlighted>,
+    ): it => codly-line(
     it,
     block-label: block-label,
     extra: (:),
@@ -1249,9 +1261,11 @@ snapshot_kind: text
 
           if "label" in x {
             if block-label == none {
-              panic("codly: label "
-                + str(x.label)
-                + " is only allowed in a figure block")
+              panic(
+                "codly: label "
+                  + str(x.label)
+                  + " is only allowed in a figure block",
+              )
             }
           }
 
@@ -1295,8 +1309,9 @@ snapshot_kind: text
   let lr-width = if (
     annotations.len() > 0
   ) {
-    measure(math.lr("}", size: 5em)
-      + num).width
+    measure(
+      math.lr("}", size: 5em) + num,
+    ).width
   } else {
     0pt
   }
@@ -1723,8 +1738,9 @@ snapshot_kind: text
         let referenced = if (
           reference-by == "line"
         ) {
-          reference-number-format(line.number
-            + offset)
+          reference-number-format(
+            line.number + offset,
+          )
         } else {
           num
         }
@@ -1793,8 +1809,9 @@ snapshot_kind: text
     // Otherwise it results in two paragraphs.
     if numbers-format != none {
       items.push(
-        numbers-format(line.number
-          + offset),
+        numbers-format(
+          line.number + offset,
+        ),
       )
     } else {
       l = [#raw.line(
@@ -1830,7 +1847,9 @@ snapshot_kind: text
         items = (
           ..items,
           l,
-          ..annot(extra: language-block-final),
+          ..annot(
+            extra: language-block-final,
+          ),
         )
       }
     } else {
@@ -2158,7 +2177,9 @@ snapshot_kind: text
       and it.element.func() == raw.line
       and type(it.target) == "label"
   ) {
-    let segments = str(it.target).split(":")
+    let segments = str(
+      it.target,
+    ).split(":")
     assert(
       segments.len() > 1,
       message: "codly: invalid label",
@@ -2203,9 +2224,9 @@ snapshot_kind: text
       (
         ref(lab),
         sep,
-        reference-number-format(it
-          .element
-          .number),
+        reference-number-format(
+          it.element.number,
+        ),
       ).join(),
     )
   } else {
@@ -2223,7 +2244,9 @@ snapshot_kind: text
 ) = {
   show figure.where(kind: raw): fig => {
     if "label" in fig.fields() {
-      show raw.where(block: true): it => __codly-raw(
+      show raw.where(
+        block: true,
+      ): it => __codly-raw(
         it,
         block-label: fig.label,
       )
@@ -2236,7 +2259,9 @@ snapshot_kind: text
   // Levels chosen randomly.
   let level-highlight = 39340
   show ref: it => __codly-ref(it)
-  show raw.where(block: true): it => __codly-raw(it)
+  show raw.where(
+    block: true,
+  ): it => __codly-raw(it)
 
   body
 }
@@ -2288,11 +2313,15 @@ snapshot_kind: text
         it,
         extra: args,
       )
-      show raw.where(block: true): it => __codly-raw(
+      show raw.where(
+        block: true,
+      ): it => __codly-raw(
         it,
         extra: args,
       )
-      show figure.where(kind: raw): fig => {
+      show figure.where(
+        kind: raw,
+      ): fig => {
         if "label" in fig.fields() {
           show raw.where(
             block: true,
@@ -2317,11 +2346,15 @@ snapshot_kind: text
       it,
       extra: args,
     )
-    show raw.where(block: true): it => __codly-raw(
+    show raw.where(
+      block: true,
+    ): it => __codly-raw(
       it,
       extra: extra,
     )
-    show figure.where(kind: raw): fig => {
+    show figure.where(
+      kind: raw,
+    ): fig => {
       if "label" in fig.fields() {
         show raw.where(
           block: true,

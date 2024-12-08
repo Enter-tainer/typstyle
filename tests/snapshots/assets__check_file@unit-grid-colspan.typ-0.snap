@@ -11,7 +11,9 @@ snapshot_kind: text
 #show (
   table
     .cell
-    .where(y: 0)
+    .where(
+      y: 0,
+    )
 ): set text(
   fill: white,
   weight: "bold",
@@ -103,6 +105,12 @@ snapshot_kind: text
     == 0 {
     black
   },
-  table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],
-  [b], table.cell(colspan: 2)[cd],
+  table.cell(
+    rowspan: 2,
+  )[aa], table.cell(
+    colspan: 2,
+  )[bc], [d],
+  [b], table.cell(
+    colspan: 2,
+  )[cd],
 )

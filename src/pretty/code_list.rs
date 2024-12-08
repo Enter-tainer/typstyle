@@ -59,6 +59,7 @@ impl<'a> PrettyPrinter<'a> {
             && !has_comment_children(parenthesized.to_untyped());
 
         ListStylist::new(self)
+            .with_fold_style(self.get_fold_style(parenthesized))
             .process_list(parenthesized.to_untyped(), |node| {
                 self.convert_pattern(node)
             })
@@ -73,6 +74,7 @@ impl<'a> PrettyPrinter<'a> {
         let _g = self.with_mode(Mode::CodeCont);
 
         ListStylist::new(self)
+            .with_fold_style(self.get_fold_style(array))
             .process_list(array.to_untyped(), |node| self.convert_array_item(node))
             .print_doc(ListStyle {
                 add_trailing_sep_single: true,
@@ -86,6 +88,7 @@ impl<'a> PrettyPrinter<'a> {
         let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
 
         ListStylist::new(self)
+            .with_fold_style(self.get_fold_style(dict))
             .process_list(dict.to_untyped(), |node| self.convert_dict_item(node))
             .print_doc(ListStyle {
                 delim: (if all_spread { "(:" } else { "(" }, ")"),
@@ -104,6 +107,7 @@ impl<'a> PrettyPrinter<'a> {
         });
 
         ListStylist::new(self)
+            .with_fold_style(self.get_fold_style(destructuring))
             .process_list(destructuring.to_untyped(), |node| {
                 self.convert_destructuring_item(node)
             })
@@ -127,6 +131,7 @@ impl<'a> PrettyPrinter<'a> {
             });
 
         ListStylist::new(self)
+            .with_fold_style(self.get_fold_style(params))
             .process_list(params.to_untyped(), |node| self.convert_param(node))
             .always_fold_if(|| is_single_simple)
             .print_doc(ListStyle {
@@ -138,6 +143,7 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_import_items(&'a self, import_items: ImportItems<'a>) -> ArenaDoc<'a> {
         // Note that `ImportItem` does not implement `AstNode`.
         ListStylist::new(self)
+            .with_fold_style(self.get_fold_style(import_items))
             .process_list_impl(import_items.to_untyped(), |child| match child.kind() {
                 SyntaxKind::RenamedImportItem => child
                     .cast()

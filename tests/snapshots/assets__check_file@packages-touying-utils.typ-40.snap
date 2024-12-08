@@ -272,7 +272,9 @@ snapshot_kind: text
 }
 
 
-#let typst-builtin-styled = [#set text(fill: red)].func()
+#let typst-builtin-styled = [#set text(
+    fill: red,
+  )].func()
 
 /// Determine if a content is styled
 ///
@@ -349,8 +351,9 @@ snapshot_kind: text
 ///
 /// Example: `#let hide = method-wrapper(hide)` to get a `hide` method
 #let method-wrapper(fn) = (
-  (self: none, ..args) => fn(..args)
-)
+  self: none,
+  ..args,
+) => fn(..args)
 
 
 /// Assuming all functions in dictionary have a named `self` parameter,
@@ -445,7 +448,9 @@ snapshot_kind: text
         .replace("-", " "),
     )
   }
-  convert-label-to-short-heading = convert-label-to-short-heading.with(self: self)
+  convert-label-to-short-heading = convert-label-to-short-heading.with(
+    self: self,
+  )
   assert(
     type(it) == content
       and it.func() == heading,
@@ -758,7 +763,9 @@ snapshot_kind: text
           + "/ "
           + markup-text(it.term)
           + ": "
-          + indent-markup-text(it.description)
+          + indent-markup-text(
+            it.description,
+          )
       )
     } else if it.func() == linebreak {
       "\n" + indent * " "
@@ -1111,8 +1118,10 @@ snapshot_kind: text
   body,
 ) = {
   if fill == auto {
-    panic("`auto` fill value is not supported until typst provides utilities to"
-      + " retrieve the current page background")
+    panic(
+      "`auto` fill value is not supported until typst provides utilities to"
+        + " retrieve the current page background",
+    )
   }
   if type(fill) == str {
     fill = rgb(fill)
@@ -1289,8 +1298,10 @@ snapshot_kind: text
       // assert(parsed > 0, "parsed idx is non-positive")
       parsed
     } else {
-      panic("failed to parse visible slide idx:"
-        + part)
+      panic(
+        "failed to parse visible slide idx:"
+          + part,
+      )
     }
   }
   parts.map(parse-part)
@@ -1336,7 +1347,9 @@ snapshot_kind: text
     type(visible-subslides) == content
       and visible-subslides.has("text")
   ) {
-    let parts = _parse-subslide-indices(visible-subslides.text)
+    let parts = _parse-subslide-indices(
+      visible-subslides.text,
+    )
     check-visible(idx, parts)
   } else if (
     type(visible-subslides)

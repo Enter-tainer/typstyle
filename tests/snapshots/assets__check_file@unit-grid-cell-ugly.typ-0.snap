@@ -16,7 +16,9 @@ snapshot_kind: text
   [Sodium Myreth Sulfate],
   [16.6], [104],
   [Potassium Hydroxide],
-  table.cell(colspan: 2)[24.7],
+  table.cell(
+    colspan: 2,
+  )[24.7],
 )
 
 
@@ -42,7 +44,9 @@ snapshot_kind: text
   [🚗],
 
   [Eat curbside hotdog],
-  cell(align: left)[🌴🚗],
+  cell(
+    align: left,
+  )[🌴🚗],
 
   cell(
     inset: 0.06em,

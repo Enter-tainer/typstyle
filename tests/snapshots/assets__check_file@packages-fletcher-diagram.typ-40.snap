@@ -335,10 +335,9 @@ snapshot_kind: text
   for (y, row) in matrix.enumerate() {
     for (x, item) in row.enumerate() {
       if not is-space(item) {
-        nodes.push(node(
-          (x, y),
-          $item$,
-        ).value)
+        nodes.push(
+          node((x, y), $item$).value,
+        )
       }
     }
   }

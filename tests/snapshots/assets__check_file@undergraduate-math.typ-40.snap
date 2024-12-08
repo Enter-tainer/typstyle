@@ -47,9 +47,9 @@ snapshot_kind: text
 #let enspace = kern(0.5em)
 
 // For table/grid, something like "lhs \enspace rhs"
-#let cell(lhs, rhs) = box(lhs
-  + enspace
-  + rhs)
+#let cell(lhs, rhs) = box(
+  lhs + enspace + rhs,
+)
 // Grid for code blocks
 #set grid(columns: (2em, auto))
 // Table for math-code listing
@@ -73,11 +73,13 @@ snapshot_kind: text
     "E",
   )
   let X = "X"
-  box(T
-    + kern(-0.1667em)
-    + E
-    + kern(-0.125em)
-    + X)
+  box(
+    T
+      + kern(-0.1667em)
+      + E
+      + kern(-0.125em)
+      + X,
+  )
 })
 #let LaTeX = style(styles => {
   let l = measure(
@@ -94,11 +96,13 @@ snapshot_kind: text
     baseline: a.height - l.height,
     "A",
   )
-  box(L
-    + kern(-0.36em)
-    + A
-    + kern(-0.15em)
-    + TeX)
+  box(
+    L
+      + kern(-0.36em)
+      + A
+      + kern(-0.15em)
+      + TeX,
+  )
 })
 
 // Unavailable (last check version)
@@ -118,9 +122,11 @@ snapshot_kind: text
   ),
 )
 // Tricky figure numbering
-#set figure(numbering: n => {
-  ([??], [!!], [?!]).at(n)
-})
+#set figure(
+  numbering: n => {
+    ([??], [!!], [?!]).at(n)
+  },
+)
 // No prefix
 #set ref(supplement: "")
 
@@ -128,7 +134,9 @@ snapshot_kind: text
 #set par(justify: true)
 
 // Run-in sections, like LaTeX \paragraph
-#show heading.where(level: 1): it => text(
+#show heading.where(
+  level: 1,
+): it => text(
   size: normalsize,
   weight: "bold",
   fill: headcolor,

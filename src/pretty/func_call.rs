@@ -4,6 +4,7 @@ use typst_syntax::{ast::*, SyntaxKind};
 use super::list::{ListStyle, ListStylist};
 use super::mode::Mode;
 use super::plain::PlainStylist;
+use super::style::FoldStyle;
 use super::util::is_only_one_and;
 use super::PrettyPrinter;
 
@@ -57,48 +58,42 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
         let _g = self.with_mode(Mode::CodeCont);
 
-        let is_in_show = (|| {
-            if let Some(node) = self.source.find(args.to_untyped().span()) {
-                if let Some(parent) = node.parent() {
-                    if parent.kind() == SyntaxKind::SetRule {
-                        if let Some(parent) = parent.parent() {
-                            if parent.kind() == SyntaxKind::ShowRule {
-                                return true;
-                            }
-                        }
-                    }
+        let mut fold_style = self.get_fold_style(args);
+
+        let children = || {
+            args.to_untyped()
+                .children()
+                .take_while(|it| it.kind() != SyntaxKind::RightParen)
+        };
+        let arg_count = children().filter(|it| it.is::<Arg>()).count();
+
+        is_only_one_and(args.items().take(arg_count), |arg| {
+            let inner = match arg {
+                Arg::Pos(p) => *p,
+                Arg::Named(_) => {
+                    fold_style = FoldStyle::Fit;
+                    return false;
                 }
-            }
-            false
-        })();
-        let arg_count = args
-            .to_untyped()
-            .children()
-            .take_while(|it| it.kind() != SyntaxKind::RightParen)
-            .filter(|it| it.is::<Arg>())
-            .count();
-        let always_fold = !is_in_show
-            && is_only_one_and(args.items().take(arg_count), |arg| {
-                let inner = match arg {
-                    Arg::Pos(p) => *p,
-                    Arg::Named(n) => n.expr(),
-                    Arg::Spread(s) => s.expr(),
-                };
-                !matches!(inner, Expr::FuncCall(_))
-            });
-        let mut closed = false;
+                Arg::Spread(s) => s.expr(),
+            };
+            fold_style = if matches!(
+                inner,
+                Expr::FuncCall(_) | Expr::FieldAccess(_) | Expr::Unary(_) | Expr::Binary(_)
+            ) {
+                FoldStyle::Fit
+            } else {
+                FoldStyle::Always
+            };
+            true
+        });
+
         ListStylist::new(self)
             .keep_linebreak(self.config.blank_lines_upper_bound)
-            .process_list_impl(args.to_untyped(), |child| {
+            .with_fold_style(fold_style)
+            .process_iterable_impl(children(), |child| {
                 // We should ignore additional args here.
-                if child.kind() == SyntaxKind::RightParen {
-                    closed = true;
-                } else if !closed {
-                    return child.cast().map(|arg| self.convert_arg(arg));
-                }
-                Option::None
+                child.cast().map(|arg| self.convert_arg(arg))
             })
-            .always_fold_if(|| always_fold)
             .print_doc(ListStyle {
                 ..Default::default()
             })

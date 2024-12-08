@@ -105,11 +105,13 @@ snapshot_kind: text
       }
     }
   } else {
-    panic("Tablex error:"
-      + error-prefix
-      + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
-      + str(type(fit-spans))
-      + "'")
+    panic(
+      "Tablex error:"
+        + error-prefix
+        + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
+        + str(type(fit-spans))
+        + "'",
+    )
   }
   fit-spans
 }
@@ -934,9 +936,11 @@ snapshot_kind: text
             // in the meantime
 
             if prev_x > x_limit + 1 {
-              panic("Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most "
-                + str(x_limit + 1)
-                + " empty cells or vlines before the first cell of the table.")
+              panic(
+                "Error: Specified way too many vlines or empty () cells before the first row of the table. (Note that () is used to separate vline()s at the beginning of the table.)  Please specify at most "
+                  + str(x_limit + 1)
+                  + " empty cells or vlines before the first cell of the table.",
+              )
             }
           } else if row_wrapped {
             item.x = x_limit // allow v_line at the last column
@@ -968,11 +972,13 @@ snapshot_kind: text
     }
 
     if this_x == none or this_y == none {
-      panic("Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: "
-        + repr((prev_x, prev_y))
-        + ", new cell: "
-        + repr(cell)
-        + ")")
+      panic(
+        "Internal tablex error: Grid wasn't large enough to fit the given cells. (Previous position: "
+          + repr((prev_x, prev_y))
+          + ", new cell: "
+          + repr(cell)
+          + ")",
+      )
     }
 
     cell.x = this_x
@@ -1033,11 +1039,13 @@ snapshot_kind: text
     }
 
     if max_x >= x_limit {
-      panic("Error: Cell at "
-        + repr((this_x, this_y))
-        + " has a colspan of "
-        + repr(cell.colspan)
-        + ", which would exceed the available columns.")
+      panic(
+        "Error: Cell at "
+          + repr((this_x, this_y))
+          + " has a colspan of "
+          + repr(cell.colspan)
+          + ", which would exceed the available columns.",
+      )
     }
 
     let cell_positions = positions-spanned-by(cell, x: this_x, y: this_y, x_limit: x_limit, y_limit: none)
@@ -1049,12 +1057,14 @@ snapshot_kind: text
       if currently_there != none {
         let parent_cell = get-parent-cell(currently_there, grid: grid)
 
-        panic("Error: Multiple cells attempted to occupy the cell position at "
-          + repr((px, py))
-          + ": one starting at "
-          + repr((this_x, this_y))
-          + ", and one starting at "
-          + repr((parent_cell.x, parent_cell.y)))
+        panic(
+          "Error: Multiple cells attempted to occupy the cell position at "
+            + repr((px, py))
+            + ": one starting at "
+            + repr((this_x, this_y))
+            + ", and one starting at "
+            + repr((parent_cell.x, parent_cell.y)),
+        )
       }
 
       // initial position => assign it to the cell's x/y
@@ -2846,11 +2856,13 @@ snapshot_kind: text
       }
 
       if cells.len() != original-cells.len() {
-        panic("Tablex error: 'map-rows' returned "
-          + str(cells.len())
-          + " cells, when it should have returned exactly "
-          + str(original-cells.len())
-          + ".")
+        panic(
+          "Tablex error: 'map-rows' returned "
+            + str(cells.len())
+            + " cells, when it should have returned exactly "
+            + str(original-cells.len())
+            + ".",
+        )
       }
 
       for (i, cell) in cells.enumerate() {
@@ -2902,11 +2914,13 @@ snapshot_kind: text
       }
 
       if cells.len() != original-cells.len() {
-        panic("Tablex error: 'map-cols' returned "
-          + str(cells.len())
-          + " cells, when it should have returned exactly "
-          + str(original-cells.len())
-          + ".")
+        panic(
+          "Tablex error: 'map-cols' returned "
+            + str(cells.len())
+            + " cells, when it should have returned exactly "
+            + str(original-cells.len())
+            + ".",
+        )
       }
 
       for (i, cell) in cells.enumerate() {

@@ -343,10 +343,12 @@ snapshot_kind: text
     pos.len()
       > 0
   ) {
-    panic("codly: unknown arguments: "
-      + pos
-        .keys()
-        .join(", "))
+    panic(
+      "codly: unknown arguments: "
+        + pos
+          .keys()
+          .join(", "),
+    )
   }
 }
 
@@ -477,9 +479,11 @@ snapshot_kind: text
       ()
     } else {
       highlights
-        .sorted(key: x => (
-          x.line
-        ))
+        .sorted(
+          key: x => (
+            x.line
+          ),
+        )
         .map(x => {
           if (
             not "start"
@@ -660,7 +664,9 @@ snapshot_kind: text
     ) {
       // We add the indentation to the line.
       highlighted = {
-        set par(hanging-indent: width)
+        set par(
+          hanging-indent: width,
+        )
         highlighted
       }
     }
@@ -677,9 +683,13 @@ snapshot_kind: text
       block-label
         != none
     ) {
-      let lab = label(str(block-label)
-        + ":"
-        + str(it.number))
+      let lab = label(
+        str(block-label)
+          + ":"
+          + str(
+            it.number,
+          ),
+      )
 
       return [#l#lab]
     } else {
@@ -692,8 +702,12 @@ snapshot_kind: text
   for hl in (
     highlights
   ) {
-    let fill = highlight-fill(hl.fill)
-    let stroke = highlight-stroke(hl.fill)
+    let fill = highlight-fill(
+      hl.fill,
+    )
+    let stroke = highlight-stroke(
+      hl.fill,
+    )
     let tag = if (
       "tag"
         in hl
@@ -733,12 +747,16 @@ snapshot_kind: text
         "child"
           in fields
       ) {
-        get-len(fields.child)
+        get-len(
+          fields.child,
+        )
       } else if (
         "body"
           in fields
       ) {
-        get-len(fields.body)
+        get-len(
+          fields.body,
+        )
       } else {
         0
       }
@@ -770,7 +788,9 @@ snapshot_kind: text
         elem.has("child")
           and elem.has("styles")
       ) {
-        get-flattened-body(elem.child)
+        get-flattened-body(
+          elem.child,
+        )
           .map(x => (
             elem.func()
           )(
@@ -934,7 +954,9 @@ snapshot_kind: text
             ).get()
           })
 
-          reference-number-format(it.number)
+          reference-number-format(
+            it.number,
+          )
         } else {
           assert(
             "tag"
@@ -1042,7 +1064,9 @@ snapshot_kind: text
   ) {
     // We add the indentation to the line.
     highlighted = {
-      set par(hanging-indent: width)
+      set par(
+        hanging-indent: width,
+      )
       highlighted
     }
   }
@@ -1059,9 +1083,13 @@ snapshot_kind: text
     block-label
       != none
   ) {
-    let lab = label(str(block-label)
-      + ":"
-      + str(it.number))
+    let lab = label(
+      str(block-label)
+        + ":"
+        + str(
+          it.number,
+        ),
+    )
 
     return [#l#lab]
   } else {
@@ -1076,7 +1104,9 @@ snapshot_kind: text
 ) = context {
   show raw
     .line
-    .where(label: <codly-highlighted>): it => codly-line(
+    .where(
+      label: <codly-highlighted>,
+    ): it => codly-line(
     it,
     block-label: block-label,
     extra: (:),
@@ -1091,7 +1121,9 @@ snapshot_kind: text
     panic("codly-raw: body must be a raw content")
   }
 
-  set par(justify: false)
+  set par(
+    justify: false,
+  )
   let enabled = (
     __codly-args
       .enabled
@@ -1485,7 +1517,9 @@ snapshot_kind: text
       ()
     } else {
       skips
-        .sorted(key: x => x.at(0))
+        .sorted(
+          key: x => x.at(0),
+        )
         .dedup()
     }
   }
@@ -1631,9 +1665,11 @@ snapshot_kind: text
       ()
     } else {
       annotations
-        .sorted(key: x => (
-          x.start
-        ))
+        .sorted(
+          key: x => (
+            x.start
+          ),
+        )
         .map(x => {
           if (
             (
@@ -1667,9 +1703,13 @@ snapshot_kind: text
               block-label
                 == none
             ) {
-              panic("codly: label "
-                + str(x.label)
-                + " is only allowed in a figure block")
+              panic(
+                "codly: label "
+                  + str(
+                    x.label,
+                  )
+                  + " is only allowed in a figure block",
+              )
             }
           }
 
@@ -1727,11 +1767,13 @@ snapshot_kind: text
     annotations.len()
       > 0
   ) {
-    measure(math.lr(
-      "}",
-      size: 5em,
-    )
-      + num).width
+    measure(
+      math.lr(
+        "}",
+        size: 5em,
+      )
+        + num,
+    ).width
   } else {
     0pt
   }
@@ -1829,7 +1871,9 @@ snapshot_kind: text
     it.lang
       in languages
   ) {
-    let lang = languages.at(it.lang)
+    let lang = languages.at(
+      it.lang,
+    )
     let name = if (
       type(lang)
         == str
@@ -1969,8 +2013,10 @@ snapshot_kind: text
         lang-stroke
       }
 
-      let b = measure(icon
-        + name)
+      let b = measure(
+        icon
+          + name,
+      )
       box(
         radius: radius,
         fill: fill,
@@ -2102,7 +2148,9 @@ snapshot_kind: text
         lang-stroke
       }
 
-      let b = measure(it.lang)
+      let b = measure(
+        it.lang,
+      )
       box(
         radius: radius,
         fill: fill,
@@ -2246,8 +2294,10 @@ snapshot_kind: text
           reference-by
             == "line"
         ) {
-          reference-number-format(line.number
-            + offset)
+          reference-number-format(
+            line.number
+              + offset,
+          )
         } else {
           num
         }
@@ -2308,7 +2358,9 @@ snapshot_kind: text
       _ = skips.remove(0)
     }
 
-    if not in_range(line.number) {
+    if not in_range(
+      line.number,
+    ) {
       continue
     }
 
@@ -2328,8 +2380,10 @@ snapshot_kind: text
         != none
     ) {
       items.push(
-        numbers-format(line.number
-          + offset),
+        numbers-format(
+          line.number
+            + offset,
+        ),
       )
     } else {
       l = [#raw.line(
@@ -2387,7 +2441,9 @@ snapshot_kind: text
         items = (
           ..items,
           l,
-          ..annot(extra: language-block-final),
+          ..annot(
+            extra: language-block-final,
+          ),
         )
       }
     } else {
@@ -2750,9 +2806,11 @@ snapshot_kind: text
     .at(1)
   (
     num.body,
-    label(lbl
-      .body
-      .text),
+    label(
+      lbl
+        .body
+        .text,
+    ),
   )
 }
 
@@ -2790,7 +2848,9 @@ snapshot_kind: text
     let (
       tag,
       label,
-    ) = __codly-get-parts(it.element)
+    ) = __codly-get-parts(
+      it.element,
+    )
     link(
       it.target,
       (
@@ -2829,7 +2889,9 @@ snapshot_kind: text
     let (
       num,
       label,
-    ) = __codly-get-parts(it.element)
+    ) = __codly-get-parts(
+      it.element,
+    )
     link(
       it.target,
       (
@@ -2845,10 +2907,14 @@ snapshot_kind: text
         .element
         .func()
         == raw.line
-      and type(it.target)
+      and type(
+        it.target,
+      )
         == "label"
   ) {
-    let segments = str(it.target).split(":")
+    let segments = str(
+      it.target,
+    ).split(":")
     assert(
       segments.len()
         > 1,
@@ -2900,9 +2966,11 @@ snapshot_kind: text
       (
         ref(lab),
         sep,
-        reference-number-format(it
-          .element
-          .number),
+        reference-number-format(
+          it
+            .element
+            .number,
+        ),
       ).join(),
     )
   } else {
@@ -2918,12 +2986,16 @@ snapshot_kind: text
 #let codly-init(
   body,
 ) = {
-  show figure.where(kind: raw): fig => {
+  show figure.where(
+    kind: raw,
+  ): fig => {
     if (
       "label"
         in fig.fields()
     ) {
-      show raw.where(block: true): it => __codly-raw(
+      show raw.where(
+        block: true,
+      ): it => __codly-raw(
         it,
         block-label: fig.label,
       )
@@ -2936,7 +3008,9 @@ snapshot_kind: text
   // Levels chosen randomly.
   let level-highlight = 39340
   show ref: it => __codly-ref(it)
-  show raw.where(block: true): it => __codly-raw(it)
+  show raw.where(
+    block: true,
+  ): it => __codly-raw(it)
 
   body
 }
@@ -2995,11 +3069,15 @@ snapshot_kind: text
         it,
         extra: args,
       )
-      show raw.where(block: true): it => __codly-raw(
+      show raw.where(
+        block: true,
+      ): it => __codly-raw(
         it,
         extra: args,
       )
-      show figure.where(kind: raw): fig => {
+      show figure.where(
+        kind: raw,
+      ): fig => {
         if (
           "label"
             in fig.fields()
@@ -3027,11 +3105,15 @@ snapshot_kind: text
       it,
       extra: args,
     )
-    show raw.where(block: true): it => __codly-raw(
+    show raw.where(
+      block: true,
+    ): it => __codly-raw(
       it,
       extra: extra,
     )
-    show figure.where(kind: raw): fig => {
+    show figure.where(
+      kind: raw,
+    ): fig => {
       if (
         "label"
           in fig.fields()

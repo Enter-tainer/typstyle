@@ -2131,8 +2131,9 @@ snapshot_kind: text
     )
     header = page-preamble(self) + header
     set page(..(self.page + page-extra-args + (header: header, footer: footer)))
-    setting-with-auto-offset-for-heading(subslide-preamble(self)
-      + composer-with-side-by-side(..conts))
+    setting-with-auto-offset-for-heading(
+      subslide-preamble(self) + composer-with-side-by-side(..conts),
+    )
   } else {
     // render all the subslides
     let result = ()
@@ -2155,8 +2156,9 @@ snapshot_kind: text
         set page(..(
           self.page + page-extra-args + (header: new-header, footer: footer)
         ))
-        setting-with-auto-offset-for-heading(subslide-preamble(self)
-          + composer-with-side-by-side(..conts))
+        setting-with-auto-offset-for-heading(
+          subslide-preamble(self) + composer-with-side-by-side(..conts),
+        )
       })
     }
     // return the result

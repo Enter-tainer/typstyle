@@ -943,13 +943,7 @@ snapshot_kind: text
   )
 
   // Get the height of an individual line.
-  let line-height = (
-    measure(
-      raw.line(1, 1, "Hello, World!", [Hello, World!]),
-    ).height
-      + padding.top
-      + padding.bottom
-  )
+  let line-height = measure(raw.line(1, 1, "Hello, World!", [Hello, World!])).height + padding.top + padding.bottom
 
   let items = ()
   let height = measure[1].height

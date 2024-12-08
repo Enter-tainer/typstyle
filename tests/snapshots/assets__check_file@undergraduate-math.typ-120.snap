@@ -70,9 +70,11 @@ snapshot_kind: text
 // No idea
 #show "?!": box(text(orange, [No idea #emoji.face.unhappy]))
 // Tricky figure numbering
-#set figure(numbering: n => {
-  ([??], [!!], [?!]).at(n)
-})
+#set figure(
+  numbering: n => {
+    ([??], [!!], [?!]).at(n)
+  },
+)
 // No prefix
 #set ref(supplement: "")
 

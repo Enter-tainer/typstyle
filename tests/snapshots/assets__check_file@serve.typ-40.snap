@@ -2,12 +2,15 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/serve.typ
+snapshot_kind: text
 ---
 #import "/github-pages/docs/book.typ": (
   book-page,
 )
 
-#show: book-page.with(title: "CLI Serve Command")
+#show: book-page.with(
+  title: "CLI Serve Command",
+)
 
 = The serve command
 

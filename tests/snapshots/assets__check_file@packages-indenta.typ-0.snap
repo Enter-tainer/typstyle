@@ -158,7 +158,9 @@ snapshot_kind: text
               fn,
             )
         ) {
-          context h(par.first-line-indent)
+          context h(
+            par.first-line-indent,
+          )
         }
         st = 0
       }

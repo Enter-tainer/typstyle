@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/unit/markup/content-code.typ
+snapshot_kind: text
 ---
 #let task(
   body,
@@ -13,5 +14,9 @@ input_file: tests/assets/unit/markup/content-code.typ
 
 由三个递增的数字组成，并用「点号」（`.`）分隔由三个递增的数字组成，并用「点号」（`.`）分隔由三个递增的数字组成，并用「点号」（`.`）分隔。
 
-#task(critical: true)[Food today?]
-#task(critical: false)[Work deadline]
+#task(
+  critical: true,
+)[Food today?]
+#task(
+  critical: false,
+)[Work deadline]
