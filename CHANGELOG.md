@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.12.9 - [2024-12-08]
+
+- Typstyle no longer force single arg function call to be in a single line. Instead, it is determined in a smarter way. And this fixes https://github.com/Enter-tainer/typstyle/issues/143.
+- Typstyle will always add newline at the end of the file. Previously, it only adds newline when it already exists. 
+
 ## v0.12.8 - [2024-12-07]
 
 - Typstyle will format binary expressions as operator chains. Parentheses are added if necessary.
