@@ -35,6 +35,7 @@ type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
 pub struct PrettyPrinter<'a> {
     config: PrinterConfig,
+    #[allow(dead_code)]
     source: Source,
     attr_store: AttrStore,
     mode: RefCell<Vec<Mode>>,
@@ -164,15 +165,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn format_disabled(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
-        if let Some(text) = self
-            .source
-            .find(node.span())
-            .and_then(|linked_node| self.source.get(linked_node.range()))
-        {
-            self.arena.text(text)
-        } else {
-            self.arena.text(node.clone().into_text().to_string())
-        }
+        self.arena.text(node.clone().into_text().to_string())
     }
 
     /// For leaf only.
