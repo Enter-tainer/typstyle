@@ -373,9 +373,8 @@ snapshot_kind: text
     }
   }
 
-  let rows(len) = calc.ceil((
-    len / col_len
-  ))
+  let rows(len) = calc.ceil(len
+    / col_len)
 
   while rows(len) < max_explicit_y {
     len += col_len
@@ -476,9 +475,8 @@ snapshot_kind: text
     col_len: col_len,
   )
 
-  let expected_rows = calc.ceil((
-    grid_len / col_len
-  ))
+  let expected_rows = calc.ceil(grid_len
+    / col_len)
 
   // more cells than expected => add rows
   if rows.len() < expected_rows {

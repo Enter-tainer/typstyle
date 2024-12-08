@@ -1339,11 +1339,9 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter #meanwhile
       if cover-arr.len() != 0 {
-        result.push((
-          "cover("
-            + cover-arr.sum()
-            + ")"
-        ))
+        result.push("cover("
+          + cover-arr.sum()
+          + ")")
         cover-arr = ()
       }
       // then reset the repetitions
@@ -1357,11 +1355,9 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter linebreak or parbreak
       if cover-arr.len() != 0 {
-        result.push((
-          "cover("
-            + cover-arr.sum()
-            + ")"
-        ))
+        result.push("cover("
+          + cover-arr.sum()
+          + ")")
         cover-arr = ()
       }
       result.push(child)
@@ -1378,9 +1374,9 @@ snapshot_kind: text
   }
   // clear the cover-arr when end
   if cover-arr.len() != 0 {
-    result.push((
-      "cover(" + cover-arr.sum() + ")"
-    ))
+    result.push("cover("
+      + cover-arr.sum()
+      + ")")
     cover-arr = ()
   }
   let equation = math.equation(
@@ -1477,11 +1473,9 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter #meanwhile
       if cover-arr.len() != 0 {
-        result.push((
-          "\\phantom{"
-            + cover-arr.sum()
-            + "}"
-        ))
+        result.push("\\phantom{"
+          + cover-arr.sum()
+          + "}")
         cover-arr = ()
       }
       // then reset the repetitions
@@ -1495,11 +1489,9 @@ snapshot_kind: text
     ) {
       // clear the cover-arr when encounter linebreak or parbreak
       if cover-arr.len() != 0 {
-        result.push((
-          "\\phantom{"
-            + cover-arr.sum()
-            + "}"
-        ))
+        result.push("\\phantom{"
+          + cover-arr.sum()
+          + "}")
         cover-arr = ()
       }
       result.push(child)
@@ -1516,11 +1508,9 @@ snapshot_kind: text
   }
   // clear the cover-arr when end
   if cover-arr.len() != 0 {
-    result.push((
-      "\\phantom{"
-        + cover-arr.sum()
-        + "}"
-    ))
+    result.push("\\phantom{"
+      + cover-arr.sum()
+      + "}")
     cover-arr = ()
   }
   let equation = (eqt.mitex)(

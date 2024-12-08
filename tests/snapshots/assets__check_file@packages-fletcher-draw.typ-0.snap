@@ -51,10 +51,8 @@ snapshot_kind: text
             cetz
               .draw
               .set-style(
-                fill: if (
-                  i
-                    == 0
-                ) {
+                fill: if i
+                  == 0 {
                   node.fill
                 },
                 stroke: node.stroke,
@@ -159,10 +157,8 @@ snapshot_kind: text
             .xyz,
           node.size,
         ),
-        stroke: (
-          DEBUG_COLOR
-            + .1pt
-        ),
+        stroke: DEBUG_COLOR
+          + .1pt,
       )
 
     // node anchoring outline (what edges snap to)
@@ -177,10 +173,8 @@ snapshot_kind: text
         cetz
           .draw
           .set-style(
-            stroke: (
-              DEBUG_COLOR2
-                + 0.25pt
-            ),
+            stroke: DEBUG_COLOR2
+              + 0.25pt,
             fill: none,
           )
         (
@@ -298,10 +292,8 @@ snapshot_kind: text
         },
       ),
       angle: edge.label-angle,
-      anchor: if (
-        edge.label-anchor
-          != auto
-      ) {
+      anchor: if edge.label-anchor
+        != auto {
         edge.label-anchor
       },
     )
@@ -424,25 +416,21 @@ snapshot_kind: text
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
   decor = decor.with(
-    start: (
-      if has-mark-at(0) {
-        0.1
-      } else {
-        ε
-      }
-        * 100%
-    ),
-    stop: (
-      if has-mark-at(1) {
-        0.9
-      } else {
-        (
-          1
-            - ε
-        )
-      }
-        * 100%
-    ),
+    start: if has-mark-at(0) {
+      0.1
+    } else {
+      ε
+    }
+      * 100%,
+    stop: if has-mark-at(1) {
+      0.9
+    } else {
+      (
+        1
+          - ε
+      )
+    }
+      * 100%,
   )
 
   decor(path)
@@ -638,18 +626,12 @@ snapshot_kind: text
       .draw
       .arc(
         center,
-        radius: (
-          radius
-            + shift
-        ),
-        start: (
-          start
-            + δ-start
-        ),
-        stop: (
-          stop
-            + δ-stop
-        ),
+        radius: radius
+          + shift,
+        start: start
+          + δ-start,
+        stop: stop
+          + δ-stop,
         anchor: "origin",
         stroke: edge.stroke,
       )
@@ -993,10 +975,8 @@ snapshot_kind: text
           > 0
       ) {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at((
-          i
-            - 1
-        ))
+        let (line-shift,) = rounded-corners.at(i
+          - 1)
         from = vector.add(
           from,
           vector-polar(
@@ -1044,10 +1024,8 @@ snapshot_kind: text
               .draw
               .arc(
                 arc-center,
-                radius: (
-                  arc-radius
-                    - d
-                ),
+                radius: arc-radius
+                  - d,
                 start: start,
                 delta: delta,
                 anchor: "origin",
@@ -1068,10 +1046,8 @@ snapshot_kind: text
                   .draw
                   .circle(
                     arc-center,
-                    radius: (
-                      arc-radius
-                        - d
-                    ),
+                    radius: arc-radius
+                      - d,
                     stroke: debug-stroke,
                   ),
               )
@@ -1829,10 +1805,8 @@ snapshot_kind: text
     draw.rect(
       a,
       b,
-      stroke: (
-        DEBUG_COLOR
-          + .5pt
-      ),
+      stroke: DEBUG_COLOR
+        + .5pt,
     )
 
     draw.set-style(stroke: (
@@ -1947,10 +1921,8 @@ snapshot_kind: text
             fill: DEBUG_COLOR,
             size: .7em,
           )[#x],
-          anchor: if (
-            axis
-              == 0
-          ) {
+          anchor: if axis
+            == 0 {
             "north"
           } else {
             "east"

@@ -74,10 +74,8 @@ snapshot_kind: text
 // Table for math-code listing
 #set table(
   stroke: none,
-  align: (
-    horizon
-      + left
-  ),
+  align: horizon
+    + left,
   inset: 0pt,
   row-gutter: 0.45em,
 )

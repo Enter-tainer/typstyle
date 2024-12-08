@@ -55,6 +55,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         let is_in_show = (|| {
             if let Some(node) = self.source.find(args.to_untyped().span()) {
                 if let Some(parent) = node.parent() {
@@ -102,7 +104,9 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    pub(super) fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+    fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         let inner = PlainStylist::new(self)
             .process_iterable(get_parenthesized_args_untyped(args), |child| {
                 self.convert_arg(child)

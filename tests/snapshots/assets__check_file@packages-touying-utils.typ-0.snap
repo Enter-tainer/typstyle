@@ -109,14 +109,12 @@ snapshot_kind: text
     }
     let ratio = calc.min(
       1.0,
-      (
-        slide-counter
-          .get()
-          .first()
-          / last-slide-counter
-            .final()
-            .first()
-      ),
+      slide-counter
+        .get()
+        .first()
+        / last-slide-counter
+          .final()
+          .first(),
     )
     callback(ratio)
   }
@@ -189,10 +187,8 @@ snapshot_kind: text
   }
   arr.slice(
     i,
-    (
-      j
-        + 1
-    ),
+    j
+      + 1,
   )
 }
 
@@ -924,10 +920,8 @@ snapshot_kind: text
   )
   let indent-markup-text = markup-text.with(
     mode: mode,
-    indent: (
-      indent
-        + 2
-    ),
+    indent: indent
+      + 2,
   )
   let markup-text = markup-text.with(
     mode: mode,

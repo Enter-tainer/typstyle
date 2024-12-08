@@ -273,10 +273,8 @@ snapshot_kind: text
       } else {
         rect
           .size
-          .at((
-            1
-              - axis
-          ))
+          .at(1
+            - axis)
       }
       cell-sizes
         .at(axis)

@@ -480,10 +480,8 @@ snapshot_kind: text
 
   let rows(
     len,
-  ) = calc.ceil((
-    len
-      / col_len
-  ))
+  ) = calc.ceil(len
+    / col_len)
 
   while (
     rows(len)
@@ -641,10 +639,8 @@ snapshot_kind: text
     col_len: col_len,
   )
 
-  let expected_rows = calc.ceil((
-    grid_len
-      / col_len
-  ))
+  let expected_rows = calc.ceil(grid_len
+    / col_len)
 
   // more cells than expected => add rows
   if (
@@ -2790,10 +2786,8 @@ snapshot_kind: text
 
             calc.max(
               max,
-              (
-                width
-                  - fixed_size
-              ),
+              width
+                - fixed_size,
               0pt,
             )
           } else {
@@ -3195,10 +3189,8 @@ snapshot_kind: text
 
             calc.max(
               max,
-              (
-                height
-                  - fixed_size
-              ),
+              height
+                - fixed_size,
               0pt,
             )
           } else {
@@ -3425,10 +3417,8 @@ snapshot_kind: text
   ) {
     sum = calc.max(
       0pt,
-      (
-        sum
-          - col-gutter
-      ),
+      sum
+        - col-gutter,
     ) // remove extra gutter from last col
   }
 
@@ -3484,10 +3474,8 @@ snapshot_kind: text
   ) {
     sum = calc.max(
       0pt,
-      (
-        sum
-          - row-gutter
-      ),
+      sum
+        - row-gutter,
     ) // remove extra gutter from last row
   }
 
@@ -5065,17 +5053,13 @@ snapshot_kind: text
     current_row += 1
     row_group_add_counter = calc.max(
       0,
-      (
-        row_group_add_counter
-          - 1
-      ),
+      row_group_add_counter
+        - 1,
     ) // one row added
     header_rows_count = calc.max(
       0,
-      (
-        header_rows_count
-          - 1
-      ),
+      header_rows_count
+        - 1,
     ) // ensure at least the amount of requested header rows was added
 
     // added all pertaining rows to the group
@@ -5275,10 +5259,8 @@ snapshot_kind: text
   if auto-hlines {
     new_hlines = range(
       0,
-      (
-        row_len
-          + 1
-      ),
+      row_len
+        + 1,
     )
       .filter(y => (
         hlines
@@ -5295,10 +5277,8 @@ snapshot_kind: text
   if auto-vlines {
     new_vlines = range(
       0,
-      (
-        col_len
-          + 1
-      ),
+      col_len
+        + 1,
     )
       .filter(x => (
         vlines

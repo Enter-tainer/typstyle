@@ -83,12 +83,10 @@ snapshot_kind: text
     }
     let ratio = calc.min(
       1.0,
-      (
-        slide-counter.get().first()
-          / last-slide-counter
-            .final()
-            .first()
-      ),
+      slide-counter.get().first()
+        / last-slide-counter
+          .final()
+          .first(),
     )
     callback(ratio)
   }

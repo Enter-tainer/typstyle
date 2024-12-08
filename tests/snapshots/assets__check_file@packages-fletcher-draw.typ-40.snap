@@ -118,9 +118,8 @@ snapshot_kind: text
         cetz
           .draw
           .set-style(
-            stroke: (
-              DEBUG_COLOR2 + 0.25pt
-            ),
+            stroke: DEBUG_COLOR2
+              + 0.25pt,
             fill: none,
           )
         (node.shape)(node, node.outset)
@@ -211,9 +210,8 @@ snapshot_kind: text
         },
       ),
       angle: edge.label-angle,
-      anchor: if (
-        edge.label-anchor != auto
-      ) { edge.label-anchor },
+      anchor: if edge.label-anchor
+        != auto { edge.label-anchor },
     )
 
   if debug >= 2 {
@@ -282,18 +280,14 @@ snapshot_kind: text
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
   decor = decor.with(
-    start: (
-      if has-mark-at(0) { 0.1 } else {
-        ε
-      }
-        * 100%
-    ),
-    stop: (
-      if has-mark-at(1) { 0.9 } else {
-        1 - ε
-      }
-        * 100%
-    ),
+    start: if has-mark-at(0) {
+      0.1
+    } else { ε }
+      * 100%,
+    stop: if has-mark-at(1) {
+      0.9
+    } else { 1 - ε }
+      * 100%,
   )
 
   decor(path)
@@ -642,9 +636,8 @@ snapshot_kind: text
 
       if i > 0 {
         // offset start of segment to give space for previous arc
-        let (line-shift,) = rounded-corners.at((
-          i - 1
-        ))
+        let (line-shift,) = rounded-corners.at(i
+          - 1)
         from = vector.add(
           from,
           vector-polar(
@@ -698,9 +691,8 @@ snapshot_kind: text
                   .draw
                   .circle(
                     arc-center,
-                    radius: (
-                      arc-radius - d
-                    ),
+                    radius: arc-radius
+                      - d,
                     stroke: debug-stroke,
                   ),
               )
