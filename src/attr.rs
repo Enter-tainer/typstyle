@@ -7,6 +7,7 @@ use typst_syntax::{
 
 use crate::ext::StrExt;
 
+#[derive(Clone, Copy)]
 struct State {
     is_math: bool,
 }
@@ -83,26 +84,20 @@ impl AttrStore {
         self.compute_multiline_impl(root);
     }
 
-    fn compute_multiline_impl(&mut self, node: &SyntaxNode) {
-        if self.is_multiline(node) {
-            return;
-        }
-        if node.children().count() == 0 {
-            return;
-        }
-        if node
+    fn compute_multiline_impl(&mut self, node: &SyntaxNode) -> bool {
+        let mut is_multiline = node
             .cast_first_match::<Space>()
-            .is_some_and(|space| space.to_untyped().text().has_linebreak())
-        {
-            self.set_multiline(node);
+            .is_some_and(|space| space.to_untyped().text().has_linebreak());
+        if is_multiline {
             self.set_multiline_flavor(node);
         }
         for child in node.children() {
-            self.compute_multiline_impl(child);
-            if self.is_multiline(child) {
-                self.set_multiline(node);
-            }
+            is_multiline |= self.compute_multiline_impl(child);
         }
+        if is_multiline {
+            self.set_multiline(node);
+        }
+        is_multiline
     }
 
     fn set_multiline(&mut self, node: &SyntaxNode) {
@@ -117,59 +112,59 @@ impl AttrStore {
     }
 
     fn compute_no_format(&mut self, root: &SyntaxNode) {
-        let mut state = State { is_math: false };
-        self.compute_no_format_impl(root, &mut state);
+        self.compute_no_format_impl(root, State { is_math: false });
     }
 
-    fn compute_no_format_impl(&mut self, node: &SyntaxNode, state: &mut State) {
-        if self.is_format_disabled(node) {
+    fn compute_no_format_impl(&mut self, node: &SyntaxNode, state: State) {
+        let state = if node.is::<Math>() {
+            State { is_math: true }
+        } else {
+            state
+        };
+
+        // no format multiline single backtick raw block
+        if node
+            .cast::<Raw>()
+            .is_some_and(|raw| !raw.block() && raw.lines().count() > 1)
+        {
+            self.set_format_disabled(node);
             return;
         }
-        let mut format_disabled = false;
-        let original_is_math = state.is_math;
-        if node.is::<Math>() {
-            state.is_math = true;
+        // no format args in math blocks
+        if node.kind() == SyntaxKind::Args && state.is_math {
+            self.set_format_disabled(node);
+            return;
         }
 
+        let mut disable_next = false;
+        let mut commented = false;
         for child in node.children() {
             let child_kind = child.kind();
             if child_kind == SyntaxKind::LineComment || child_kind == SyntaxKind::BlockComment {
-                self.set_commented(node);
+                commented = true;
                 // @typstyle off affects the whole next block
                 if child.text().contains("@typstyle off") {
-                    format_disabled = true;
+                    disable_next = true;
                     self.set_format_disabled(child);
                 }
                 continue;
             }
-            // no format multiline single backtick raw block
-            if let Some(raw) = child.cast::<Raw>() {
-                if !raw.block() && raw.lines().count() > 1 {
-                    self.set_format_disabled(child);
-                }
+            // no format nodes with @typstyle off
+            if child_kind != SyntaxKind::Space && disable_next {
+                self.set_format_disabled(child);
+                disable_next = false;
+                continue;
             }
             // no format hash related nodes in math blocks
             if child_kind == SyntaxKind::Hash && state.is_math {
                 self.set_format_disabled(node);
                 break;
             }
-            // no format args in math blocks
-            if child.is::<Args>() && state.is_math {
-                self.set_format_disabled(child);
-                continue;
-            }
-            if child.children().count() == 0 {
-                continue;
-            }
-            // no format nodes with @typstyle off
-            if format_disabled {
-                self.set_format_disabled(child);
-                format_disabled = false;
-                continue;
-            }
             self.compute_no_format_impl(child, state);
         }
-        state.is_math = original_is_math;
+        if commented {
+            self.set_commented(node);
+        }
     }
 
     fn set_format_disabled(&mut self, node: &SyntaxNode) {
