@@ -26,7 +26,6 @@ use itertools::Itertools;
 use mode::Mode;
 use pretty::{Arena, DocAllocator, DocBuilder};
 use typst_syntax::{ast::*, Source, SyntaxKind, SyntaxNode};
-use util::is_comment_node;
 
 use crate::{ext::StrExt, AttrStore};
 use style::FoldStyle;
@@ -67,86 +66,6 @@ impl<'a> PrettyPrinter<'a> {
 }
 
 impl<'a> PrettyPrinter<'a> {
-    pub fn convert_markup(&'a self, root: Markup<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::Markup);
-        let mut doc = self.arena.nil();
-        #[derive(Debug, Default)]
-        struct Line<'a> {
-            has_text: bool,
-            nodes: Vec<&'a SyntaxNode>,
-        }
-        // break markup into lines, split by stmt, parbreak, newline, multiline raw,
-        // equation if a line contains text, it will be skipped by the formatter
-        // to keep the original format
-        let lines = {
-            let mut lines: Vec<Line> = vec![];
-            let mut current_line = Line {
-                has_text: false,
-                nodes: vec![],
-            };
-            for node in root.to_untyped().children() {
-                let mut break_line = false;
-                if let Some(space) = node.cast::<Space>() {
-                    if space.to_untyped().text().has_linebreak() {
-                        break_line = true;
-                    }
-                } else if let Some(pb) = node.cast::<Parbreak>() {
-                    if pb.to_untyped().text().has_linebreak() {
-                        break_line = true;
-                    }
-                } else if node.kind().is_stmt() {
-                    break_line = true;
-                } else if let Some(expr) = node.cast::<Expr>() {
-                    match expr {
-                        Expr::Text(_) => current_line.has_text = true,
-                        Expr::Raw(r) => {
-                            if r.block() {
-                                break_line = true;
-                            } else {
-                                current_line.has_text = true;
-                            }
-                        }
-                        Expr::Strong(_) | Expr::Emph(_) => current_line.has_text = true,
-                        Expr::Code(_) => break_line = true,
-                        Expr::Equation(e) if e.block() => break_line = true,
-                        _ => (),
-                    }
-                }
-                current_line.nodes.push(node);
-                if break_line {
-                    lines.push(current_line);
-                    current_line = Line::default();
-                }
-            }
-            if !current_line.nodes.is_empty() {
-                lines.push(current_line);
-            }
-            lines
-        };
-        for Line { has_text, nodes } in lines {
-            for node in nodes {
-                if let Some(space) = node.cast::<Space>() {
-                    doc += self.convert_space(space);
-                    continue;
-                }
-                if let Some(pb) = node.cast::<Parbreak>() {
-                    doc += self.convert_parbreak(pb);
-                    continue;
-                }
-                if has_text {
-                    doc += self.format_disabled(node);
-                } else if let Some(expr) = node.cast::<Expr>() {
-                    doc += self.convert_expr(expr);
-                } else if is_comment_node(node) {
-                    doc += self.convert_comment(node);
-                } else {
-                    doc += trivia_prefix(&self.arena, node);
-                }
-            }
-        }
-        doc
-    }
-
     fn check_disabled(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
         if self.attr_store.is_format_disabled(node) {
             Some(self.format_disabled(node))
@@ -551,7 +470,7 @@ fn trivia<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
     to_doc(arena, node.text(), StripMode::None)
 }
 
-fn trivia_prefix<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+fn trivia_strip_prefix<'a>(arena: &'a Arena<'a>, node: &'a SyntaxNode) -> ArenaDoc<'a> {
     to_doc(arena, node.text(), StripMode::Prefix)
 }
 
