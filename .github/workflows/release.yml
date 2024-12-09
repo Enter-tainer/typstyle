@@ -182,7 +182,7 @@ jobs:
         - /usr/local/cargo/registry:/usr/local/cargo/registry
     env:
       RUST_TARGET: x86_64-unknown-linux-musl
-      RUSTFLAGS: "-C link-arg=-fuse-ld=lld -C target-feature=-crt-static"
+      RUSTFLAGS: "-C target-feature=+crt-static"
     steps:
       - name: Install dependencies
         run: apk add --no-cache git clang lld musl-dev nodejs npm yarn binutils
