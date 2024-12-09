@@ -341,7 +341,8 @@ Marks are arrow tips that can be added to the end of path based elements that su
                 [],
               ),
             )
-            .join([, ]),
+            .join([,
+            ]),
           cetz.canvas(
             cetz
               .draw
@@ -389,7 +390,8 @@ line(..c)
     "array",
     "dictionary",
   ),
-  [This option sets the mark to draw when using the `mark` draw function, or applies styling to both mark ends of path based elements. The mark's name or shorthand can be given, multiple marks can be drawn by passing an array of names or shorthands. When `none` no marks will be drawn. A style `dictionary` can be given instead of a `string` to override styling for that particular mark, just make sure to still give the mark name using the `symbol` key otherwise nothing will be drawn!. ],
+  [This option sets the mark to draw when using the `mark` draw function, or applies styling to both mark ends of path based elements. The mark's name or shorthand can be given, multiple marks can be drawn by passing an array of names or shorthands. When `none` no marks will be drawn. A style `dictionary` can be given instead of a `string` to override styling for that particular mark, just make sure to still give the mark name using the `symbol` key otherwise nothing will be drawn!.
+  ],
 )
 #doc-style.show-parameter-block(
   "start",

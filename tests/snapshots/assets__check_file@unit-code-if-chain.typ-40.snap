@@ -10,16 +10,15 @@ snapshot_kind: text
   (true, false)
 } else { none }
 
-#if a < b { true } else if (
-  c < d
-) [ false ] else if (
-  1 + 2 == 3
-) [*strong*] else { none }
+#if a < b { true } else if c < d [
+  false
+] else if 1 + 2 == 3 [*strong*] else {
+  none
+}
 
 #if a < b { true } else if c < d [
-  false ] else if (
-  1 + 2 == 3
-) [*strong*] else {
+  false
+] else if 1 + 2 == 3 [*strong*] else {
   none
 }
 
@@ -37,16 +36,15 @@ snapshot_kind: text
     (true, false)
   } else { none }
 
-  if a < b { true } else if (
-    c < d
-  ) [ false ] else if (
-    1 + 2 == 3
-  ) [*strong*] else { none }
+  if a < b { true } else if c < d [
+    false
+  ] else if 1 + 2 == 3 [*strong*] else {
+    none
+  }
 
   if a < b { true } else if c < d [
-    false ] else if (
-    1 + 2 == 3
-  ) [*strong*] else {
+    false
+  ] else if 1 + 2 == 3 [*strong*] else {
     none
   }
 
@@ -72,7 +70,8 @@ snapshot_kind: text
   true
   false
 } else if c < d [
-  false ] else if (
+  false
+] else if (
   1 + 2 == 3
 ) [*strong*] else if false {
   if 0 < 1 { true }
