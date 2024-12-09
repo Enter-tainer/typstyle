@@ -1,0 +1,19 @@
+---
+source: tests/assets.rs
+expression: doc_string
+input_file: tests/assets/unit/markup/strong-multiline.typ
+snapshot_kind: text
+---
+*11111
+111*
+
+* 11111
+111 *
+
+*22222
+222
+*
+
+* #text( fill:   red)[555]
+aaaaa
+*

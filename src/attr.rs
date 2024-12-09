@@ -1,7 +1,7 @@
 use rustc_hash::FxHashMap;
 
 use typst_syntax::{
-    ast::{Args, AstNode, Math, Raw, Space},
+    ast::{Args, AstNode, Math, Raw},
     Span, SyntaxKind, SyntaxNode,
 };
 
@@ -85,13 +85,19 @@ impl AttrStore {
     }
 
     fn compute_multiline_impl(&mut self, node: &SyntaxNode) -> bool {
-        let mut is_multiline = node
-            .cast_first_match::<Space>()
-            .is_some_and(|space| space.to_untyped().text().has_linebreak());
-        if is_multiline {
-            self.set_multiline_flavor(node);
-        }
+        let mut is_multiline = false;
+        let mut seen_space = false;
         for child in node.children() {
+            if child.kind() == SyntaxKind::Space {
+                if child.text().has_linebreak() {
+                    is_multiline = true;
+                    if !seen_space {
+                        // Decide multiline flavor based on the first space
+                        self.set_multiline_flavor(node);
+                    }
+                }
+                seen_space = true;
+            }
             is_multiline |= self.compute_multiline_impl(child);
         }
         if is_multiline {
