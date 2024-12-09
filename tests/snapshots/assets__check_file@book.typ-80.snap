@@ -2,6 +2,7 @@
 source: tests/assets.rs
 expression: doc_string
 input_file: tests/assets/book.typ
+snapshot_kind: text
 ---
 // #import "@preview/book:0.2.2": *
 
@@ -14,7 +15,8 @@ input_file: tests/assets/book.typ
   repository-edit: "https://github.com/Myriad-Dreamin/typst-book/edit/main/github-pages/docs/{path}",
   authors: ("Myriad-Dreamin", "7mile"),
   language: "en",
-  summary: [ // begin of summary
+  summary: [
+    // begin of summary
     #prefix-chapter("introduction.typ")[Introduction]
     = User Guide
     - #chapter("guide/installation.typ", section: "1")[Installation]

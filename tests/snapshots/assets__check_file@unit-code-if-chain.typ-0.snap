@@ -37,7 +37,9 @@ snapshot_kind: text
 } else if (
   c
     < d
-) [ false ] else if (
+) [
+  false
+] else if (
   1
     + 2
     == 3
@@ -54,7 +56,8 @@ snapshot_kind: text
   c
     < d
 ) [
-  false ] else if (
+  false
+] else if (
   1
     + 2
     == 3
@@ -70,7 +73,9 @@ snapshot_kind: text
 } else if (
   c
     < d
-) [ false ] else if (
+) [
+  false
+] else if (
   1
     + 2
     == 3
@@ -113,7 +118,9 @@ snapshot_kind: text
   } else if (
     c
       < d
-  ) [ false ] else if (
+  ) [
+    false
+  ] else if (
     1
       + 2
       == 3
@@ -130,7 +137,8 @@ snapshot_kind: text
     c
       < d
   ) [
-    false ] else if (
+    false
+  ] else if (
     1
       + 2
       == 3
@@ -146,7 +154,9 @@ snapshot_kind: text
   } else if (
     c
       < d
-  ) [ false ] else if (
+  ) [
+    false
+  ] else if (
     1
       + 2
       == 3
@@ -165,7 +175,9 @@ snapshot_kind: text
 } else if (
   c
     < d
-) [ false ] else if (
+) [
+  false
+] else if (
   1
     + 2
     == 3
@@ -184,7 +196,8 @@ snapshot_kind: text
   c
     < d
 ) [
-  false ] else if (
+  false
+] else if (
   1
     + 2
     == 3
