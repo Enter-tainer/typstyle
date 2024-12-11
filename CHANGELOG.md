@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.12.10 - [2024-12-12]
+
+- Fix: musl build is now statically linked. This fixes the issue that the musl build doesn't work on systems other than alpine.
+- Typstyle now break content blocks into multiple lines if they have leading spaces and trailing spaces.
+
+For example, the following code is not formattable by typstyle previously:
+```typst
+#{
+  let res = if true [ The Result is definitely true. And it is a very long sentence that needs to be broken into multiple lines. ] else [ The Result is definitely false. And it is a very long sentence that needs to be broken into multiple lines. ]
+}
+```
+
+Now it will be formatted as:
+```typst
+#{
+  let res = if true [
+    The Result is definitely true. And it is a very long sentence that needs to be broken into multiple lines.
+  ] else [
+    The Result is definitely false. And it is a very long sentence that needs to be broken into multiple lines.
+  ]
+}
+```
+
 ## v0.12.9 - [2024-12-08]
 
 - Typstyle no longer force single arg function call to be in a single line. Instead, it is determined in a smarter way. And this fixes https://github.com/Enter-tainer/typstyle/issues/143.
