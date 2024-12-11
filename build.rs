@@ -1,15 +1,33 @@
 use anyhow::Result;
-use vergen::EmitBuilder;
 
 fn main() -> Result<()> {
-    // Emit the instructions
-    let mut builder = EmitBuilder::builder();
-
-    builder.all_cargo().build_timestamp().all_rustc();
-
+    let build = vergen::BuildBuilder::default()
+        .build_timestamp(true)
+        .build()?;
+    let cargo = vergen::CargoBuilder::all_cargo()?;
+    let rustc = vergen::RustcBuilder::default()
+        .commit_hash(true)
+        .semver(true)
+        .host_triple(true)
+        .channel(true)
+        .llvm_version(true)
+        .build()?;
     #[cfg(feature = "git-info")]
-    builder.git_sha(false).git_describe(true, true, None);
+    let gitcl = vergen_gitcl::GitclBuilder::default()
+        .sha(false)
+        .describe(true, true, None)
+        .build()?;
 
-    builder.emit()?;
+    // Emit the instructions
+    let mut emitter = vergen::Emitter::default();
+    emitter
+        .add_instructions(&build)?
+        .add_instructions(&cargo)?
+        .add_instructions(&rustc)?;
+    #[cfg(feature = "git-info")]
+    emitter.add_instructions(&gitcl)?;
+
+    emitter.emit()?;
+
     Ok(())
 }
