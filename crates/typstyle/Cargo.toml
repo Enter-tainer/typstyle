@@ -1,0 +1,37 @@
+[package]
+name = "typstyle"
+description = "The CLI for Typstyle."
+authors.workspace = true
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "typstyle"
+test = false
+doctest = false
+bench = false
+doc = false
+
+[dependencies]
+typstyle-core.workspace = true
+
+typst-syntax.workspace = true
+
+anyhow.workspace = true
+clap.workspace = true
+clap_complete = { workspace = true, optional = true}
+walkdir.workspace = true
+
+[build-dependencies]
+anyhow.workspace = true
+vergen.workspace = true
+vergen-gitcl = { workspace = true, optional = true}
+
+[features]
+default = ["git-info", "completion"]
+git-info = ["vergen-gitcl"]
+completion = ["clap_complete"]

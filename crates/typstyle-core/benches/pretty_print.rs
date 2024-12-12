@@ -2,8 +2,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::fs;
 use std::time::Duration;
 use typst_syntax::Source;
-use typstyle_core::attr::AttrStore;
-use typstyle_core::Typstyle;
+use typstyle_core::{attr::AttrStore, Typstyle};
 
 fn bench_attrs(c: &mut Criterion, id: &str, path: &str) {
     c.bench_function(id, |b| {
@@ -42,7 +41,7 @@ fn benchmark_attrs(c: &mut Criterion) {
         bench_attrs(
             c,
             &format!("attrs-{name}"),
-            &format!("tests/assets/{name}.typ"),
+            &format!("../../tests/assets/{name}.typ"),
         );
     }
 }
@@ -52,7 +51,7 @@ fn benchmark_pretty(c: &mut Criterion) {
         bench_pretty(
             c,
             &format!("pretty-{name}"),
-            &format!("tests/assets/{name}.typ"),
+            &format!("../../tests/assets/{name}.typ"),
         );
     }
 }

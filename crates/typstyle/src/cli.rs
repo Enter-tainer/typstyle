@@ -1,10 +1,10 @@
 use std::{
     path::PathBuf,
     process::{ExitCode, Termination},
+    sync::LazyLock,
 };
 
 use clap::{Parser, Subcommand};
-use once_cell::sync::Lazy;
 
 #[derive(Debug, Clone, Parser)]
 #[clap(name = "typstyle", author, version, about, long_version(LONG_VERSION.as_str()))]
@@ -61,7 +61,7 @@ impl Termination for CliResults {
 }
 
 static NONE: &str = "None";
-static LONG_VERSION: Lazy<String> = Lazy::new(|| {
+static LONG_VERSION: LazyLock<String> = LazyLock::new(|| {
     format!(
         "
 Version:             {}

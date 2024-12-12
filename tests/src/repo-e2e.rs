@@ -181,7 +181,7 @@ fn run_test_case(testcase: Testcase) -> anyhow::Result<()> {
     clone_test_case(&testcase)?;
     compile_and_format_test_case(&testcase)?;
     let testcase_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/e2e")
+        .join("e2e")
         .join(&*testcase.name);
     let _ = fs::remove_dir_all(testcase_dir);
     Ok(())
@@ -192,7 +192,7 @@ fn clone_test_case(testcase: &Testcase) -> anyhow::Result<()> {
     // checkout the revision
     let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
     // do mkdir -p project_root/tests/e2e
-    let e2e_dir = project_root.join("tests/e2e");
+    let e2e_dir = project_root.join("e2e");
     let testcase_dir = e2e_dir.join(&*testcase.name);
     let _ = fs::create_dir_all(&e2e_dir);
     // clean the testcase_dir
@@ -217,7 +217,7 @@ fn clone_test_case(testcase: &Testcase) -> anyhow::Result<()> {
 
 fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
     let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let e2e_dir = project_root.join("tests/e2e");
+    let e2e_dir = project_root.join("e2e");
     let testcase_dir = e2e_dir.join(&*testcase.name);
     let entrypoint = testcase_dir.join(&*testcase.entrypoint);
     let root = if cfg!(windows) {

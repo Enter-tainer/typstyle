@@ -1,105 +1,62 @@
-[package]
-name = "typstyle"
+[workspace]
+resolver = "2"
+members = ["crates/*", "tests"]
+default-members = ["crates/typstyle"]
+
+[workspace.package]
 version = "0.12.10"
+rust-version = "1.80"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
-license = "Apache-2.0"
 description = "Beautiful and reliable typst code formatter"
+license = "Apache-2.0"
 repository = "https://github.com/Enter-tainer/typstyle"
 homepage = "https://enter-tainer.github.io/typstyle/"
 
-include = [
-  "src/**/*.rs",
-  "/LICENSE",
-  "/README.md",
-  "build.rs",
-  "tests/assets.rs",
-  "tests/repo-e2e.rs",
-]
+[workspace.dependencies]
+typstyle-core = { path = "crates/typstyle-core" }
+typstyle = { path = "crates/typstyle" }
 
-[[bin]]
-name = "typstyle"
-path = "src/main.rs"
-required-features = ["cli"]
-test = false
-doctest = false
-bench = false
-doc = false
+# Used in core
+typst-syntax = "0.12.0"
 
-[lib]
-name = "typstyle_core"
-path = "src/lib.rs"
-crate-type = ["cdylib", "lib"]
-bench = false
-
-[dependencies]
 itertools = "0.13.0"
 pretty = "0.12.3"
 rustc-hash = "2.0"
-typst-syntax = "0.12.0"
 
+# Use in CLI
 anyhow = "1"
 ecow = "0.2.3"
-once_cell = { version = "1.20.2", optional = true }
-wasm-bindgen = { version = "0.2", optional = true }
-clap = { version = "4.5.20", features = ["derive", "env"], optional = true }
-walkdir = { version = "2", optional = true }
-clap_complete = { version = "4.5.36", optional = true }
+wasm-bindgen = { version = "0.2" }
+clap = { version = "4.5.20", features = ["derive", "env"] }
+walkdir = { version = "2" }
+clap_complete = { version = "4.5.36" }
 
-[dev-dependencies]
+# Used in tests
 insta = { version = "1.41.1" }
 libtest-mimic = "0.8.1"
 pathdiff = "0.2.2"
 pretty_assertions = "1.4.1"
-walkdir = "2"
-reflexo = { version = "0.5.0", default-features = false, features = ["typst"] }
-reflexo-typst-shim = { version = "0.5.0", default-features = false, features = [
-] }
-reflexo-world = { version = "0.5.0", default-features = false, features = [
-  "system",
-] }
-reflexo-vfs = { version = "0.5.0", default-features = false, features = [
-  "system",
-] }
-reflexo-typst = { version = "0.5.0", default-features = false, features = [
-  "system",
-  "no-content-hint",
-] }
+# reflexo-typst-shim = { version = "0.5.0", default-features = false, features = [] }
+reflexo-world = { version = "0.5.0", default-features = false, features = ["system"] }
+# reflexo-vfs = { version = "0.5.0", default-features = false, features = ["system"] }
+reflexo-typst = { version = "0.5.0", default-features = false, features = ["system", "no-content-hint"] }
+# reflexo = { version = "0.5.0", default-features = false, features = ["typst"] }
 typst-assets = { version = "0.12.0", features = ["fonts"] }
 typst-render = "0.12.0"
 typst-pdf = "0.12.0"
 typst = "0.12.0"
 
+# Used in benchmark
 criterion = { version = "0.5" }
 
-[[bench]]
-name = "pretty_print"
-harness = false
-
-[build-dependencies]
-anyhow = "1"
+# Build
 vergen = { version = "9.0", features = ["build", "cargo", "rustc"] }
-vergen-gitcl = { version = "1.0", optional = true }
+vergen-gitcl = { version = "1.0" }
 
 [profile.dev.package]
 insta.opt-level = 3
 similar.opt-level = 3
-
-[[test]]
-name = "assets"
-harness = false
-
-[[test]]
-name = "repo-e2e"
-harness = false
-
-[features]
-
-default = ["cli", "wasm", "git-info", "completion"]
-cli = ["clap", "once_cell", "walkdir"]
-wasm = ["wasm-bindgen"]
-git-info = ["vergen-gitcl"]
-completion = ["cli", "dep:clap_complete"]
 
 [profile.test]
 opt-level = 3

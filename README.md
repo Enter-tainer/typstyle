@@ -13,7 +13,7 @@
 3. Install using [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall): `cargo binstall typstyle`
 4. Install it using cargo: `cargo install typstyle --locked`
 
-Usage: 
+Usage:
 ```txt
 Beautiful and reliable typst code formatter
 
@@ -114,7 +114,7 @@ We have set up multiple tests:
 3. Correctness test: We compare the rendered output of the code before and after formatting and ensure they are the same
 4. E2E Correctness test: We collect a bunch of typst code repo including tablex, cetz, fletcher... and format them to ensure (a) the format result converges and (b) the rendered output is the same.
 
-We also have continuous benchmarking for each commit on master branch. See https://enter-tainer.github.io/typstyle-bench-results/dev/bench/
+We also have continuous benchmarking for each commit on master branch. See <https://enter-tainer.github.io/typstyle-bench-results/dev/bench/>.
 
 ## Use as a library
 

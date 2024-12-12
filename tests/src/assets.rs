@@ -123,9 +123,7 @@ fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
     // We recursively look for `.typ` files, starting from the current
     // directory.
     let mut tests = Vec::new();
-    let current_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests")
-        .join("assets");
+    let current_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("assets");
     visit_dir(&current_dir, &mut tests)?;
 
     Ok(tests)
@@ -147,17 +145,14 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
     let content = remove_crlf(content);
-    let rel_path = pathdiff::diff_paths(
-        path,
-        env::current_dir().unwrap().join("tests").join("assets"),
-    )
-    .unwrap();
+    let rel_path = pathdiff::diff_paths(path, env::current_dir().unwrap().join("assets")).unwrap();
     let doc_string = Typstyle::new_with_content(content, width).pretty_print();
     let replaced_path = rel_path
         .to_str()
         .unwrap()
         .replace(std::path::MAIN_SEPARATOR, "-");
     insta::with_settings!({
+        snapshot_path => env::current_dir().unwrap().join("snapshots"),
         snapshot_suffix => format!("{}-{width}", replaced_path),
         input_file => path,
     }, {
