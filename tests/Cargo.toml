@@ -1,0 +1,38 @@
+[package]
+name = "typstyle-tests"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+publish = false
+
+[[test]]
+name = "assets"
+path = "src/assets.rs"
+harness = false
+
+[[test]]
+name = "repo-e2e"
+path = "src/repo-e2e.rs"
+harness = false
+
+[features]
+
+[dependencies]
+typstyle-core.workspace = true
+
+anyhow.workspace = true
+ecow.workspace = true
+itertools.workspace = true
+walkdir.workspace = true
+
+insta = { workspace = true }
+libtest-mimic.workspace = true
+pathdiff.workspace = true
+pretty_assertions.workspace = true
+reflexo-world = { workspace = true }
+reflexo-typst = { workspace = true }
+typst-assets = { workspace = true }
+typst-render = { workspace = true }
+typst-pdf = { workspace = true }
+typst = { workspace = true }

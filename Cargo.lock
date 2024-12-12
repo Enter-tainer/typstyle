@@ -2618,9 +2618,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.5.7"
+version = "0.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b6dfecf2c74bce2466cabf93f6664d6998a69eb21e39f4207930065b27b771f"
+checksum = "03a862b389f93e68874fbf580b9de08dd02facb9a788ebadaf4a3fd33cf58834"
 dependencies = [
  "bitflags 2.6.0",
 ]
@@ -4023,30 +4023,46 @@ dependencies = [
  "anyhow",
  "clap",
  "clap_complete",
+ "typst-syntax",
+ "typstyle-core",
+ "vergen",
+ "vergen-gitcl",
+ "walkdir",
+]
+
+[[package]]
+name = "typstyle-core"
+version = "0.12.10"
+dependencies = [
  "criterion",
  "ecow",
  "insta",
  "itertools 0.13.0",
- "libtest-mimic",
- "once_cell",
- "pathdiff",
  "pretty",
- "pretty_assertions",
- "reflexo",
- "reflexo-typst",
- "reflexo-typst-shim",
- "reflexo-vfs",
- "reflexo-world",
  "rustc-hash",
+ "typst-syntax",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "typstyle-tests"
+version = "0.12.10"
+dependencies = [
+ "anyhow",
+ "ecow",
+ "insta",
+ "itertools 0.13.0",
+ "libtest-mimic",
+ "pathdiff",
+ "pretty_assertions",
+ "reflexo-typst",
+ "reflexo-world",
  "typst",
  "typst-assets",
  "typst-pdf",
  "typst-render",
- "typst-syntax",
- "vergen",
- "vergen-gitcl",
+ "typstyle-core",
  "walkdir",
- "wasm-bindgen",
 ]
 
 [[package]]
