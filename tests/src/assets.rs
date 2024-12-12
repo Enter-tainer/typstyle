@@ -1,5 +1,6 @@
-use libtest_mimic::{Failed, Trial};
 use std::{env, error::Error, ffi::OsStr, fs, path::Path};
+
+use libtest_mimic::{Failed, Trial};
 use typstyle_core::Typstyle;
 
 /// Creates one test for each `.typ` file in the current directory or
@@ -33,35 +34,37 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
         for entry in fs::read_dir(path)? {
             let entry = entry?;
             let file_type = entry.file_type()?;
-
-            // Handle files
             let path = entry.path();
-            if file_type.is_file() {
-                if path.extension() == Some(OsStr::new("typ")) {
-                    let name = path
-                        .strip_prefix(env::current_dir()?)?
-                        .display()
-                        .to_string();
 
-                    tests.extend([
-                        make_test(&path, &name, 0),
-                        make_test(&path, &name, 40),
-                        make_test(&path, &name, 80),
-                        make_test(&path, &name, 120),
-                        make_convergence_test(&path, &name, 0),
-                        make_convergence_test(&path, &name, 40),
-                        make_convergence_test(&path, &name, 80),
-                    ]);
-                    #[cfg(feature = "consistency")]
-                    tests.extend([
-                        make_consistency_test(&path, &name, 0),
-                        make_consistency_test(&path, &name, 40),
-                        make_consistency_test(&path, &name, 80),
-                    ]);
-                }
-            } else if file_type.is_dir() {
+            if file_type.is_dir() {
                 // Handle directories
                 visit_dir(&path, tests)?;
+                continue;
+            } else if !file_type.is_file() {
+                continue;
+            }
+            // Handle files
+            if path.extension() == Some(OsStr::new("typ")) {
+                let name = path
+                    .strip_prefix(env::current_dir()?)?
+                    .display()
+                    .to_string();
+
+                tests.extend([
+                    make_test(&path, &name, 0),
+                    make_test(&path, &name, 40),
+                    make_test(&path, &name, 80),
+                    make_test(&path, &name, 120),
+                    make_convergence_test(&path, &name, 0),
+                    make_convergence_test(&path, &name, 40),
+                    make_convergence_test(&path, &name, 80),
+                ]);
+                #[cfg(feature = "consistency")]
+                tests.extend([
+                    make_consistency_test(&path, &name, 0),
+                    make_consistency_test(&path, &name, 40),
+                    make_consistency_test(&path, &name, 80),
+                ]);
             }
         }
 
@@ -87,12 +90,8 @@ fn remove_crlf(content: String) -> String {
 
 /// Performs a couple of tidy tests.
 fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
-    let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
+    let content = read_content(path)?;
 
-    // Check that the file is valid UTF-8
-    let content = String::from_utf8(content)
-        .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
-    let content = remove_crlf(content);
     let rel_path = pathdiff::diff_paths(path, env::current_dir().unwrap().join("assets")).unwrap();
     let doc_string = Typstyle::new_with_content(content, width).pretty_print();
     let replaced_path = rel_path
@@ -111,12 +110,8 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
 }
 
 fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
-    let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
+    let content = read_content(path)?;
 
-    // Check that the file is valid UTF-8
-    let content = String::from_utf8(content)
-        .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
-    let content = remove_crlf(content);
     let first_pass = Typstyle::new_with_content(content, width).pretty_print();
     let second_pass = Typstyle::new_with_content(first_pass.clone(), width).pretty_print();
     pretty_assertions::assert_str_eq!(
@@ -129,21 +124,29 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
 
 #[cfg(feature = "consistency")]
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
-    use typstyle_consistency::{
-        cmp::compare_docs,
-        compile::{compile_universe, make_universe},
-    };
+    use typstyle_consistency::{cmp::compare_docs, universe::make_universe};
 
+    let content = read_content(path)?;
+
+    let formatted_src = Typstyle::new_with_content(content.clone(), width).pretty_print();
+
+    compare_docs(
+        "",
+        make_universe(&content)?,
+        make_universe(&formatted_src)?,
+        false,
+    )?;
+
+    Ok(())
+}
+
+fn read_content(path: &Path) -> Result<String, Failed> {
     let content = fs::read(path).map_err(|e| format!("Cannot read file: {e}"))?;
+
     // Check that the file is valid UTF-8
     let content = String::from_utf8(content)
         .map_err(|_| "The file's contents are not a valid UTF-8 string!")?;
     let content = remove_crlf(content);
-    let formatted_src = Typstyle::new_with_content(content.clone(), width).pretty_print();
 
-    let doc = compile_universe(make_universe(&content)?).0;
-    let formatted_doc = compile_universe(make_universe(&formatted_src)?).0;
-    compare_docs(doc, formatted_doc)?;
-
-    Ok(())
+    Ok(content)
 }
