@@ -1,35 +1,13 @@
-use std::{
-    borrow::Cow,
-    collections::HashSet,
-    env, fs,
-    marker::PhantomData,
-    path::{Path, PathBuf},
-    sync::Arc,
-};
+use std::{borrow::Cow, collections::HashSet, fs, path::Path};
 
-use anyhow::{bail, Context};
-use ecow::EcoVec;
-use itertools::Itertools;
-use libtest_mimic::{Arguments, Failed, Trial};
-use reflexo_typst::{error::diag_from_std, CompileDriver};
-use reflexo_world::{
-    config::CompileOpts, CompilerUniverse, EntryOpts, ShadowApi, TypstSystemUniverse,
+use anyhow::Context;
+use libtest_mimic::{Failed, Trial};
+
+use typstyle_consistency::{
+    cmp::compare_docs_full,
+    compile::{compile_universe, make_universe_formatted},
 };
-use typst::{
-    diag::SourceDiagnostic,
-    foundations::Smart::{Auto, Custom},
-    layout::Page,
-    model::Document,
-    World,
-};
-use typst_pdf::{PdfOptions, PdfStandards};
 use typstyle_core::Typstyle;
-
-fn main() -> anyhow::Result<()> {
-    let args = Arguments::from_args();
-    let tests = collect_tests()?;
-    libtest_mimic::run(&args, tests).exit();
-}
 
 #[derive(Debug, Clone)]
 struct Testcase {
@@ -37,6 +15,7 @@ struct Testcase {
     repo_url: Cow<'static, str>,
     revision: Cow<'static, str>,
     entrypoint: Cow<'static, str>,
+    // these files are included as-is and should not be formatted
     blacklist: HashSet<String>,
 }
 
@@ -56,13 +35,13 @@ impl Testcase {
         }
     }
 
-    fn with_blacklist(mut self, blacklist: impl Iterator<Item = impl Into<String>>) -> Self {
-        self.blacklist = blacklist.map(Into::into).collect();
+    fn with_blacklist(mut self, blacklist: impl IntoIterator<Item = impl Into<String>>) -> Self {
+        self.blacklist = blacklist.into_iter().map(Into::into).collect();
         self
     }
 }
 
-fn collect_tests() -> anyhow::Result<Vec<Trial>> {
+pub(super) fn collect_tests() -> Vec<Trial> {
     let cases = [
         Testcase::new(
             "tutorial",
@@ -94,7 +73,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "742a0c614c0163dee557b101fb8e4e4063d51fd3",
             "main.typ",
         )
-        .with_blacklist(["chicv.typ"].into_iter()),
+        .with_blacklist(["chicv.typ"]),
         Testcase::new(
             "touying-example",
             "https://github.com/touying-typ/touying",
@@ -114,7 +93,7 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "docs/manual.typ",
         )
         // tidy has weird behavior when parsing typ source code
-        .with_blacklist(["main.typ", "marks.typ"].into_iter()),
+        .with_blacklist(["main.typ", "marks.typ"]),
         Testcase::new(
             "nju-thesis-typst",
             "https://github.com/nju-lug/nju-thesis-typst",
@@ -139,21 +118,17 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "3cd5f656c3c6845e267621d1d118d6c8f7731f37",
             "docs/guide/quill-guide.typ",
         )
-        // these files are included as-is and should not be formatted
-        .with_blacklist(
-            [
-                "shor-nine-qubit-code.typ",
-                "teleportation.typ",
-                "phase-estimation.typ",
-                "qft.typ",
-                "fault-tolerant-measurement.typ",
-                "fault-tolerant-pi8.typ",
-                "fault-tolerant-toffoli1.typ",
-                "fault-tolerant-toffoli2.typ",
-                "quill-guide.typ",
-            ]
-            .into_iter(),
-        ),
+        .with_blacklist([
+            "shor-nine-qubit-code.typ",
+            "teleportation.typ",
+            "phase-estimation.typ",
+            "qft.typ",
+            "fault-tolerant-measurement.typ",
+            "fault-tolerant-pi8.typ",
+            "fault-tolerant-toffoli1.typ",
+            "fault-tolerant-toffoli2.typ",
+            "quill-guide.typ",
+        ]),
         Testcase::new(
             "curryst",
             "https://github.com/pauladam94/curryst",
@@ -167,255 +142,79 @@ fn collect_tests() -> anyhow::Result<Vec<Trial>> {
             "examples/example.typ",
         ),
     ];
-    Ok(cases
+    cases
         .into_iter()
         .map(|case| {
             Trial::test(format!("{} - e2e", case.name.clone()), move || {
-                run_test_case(case.clone()).map_err(|e| Failed::from(e.to_string()))
+                run_testcase(case.clone()).map_err(|e| Failed::from(e.to_string()))
             })
         })
-        .collect())
+        .collect()
 }
 
-fn run_test_case(testcase: Testcase) -> anyhow::Result<()> {
-    clone_test_case(&testcase)?;
-    compile_and_format_test_case(&testcase)?;
-    let testcase_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("e2e")
-        .join(&*testcase.name);
+fn run_testcase(testcase: Testcase) -> anyhow::Result<()> {
+    let e2e_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("e2e");
+    // do mkdir -p project_root/tests/e2e
+    let _ = fs::create_dir_all(&e2e_dir);
+    let testcase_dir = e2e_dir.join(&*testcase.name);
+
+    clone_testcase_repo(&testcase, &testcase_dir)?;
+    check_testcase(&testcase, &testcase_dir)?;
+
     let _ = fs::remove_dir_all(testcase_dir);
     Ok(())
 }
 
-fn clone_test_case(testcase: &Testcase) -> anyhow::Result<()> {
-    // clone the repo
-    // checkout the revision
-    let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    // do mkdir -p project_root/tests/e2e
-    let e2e_dir = project_root.join("e2e");
-    let testcase_dir = e2e_dir.join(&*testcase.name);
-    let _ = fs::create_dir_all(&e2e_dir);
+fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
     // clean the testcase_dir
-    let _ = fs::remove_dir_all(&testcase_dir);
+    let _ = fs::remove_dir_all(testcase_dir);
     // do git clone with submodule
-    // do git checkout testcase.revision
     std::process::Command::new("git")
         .arg("clone")
         .arg(&*testcase.repo_url)
-        .arg(&testcase_dir)
+        .arg(testcase_dir)
         .arg("--recurse-submodules")
         .output()
         .context("failed to clone repo")?;
+    // do git checkout testcase.revision
     std::process::Command::new("git")
         .arg("checkout")
         .arg(&*testcase.revision)
-        .current_dir(&testcase_dir)
+        .current_dir(testcase_dir)
         .output()
         .context("failed to checkout revision")?;
     Ok(())
 }
 
-fn compile_and_format_test_case(testcase: &Testcase) -> anyhow::Result<()> {
-    let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let e2e_dir = project_root.join("e2e");
-    let testcase_dir = e2e_dir.join(&*testcase.name);
+fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
     let entrypoint = testcase_dir.join(&*testcase.entrypoint);
-    let root = if cfg!(windows) {
-        PathBuf::from("C:\\")
-    } else {
-        PathBuf::from("/")
-    };
-    let entry_file = root.join(
-        entrypoint
-            .strip_prefix(&testcase_dir)
-            .context("entrypoint is not within the testcase_dir")?,
-    );
-    let make_world = || -> anyhow::Result<TypstSystemUniverse> {
-        let univ = CompilerUniverse::new(CompileOpts {
-            entry: EntryOpts::new_rooted(root.clone(), Some(entrypoint.clone())),
-            with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
-            ..Default::default()
-        })?
-        .with_entry_file(entry_file.clone());
-        Ok(univ)
-    };
-    let mut world = make_world()?;
-    let mut formatted_world = make_world()?;
-    // map all files within the testcase_dir
-    for entry in walkdir::WalkDir::new(&testcase_dir) {
-        let entry = entry?;
-        if entry.file_type().is_file() {
-            let path = entry.path();
-            let rel_path = path.strip_prefix(&testcase_dir)?;
-            let content = fs::read(path)?;
-            world.map_shadow(&root.join(rel_path), content.clone().into())?;
-            formatted_world.map_shadow(
-                &root.join(rel_path),
-                if path.extension() == Some("typ".as_ref())
-                    && !testcase.blacklist.contains(
-                        path.file_name()
-                            .unwrap()
-                            .to_string_lossy()
-                            .to_string()
-                            .as_str(),
-                    )
-                {
-                    let content = String::from_utf8(content)?;
-                    let doc = Typstyle::new_with_content(content, 80).pretty_print();
-                    let second_format = Typstyle::new_with_content(doc.clone(), 80).pretty_print();
-                    pretty_assertions::assert_eq!(
-                        doc,
-                        second_format,
-                        "The file {} is not converging after formatting",
-                        rel_path.display()
-                    );
-                    doc.as_bytes().into()
-                } else {
-                    content.into()
-                },
-            )?;
-        }
-    }
-    let mut driver = CompileDriver::new(PhantomData, world);
-    let mut formatted_driver = CompileDriver::new(PhantomData, formatted_world);
-    let doc = driver.compile(&mut Default::default()).map(|x| x.output);
-    let formatted_doc = formatted_driver
-        .compile(&mut Default::default())
-        .map(|x| x.output);
-    compare_docs(
-        &testcase.name,
-        doc,
-        &driver.universe().snapshot(),
-        formatted_doc,
-        &formatted_driver.universe().snapshot(),
+
+    let (doc, formatted_doc) = make_universe_formatted(
+        testcase_dir,
+        &entrypoint,
+        &testcase.blacklist,
+        |content, rel_path| {
+            let doc = Typstyle::new_with_content(content, 80).pretty_print();
+            let second_format = Typstyle::new_with_content(doc.clone(), 80).pretty_print();
+            pretty_assertions::assert_eq!(
+                doc,
+                second_format,
+                "The file {} is not converging after formatting",
+                rel_path.display()
+            );
+            doc
+        },
     )?;
-    Ok(())
-}
 
-fn compare_docs(
-    name: &str,
-    doc: Result<Arc<Document>, EcoVec<SourceDiagnostic>>,
-    world: &dyn World,
-    formatted_doc: Result<Arc<Document>, EcoVec<SourceDiagnostic>>,
-    formatted_world: &dyn World,
-) -> anyhow::Result<()> {
-    match (doc, formatted_doc) {
-        (Ok(doc), Ok(formatted_doc)) => {
-            let pdf = typst_pdf::pdf(
-                &doc,
-                &PdfOptions {
-                    ident: Custom("original"),
-                    timestamp: None,
-                    page_ranges: None,
-                    standards: PdfStandards::default(),
-                },
-            );
-            let formatted_pdf = typst_pdf::pdf(
-                &formatted_doc,
-                &PdfOptions {
-                    ident: Custom("formatted"),
-                    timestamp: None,
-                    page_ranges: None,
-                    standards: PdfStandards::default(),
-                },
-            );
-            // write both pdf to tmp path
-            let tmp_dir = env::temp_dir();
-            let pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "original"));
-            let formatted_pdf_path = tmp_dir.join(format!("{name}-{}.pdf", "formatted"));
-            std::fs::write(&pdf_path, pdf.unwrap()).context("failed to write pdf")?;
-            std::fs::write(&formatted_pdf_path, formatted_pdf.unwrap())
-                .context("failed to write formatted pdf")?;
-            let message = format!(
-                "The pdfs are written to \"{}\" and \"{}\"",
-                pdf_path.display(),
-                formatted_pdf_path.display()
-            );
-            pretty_assertions::assert_eq!(
-                doc.pages.len(),
-                formatted_doc.pages.len(),
-                "The page counts are not consistent. {message}"
-            );
-            pretty_assertions::assert_eq!(
-                doc.info.title,
-                formatted_doc.info.title,
-                "The titles are not consistent. {message}"
-            );
-            pretty_assertions::assert_eq!(
-                doc.info.author,
-                formatted_doc.info.author,
-                "The authors are not consistent. {message}"
-            );
-            pretty_assertions::assert_eq!(
-                doc.info.keywords,
-                formatted_doc.info.keywords,
-                "The keywords are not consistent. {message}"
-            );
+    let result = compile_universe(doc);
+    let result_formatted = compile_universe(formatted_doc);
+    compare_docs_full(
+        &testcase.name,
+        result.0,
+        &result.1.snapshot(),
+        result_formatted.0,
+        &result_formatted.1.snapshot(),
+    )?;
 
-            for (i, (doc, formatted_doc)) in
-                doc.pages.iter().zip(formatted_doc.pages.iter()).enumerate()
-            {
-                let png = typst_render::render(
-                    &Page {
-                        frame: doc.frame.clone(),
-                        fill: Auto,
-                        numbering: None,
-                        number: i,
-                    },
-                    2.0,
-                );
-                let formatted_png = typst_render::render(
-                    &Page {
-                        frame: formatted_doc.frame.clone(),
-                        fill: Auto,
-                        numbering: None,
-                        number: i,
-                    },
-                    2.0,
-                );
-                if png != formatted_png {
-                    // save both to tmp path and report error
-                    let tmp_dir = env::temp_dir();
-                    let png_path = tmp_dir.join(format!("{name}-{}-{}.png", i, "original"));
-                    let formatted_png_path =
-                        tmp_dir.join(format!("{name}-{}-{}.png", i, "formatted"));
-                    png.save_png(&png_path).unwrap();
-                    formatted_png.save_png(&formatted_png_path).unwrap();
-                    bail!(
-                        "The output are not consistent for page {}, original png path: \"{}\", formatted png path: \"{}\"",
-                        i, png_path.display(), formatted_png_path.display()
-                    );
-                }
-            }
-        }
-        (Err(e1), Err(e2)) => {
-            pretty_assertions::assert_eq!(
-                e1.len(),
-                e2.len(),
-                "The error counts are not consistent"
-            );
-            for (e1, e2) in e1.iter().zip(e2.iter()) {
-                pretty_assertions::assert_eq!(
-                    e1.message,
-                    e2.message,
-                    "The error messages are not consistent after formatting"
-                );
-            }
-        }
-        (_, Err(res2)) => {
-            let diag = res2
-                .into_iter()
-                .map(|e| diag_from_std(e, Some(formatted_world)))
-                .collect_vec();
-            bail!("Formatted doc failed to compile: {:#?}", diag);
-        }
-        (Err(res1), _) => {
-            let diag = res1
-                .into_iter()
-                .map(|e| diag_from_std(e, Some(world)))
-                .collect_vec();
-            bail!("Original doc failed to compile: {:#?}", diag);
-        }
-    }
     Ok(())
 }

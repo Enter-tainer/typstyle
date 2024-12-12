@@ -16,6 +16,7 @@ homepage = "https://enter-tainer.github.io/typstyle/"
 [workspace.dependencies]
 typstyle-core = { path = "crates/typstyle-core" }
 typstyle = { path = "crates/typstyle" }
+typstyle-consistency = { path = "crates/typstyle-consistency" }
 
 # Used in core
 typst-syntax = "0.12.0"
