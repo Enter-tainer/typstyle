@@ -2,11 +2,7 @@ use std::{borrow::Cow, collections::HashSet, fs, path::Path};
 
 use anyhow::Context;
 use libtest_mimic::{Failed, Trial};
-
-use typstyle_consistency::{
-    cmp::compare_docs_full,
-    compile::{compile_universe, make_universe_formatted},
-};
+use typstyle_consistency::{cmp::compare_docs, universe::make_universe_formatted};
 use typstyle_core::Typstyle;
 
 #[derive(Debug, Clone)]
@@ -206,15 +202,5 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         },
     )?;
 
-    let result = compile_universe(doc);
-    let result_formatted = compile_universe(formatted_doc);
-    compare_docs_full(
-        &testcase.name,
-        result.0,
-        &result.1.snapshot(),
-        result_formatted.0,
-        &result_formatted.1.snapshot(),
-    )?;
-
-    Ok(())
+    compare_docs(&testcase.name, doc, formatted_doc, true)
 }

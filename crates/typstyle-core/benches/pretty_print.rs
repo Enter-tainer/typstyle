@@ -1,6 +1,6 @@
+use std::{fs, time::Duration};
+
 use criterion::{criterion_group, criterion_main, Criterion};
-use std::fs;
-use std::time::Duration;
 use typst_syntax::Source;
 use typstyle_core::{attr::AttrStore, Typstyle};
 

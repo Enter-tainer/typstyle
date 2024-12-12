@@ -1,17 +1,14 @@
-use anyhow::Context;
-use reflexo_typst::{CompileDriver, Compiler};
-use reflexo_world::{
-    config::CompileOpts, CompilerUniverse, EntryOpts, ShadowApi, TypstSystemUniverse,
-};
 use std::{
     borrow::Cow,
     collections::HashSet,
     fs,
-    marker::PhantomData,
     path::{Path, PathBuf},
 };
 
-use crate::CompilationResult;
+use anyhow::Context;
+use reflexo_world::{
+    config::CompileOpts, CompilerUniverse, EntryOpts, ShadowApi, TypstSystemUniverse,
+};
 
 pub fn make_universe(content: &str) -> anyhow::Result<TypstSystemUniverse> {
     let root = os_root();
@@ -37,6 +34,7 @@ pub fn make_universe_formatted(
             .strip_prefix(source_dir)
             .context("entrypoint is not within the testcase_dir")?,
     );
+
     let make_world = || -> anyhow::Result<TypstSystemUniverse> {
         let univ = CompilerUniverse::new(CompileOpts {
             entry: EntryOpts::new_rooted(root.clone(), Some(entrypoint.to_path_buf())),
@@ -46,6 +44,7 @@ pub fn make_universe_formatted(
         .with_entry_file(entry_file.to_path_buf());
         Ok(univ)
     };
+
     let mut world = make_world()?;
     let mut formatted_world = make_world()?;
     // map all files within the testcase_dir
@@ -77,14 +76,6 @@ pub fn make_universe_formatted(
         )?;
     }
     Ok((world, formatted_world))
-}
-
-pub fn compile_universe(
-    universe: TypstSystemUniverse,
-) -> (CompilationResult, CompileDriver<impl Compiler>) {
-    let mut driver = CompileDriver::new(PhantomData, universe);
-    let doc = driver.compile(&mut Default::default()).map(|x| x.output);
-    (doc, driver)
 }
 
 fn os_root() -> PathBuf {

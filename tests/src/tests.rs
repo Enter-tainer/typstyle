@@ -3,8 +3,9 @@ mod assets;
 #[path = "repo-e2e.rs"]
 mod repo_e2e;
 
-use libtest_mimic::Arguments;
 use std::error::Error;
+
+use libtest_mimic::Arguments;
 
 fn main() -> Result<(), Box<dyn Error>> {
     #[allow(unused_mut)]

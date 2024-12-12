@@ -21,7 +21,7 @@ typstyle-consistency = { workspace = true, optional = true }
 
 anyhow.workspace = true
 
-insta = { workspace = true }
+insta.workspace = true
 libtest-mimic.workspace = true
 pathdiff.workspace = true
 pretty_assertions.workspace = true
