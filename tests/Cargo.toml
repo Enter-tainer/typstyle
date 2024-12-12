@@ -7,32 +7,21 @@ edition.workspace = true
 publish = false
 
 [[test]]
-name = "assets"
-path = "src/assets.rs"
-harness = false
-
-[[test]]
-name = "repo-e2e"
-path = "src/repo-e2e.rs"
+name = "tests"
+path = "src/tests.rs"
 harness = false
 
 [features]
+default = ["consistency"]
+consistency = ["typstyle-consistency"]
 
 [dependencies]
 typstyle-core.workspace = true
+typstyle-consistency = { workspace = true, optional = true }
 
 anyhow.workspace = true
-ecow.workspace = true
-itertools.workspace = true
-walkdir.workspace = true
 
 insta = { workspace = true }
 libtest-mimic.workspace = true
 pathdiff.workspace = true
 pretty_assertions.workspace = true
-reflexo-world = { workspace = true }
-reflexo-typst = { workspace = true }
-typst-assets = { workspace = true }
-typst-render = { workspace = true }
-typst-pdf = { workspace = true }
-typst = { workspace = true }

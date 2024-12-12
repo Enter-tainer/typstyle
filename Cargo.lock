@@ -4031,6 +4031,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "typstyle-consistency"
+version = "0.12.10"
+dependencies = [
+ "anyhow",
+ "ecow",
+ "itertools 0.13.0",
+ "pretty_assertions",
+ "reflexo-typst",
+ "reflexo-world",
+ "typst",
+ "typst-assets",
+ "typst-pdf",
+ "typst-render",
+ "walkdir",
+]
+
+[[package]]
 name = "typstyle-core"
 version = "0.12.10"
 dependencies = [
@@ -4049,20 +4066,12 @@ name = "typstyle-tests"
 version = "0.12.10"
 dependencies = [
  "anyhow",
- "ecow",
  "insta",
- "itertools 0.13.0",
  "libtest-mimic",
  "pathdiff",
  "pretty_assertions",
- "reflexo-typst",
- "reflexo-world",
- "typst",
- "typst-assets",
- "typst-pdf",
- "typst-render",
+ "typstyle-consistency",
  "typstyle-core",
- "walkdir",
 ]
 
 [[package]]
