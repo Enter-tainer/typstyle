@@ -1,7 +1,7 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/unit/markup/heading.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/heading.typ
+snapshot_kind: text
 ---
 == Level 2
 

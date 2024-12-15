@@ -1,7 +1,7 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/unit/math/math-let.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/math-let.typ
+snapshot_kind: text
 ---
 #let xmat(..arg) = [..#arg]
 $

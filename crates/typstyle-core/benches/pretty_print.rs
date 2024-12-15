@@ -41,7 +41,7 @@ fn benchmark_attrs(c: &mut Criterion) {
         bench_attrs(
             c,
             &format!("attrs-{name}"),
-            &format!("../../tests/assets/{name}.typ"),
+            &format!("../../tests/fixtures/{name}.typ"),
         );
     }
 }
@@ -51,7 +51,7 @@ fn benchmark_pretty(c: &mut Criterion) {
         bench_pretty(
             c,
             &format!("pretty-{name}"),
-            &format!("../../tests/assets/{name}.typ"),
+            &format!("../../tests/fixtures/{name}.typ"),
         );
     }
 }

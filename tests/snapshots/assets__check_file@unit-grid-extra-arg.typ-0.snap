@@ -1,7 +1,7 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/unit/grid/extra-arg.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/grid/extra-arg.typ
+snapshot_kind: text
 ---
 #grid(
   columns: 2,

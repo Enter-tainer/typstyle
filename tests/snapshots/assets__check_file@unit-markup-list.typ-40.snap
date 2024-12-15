@@ -1,7 +1,7 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/unit/markup/list.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/list.typ
+snapshot_kind: text
 ---
 === Legends <plot-legends>
 A legend for a plot will be drawn if at least one set of data with a label that is not `none` is given.

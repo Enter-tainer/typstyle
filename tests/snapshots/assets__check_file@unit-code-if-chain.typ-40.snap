@@ -1,7 +1,6 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/unit/code/if-chain.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/if-chain.typ
 snapshot_kind: text
 ---
 #if a < b { true } else if c < d {
