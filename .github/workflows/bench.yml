@@ -1,4 +1,4 @@
-name: Benchmark
+name: Benchmark for master
 on:
   push:
     branches:
