@@ -1,0 +1,10 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/func/func-call-flavor.typ
+snapshot_kind: text
+---
+#table(
+  stroke: none,
+  [arg1],
+  [arg2]
+)

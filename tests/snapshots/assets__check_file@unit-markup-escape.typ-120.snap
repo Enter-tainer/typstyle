@@ -1,0 +1,7 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/escape.typ
+snapshot_kind: text
+---
+I got an ice cream for
+\$1.50! \u{1f600}

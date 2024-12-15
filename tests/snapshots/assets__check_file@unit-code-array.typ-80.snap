@@ -1,0 +1,9 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/array.typ
+snapshot_kind: text
+---
+#{
+  (1,)
+  (1, 2, 3)
+}

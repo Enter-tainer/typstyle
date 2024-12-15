@@ -1,0 +1,6 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/call-chain.typ
+snapshot_kind: text
+---
+$arrow.r.long.bar$

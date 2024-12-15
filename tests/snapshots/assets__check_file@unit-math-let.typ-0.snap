@@ -1,0 +1,12 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/let.typ
+snapshot_kind: text
+---
+#let xmat(
+  ..arg,
+) = [..#arg]
+$
+  #let g = (i) => $g^#i$
+    xmat(2, 2, #g)
+$

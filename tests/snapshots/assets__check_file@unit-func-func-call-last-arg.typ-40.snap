@@ -1,0 +1,24 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/func/func-call-last-arg.typ
+snapshot_kind: text
+---
+#fun(aaaaaaaa, bbbbbbbbbb, () => { })
+
+#fun(aaaaaaaa, bbbbbbbbbb, () => { })
+
+#fun(
+  aaaaaaaa,
+  bbbbbbbbbb,
+  () => {
+    // something
+  },
+)
+
+#fun(
+  aaaaaaaa,
+  bbbbbbbbbb,
+  {
+    // something
+  },
+)
