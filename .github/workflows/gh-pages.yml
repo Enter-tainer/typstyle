@@ -45,7 +45,7 @@ jobs:
       - name: Build wasm
         run: |
           cd crates/typstyle-core
-          wasm-pack build
+          wasm-pack build --features wasm
           cp ../../README.md pkg
           cp ../../LICENSE pkg
       - name: Publish to npm
