@@ -92,21 +92,16 @@ fn remove_crlf(content: String) -> String {
 fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     let content = read_content(path)?;
 
-    let rel_path =
-        pathdiff::diff_paths(path, env::current_dir().unwrap().join("fixtures")).unwrap();
-    let doc_string = Typstyle::new_with_content(content, width).pretty_print();
-    let replaced_path = rel_path
-        .to_str()
-        .unwrap()
-        .replace(std::path::MAIN_SEPARATOR, "-");
+    let formatted = Typstyle::new_with_content(content, width).pretty_print();
+    let snap_name = format!("{}-{width}", path.file_name().unwrap().to_str().unwrap());
+
     insta::with_settings!({
-        snapshot_path => env::current_dir().unwrap().join("snapshots"),
-        snapshot_suffix => format!("{}-{width}", replaced_path),
-        input_file => path,
+        snapshot_path => path.parent().unwrap().join("snap"),
         prepend_module_to_snapshot => false,
+        input_file => path,
         omit_expression => true,
     }, {
-        insta::assert_snapshot!("assets__check_file", doc_string);
+        insta::assert_snapshot!(snap_name, formatted);
     });
     Ok(())
 }
