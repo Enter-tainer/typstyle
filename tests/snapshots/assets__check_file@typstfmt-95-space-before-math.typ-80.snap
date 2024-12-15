@@ -1,6 +1,6 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/typstfmt/95-space-before-math.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/typstfmt/95-space-before-math.typ
+snapshot_kind: text
 ---
 aaa $a$

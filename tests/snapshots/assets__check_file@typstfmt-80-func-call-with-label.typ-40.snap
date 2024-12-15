@@ -1,7 +1,7 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/typstfmt/80-func-call-with-label.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/typstfmt/80-func-call-with-label.typ
+snapshot_kind: text
 ---
 #figure(
   image("glacier.jpg", width: 70%),

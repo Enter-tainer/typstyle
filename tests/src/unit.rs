@@ -74,7 +74,7 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
     // We recursively look for `.typ` files, starting from the current
     // directory.
     let mut tests = Vec::new();
-    let current_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("assets");
+    let current_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("fixtures");
     visit_dir(&current_dir, &mut tests)?;
 
     Ok(tests)
@@ -92,7 +92,8 @@ fn remove_crlf(content: String) -> String {
 fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     let content = read_content(path)?;
 
-    let rel_path = pathdiff::diff_paths(path, env::current_dir().unwrap().join("assets")).unwrap();
+    let rel_path =
+        pathdiff::diff_paths(path, env::current_dir().unwrap().join("fixtures")).unwrap();
     let doc_string = Typstyle::new_with_content(content, width).pretty_print();
     let replaced_path = rel_path
         .to_str()
@@ -103,6 +104,7 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
         snapshot_suffix => format!("{}-{width}", replaced_path),
         input_file => path,
         prepend_module_to_snapshot => false,
+        omit_expression => true,
     }, {
         insta::assert_snapshot!("assets__check_file", doc_string);
     });

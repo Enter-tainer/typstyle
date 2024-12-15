@@ -1,7 +1,6 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/packages/indenta.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/packages/indenta.typ
 snapshot_kind: text
 ---
 /*

@@ -1,7 +1,6 @@
 ---
-source: tests/assets.rs
-expression: doc_string
-input_file: tests/assets/packages/touying/utils.typ
+source: tests/src/unit.rs
+input_file: tests/fixtures/packages/touying/utils.typ
 snapshot_kind: text
 ---
 /*
