@@ -58,9 +58,7 @@ fn benchmark_pretty(c: &mut Criterion) {
 
 criterion_group! {
     name = benches;
-    config = Criterion::default()
-        .measurement_time(Duration::from_secs(8))  // 只增加测量时间
-        .sample_size(50);                          // 减少采样数量
+    config = Criterion::default();
     targets = benchmark_attrs, benchmark_pretty
 }
 criterion_main!(benches);
