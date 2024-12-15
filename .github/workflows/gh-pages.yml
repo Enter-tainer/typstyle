@@ -42,8 +42,12 @@ jobs:
         with:
           enable-cache: true
           cache-prefix: 'typstyle-rye'
-      - run: |
+      - name: Build wasm
+        run: |
+          cd crates/typstyle-core
           wasm-pack build
+          cp ../../README.md pkg
+          cp ../../LICENSE pkg
       - name: Publish to npm
         if: startsWith(github.ref, 'refs/tags/')
         run: |
