@@ -1,0 +1,18 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/comment/in-if.typ
+snapshot_kind: text
+---
+#{
+  if /*(condition)*/ true { }
+
+  if true /*(condition)*/ { }
+
+  if true {
+    /*  111
+    222   */
+  } // (condition)
+  else { }
+
+  if true { } else /*(condition)*/ { }
+}

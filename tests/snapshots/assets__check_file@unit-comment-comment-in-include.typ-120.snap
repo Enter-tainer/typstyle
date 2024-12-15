@@ -1,8 +1,0 @@
----
-source: tests/src/unit.rs
-input_file: tests/fixtures/unit/comment/comment-in-include.typ
-snapshot_kind: text
----
-#include /* * strong * */ /* block */ "cond.typ" // line
-#include /* block
-          */ "cond.typ" // line

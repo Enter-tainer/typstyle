@@ -25,33 +25,34 @@ fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
     });
 }
 
-const TEST_ASSETS: [&str; 8] = [
-    "tablex",
-    "cetz-manual",
-    "undergraduate-math",
-    "packages/codly",
-    "packages/fletcher-diagram",
-    "packages/fletcher-draw",
-    "packages/touying/core",
-    "packages/touying/utils",
+/// (path, name)
+const TEST_ASSETS: [(&str, &str); 8] = [
+    ("articles/undergraduate-math", "undergraduate-math"),
+    ("packages/cetz-manual", "cetz-manual"),
+    ("packages/codly", "codly"),
+    ("packages/fletcher-diagram", "fletcher-diagram"),
+    ("packages/fletcher-draw", "fletcher-draw"),
+    ("packages/tablex", "tablex"),
+    ("packages/touying/core", "touying-core"),
+    ("packages/touying/utils", "touying-utils"),
 ];
 
 fn benchmark_attrs(c: &mut Criterion) {
-    for name in TEST_ASSETS {
+    for (path, name) in TEST_ASSETS {
         bench_attrs(
             c,
             &format!("attrs-{name}"),
-            &format!("../../tests/fixtures/{name}.typ"),
+            &format!("../../tests/fixtures/{path}.typ"),
         );
     }
 }
 
 fn benchmark_pretty(c: &mut Criterion) {
-    for name in TEST_ASSETS {
+    for (path, name) in TEST_ASSETS {
         bench_pretty(
             c,
             &format!("pretty-{name}"),
-            &format!("../../tests/fixtures/{name}.typ"),
+            &format!("../../tests/fixtures/{path}.typ"),
         );
     }
 }

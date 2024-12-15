@@ -1,0 +1,12 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/show-set.typ
+snapshot_kind: text
+---
+#show heading.where(
+  level: 2,
+): set heading(
+  numbering: (
+    ..n,
+  ) => [#n.pos().at(1).],
+)

@@ -1,6 +1,0 @@
----
-source: tests/src/unit.rs
-input_file: tests/fixtures/test.typ
-snapshot_kind: text
----
-#link("http://example.com")[test]
