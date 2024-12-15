@@ -1,5 +1,5 @@
 import './style.css'
-import { pretty_print_wasm } from "typstyle"
+import { pretty_print_wasm } from "typstyle-core"
 import van from "vanjs-core"
 const { div, textarea, input, label, p, a } = van.tags;
 
