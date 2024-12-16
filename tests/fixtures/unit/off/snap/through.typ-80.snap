@@ -1,0 +1,9 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/off/through.typ
+snapshot_kind: text
+---
+/* @typstyle off */
+#1
+#let aaa = 123
+#let bbb = 123
