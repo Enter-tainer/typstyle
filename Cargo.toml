@@ -14,8 +14,8 @@ repository = "https://github.com/Enter-tainer/typstyle"
 homepage = "https://enter-tainer.github.io/typstyle/"
 
 [workspace.dependencies]
-typstyle-core = { path = "crates/typstyle-core" }
-typstyle = { path = "crates/typstyle" }
+typstyle-core = { path = "crates/typstyle-core", version = "0.12.11" }
+typstyle = { path = "crates/typstyle", version = "0.12.11" }
 typstyle-consistency = { path = "crates/typstyle-consistency" }
 
 # Used in core
@@ -39,9 +39,14 @@ libtest-mimic = "0.8.1"
 pathdiff = "0.2.2"
 pretty_assertions = "1.4.1"
 # reflexo-typst-shim = { version = "0.5.0", default-features = false, features = [] }
-reflexo-world = { version = "0.5.0", default-features = false, features = ["system"] }
+reflexo-world = { version = "0.5.0", default-features = false, features = [
+  "system",
+] }
 # reflexo-vfs = { version = "0.5.0", default-features = false, features = ["system"] }
-reflexo-typst = { version = "0.5.0", default-features = false, features = ["system", "no-content-hint"] }
+reflexo-typst = { version = "0.5.0", default-features = false, features = [
+  "system",
+  "no-content-hint",
+] }
 # reflexo = { version = "0.5.0", default-features = false, features = ["typst"] }
 typst-assets = { version = "0.12.0", features = ["fonts"] }
 typst-render = "0.12.0"
