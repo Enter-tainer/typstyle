@@ -2038,15 +2038,15 @@ snapshot_kind: text
         // save the states and counters
         context {
           utils.saved-frozen-states.update(self.frozen-states.map(s => s.get()))
-          utils
-            .saved-default-frozen-states
-            .update(self.default-frozen-states.map(s => s.get()))
-          utils
-            .saved-frozen-counters
-            .update(self.frozen-counters.map(s => s.get()))
-          utils
-            .saved-default-frozen-counters
-            .update(self.default-frozen-counters.map(s => s.get()))
+          utils.saved-default-frozen-states.update(
+            self.default-frozen-states.map(s => s.get()),
+          )
+          utils.saved-frozen-counters.update(
+            self.frozen-counters.map(s => s.get()),
+          )
+          utils.saved-default-frozen-counters.update(
+            self.default-frozen-counters.map(s => s.get()),
+          )
         }
       } else {
         // restore the states and counters

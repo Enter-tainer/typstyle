@@ -2732,10 +2732,9 @@ snapshot_kind: text
             and not is-header
             and start-y == header_last_y + 1
         ) {
-          let hlines_below_header = first-row-group
-            .row_group
-            .hlines
-            .filter(h => h.y == header_last_y + 1)
+          let hlines_below_header = first-row-group.row_group.hlines.filter(h => (
+            h.y == header_last_y + 1
+          ))
 
           hlines + hlines_below_header
         } else {

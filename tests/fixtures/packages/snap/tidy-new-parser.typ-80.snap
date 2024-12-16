@@ -263,9 +263,10 @@ snapshot_kind: text
       args.len() > 0
         and (state.unfinished-param.ends-with(",") or state.state == "finished")
     ) {
-      state
-        .params
-        .push((name: args.first(), desc-lines: state.unmatched-description))
+      state.params.push((
+        name: args.first(),
+        desc-lines: state.unmatched-description,
+      ))
       state.unmatched-description = ()
       state.params += args.slice(1).map(arg => (name: arg, desc-lines: ()))
       state.unfinished-param = ""

@@ -21,6 +21,10 @@ impl<'a> PrettyPrinter<'a> {
                 return res;
             }
         }
+        self.convert_func_call_plain(func_call)
+    }
+
+    pub(super) fn convert_func_call_plain(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
         self.convert_expr(func_call.callee())
             + self.convert_func_call_args(func_call, func_call.args())
     }

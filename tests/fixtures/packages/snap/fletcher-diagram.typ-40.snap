@@ -84,23 +84,17 @@ snapshot_kind: text
       let size = rect.size.at(axis)
 
       if calc.fract(coord) == 0 {
-        rect
-          .center
-          .at(axis) = calc.trunc(coord)
+        rect.center.at(axis) = calc.trunc(coord)
         new-rects.push(rect)
       } else {
-        rect
-          .center
-          .at(axis) = calc.floor(coord)
+        rect.center.at(axis) = calc.floor(coord)
         rect.size.at(axis) = (
           size
             * (calc.ceil(coord) - coord)
         )
         new-rects.push(rect)
 
-        rect
-          .center
-          .at(axis) = calc.ceil(coord)
+        rect.center.at(axis) = calc.ceil(coord)
         rect.size.at(axis) = (
           size
             * (
@@ -624,12 +618,8 @@ snapshot_kind: text
       len,
       options.em-size,
     )
-    options.spacing = options
-      .spacing
-      .map(to-pt)
-    options.cell-size = options
-      .cell-size
-      .map(to-pt)
+    options.spacing = options.spacing.map(to-pt)
+    options.cell-size = options.cell-size.map(to-pt)
 
     let nodes = nodes.map(node => {
       node = resolve-node-options(

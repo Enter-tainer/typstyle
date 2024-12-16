@@ -247,13 +247,11 @@ snapshot_kind: text
       name: name,
       style: style.named(),
       before: ctx => {
-        ctx
-          .groups
-          .push((
-            ctx: ctx,
-            anchors: (:),
-            tree-root: layout(root, ctx),
-          ))
+        ctx.groups.push((
+          ctx: ctx,
+          anchors: (:),
+          tree-root: layout(root, ctx),
+        ))
         return ctx
       },
       after: ctx => {

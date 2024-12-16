@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
@@ -5,6 +6,7 @@ use crate::PrettyPrinter;
 
 use super::{
     chain::{iterate_deep_nodes, ChainStyle, ChainStylist},
+    util::has_comment_children,
     ArenaDoc,
 };
 
@@ -13,6 +15,10 @@ impl<'a> PrettyPrinter<'a> {
         if let Some(res) = self.try_convert_dot_chain(field_access.to_untyped()) {
             return res;
         }
+        self.convert_field_access_plain(field_access)
+    }
+
+    fn convert_field_access_plain(&'a self, field_access: FieldAccess<'a>) -> ArenaDoc<'a> {
         // Comments within field access are not allowed outside code mode
         self.convert_expr(field_access.target())
             + self.arena.text(".")
@@ -21,23 +27,66 @@ impl<'a> PrettyPrinter<'a> {
 
     /// Convert the node as dot chain, if in code, or in markup with at least two FieldAccess and one FuncCall.
     pub(super) fn try_convert_dot_chain(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
-        if self.current_mode().is_code() {
-            return Some(self.convert_dot_chain(node));
-        } else if self.current_mode().is_markup() {
-            let mut chain_len = 0;
-            let mut has_call = false;
-            for node in resolve_dot_chain(node) {
-                if node.kind() == SyntaxKind::FieldAccess {
-                    chain_len += 1;
-                } else if node.kind() == SyntaxKind::FuncCall {
-                    has_call = true;
-                }
+        let mut dot_num = 0;
+        let mut call_num = 0;
+        let mut has_comment = false;
+        let chain: Vec<&SyntaxNode> = resolve_dot_chain(node).collect_vec();
+        for node in &chain {
+            if node.kind() == SyntaxKind::FieldAccess {
+                dot_num += 1;
+            } else if node.kind() == SyntaxKind::FuncCall {
+                call_num += 1;
             }
-            if chain_len > 1 && has_call {
-                return Some(self.parenthesize_if_necessary(|| self.convert_dot_chain(node)));
+            if has_comment_children(node) {
+                has_comment = true;
             }
         }
+        if dot_num > 1 && call_num == 1 && !has_comment {
+            if let Some(res) = self.try_convert_dot_chain_plain(chain) {
+                return Some(res);
+            }
+        }
+        if self.current_mode().is_markup() && dot_num > 1 && call_num > 0 {
+            return Some(self.parenthesize_if_necessary(|| self.convert_dot_chain(node)));
+        } else if self.current_mode().is_code() {
+            return Some(self.convert_dot_chain(node));
+        }
         None
+    }
+
+    /// Used for ident.ident(args)
+    fn try_convert_dot_chain_plain(
+        &'a self,
+        mut chain: Vec<&'a SyntaxNode>,
+    ) -> Option<ArenaDoc<'a>> {
+        chain.reverse();
+        let func_call = chain.last()?.cast::<FuncCall>()?;
+        let ident = chain[0].cast::<Ident>()?;
+
+        // If the chain idents are long enough, do not put them in one line.
+        let estimated_len = ident.get().len()
+            + chain
+                .iter()
+                .skip(1)
+                .map(|child| {
+                    child
+                        .cast::<FieldAccess>()
+                        .map(|field_access| field_access.field().get().len() + 1)
+                        .unwrap_or_default()
+                })
+                .sum::<usize>();
+        if estimated_len >= self.config.chain_width() {
+            return None;
+        }
+
+        let mut doc = self.convert_ident(ident);
+        for child in chain {
+            if let Some(field_access) = child.cast::<FieldAccess>() {
+                doc += self.arena.text(".") + self.convert_ident(field_access.field());
+            }
+        }
+        doc += self.convert_args(func_call.args());
+        Some(doc)
     }
 
     fn convert_dot_chain(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {

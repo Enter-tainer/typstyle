@@ -433,9 +433,7 @@ snapshot_kind: text
       __codly-args.smart-indent.default,
     ).get()
   })
-  let body = if it
-    .body
-    .has("children") {
+  let body = if it.body.has("children") {
     it.body.children
   } else {
     (it.body,)
@@ -479,9 +477,7 @@ snapshot_kind: text
       first != none
         and first.has("text")
     ) {
-      let match = first
-        .text
-        .match(indent-regex)
+      let match = first.text.match(indent-regex)
 
       // Ensure there is a match and it starts at the beginning of the line.
       if (
@@ -494,9 +490,10 @@ snapshot_kind: text
         )
 
         // Then measure the necessary indent.
-        let indent = first
-          .text
-          .slice(match.start, match.end)
+        let indent = first.text.slice(
+          match.start,
+          match.end,
+        )
         width = measure([#indent]).width
       }
     }
@@ -603,9 +600,7 @@ snapshot_kind: text
         // Separate the whitespaces at the start of text
         let out = ()
         let ws = none
-        for cluster in elem
-          .text
-          .clusters() {
+        for cluster in elem.text.clusters() {
           let m = cluster.match(ws_regex)
           if m != none and ws != none {
             ws += cluster
@@ -837,11 +832,9 @@ snapshot_kind: text
   block-label: none,
   extra: (:),
 ) = context {
-  show raw
-    .line
-    .where(
-      label: <codly-highlighted>,
-    ): it => codly-line(
+  show raw.line.where(
+    label: <codly-highlighted>,
+  ): it => codly-line(
     it,
     block-label: block-label,
     extra: (:),
@@ -1688,9 +1681,10 @@ snapshot_kind: text
     none
   }
 
-  for (i, line) in it
-    .lines
-    .enumerate() {
+  for (
+    i,
+    line,
+  ) in it.lines.enumerate() {
     first-annot = false
 
     // Check for annotations
@@ -1984,9 +1978,7 @@ snapshot_kind: text
               fill
             },
             ..header,
-            ..it
-              .lines
-              .map(line => hide(line)),
+            ..it.lines.map(line => hide(line)),
             ..footer,
           ),
         )

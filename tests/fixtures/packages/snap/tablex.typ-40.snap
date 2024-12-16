@@ -991,9 +991,7 @@ snapshot_kind: text
       )
       s = repr(stroke).match(r)
       if s != none {
-        s = s
-          .captures
-          .first() // get the first match (the thickness)
+        s = s.captures.first() // get the first match (the thickness)
       }
     }
 
@@ -1132,12 +1130,10 @@ snapshot_kind: text
     let next-row-pos = (
       first-row-pos + grid.width
     )
-    let cell-row = grid
-      .items
-      .slice(
-        first-row-pos,
-        calc.min(len, next-row-pos),
-      )
+    let cell-row = grid.items.slice(
+      first-row-pos,
+      calc.min(len, next-row-pos),
+    )
     let cell-row-len = cell-row.len()
     if cell-row-len < grid.width {
       // the row isn't complete because the grid wasn't large enough.
@@ -1603,13 +1599,12 @@ snapshot_kind: text
   }
 
   // for missing cell positions: add empty cell
-  for (index, item) in grid
-    .items
-    .enumerate() {
+  for (
+    index,
+    item,
+  ) in grid.items.enumerate() {
     if item == none {
-      grid
-        .items
-        .at(index) = new_empty_cell(
+      grid.items.at(index) = new_empty_cell(
         grid,
         index: index,
       )
@@ -1624,9 +1619,9 @@ snapshot_kind: text
     )
       != 0
   ) {
-    grid
-      .items
-      .push(new_empty_cell(grid))
+    grid.items.push(
+      new_empty_cell(grid),
+    )
   }
 
   (
@@ -4413,15 +4408,13 @@ snapshot_kind: text
         }
 
         cell.content = [#cell.content]
-        grid
-          .items
-          .at(
-            grid-index-at(
-              cell.x,
-              cell.y,
-              grid: grid,
-            ),
-          ) = cell
+        grid.items.at(
+          grid-index-at(
+            cell.x,
+            cell.y,
+            grid: grid,
+          ),
+        ) = cell
       }
     }
   }
@@ -4500,15 +4493,13 @@ snapshot_kind: text
         }
 
         cell.content = [#cell.content]
-        grid
-          .items
-          .at(
-            grid-index-at(
-              cell.x,
-              cell.y,
-              grid: grid,
-            ),
-          ) = cell
+        grid.items.at(
+          grid-index-at(
+            cell.x,
+            cell.y,
+            grid: grid,
+          ),
+        ) = cell
       }
     }
   }

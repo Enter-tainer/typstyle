@@ -1,4 +1,4 @@
-use std::{fs, time::Duration};
+use std::fs;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use typst_syntax::Source;
