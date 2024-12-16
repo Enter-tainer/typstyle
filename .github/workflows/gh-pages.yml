@@ -51,7 +51,7 @@ jobs:
       - name: Publish to npm
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          cd pkg
+          cd crates/typstyle-core/pkg
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
