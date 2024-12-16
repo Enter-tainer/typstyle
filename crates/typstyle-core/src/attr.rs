@@ -156,7 +156,7 @@ impl AttrStore {
                 continue;
             }
             // no format nodes with @typstyle off
-            if child_kind != SyntaxKind::Space && disable_next {
+            if disable_next && !matches!(child_kind, SyntaxKind::Space | SyntaxKind::Hash) {
                 self.set_format_disabled(child);
                 disable_next = false;
                 continue;

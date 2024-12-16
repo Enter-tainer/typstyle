@@ -10,6 +10,13 @@ use super::{
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_code_block(&'a self, code_block: CodeBlock<'a>) -> ArenaDoc<'a> {
+        if self
+            .attr_store
+            .is_format_disabled(code_block.body().to_untyped())
+        {
+            return self.format_disabled(code_block.to_untyped());
+        }
+
         let _g = self.with_mode(Mode::Code);
 
         let mut nodes = vec![];

@@ -1,0 +1,25 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/off/after-hash.typ
+snapshot_kind: text
+---
+/* @typstyle off */
+#let x   =  1  +  2
+#let y = (
+  3
+    * 4
+)
+
+#[
+  /* @typstyle off */
+  #let x   =  1  +  2
+]
+
+#[
+  /* @typstyle off */
+  #let x   =  1  +  2
+  #let y = (
+    3
+      * 4
+  )
+]
