@@ -374,12 +374,10 @@ snapshot_kind: text
             or state.state == "finished"
         )
     ) {
-      state
-        .params
-        .push((
-          name: args.first(),
-          desc-lines: state.unmatched-description,
-        ))
+      state.params.push((
+        name: args.first(),
+        desc-lines: state.unmatched-description,
+      ))
       state.unmatched-description = ()
       state.params += args
         .slice(1)

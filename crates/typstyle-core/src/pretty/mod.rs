@@ -1,4 +1,3 @@
-pub mod config;
 pub mod doc_ext;
 pub mod style;
 
@@ -7,6 +6,7 @@ mod code_chain;
 mod code_flow;
 mod code_list;
 mod comment;
+mod config;
 mod flow;
 mod func_call;
 mod import;
@@ -18,34 +18,32 @@ mod plain;
 mod table;
 mod util;
 
+pub use config::PrinterConfig;
+
 use std::cell::RefCell;
 
-use config::PrinterConfig;
-use doc_ext::DocExt;
 use itertools::Itertools;
-use mode::Mode;
 use pretty::{Arena, DocAllocator, DocBuilder};
-use typst_syntax::{ast::*, Source, SyntaxKind, SyntaxNode};
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{ext::StrExt, AttrStore};
+use doc_ext::DocExt;
+use mode::Mode;
 use style::FoldStyle;
 
 type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
 pub struct PrettyPrinter<'a> {
     config: PrinterConfig,
-    #[allow(dead_code)]
-    source: Source,
     attr_store: AttrStore,
     mode: RefCell<Vec<Mode>>,
     arena: Arena<'a>,
 }
 
 impl<'a> PrettyPrinter<'a> {
-    pub fn new(source: Source, attr_store: AttrStore) -> Self {
+    pub fn new(config: PrinterConfig, attr_store: AttrStore) -> Self {
         Self {
-            source,
-            config: Default::default(),
+            config,
             attr_store,
             mode: vec![].into(),
             arena: Arena::new(),

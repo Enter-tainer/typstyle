@@ -10,6 +10,7 @@ pub mod pretty;
 pub use attr::AttrStore;
 #[doc(hidden)]
 pub use pretty::PrettyPrinter;
+pub use pretty::PrinterConfig;
 
 use typst_syntax::Source;
 
@@ -46,8 +47,12 @@ impl Typstyle {
         if root.erroneous() {
             return self.source.text().to_string();
         }
+        let config = PrinterConfig {
+            max_width: self.width,
+            ..Default::default()
+        };
         let attr_store = AttrStore::new(root);
-        let printer = PrettyPrinter::new(self.source.clone(), attr_store);
+        let printer = PrettyPrinter::new(config, attr_store);
         let markup = root.cast().unwrap();
         let doc = printer.convert_markup(markup);
         let result = doc.pretty(self.width).to_string();

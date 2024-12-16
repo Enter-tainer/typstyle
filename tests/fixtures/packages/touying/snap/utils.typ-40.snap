@@ -319,9 +319,10 @@ snapshot_kind: text
   (
     is-metadata(it)
       and type(it.value) == dictionary
-      and it
-        .value
-        .at("kind", default: none)
+      and it.value.at(
+        "kind",
+        default: none,
+      )
         == kind
   )
 }
@@ -378,9 +379,12 @@ snapshot_kind: text
     ) {
       methods.insert(
         key,
-        (..args) => self
-          .methods
-          .at(key)(self: self, ..args),
+        (
+          ..args,
+        ) => self.methods.at(key)(
+          self: self,
+          ..args,
+        ),
       )
     }
   }
@@ -675,15 +679,12 @@ snapshot_kind: text
     message: "self must have an info field",
   )
   if type(self.info.date) == datetime {
-    self
-      .info
-      .date
-      .display(
-        self.at(
-          "datetime-format",
-          default: auto,
-        ),
-      )
+    self.info.date.display(
+      self.at(
+        "datetime-format",
+        default: auto,
+      ),
+    )
   } else {
     self.info.date
   }
@@ -1440,10 +1441,9 @@ snapshot_kind: text
   visible-subslides,
   uncover-cont,
 ) = {
-  let cover = self
-    .methods
-    .cover
-    .with(self: self)
+  let cover = self.methods.cover.with(
+    self: self,
+  )
   if check-visible(
     self.subslide,
     visible-subslides,

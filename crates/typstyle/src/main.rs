@@ -1,15 +1,18 @@
+mod cli;
+
 #[doc(hidden)]
 use std::{io::Read, path::PathBuf};
 
 use anyhow::{bail, Context, Result};
 use clap::Parser;
 use typst_syntax::Source;
-use typstyle_core::{attr::AttrStore, strip_trailing_whitespace, PrettyPrinter, Typstyle};
 use walkdir::{DirEntry, WalkDir};
 
-use crate::cli::{CliArguments, CliResults};
+use typstyle_core::{
+    attr::AttrStore, strip_trailing_whitespace, PrettyPrinter, PrinterConfig, Typstyle,
+};
 
-mod cli;
+use crate::cli::{CliArguments, CliResults};
 
 fn get_input(input: Option<&PathBuf>) -> Result<String> {
     match input {
@@ -165,7 +168,11 @@ fn format(input: Option<&PathBuf>, args: &CliArguments) -> Result<bool> {
         println!("{:#?}", root);
     }
     let markup = root.cast().unwrap();
-    let printer = PrettyPrinter::new(source.clone(), attr_store);
+    let config = PrinterConfig {
+        max_width: *line_width,
+        ..Default::default()
+    };
+    let printer = PrettyPrinter::new(config, attr_store);
     let doc = printer.convert_markup(markup);
     if *pretty_doc {
         println!("{:#?}", doc);

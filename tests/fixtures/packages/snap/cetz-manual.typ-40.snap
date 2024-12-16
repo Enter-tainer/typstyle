@@ -294,13 +294,11 @@ Marks are arrow tips that can be added to the end of path based elements that su
             .at(name, default: ([],))
             .join([, ]),
           cetz.canvas(
-            cetz
-              .draw
-              .line(
-                (),
-                (1, 0),
-                mark: (end: name),
-              ),
+            cetz.draw.line(
+              (),
+              (1, 0),
+              mark: (end: name),
+            ),
           ),
         )
       }
