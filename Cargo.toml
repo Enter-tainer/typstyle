@@ -4,7 +4,7 @@ members = ["crates/*", "tests"]
 default-members = ["crates/typstyle"]
 
 [workspace.package]
-version = "0.12.10"
+version = "0.12.11"
 rust-version = "1.80"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
