@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.12 - [2024-12-16]
+
+No changes. We failed to publish the previous release because of the ci issue.
+
 ## v0.12.11 - [2024-12-16]
 
 **Packaging:** We've split typstyle crate into two independent crates: `typstyle` and `typstyle-core`. `typstyle` is the CLI tool, and `typstyle-core` is the core library. The npm package is now `typstyle-core`, `typstyle` on npm will be deprecated in the future.
