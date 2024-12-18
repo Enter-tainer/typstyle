@@ -1,6 +1,8 @@
 /// Configuration Options for Typstyle Printer.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrinterConfig {
+    /// Number of spaces per tab
+    pub tab_spaces: usize,
     /// Maximum width of each line.
     pub max_width: usize,
     /// The ratio of max width for chains. Not precise.
@@ -12,6 +14,7 @@ pub struct PrinterConfig {
 impl Default for PrinterConfig {
     fn default() -> Self {
         Self {
+            tab_spaces: 2,
             max_width: 80,
             chain_width_ratio: 0.6,
             blank_lines_upper_bound: 2,
@@ -20,6 +23,13 @@ impl Default for PrinterConfig {
 }
 
 impl PrinterConfig {
+    pub fn new_with_width(max_width: usize) -> Self {
+        Self {
+            max_width,
+            ..Default::default()
+        }
+    }
+
     pub fn chain_width(&self) -> usize {
         (self.max_width as f32 * self.chain_width_ratio) as usize
     }

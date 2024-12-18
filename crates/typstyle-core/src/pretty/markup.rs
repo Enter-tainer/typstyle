@@ -106,7 +106,10 @@ impl<'a> PrettyPrinter<'a> {
             if child.kind() == SyntaxKind::ListMarker {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_stripped(markup).nest(2))
+                FlowItem::spaced(
+                    self.convert_markup_stripped(markup)
+                        .nest(self.config.tab_spaces as isize),
+                )
             } else {
                 FlowItem::none()
             }
@@ -118,7 +121,10 @@ impl<'a> PrettyPrinter<'a> {
             if child.kind() == SyntaxKind::EnumMarker {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_stripped(markup).nest(2))
+                FlowItem::spaced(
+                    self.convert_markup_stripped(markup)
+                        .nest(self.config.tab_spaces as isize),
+                )
             } else {
                 FlowItem::none()
             }
@@ -134,7 +140,7 @@ impl<'a> PrettyPrinter<'a> {
             } else if let Some(markup) = child.cast() {
                 // Here we can safely strip the space. Should never turn space into line.
                 let doc = self.convert_markup_stripped(markup);
-                FlowItem::spaced(doc.nest(2))
+                FlowItem::spaced(doc.nest(self.config.tab_spaces as isize))
             } else {
                 FlowItem::none()
             }

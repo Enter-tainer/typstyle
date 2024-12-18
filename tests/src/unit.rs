@@ -1,7 +1,7 @@
 use std::{env, error::Error, ffi::OsStr, fs, path::Path};
 
 use libtest_mimic::{Failed, Trial};
-use typstyle_core::Typstyle;
+use typstyle_core::{PrinterConfig, Typstyle};
 
 /// Creates one test for each `.typ` file in the current directory or
 /// sub-directories of the current directory.
@@ -92,7 +92,8 @@ fn remove_crlf(content: String) -> String {
 fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
     let content = read_content(path)?;
 
-    let formatted = Typstyle::new_with_content(content, width).pretty_print();
+    let cfg = PrinterConfig::new_with_width(width);
+    let formatted = Typstyle::new_with_content(content, cfg).pretty_print();
     let snap_name = format!("{}-{width}", path.file_name().unwrap().to_str().unwrap());
 
     insta::with_settings!({
@@ -109,8 +110,9 @@ fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
 fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
     let content = read_content(path)?;
 
-    let first_pass = Typstyle::new_with_content(content, width).pretty_print();
-    let second_pass = Typstyle::new_with_content(first_pass.clone(), width).pretty_print();
+    let cfg = PrinterConfig::new_with_width(width);
+    let first_pass = Typstyle::new_with_content(content, cfg.clone()).pretty_print();
+    let second_pass = Typstyle::new_with_content(first_pass.clone(), cfg).pretty_print();
     pretty_assertions::assert_str_eq!(
         first_pass,
         second_pass,
@@ -125,7 +127,8 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
 
     let content = read_content(path)?;
 
-    let formatted_src = Typstyle::new_with_content(content.clone(), width).pretty_print();
+    let cfg = PrinterConfig::new_with_width(width);
+    let formatted_src = Typstyle::new_with_content(content.clone(), cfg).pretty_print();
 
     compare_docs(
         "",

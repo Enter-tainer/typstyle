@@ -3,7 +3,7 @@ use std::{borrow::Cow, collections::HashSet, fs, path::Path};
 use anyhow::Context;
 use libtest_mimic::{Failed, Trial};
 use typstyle_consistency::{cmp::compare_docs, universe::make_universe_formatted};
-use typstyle_core::Typstyle;
+use typstyle_core::{PrinterConfig, Typstyle};
 
 #[derive(Debug, Clone)]
 struct Testcase {
@@ -190,8 +190,9 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         &entrypoint,
         &testcase.blacklist,
         |content, rel_path| {
-            let doc = Typstyle::new_with_content(content, 80).pretty_print();
-            let second_format = Typstyle::new_with_content(doc.clone(), 80).pretty_print();
+            let cfg = PrinterConfig::new_with_width(80);
+            let doc = Typstyle::new_with_content(content, cfg.clone()).pretty_print();
+            let second_format = Typstyle::new_with_content(doc.clone(), cfg).pretty_print();
             pretty_assertions::assert_eq!(
                 doc,
                 second_format,

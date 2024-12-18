@@ -260,6 +260,7 @@ impl<'a> ListStylist<'a> {
 
         let is_single = self.item_count == 1;
         let sep = arena.text(sty.separator);
+        let indent = self.printer.config.tab_spaces;
         let fold_style = if self.has_line_comment {
             FoldStyle::Never
         } else {
@@ -277,7 +278,9 @@ impl<'a> ListStylist<'a> {
                         Item::Linebreak(n) => inner += arena.hardline().repeat_n(n),
                     }
                 }
-                (arena.hardline() + inner).nest(2).enclose(delim.0, delim.1)
+                (arena.hardline() + inner)
+                    .nest(indent as isize)
+                    .enclose(delim.0, delim.1)
             }
             FoldStyle::Always => {
                 let mut inner = arena.nil();
@@ -344,7 +347,7 @@ impl<'a> ListStylist<'a> {
                 if is_single && sty.omit_delim_single {
                     inner.group()
                 } else {
-                    inner = (arena.line_() + inner).nest(2);
+                    inner = (arena.line_() + inner).nest(indent as isize);
                     if sty.omit_delim_flat {
                         inner
                             .enclose(
