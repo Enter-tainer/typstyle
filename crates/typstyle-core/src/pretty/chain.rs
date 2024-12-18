@@ -211,7 +211,7 @@ impl<'a> ChainStylist<'a> {
         if use_simple_layout {
             (first_doc + follow_docs).group()
         } else {
-            (first_doc + (follow_docs).nest(2)).group()
+            (first_doc + (follow_docs).nest(self.printer.config.tab_spaces as isize)).group()
         }
     }
 }

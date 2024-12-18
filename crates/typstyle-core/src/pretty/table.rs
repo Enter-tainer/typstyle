@@ -22,7 +22,7 @@ const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header",
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_table(&'a self, table: FuncCall<'a>, columns: usize) -> ArenaDoc<'a> {
-        let mut doc = self.arena.text("(") + self.arena.hardline();
+        let mut doc = self.arena.hardline();
         for named in table.args().items().filter_map(|node| match node {
             Arg::Named(named) => Some(named),
             _ => None,
@@ -95,7 +95,7 @@ impl<'a> PrettyPrinter<'a> {
                     self.arena.nil()
                 });
         }
-        doc.nest(2) + self.arena.hardline() + ")"
+        (doc.nest(self.config.tab_spaces as isize) + self.arena.hardline()).parens()
     }
 }
 

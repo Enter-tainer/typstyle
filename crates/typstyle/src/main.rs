@@ -89,7 +89,8 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
                         let Ok(content) = std::fs::read_to_string(entry.path()) else {
                             continue;
                         };
-                        let res = Typstyle::new_with_content(content.clone(), width).pretty_print();
+                        let cfg = PrinterConfig::new_with_width(width);
+                        let res = Typstyle::new_with_content(content.clone(), cfg).pretty_print();
 
                         // Check if the file is changed.
                         changed |= res != content;

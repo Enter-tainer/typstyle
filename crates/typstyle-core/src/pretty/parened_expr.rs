@@ -35,7 +35,7 @@ impl<'a> PrettyPrinter<'a> {
             return self.convert_expr(expr);
         }
         let _g = self.with_mode(Mode::CodeCont);
-        optional_paren(&self.arena, self.convert_expr(expr))
+        optional_paren(&self.arena, self.convert_expr(expr), self.config.tab_spaces)
     }
 
     /// Parenthesize the body if necessary.
@@ -52,15 +52,15 @@ impl<'a> PrettyPrinter<'a> {
         // - If without paren, the entire expression is in one line, thus safe.
         // - If with paren, surely safe.
         let _g = self.with_mode(Mode::CodeCont);
-        optional_paren(&self.arena, body())
+        optional_paren(&self.arena, body(), self.config.tab_spaces)
     }
 }
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
-fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>) -> ArenaDoc<'a> {
+fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>, indent: usize) -> ArenaDoc<'a> {
     let open = (arena.text("(") + arena.line()).flat_alt(arena.nil());
     let close = (arena.line() + arena.text(")")).flat_alt(arena.nil());
-    ((open + body).nest(2) + close).group()
+    ((open + body).nest(indent as isize) + close).group()
 }
 
 /// Checks if parentheses are needed for an expression that may span multiple lines.

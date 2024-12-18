@@ -111,7 +111,7 @@ impl<'a> PrettyPrinter<'a> {
                 self.convert_arg(child)
             })
             .print_doc();
-        inner.nest(2).parens()
+        inner.nest(self.config.tab_spaces as isize).parens()
     }
 
     /// Handle additional content blocks

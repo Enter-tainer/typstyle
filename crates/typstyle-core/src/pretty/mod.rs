@@ -245,9 +245,9 @@ impl<'a> PrettyPrinter<'a> {
             } else {
                 self.arena.line()
             };
-            doc = (block_sep.clone() + doc).nest(2) + block_sep;
+            doc = (block_sep.clone() + doc).nest(self.config.tab_spaces as isize) + block_sep;
         } else {
-            doc = doc.nest(2);
+            doc = doc.nest(self.config.tab_spaces as isize);
         }
         doc.enclose("$", "$")
     }
@@ -275,7 +275,10 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
-        let content = self.convert_markup(content_block.body()).group().nest(2);
+        let content = self
+            .convert_markup(content_block.body())
+            .group()
+            .nest(self.config.tab_spaces as isize);
         content.brackets()
     }
 
@@ -368,7 +371,7 @@ impl<'a> PrettyPrinter<'a> {
                 self.arena.nil()
             },
         )
-        .nest(2)
+        .nest(self.config.tab_spaces as isize)
         .enclose(open, close)
     }
 
