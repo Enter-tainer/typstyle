@@ -99,6 +99,11 @@ impl<'a> PrettyPrinter<'a> {
         if let Some(res) = self.check_disabled(expr.to_untyped()) {
             return res;
         }
+        if self.current_mode().is_math() {
+            if let Some(res) = self.check_unformattable(expr.to_untyped()) {
+                return res;
+            }
+        }
         match expr {
             Expr::Text(t) => self.convert_text(t),
             Expr::Space(s) => self.convert_space(s),
@@ -227,6 +232,10 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_equation(&'a self, equation: Equation<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_unformattable(equation.to_untyped()) {
+            return res;
+        }
+
         let _g = self.with_mode(Mode::Math);
         let mut doc = self.convert_math(equation.body());
         if equation.block() {
