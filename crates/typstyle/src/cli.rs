@@ -1,8 +1,4 @@
-use std::{
-    path::PathBuf,
-    process::{ExitCode, Termination},
-    sync::LazyLock,
-};
+use std::{path::PathBuf, sync::LazyLock};
 
 use clap::{Parser, Subcommand};
 
@@ -44,20 +40,6 @@ pub enum Command {
         #[clap(value_enum)]
         shell: clap_complete::Shell,
     },
-}
-
-pub enum CliResults {
-    Good,
-    Bad,
-}
-
-impl Termination for CliResults {
-    fn report(self) -> ExitCode {
-        match self {
-            CliResults::Good => ExitCode::SUCCESS,
-            _ => ExitCode::FAILURE,
-        }
-    }
 }
 
 static NONE: &str = "None";
