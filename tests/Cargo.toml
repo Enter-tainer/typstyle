@@ -20,6 +20,7 @@ typstyle-core.workspace = true
 typstyle-consistency = { workspace = true, optional = true }
 
 anyhow.workspace = true
+typst-syntax.workspace = true
 
 insta.workspace = true
 libtest-mimic.workspace = true

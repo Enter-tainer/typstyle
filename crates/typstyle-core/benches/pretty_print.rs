@@ -15,7 +15,9 @@ fn bench_attrs(c: &mut Criterion, id: &str, path: &str) {
 fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
     fn pretty_print_source(source: Source) -> String {
         let cfg = PrinterConfig::new_with_width(80);
-        Typstyle::new_with_src(source, cfg).pretty_print()
+        Typstyle::new_with_src(source, cfg)
+            .pretty_print()
+            .expect("expect errorless")
     }
 
     c.bench_function(id, |b| {

@@ -1,15 +1,17 @@
-use std::{env, error::Error, ffi::OsStr, fs, path::Path};
+use std::{env, error::Error, fs, path::Path};
 
+use insta::internals::Content;
 use libtest_mimic::{Failed, Trial};
+use typst_syntax::Source;
 use typstyle_core::{PrinterConfig, Typstyle};
 
 /// Creates one test for each `.typ` file in the current directory or
 /// sub-directories of the current directory.
 pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
-    fn make_test(path: &Path, name: &str, width: usize) -> Trial {
+    fn make_snapshot_test(path: &Path, name: &str, width: usize) -> Trial {
         let path = path.to_path_buf();
         Trial::test(format!("{name} - {width}char"), move || {
-            check_file(&path, width)
+            check_snapshot(&path, width)
         })
         .with_kind("typst")
     }
@@ -40,39 +42,36 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                 // Handle directories
                 visit_dir(&path, tests)?;
                 continue;
-            } else if !file_type.is_file() {
+            } else if !(file_type.is_file() && path.extension() == Some("typ".as_ref())) {
                 continue;
             }
-            // Handle files
-            if path.extension() == Some(OsStr::new("typ")) {
-                let name = path
-                    .strip_prefix(env::current_dir()?)?
-                    .display()
-                    .to_string();
+            // Handle .typ files
+            let name = path
+                .strip_prefix(env::current_dir()?)?
+                .display()
+                .to_string();
 
-                tests.extend([
-                    make_test(&path, &name, 0),
-                    make_test(&path, &name, 40),
-                    make_test(&path, &name, 80),
-                    make_test(&path, &name, 120),
-                    make_convergence_test(&path, &name, 0),
-                    make_convergence_test(&path, &name, 40),
-                    make_convergence_test(&path, &name, 80),
-                ]);
-                #[cfg(feature = "consistency")]
-                tests.extend([
-                    make_consistency_test(&path, &name, 0),
-                    make_consistency_test(&path, &name, 40),
-                    make_consistency_test(&path, &name, 80),
-                ]);
-            }
+            tests.extend([
+                make_snapshot_test(&path, &name, 0),
+                make_snapshot_test(&path, &name, 40),
+                make_snapshot_test(&path, &name, 80),
+                make_snapshot_test(&path, &name, 120),
+                make_convergence_test(&path, &name, 0),
+                make_convergence_test(&path, &name, 40),
+                make_convergence_test(&path, &name, 80),
+            ]);
+            #[cfg(feature = "consistency")]
+            tests.extend([
+                make_consistency_test(&path, &name, 0),
+                make_consistency_test(&path, &name, 40),
+                make_consistency_test(&path, &name, 80),
+            ]);
         }
 
         Ok(())
     }
 
-    // We recursively look for `.typ` files, starting from the current
-    // directory.
+    // We recursively look for `.typ` files, starting from the current directory.
     let mut tests = Vec::new();
     let current_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("fixtures");
     visit_dir(&current_dir, &mut tests)?;
@@ -80,39 +79,40 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
     Ok(tests)
 }
 
-fn remove_crlf(content: String) -> String {
-    if cfg!(windows) {
-        content.replace("\r\n", "\n")
-    } else {
-        content
+fn check_snapshot(path: &Path, width: usize) -> Result<(), Failed> {
+    let source = read_source(path)?;
+
+    let mut settings = insta::Settings::clone_current();
+    settings.set_prepend_module_to_snapshot(false);
+    settings.set_omit_expression(true);
+    settings.set_snapshot_path(path.parent().unwrap().join("snap"));
+    settings.set_input_file(path);
+    if source.root().erroneous() {
+        settings.set_raw_info(&Content::Map(vec![("erroneous".into(), true.into())]));
     }
-}
+    settings.bind(|| {
+        let snap_name = format!("{}-{width}", path.file_name().unwrap().to_str().unwrap());
+        if source.root().erroneous() {
+            insta::assert_snapshot!(snap_name, "");
+        } else {
+            let cfg = PrinterConfig::new_with_width(width);
+            let formatted = Typstyle::new_with_src(source, cfg).pretty_print().unwrap();
 
-/// Performs a couple of tidy tests.
-fn check_file(path: &Path, width: usize) -> Result<(), Failed> {
-    let content = read_content(path)?;
-
-    let cfg = PrinterConfig::new_with_width(width);
-    let formatted = Typstyle::new_with_content(content, cfg).pretty_print();
-    let snap_name = format!("{}-{width}", path.file_name().unwrap().to_str().unwrap());
-
-    insta::with_settings!({
-        snapshot_path => path.parent().unwrap().join("snap"),
-        prepend_module_to_snapshot => false,
-        input_file => path,
-        omit_expression => true,
-    }, {
-        insta::assert_snapshot!(snap_name, formatted);
+            insta::assert_snapshot!(snap_name, formatted);
+        }
     });
     Ok(())
 }
 
 fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
-    let content = read_content(path)?;
+    let source = read_source(path)?;
+    if source.root().erroneous() {
+        return Ok(());
+    }
 
     let cfg = PrinterConfig::new_with_width(width);
-    let first_pass = Typstyle::new_with_content(content, cfg.clone()).pretty_print();
-    let second_pass = Typstyle::new_with_content(first_pass.clone(), cfg).pretty_print();
+    let first_pass = Typstyle::new_with_src(source, cfg.clone()).pretty_print()?;
+    let second_pass = Typstyle::new_with_content(first_pass.clone(), cfg).pretty_print()?;
     pretty_assertions::assert_str_eq!(
         first_pass,
         second_pass,
@@ -125,19 +125,26 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     use typstyle_consistency::{cmp::compare_docs, universe::make_universe};
 
-    let content = read_content(path)?;
+    let source = read_source(path)?;
+    if source.root().erroneous() {
+        return Ok(());
+    }
 
     let cfg = PrinterConfig::new_with_width(width);
-    let formatted_src = Typstyle::new_with_content(content.clone(), cfg).pretty_print();
+    let formatted_src = Typstyle::new_with_src(source.clone(), cfg).pretty_print()?;
 
     compare_docs(
         "",
-        make_universe(&content)?,
+        make_universe(source.text())?,
         make_universe(&formatted_src)?,
         false,
     )?;
 
     Ok(())
+}
+
+fn read_source(path: &Path) -> Result<Source, Failed> {
+    read_content(path).map(Source::detached)
 }
 
 fn read_content(path: &Path) -> Result<String, Failed> {
@@ -149,4 +156,12 @@ fn read_content(path: &Path) -> Result<String, Failed> {
     let content = remove_crlf(content);
 
     Ok(content)
+}
+
+fn remove_crlf(content: String) -> String {
+    if cfg!(windows) {
+        content.replace("\r\n", "\n")
+    } else {
+        content
+    }
 }

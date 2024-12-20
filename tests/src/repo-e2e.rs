@@ -2,6 +2,7 @@ use std::{borrow::Cow, collections::HashSet, fs, path::Path};
 
 use anyhow::Context;
 use libtest_mimic::{Failed, Trial};
+use typst_syntax::Source;
 use typstyle_consistency::{cmp::compare_docs, universe::make_universe_formatted};
 use typstyle_core::{PrinterConfig, Typstyle};
 
@@ -190,9 +191,17 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         &entrypoint,
         &testcase.blacklist,
         |content, rel_path| {
+            let source = Source::detached(content);
+            if source.root().erroneous() {
+                return source.text().to_string();
+            }
             let cfg = PrinterConfig::new_with_width(80);
-            let doc = Typstyle::new_with_content(content, cfg.clone()).pretty_print();
-            let second_format = Typstyle::new_with_content(doc.clone(), cfg).pretty_print();
+            let doc = Typstyle::new_with_src(source, cfg.clone())
+                .pretty_print()
+                .unwrap();
+            let second_format = Typstyle::new_with_content(doc.clone(), cfg)
+                .pretty_print()
+                .unwrap();
             pretty_assertions::assert_eq!(
                 doc,
                 second_format,

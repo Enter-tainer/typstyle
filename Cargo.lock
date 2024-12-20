@@ -4070,6 +4070,7 @@ dependencies = [
  "libtest-mimic",
  "pathdiff",
  "pretty_assertions",
+ "typst-syntax",
  "typstyle-consistency",
  "typstyle-core",
 ]
