@@ -4,7 +4,7 @@ use anyhow::Context;
 use libtest_mimic::{Failed, Trial};
 use typst_syntax::Source;
 use typstyle_consistency::{cmp::compare_docs, universe::make_universe_formatted};
-use typstyle_core::{PrinterConfig, Typstyle};
+use typstyle_core::Typstyle;
 
 #[derive(Debug, Clone)]
 struct Testcase {
@@ -195,13 +195,8 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
             if source.root().erroneous() {
                 return source.text().to_string();
             }
-            let cfg = PrinterConfig::new_with_width(80);
-            let doc = Typstyle::new_with_src(source, cfg.clone())
-                .pretty_print()
-                .unwrap();
-            let second_format = Typstyle::new_with_content(doc.clone(), cfg)
-                .pretty_print()
-                .unwrap();
+            let doc = Typstyle::default().format_source(&source).unwrap();
+            let second_format = Typstyle::default().format_content(&doc).unwrap();
             pretty_assertions::assert_eq!(
                 doc,
                 second_format,

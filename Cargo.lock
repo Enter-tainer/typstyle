@@ -4086,6 +4086,7 @@ dependencies = [
  "itertools 0.13.0",
  "pretty",
  "rustc-hash",
+ "serde",
  "typst-syntax",
  "wasm-bindgen",
 ]
