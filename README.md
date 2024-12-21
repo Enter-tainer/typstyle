@@ -34,20 +34,48 @@ Beautiful and reliable typst code formatter
 Usage: typstyle.exe [OPTIONS] [INPUT]... [COMMAND]
 
 Commands:
-  format-all  Format all files in-place in the given directory
-  help        Print this message or the help of the given subcommand(s)
+  format-all   Format all files in-place in the given directory
+  help         Print this message or the help of the given subcommand(s)
 
 Arguments:
   [INPUT]...  Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
 
 Options:
+  -i, --inplace  Format the file in place
+      --check    Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required
+  -h, --help     Print help
+  -V, --version  Print version
+
+Format Configuration:
   -c, --column <COLUMN>  The column width of the output [default: 80]
-  -a, --ast              Print the AST of the input file
-  -p, --pretty-doc       Print the pretty document
-  -i, --inplace          Format the file in place
-      --check            Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required
-  -h, --help             Print help
-  -V, --version          Print version
+
+Debug Options:
+  -a, --ast         Print the AST of the input file
+  -p, --pretty-doc  Print the pretty document
+
+Log Levels:
+  -v, --verbose  Enable verbose logging
+  -q, --quiet    Print diagnostics, but nothing else
+```
+
+```txt
+Format all files in-place in the given directory
+
+Usage: typstyle.exe format-all [OPTIONS] [DIRECTORY]
+
+Arguments:
+  [DIRECTORY]  The directory to format. If not provided, the current directory is used
+
+Options:
+      --check  Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required
+  -h, --help   Print help
+
+Format Configuration:
+  -c, --column <COLUMN>  The column width of the output [default: 80]
+
+Log Levels:
+  -v, --verbose  Enable verbose logging
+  -q, --quiet    Print diagnostics, but nothing else
 ```
 
 #### Examples
