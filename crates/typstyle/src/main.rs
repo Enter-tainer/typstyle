@@ -1,11 +1,13 @@
 mod cli;
 mod fmt;
+mod logging;
 
 use std::process::{ExitCode, Termination};
 
 use anyhow::Result;
 use clap::Parser;
 use fmt::{format_all, format_many, format_one, FormatStatus};
+use log::error;
 
 use crate::cli::CliArguments;
 
@@ -24,7 +26,10 @@ impl Termination for CliResults {
 }
 
 fn main() -> CliResults {
+    logging::init();
+
     let args = CliArguments::parse();
+    args.validate_input();
 
     // Should put the formatter into check mode
     let check = args.check;
@@ -32,7 +37,7 @@ fn main() -> CliResults {
         Ok(FormatStatus::Changed) if check => CliResults::Bad,
         Ok(_) => CliResults::Good,
         Err(e) => {
-            eprintln!("{e}");
+            error!("{e}");
             CliResults::Bad
         }
     }

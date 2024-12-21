@@ -1,6 +1,11 @@
-use std::{io::Read, path::PathBuf};
+use std::{
+    io::Read,
+    path::{Path, PathBuf},
+    time::Instant,
+};
 
 use anyhow::{bail, Context, Result};
+use log::{error, info, warn};
 use typst_syntax::Source;
 use walkdir::{DirEntry, WalkDir};
 
@@ -45,9 +50,15 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
         .clone()
         .unwrap_or_else(|| std::env::current_dir().unwrap());
 
-    let mut format_count = 0;
-    let mut unchanged_count = 0;
-    let mut error_count = 0;
+    #[derive(Default)]
+    struct Summary {
+        format_count: usize,
+        unchanged_count: usize,
+        error_count: usize,
+    }
+    let mut summary = Summary::default();
+
+    let start_time = Instant::now();
 
     // Walk through all the files in the directory
     let entries = WalkDir::new(directory)
@@ -61,34 +72,52 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
         let Ok(content) = std::fs::read_to_string(entry.path()) else {
             continue;
         };
-        let cfg = PrinterConfig::new_with_width(args.column);
+        let cfg = PrinterConfig::new_with_width(args.style.column);
         let Ok(res) = Typstyle::new_with_content(content.clone(), cfg).pretty_print() else {
-            error_count += 1;
+            warn!("Failed to format: {}", entry.path().display());
             continue;
         };
 
         // Check if the content is already well-formatted (unchanged)
         if res == content {
-            unchanged_count += 1;
+            summary.unchanged_count += 1;
             continue;
         }
         status = FormatStatus::Changed;
 
-        // Attempt to overwrite the file with the formatted content
-        match std::fs::write(entry.path(), res)
-            .with_context(|| format!("failed to overwrite {}", entry.path().display()))
-        {
-            Ok(_) => format_count += 1,
-            Err(e) => {
-                eprintln!("{e}");
-                error_count += 1;
+        if args.check {
+            info!("Would reformat: {}", entry.path().display());
+            summary.format_count += 1
+        } else {
+            // Attempt to overwrite the file with the formatted content
+            match write_back(entry.path(), &res) {
+                Ok(_) => summary.format_count += 1,
+                Err(e) => {
+                    error!("{e}");
+                    summary.error_count += 1;
+                }
             }
         }
     }
+    let duration = start_time.elapsed();
 
-    eprintln!("successfully formatted {format_count} files ({unchanged_count} unchanged)");
-    if error_count > 0 {
-        bail!("failed to format {error_count} files");
+    if args.check {
+        info!(
+            "{} files would be reformatted ({} already formatted), checked in {:?}",
+            summary.format_count, summary.unchanged_count, duration
+        );
+    } else {
+        info!(
+            "Successfully formatted {} files ({} unchanged) in {:?}",
+            summary.format_count, summary.unchanged_count, duration
+        );
+    }
+    if summary.error_count > 0 {
+        // Syntax errors are not counted here.
+        bail!(
+            "failed to format {} files due to IO error",
+            summary.error_count
+        );
     }
 
     Ok(status)
@@ -112,14 +141,14 @@ pub fn format_many(input: &[PathBuf], args: &CliArguments) -> Result<FormatStatu
     // Format the files one by one
     for file in input {
         status |= format_one(Some(file), args).unwrap_or_else(|e| {
-            eprintln!("{e}");
+            error!("{e}");
             error_count += 1;
             FormatStatus::Unchanged
         });
     }
 
     if error_count > 0 {
-        bail!("failed to format {error_count} files");
+        bail!("failed to format {error_count} files due to IO error");
     }
     Ok(status)
 }
@@ -136,27 +165,33 @@ pub fn format_many(input: &[PathBuf], args: &CliArguments) -> Result<FormatStatu
 /// # Returns
 /// Returns `Ok(FormatStatus)` indicating whether the file was modified or remained unchanged.
 pub fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<FormatStatus> {
-    if args.inplace && input.is_none() {
-        bail!("cannot perform in-place formatting without at least one file being presented");
-    }
     let content = get_input(input)?;
-    let res = format_echo(content, args);
+    let res = format_debug(content, args);
     let status = match &res {
         FormatResult::Changed(_) => FormatStatus::Changed,
         _ => FormatStatus::Unchanged,
     };
     match res {
         FormatResult::Changed(res) if args.inplace => {
-            let Some(path) = input else { unreachable!() };
-            std::fs::write(path, res)
-                .with_context(|| format!("failed to write to the file {}", path.display()))?;
+            // We have already validated that the input is Some.
+            write_back(input.unwrap(), &res)?;
         }
-        FormatResult::Changed(res) | FormatResult::Unchanged(res) => {
-            if !args.check {
-                print!("{}", res);
+        FormatResult::Changed(_) if args.check => {
+            if let Some(path) = input {
+                info!("Would reformat: {}", path.display());
             }
         }
-        _ => {}
+        FormatResult::Unchanged(_) if args.check => {}
+        FormatResult::Changed(res) | FormatResult::Unchanged(res) => {
+            info!("{}", res);
+        }
+        FormatResult::Erroneous => {
+            if let Some(path) = input {
+                warn!("Failed to parse {}", path.display());
+            } else {
+                warn!("Failed to parse stdin");
+            }
+        }
     }
     Ok(status)
 }
@@ -167,30 +202,29 @@ enum FormatResult {
     Erroneous,
 }
 
-fn format_echo(content: String, args: &CliArguments) -> FormatResult {
+fn format_debug(content: String, args: &CliArguments) -> FormatResult {
     let source = Source::detached(&content);
     let root = source.root();
     let attr_store = AttrStore::new(root);
-    if args.ast {
+    if args.debug.ast {
         println!("{:#?}", root);
     }
 
     // Error formatting document.
     if root.erroneous() {
-        eprintln!("failed to format: the document is erroneous");
         return FormatResult::Erroneous;
     }
 
     let config = PrinterConfig {
-        max_width: args.column,
+        max_width: args.style.column,
         ..Default::default()
     };
     let printer = PrettyPrinter::new(config, attr_store);
     let doc = printer.convert_markup(root.cast().unwrap());
-    if args.pretty_doc {
+    if args.debug.pretty_doc {
         println!("{:#?}", doc);
     }
-    let res = strip_trailing_whitespace(&doc.pretty(args.column).to_string());
+    let res = strip_trailing_whitespace(&doc.pretty(args.style.column).to_string());
 
     // Compare `res` with `content` to perform CI checks
     if res != content {
@@ -202,9 +236,8 @@ fn format_echo(content: String, args: &CliArguments) -> FormatResult {
 
 fn get_input(input: Option<&PathBuf>) -> Result<String> {
     match input {
-        Some(path) => {
-            std::fs::read_to_string(path).with_context(|| format!("failed to read {:#?}", path))
-        }
+        Some(path) => std::fs::read_to_string(path)
+            .with_context(|| format!("failed to read {}", path.display())),
         None => {
             let mut buffer = String::new();
             std::io::stdin()
@@ -213,6 +246,11 @@ fn get_input(input: Option<&PathBuf>) -> Result<String> {
             Ok(buffer)
         }
     }
+}
+
+fn write_back(path: &Path, content: &str) -> Result<()> {
+    std::fs::write(path, content)
+        .with_context(|| format!("failed to write to the file {}", path.display()))
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {
