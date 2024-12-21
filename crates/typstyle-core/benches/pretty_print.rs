@@ -2,7 +2,7 @@ use std::fs;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use typst_syntax::Source;
-use typstyle_core::{attr::AttrStore, PrinterConfig, Typstyle};
+use typstyle_core::{attr::AttrStore, Typstyle};
 
 fn bench_attrs(c: &mut Criterion, id: &str, path: &str) {
     c.bench_function(id, |b| {
@@ -14,9 +14,8 @@ fn bench_attrs(c: &mut Criterion, id: &str, path: &str) {
 
 fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
     fn pretty_print_source(source: Source) -> String {
-        let cfg = PrinterConfig::new_with_width(80);
-        Typstyle::new_with_src(source, cfg)
-            .pretty_print()
+        Typstyle::default()
+            .format_source(&source)
             .expect("expect errorless")
     }
 

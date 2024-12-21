@@ -3,7 +3,7 @@ use std::{env, error::Error, fs, path::Path};
 use insta::internals::Content;
 use libtest_mimic::{Failed, Trial};
 use typst_syntax::Source;
-use typstyle_core::{PrinterConfig, Typstyle};
+use typstyle_core::{Config, Typstyle};
 
 /// Creates one test for each `.typ` file in the current directory or
 /// sub-directories of the current directory.
@@ -95,8 +95,8 @@ fn check_snapshot(path: &Path, width: usize) -> Result<(), Failed> {
         if source.root().erroneous() {
             insta::assert_snapshot!(snap_name, "");
         } else {
-            let cfg = PrinterConfig::new_with_width(width);
-            let formatted = Typstyle::new_with_src(source, cfg).pretty_print().unwrap();
+            let cfg = Config::new().with_width(width);
+            let formatted = Typstyle::new(cfg).format_source(&source).unwrap();
 
             insta::assert_snapshot!(snap_name, formatted);
         }
@@ -110,9 +110,9 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
         return Ok(());
     }
 
-    let cfg = PrinterConfig::new_with_width(width);
-    let first_pass = Typstyle::new_with_src(source, cfg.clone()).pretty_print()?;
-    let second_pass = Typstyle::new_with_content(first_pass.clone(), cfg).pretty_print()?;
+    let cfg = Config::new().with_width(width);
+    let first_pass = Typstyle::new(cfg.clone()).format_source(&source)?;
+    let second_pass = Typstyle::new(cfg).format_content(&first_pass)?;
     pretty_assertions::assert_str_eq!(
         first_pass,
         second_pass,
@@ -130,8 +130,8 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
         return Ok(());
     }
 
-    let cfg = PrinterConfig::new_with_width(width);
-    let formatted_src = Typstyle::new_with_src(source.clone(), cfg).pretty_print()?;
+    let cfg = Config::new().with_width(width);
+    let formatted_src = Typstyle::new(cfg).format_source(&source)?;
 
     compare_docs(
         "",

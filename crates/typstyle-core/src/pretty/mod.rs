@@ -18,7 +18,7 @@ mod plain;
 mod table;
 mod util;
 
-pub use config::PrinterConfig;
+pub use config::Config;
 
 use std::cell::RefCell;
 
@@ -34,14 +34,14 @@ use style::FoldStyle;
 type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
 pub struct PrettyPrinter<'a> {
-    config: PrinterConfig,
+    config: Config,
     attr_store: AttrStore,
     mode: RefCell<Vec<Mode>>,
     arena: Arena<'a>,
 }
 
 impl<'a> PrettyPrinter<'a> {
-    pub fn new(config: PrinterConfig, attr_store: AttrStore) -> Self {
+    pub fn new(config: Config, attr_store: AttrStore) -> Self {
         Self {
             config,
             attr_store,

@@ -9,9 +9,7 @@ use log::{debug, error, info, warn};
 use typst_syntax::Source;
 use walkdir::{DirEntry, WalkDir};
 
-use typstyle_core::{
-    attr::AttrStore, strip_trailing_whitespace, PrettyPrinter, PrinterConfig, Typstyle,
-};
+use typstyle_core::{attr::AttrStore, strip_trailing_whitespace, Config, PrettyPrinter, Typstyle};
 
 use crate::cli::CliArguments;
 
@@ -72,8 +70,8 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
         let Ok(content) = std::fs::read_to_string(entry.path()) else {
             continue;
         };
-        let cfg = PrinterConfig::new_with_width(args.style.column);
-        let Ok(res) = Typstyle::new_with_content(content.clone(), cfg).pretty_print() else {
+        let cfg = Config::new().with_width(args.style.column);
+        let Ok(res) = Typstyle::new(cfg).format_content(&content) else {
             warn!("Failed to format: {}", entry.path().display());
             continue;
         };
@@ -216,7 +214,7 @@ fn format_debug(content: String, args: &CliArguments) -> FormatResult {
         return FormatResult::Erroneous;
     }
 
-    let config = PrinterConfig {
+    let config = Config {
         max_width: args.style.column,
         ..Default::default()
     };

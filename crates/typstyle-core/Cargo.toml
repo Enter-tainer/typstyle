@@ -25,7 +25,7 @@ ecow.workspace = true
 itertools.workspace = true
 pretty.workspace = true
 rustc-hash.workspace = true
-
+serde = { workspace = true, optional = true }
 wasm-bindgen = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -33,4 +33,5 @@ insta.workspace = true
 criterion.workspace = true
 
 [features]
+serde = ["dep:serde"]
 wasm = ["wasm-bindgen"]
