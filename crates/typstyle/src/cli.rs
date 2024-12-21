@@ -3,7 +3,11 @@ use std::{path::PathBuf, sync::LazyLock};
 use clap::{error::ErrorKind, Args, CommandFactory, Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "typstyle", author, version, about, long_version(LONG_VERSION.as_str()))]
+#[command(
+  name = "typstyle",
+  about = "Beautiful and reliable typst code formatter",
+  author, version, long_version(LONG_VERSION.as_str())
+)]
 pub struct CliArguments {
     #[command(subcommand)]
     pub command: Option<Command>,
@@ -24,6 +28,9 @@ pub struct CliArguments {
 
     #[command(flatten)]
     pub debug: DebugArgs,
+
+    #[command(flatten)]
+    pub log_level: LogLevelArgs,
 }
 
 impl CliArguments {
@@ -48,6 +55,7 @@ pub enum Command {
     },
     #[cfg(feature = "completion")]
     /// Generate shell completions for the given shell to stdout
+    #[command(hide = true)]
     Completions {
         /// The shell to generate completions for
         #[arg(value_enum)]
@@ -58,19 +66,47 @@ pub enum Command {
 #[derive(Args)]
 pub struct StyleArgs {
     /// The column width of the output
-    #[arg(short, long, default_value_t = 80, global = true)]
+    #[arg(
+        short,
+        long,
+        default_value_t = 80,
+        global = true,
+        help_heading = "Format Configuration"
+    )]
     pub column: usize,
 }
 
 #[derive(Args)]
 pub struct DebugArgs {
     /// Print the AST of the input file
-    #[arg(short, long, default_value_t = false)]
+    #[arg(short, long, default_value_t = false, help_heading = "Debug Options")]
     pub ast: bool,
 
     /// Print the pretty document
-    #[arg(short, long, default_value_t = false)]
+    #[arg(short, long, default_value_t = false, help_heading = "Debug Options")]
     pub pretty_doc: bool,
+}
+
+#[derive(Args)]
+pub struct LogLevelArgs {
+    /// Enable verbose logging.
+    #[arg(
+        short,
+        long,
+        global = true,
+        group = "verbosity",
+        help_heading = "Log Levels"
+    )]
+    pub verbose: bool,
+    /// Print diagnostics, but nothing else.
+    #[arg(
+        short,
+        long,
+        global = true,
+        group = "verbosity",
+        help_heading = "Log Levels"
+    )]
+    pub quiet: bool,
 }
 
 static NONE: &str = "None";

@@ -26,10 +26,17 @@ impl Termination for CliResults {
 }
 
 fn main() -> CliResults {
-    logging::init();
-
     let args = CliArguments::parse();
     args.validate_input();
+
+    logging::init();
+    log::set_max_level(if args.log_level.verbose {
+        log::LevelFilter::Debug
+    } else if args.log_level.quiet {
+        log::LevelFilter::Error
+    } else {
+        log::LevelFilter::Info
+    });
 
     // Should put the formatter into check mode
     let check = args.check;

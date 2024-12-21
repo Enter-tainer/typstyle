@@ -5,7 +5,7 @@ use std::{
 };
 
 use anyhow::{bail, Context, Result};
-use log::{error, info, warn};
+use log::{debug, error, info, warn};
 use typst_syntax::Source;
 use walkdir::{DirEntry, WalkDir};
 
@@ -86,7 +86,7 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
         status = FormatStatus::Changed;
 
         if args.check {
-            info!("Would reformat: {}", entry.path().display());
+            debug!("Would reformat: {}", entry.path().display());
             summary.format_count += 1
         } else {
             // Attempt to overwrite the file with the formatted content
