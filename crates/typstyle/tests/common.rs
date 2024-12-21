@@ -1,8 +1,10 @@
 use std::{
+    collections::HashMap,
     ffi::OsStr,
     fs,
     path::{Path, PathBuf},
     process::Command,
+    time::SystemTime,
 };
 
 use insta_cmd::get_cargo_bin;
@@ -22,6 +24,8 @@ pub struct Workspace {
     #[allow(unused)]
     tempdir: TempDir,
     project_dir: PathBuf,
+    /// Records file last modified time.
+    tracked: HashMap<PathBuf, SystemTime>,
 }
 
 #[allow(dead_code)]
@@ -33,6 +37,7 @@ impl Workspace {
         Workspace {
             tempdir,
             project_dir,
+            tracked: Default::default(),
         }
     }
 
@@ -51,14 +56,47 @@ impl Workspace {
     }
 
     pub fn write(&self, path: impl AsRef<Path>, contents: impl AsRef<[u8]>) {
-        let p = self.project_path().join(path.as_ref());
+        self.write_impl(path.as_ref(), contents.as_ref());
+    }
+
+    /// Write file to project and track its modified time.
+    pub fn write_tracked(&mut self, path: impl AsRef<Path>, contents: impl AsRef<[u8]>) {
+        let p = self.write_impl(path.as_ref(), contents.as_ref());
+        if let Ok(time) = p.metadata().unwrap().modified() {
+            self.tracked.insert(p, time);
+        }
+    }
+
+    fn write_impl(&self, path: &Path, contents: &[u8]) -> PathBuf {
+        let p = self.project_path().join(path);
         fs::create_dir_all(p.parent().unwrap()).ok();
-        fs::write(p, contents).unwrap();
+        fs::write(&p, contents).unwrap();
+        p
     }
 
     pub fn read_string(&self, path: impl AsRef<Path>) -> String {
         let p = self.project_path().join(path.as_ref());
         fs::read_to_string(p).unwrap()
+    }
+
+    pub fn is_unmodified(&self, path: impl AsRef<Path>) -> bool {
+        let p = self.project_path().join(path.as_ref());
+        if let Ok(time) = p.metadata().unwrap().modified() {
+            self.tracked
+                .get(&p)
+                .is_some_and(|old_time| *old_time == time)
+        } else {
+            true
+        }
+    }
+
+    pub fn all_unmodified(&self) -> bool {
+        self.tracked
+            .iter()
+            .all(|(p, old_time)| match p.metadata().unwrap().modified() {
+                Ok(time) => *old_time == time,
+                Err(_) => true,
+            })
     }
 }
 
