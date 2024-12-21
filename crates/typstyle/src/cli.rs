@@ -1,32 +1,45 @@
 use std::{path::PathBuf, sync::LazyLock};
 
-use clap::{Parser, Subcommand};
+use clap::{error::ErrorKind, Args, CommandFactory, Parser, Subcommand};
 
-#[derive(Debug, Clone, Parser)]
-#[clap(name = "typstyle", author, version, about, long_version(LONG_VERSION.as_str()))]
+#[derive(Parser)]
+#[command(name = "typstyle", author, version, about, long_version(LONG_VERSION.as_str()))]
 pub struct CliArguments {
+    #[command(subcommand)]
+    pub command: Option<Command>,
+
     /// Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
     pub input: Vec<PathBuf>,
-    /// The column width of the output
-    #[clap(short, long, default_value = "80")]
-    pub column: usize,
-    /// Print the AST of the input file
-    #[clap(short, long, default_value = "false")]
-    pub ast: bool,
-    /// Print the pretty document
-    #[clap(short, long, default_value = "false")]
-    pub pretty_doc: bool,
+
     /// Format the file in place
-    #[clap(short, long, default_value = "false")]
+    #[arg(short, long, default_value_t = false, conflicts_with = "check")]
     pub inplace: bool,
-    #[clap(subcommand)]
-    pub command: Option<Command>,
+
     /// Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required.
-    #[clap(long, default_value = "false")]
+    #[arg(long, default_value_t = false, global = true)]
     pub check: bool,
+
+    #[command(flatten)]
+    pub style: StyleArgs,
+
+    #[command(flatten)]
+    pub debug: DebugArgs,
 }
 
-#[derive(Debug, Subcommand, Clone)]
+impl CliArguments {
+    pub fn validate_input(&self) {
+        if self.command.is_none() && self.inplace && self.input.is_empty() {
+            let mut cmd = Self::command();
+            cmd.error(
+                ErrorKind::ValueValidation,
+                "cannot perform in-place formatting without at least one file being presented",
+            )
+            .exit();
+        }
+    }
+}
+
+#[derive(Subcommand)]
 pub enum Command {
     /// Format all files in-place in the given directory
     FormatAll {
@@ -37,9 +50,27 @@ pub enum Command {
     /// Generate shell completions for the given shell to stdout
     Completions {
         /// The shell to generate completions for
-        #[clap(value_enum)]
+        #[arg(value_enum)]
         shell: clap_complete::Shell,
     },
+}
+
+#[derive(Args)]
+pub struct StyleArgs {
+    /// The column width of the output
+    #[arg(short, long, default_value_t = 80, global = true)]
+    pub column: usize,
+}
+
+#[derive(Args)]
+pub struct DebugArgs {
+    /// Print the AST of the input file
+    #[arg(short, long, default_value_t = false)]
+    pub ast: bool,
+
+    /// Print the pretty document
+    #[arg(short, long, default_value_t = false)]
+    pub pretty_doc: bool,
 }
 
 static NONE: &str = "None";
