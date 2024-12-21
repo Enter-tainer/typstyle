@@ -66,9 +66,10 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
                     "typstyle",
                     &mut std::io::stdout(),
                 );
+
+                return Ok(FormatStatus::Unchanged);
             }
         }
-        return Ok(FormatStatus::Unchanged);
     }
 
     if args.input.is_empty() {

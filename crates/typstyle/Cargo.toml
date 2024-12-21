@@ -31,6 +31,11 @@ log.workspace = true
 anstream.workspace = true
 colored.workspace = true
 
+[dev-dependencies]
+insta = { workspace = true, features = ["filters"] }
+insta-cmd.workspace = true
+tempfile.workspace = true
+
 [build-dependencies]
 anyhow.workspace = true
 vergen.workspace = true
