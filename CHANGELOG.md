@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.12.13 - [2024-12-21]
+
+- Fix: typstyle previously incorrectly remove comments in math equations. Now it is fixed.
+- Cli:
+  - typstyle now reports error when the input file is invalid.
+  - `typstyle --check` no longer changes the file content.
+  - Other minor improvements.
+
 ## v0.12.12 - [2024-12-16]
 
 No changes. We failed to publish the previous release because of the ci issue.
