@@ -24,5 +24,4 @@ typst-syntax.workspace = true
 
 insta.workspace = true
 libtest-mimic.workspace = true
-pathdiff.workspace = true
 pretty_assertions.workspace = true

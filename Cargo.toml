@@ -39,19 +39,18 @@ colored = "2.2"
 
 # Used in tests
 insta = { version = "1.41.1" }
+insta-cmd = "0.6"
 libtest-mimic = "0.8.1"
-pathdiff = "0.2.2"
 pretty_assertions = "1.4.1"
-# reflexo-typst-shim = { version = "0.5.0", default-features = false, features = [] }
+tempfile = "3"
+
 reflexo-world = { version = "0.5.0", default-features = false, features = [
   "system",
 ] }
-# reflexo-vfs = { version = "0.5.0", default-features = false, features = ["system"] }
 reflexo-typst = { version = "0.5.0", default-features = false, features = [
   "system",
   "no-content-hint",
 ] }
-# reflexo = { version = "0.5.0", default-features = false, features = ["typst"] }
 typst-assets = { version = "0.12.0", features = ["fonts"] }
 typst-render = "0.12.0"
 typst-pdf = "0.12.0"
