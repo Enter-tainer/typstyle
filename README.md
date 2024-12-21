@@ -131,8 +131,8 @@ Add this to your `.pre-commit-config.yaml`:
 
 ### Use as a Library
 
-- **NPM**: <https://www.npmjs.com/package/typstyle>
-- **Rust**: <https://crates.io/crates/typstyle>
+- **NPM**: <https://www.npmjs.com/package/typstyle-core>
+- **Rust**: <https://crates.io/crates/typstyle-core>
 
 ## Features & Design
 
