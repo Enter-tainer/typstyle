@@ -4,11 +4,11 @@ use common::{typstyle_cmd_snapshot, Workspace};
 
 #[test]
 fn test_all_0() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a  =  0");
-    space.write("x/b.typ", "#let b  =  1");
-    space.write("x/y/.c.typ", "#let c  =  2");
-    space.write("x/.z/d.typ", "#let d  =  3");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a  =  0");
+    space.write_tracked("x/b.typ", "#let b  =  1");
+    space.write_tracked("x/y/.c.typ", "#let c  =  2");
+    space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
     success: true
@@ -21,17 +21,17 @@ fn test_all_0() {
 
     assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
     assert_eq!(space.read_string("x/b.typ"), "#let b = 1\n");
-    assert_eq!(space.read_string("x/y/.c.typ"), "#let c  =  2");
-    assert_eq!(space.read_string("x/.z/d.typ"), "#let d  =  3");
+    assert!(space.is_unmodified("x/y/.c.typ"));
+    assert!(space.is_unmodified("x/.z/d.typ"));
 }
 
 #[test]
 fn test_all_1() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a = 0\n");
-    space.write("x/b.typ", "#let b  =  1");
-    space.write("x/y/.c.typ", "#let c  =  2");
-    space.write("x/.z/d.typ", "#let d  =  3");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a = 0\n");
+    space.write_tracked("x/b.typ", "#let b  =  1");
+    space.write_tracked("x/y/.c.typ", "#let c  =  2");
+    space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
     success: true
@@ -42,19 +42,19 @@ fn test_all_1() {
     ----- stderr -----
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
+    assert!(space.is_unmodified("a.typ"));
     assert_eq!(space.read_string("x/b.typ"), "#let b = 1\n");
-    assert_eq!(space.read_string("x/y/.c.typ"), "#let c  =  2");
-    assert_eq!(space.read_string("x/.z/d.typ"), "#let d  =  3");
+    assert!(space.is_unmodified("x/y/.c.typ"));
+    assert!(space.is_unmodified("x/.z/d.typ"));
 }
 
 #[test]
 fn test_all_2() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a = 0\n");
-    space.write("x/b.typ", "#let b = 1\n");
-    space.write("x/y/.c.typ", "#let c  =  2");
-    space.write("x/.z/d.typ", "#let d  =  3");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a = 0\n");
+    space.write_tracked("x/b.typ", "#let b = 1\n");
+    space.write_tracked("x/y/.c.typ", "#let c  =  2");
+    space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
     success: true
@@ -65,19 +65,19 @@ fn test_all_2() {
     ----- stderr -----
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
-    assert_eq!(space.read_string("x/b.typ"), "#let b = 1\n");
-    assert_eq!(space.read_string("x/y/.c.typ"), "#let c  =  2");
-    assert_eq!(space.read_string("x/.z/d.typ"), "#let d  =  3");
+    assert!(space.is_unmodified("a.typ"));
+    assert!(space.is_unmodified("x/b.typ"));
+    assert!(space.is_unmodified("x/y/.c.typ"));
+    assert!(space.is_unmodified("x/.z/d.typ"));
 }
 
 #[test]
 fn test_all_0_check() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a  =  0");
-    space.write("x/b.typ", "#let b  =  1");
-    space.write("x/y/.c.typ", "#let c  =  2");
-    space.write("x/.z/d.typ", "#let d  =  3");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a  =  0");
+    space.write_tracked("x/b.typ", "#let b  =  1");
+    space.write_tracked("x/y/.c.typ", "#let c  =  2");
+    space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
     success: false
@@ -90,19 +90,16 @@ fn test_all_0_check() {
     ----- stderr -----
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a  =  0");
-    assert_eq!(space.read_string("x/b.typ"), "#let b  =  1");
-    assert_eq!(space.read_string("x/y/.c.typ"), "#let c  =  2");
-    assert_eq!(space.read_string("x/.z/d.typ"), "#let d  =  3");
+    assert!(space.all_unmodified());
 }
 
 #[test]
 fn test_all_1_check() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a = 0\n");
-    space.write("x/b.typ", "#let b  =  1");
-    space.write("x/y/.c.typ", "#let c  =  2");
-    space.write("x/.z/d.typ", "#let d  =  3");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a = 0\n");
+    space.write_tracked("x/b.typ", "#let b  =  1");
+    space.write_tracked("x/y/.c.typ", "#let c  =  2");
+    space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
     success: false
@@ -114,19 +111,16 @@ fn test_all_1_check() {
     ----- stderr -----
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
-    assert_eq!(space.read_string("x/b.typ"), "#let b  =  1");
-    assert_eq!(space.read_string("x/y/.c.typ"), "#let c  =  2");
-    assert_eq!(space.read_string("x/.z/d.typ"), "#let d  =  3");
+    assert!(space.all_unmodified());
 }
 
 #[test]
 fn test_all_2_check() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a = 0\n");
-    space.write("x/b.typ", "#let b = 1\n");
-    space.write("x/y/.c.typ", "#let c  =  2");
-    space.write("x/.z/d.typ", "#let d  =  3");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a = 0\n");
+    space.write_tracked("x/b.typ", "#let b = 1\n");
+    space.write_tracked("x/y/.c.typ", "#let c  =  2");
+    space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
     success: true
@@ -137,18 +131,15 @@ fn test_all_2_check() {
     ----- stderr -----
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
-    assert_eq!(space.read_string("x/b.typ"), "#let b = 1\n");
-    assert_eq!(space.read_string("x/y/.c.typ"), "#let c  =  2");
-    assert_eq!(space.read_string("x/.z/d.typ"), "#let d  =  3");
+    assert!(space.all_unmodified());
 }
 
 #[test]
 fn test_all_erroneous() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a = 0\n");
-    space.write("x/b.typ", "#let b  =  1");
-    space.write("x/y/c.typ", "#let c  =  2; #");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a = 0\n");
+    space.write_tracked("x/b.typ", "#let b  =  1");
+    space.write_tracked("x/y/c.typ", "#let c  =  2; #");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
     success: true
@@ -160,17 +151,17 @@ fn test_all_erroneous() {
     warn: Failed to format: [TEMP_PATH]/project/x/y/c.typ
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
+    assert!(space.is_unmodified("a.typ"));
     assert_eq!(space.read_string("x/b.typ"), "#let b = 1\n");
-    assert_eq!(space.read_string("x/y/c.typ"), "#let c  =  2; #");
+    assert!(space.is_unmodified("x/y/c.typ"));
 }
 
 #[test]
 fn test_all_erroneous_check() {
-    let space = Workspace::new();
-    space.write("a.typ", "#let a = 0\n");
-    space.write("x/b.typ", "#let b  =  1");
-    space.write("x/y/c.typ", "#let c  =  2; #");
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let a = 0\n");
+    space.write_tracked("x/b.typ", "#let b  =  1");
+    space.write_tracked("x/y/c.typ", "#let c  =  2; #");
 
     typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
     success: false
@@ -183,9 +174,7 @@ fn test_all_erroneous_check() {
     warn: Failed to format: [TEMP_PATH]/project/x/y/c.typ
     ");
 
-    assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
-    assert_eq!(space.read_string("x/b.typ"), "#let b  =  1");
-    assert_eq!(space.read_string("x/y/c.typ"), "#let c  =  2; #");
+    assert!(space.all_unmodified());
 }
 
 #[test]
