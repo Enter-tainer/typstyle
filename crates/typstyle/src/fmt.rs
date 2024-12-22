@@ -9,7 +9,7 @@ use log::{debug, error, info, warn};
 use typst_syntax::Source;
 use walkdir::{DirEntry, WalkDir};
 
-use typstyle_core::{attr::AttrStore, strip_trailing_whitespace, Config, PrettyPrinter, Typstyle};
+use typstyle_core::{Config, Typstyle};
 
 use crate::cli::CliArguments;
 
@@ -204,26 +204,19 @@ enum FormatResult {
 fn format_debug(content: String, args: &CliArguments) -> FormatResult {
     let source = Source::detached(&content);
     let root = source.root();
-    let attr_store = AttrStore::new(root);
     if args.debug.ast {
         println!("{:#?}", root);
     }
 
-    // Error formatting document.
-    if root.erroneous() {
-        return FormatResult::Erroneous;
-    }
-
-    let config = Config {
-        max_width: args.style.column,
-        ..Default::default()
+    let config = Config::new().with_width(args.style.column);
+    let res = match Typstyle::new(config).format_source_inspect(&source, |doc| {
+        if args.debug.pretty_doc {
+            println!("{:#?}", doc);
+        }
+    }) {
+        Ok(res) => res,
+        Err(_) => return FormatResult::Erroneous,
     };
-    let printer = PrettyPrinter::new(config, attr_store);
-    let doc = printer.convert_markup(root.cast().unwrap());
-    if args.debug.pretty_doc {
-        println!("{:#?}", doc);
-    }
-    let res = strip_trailing_whitespace(&doc.pretty(args.style.column).to_string());
 
     // Compare `res` with `content` to perform CI checks
     if res != content {
