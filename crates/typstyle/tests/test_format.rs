@@ -45,6 +45,8 @@ fn test_one_quiet() {
     success: true
     exit_code: 0
     ----- stdout -----
+    #let a = 0
+
 
     ----- stderr -----
     ");
@@ -141,10 +143,6 @@ fn test_two_0_inplace() {
     success: true
     exit_code: 0
     ----- stdout -----
-    #let a = 0
-
-    #let b = 1
-
 
     ----- stderr -----
     ");
@@ -163,8 +161,6 @@ fn test_two_1_inplace() {
     success: true
     exit_code: 0
     ----- stdout -----
-    #let a = 0
-
 
     ----- stderr -----
     ");
