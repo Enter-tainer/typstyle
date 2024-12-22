@@ -17,6 +17,8 @@ mod plain;
 mod table;
 mod util;
 
+pub use mode::Mode;
+
 use std::cell::RefCell;
 
 use itertools::Itertools;
@@ -25,7 +27,6 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{ext::StrExt, AttrStore, Config};
 use doc_ext::DocExt;
-use mode::Mode;
 use style::FoldStyle;
 
 pub type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
@@ -92,7 +93,7 @@ impl<'a> PrettyPrinter<'a> {
         self.arena.text(node.text().as_str())
     }
 
-    fn convert_expr(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
+    pub fn convert_expr(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
         if let Some(res) = self.check_disabled(expr.to_untyped()) {
             return res;
         }
@@ -302,7 +303,7 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    fn convert_pattern(&'a self, pattern: Pattern<'a>) -> ArenaDoc<'a> {
+    pub fn convert_pattern(&'a self, pattern: Pattern<'a>) -> ArenaDoc<'a> {
         if let Some(res) = self.check_disabled(pattern.to_untyped()) {
             return res;
         }

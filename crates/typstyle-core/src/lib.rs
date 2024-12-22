@@ -1,5 +1,6 @@
 pub mod attr;
 pub mod ext;
+pub mod partial;
 pub mod pretty;
 
 mod config;
@@ -7,11 +8,10 @@ mod utils;
 
 pub use attr::AttrStore;
 pub use config::Config;
-pub use pretty::PrettyPrinter;
-
-use typst_syntax::Source;
 
 use pretty::ArenaDoc;
+use pretty::PrettyPrinter;
+use typst_syntax::Source;
 
 #[derive(Debug)]
 pub enum Error {
