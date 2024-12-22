@@ -181,9 +181,10 @@ pub fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<Format
                 info!("Would reformat: {}", path.display());
             }
         }
-        FormatResult::Unchanged(_) if args.check => {}
         FormatResult::Changed(res) | FormatResult::Unchanged(res) => {
-            info!("{}", res);
+            if !args.inplace && !args.check {
+                println!("{}", res);
+            }
         }
         FormatResult::Erroneous => {
             if let Some(path) = input {
