@@ -20,6 +20,7 @@ jobs:
     permissions:
       actions: write
       contents: read
+
     name: Duplicate Actions Detection
     runs-on: ubuntu-latest
     outputs:
@@ -83,6 +84,9 @@ jobs:
       - name: Run E2E tests
         run: cargo nextest run --workspace -E 'test(~e2e)' --no-fail-fast
   build:
+    permissions:
+      id-token: write
+      attestations: write
     needs: [pre_build]
     strategy:
       matrix:
@@ -156,6 +160,15 @@ jobs:
         run: |
           cd target/${{ matrix.rust-target }}/ci
           cp typstyle.pdb typstyle-${{ matrix.rust-target }}.pdb
+
+      - name: Attest build provenance for windows
+        if: matrix.platform == 'win32'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            target/${{ matrix.rust-target }}/ci/typstyle
+            target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.pdb
+
       - name: Upload split debug symbols for windows
         if: matrix.platform == 'win32'
         uses: actions/upload-artifact@v4
@@ -168,6 +181,13 @@ jobs:
           cd target/${{ matrix.rust-target }}/ci
           llvm-objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ matrix.rust-target }}.debug"
           llvm-objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ matrix.rust-target }}.debug" "typstyle"
+      - name: Attest build provenance for linux
+        if: matrix.platform == 'linux'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            target/${{ matrix.rust-target }}/ci/typstyle
+            target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.debug
       - name: Upload split debug symbols for linux
         if: matrix.platform == 'linux'
         uses: actions/upload-artifact@v4
@@ -180,6 +200,13 @@ jobs:
         run: |
           dsymutil -f "target/${{ matrix.rust-target }}/ci/typstyle"
           mv "target/${{ matrix.rust-target }}/ci/typstyle.dwarf" "target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.dwarf"
+      - name: Attest build provenance for mac
+        if: matrix.platform == 'darwin'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            target/${{ matrix.rust-target }}/ci/typstyle
+            target/${{ matrix.rust-target }}/ci/typstyle-${{ matrix.rust-target }}.dwarf
       - name: Upload split debug symbols for mac
         if: matrix.platform == 'darwin'
         uses: actions/upload-artifact@v4
@@ -198,6 +225,9 @@ jobs:
           path: typstyle-${{ matrix.rust-target }}${{ fromJSON('["", ".exe"]')[matrix.platform == 'win32'] }}
 
   build_alpine:
+    permissions:
+      id-token: write
+      attestations: write
     needs: [pre_build]
     name: build (x86_64-unknown-linux-musl)
     runs-on: ubuntu-latest
@@ -225,6 +255,12 @@ jobs:
           cd target/$RUST_TARGET/ci
           objcopy --compress-debug-sections --only-keep-debug "typstyle" "typstyle-${{ env.RUST_TARGET }}.debug"
           objcopy --strip-debug --add-gnu-debuglink="typstyle-${{ env.RUST_TARGET }}.debug" "typstyle"
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            target/${{ env.RUST_TARGET }}/ci/typstyle
+            target/${{ env.RUST_TARGET }}/ci/typstyle-${{ env.RUST_TARGET }}.debug
       - name: Upload split debug symbols
         uses: actions/upload-artifact@v4
         with:
