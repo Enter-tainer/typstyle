@@ -32,15 +32,15 @@ impl Mode {
 }
 
 impl PrettyPrinter<'_> {
-    pub(super) fn push_mode(&self, mode: Mode) {
+    pub fn push_mode(&self, mode: Mode) {
         self.mode.borrow_mut().push(mode);
     }
 
-    pub(super) fn pop_mode(&self) {
+    pub fn pop_mode(&self) {
         self.mode.borrow_mut().pop();
     }
 
-    pub(super) fn current_mode(&self) -> Mode {
+    pub fn current_mode(&self) -> Mode {
         *self.mode.borrow().last().unwrap_or(&Mode::Markup)
     }
 }
