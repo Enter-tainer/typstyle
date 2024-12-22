@@ -1,0 +1,11 @@
+---
+source: tests/src/partial.rs
+info:
+  range:
+    start: 5
+    end: 10
+  erroneous: true
+input_file: tests/fixtures/partial/erroneous.typ
+snapshot_kind: text
+---
+f(x,y

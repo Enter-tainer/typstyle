@@ -1,0 +1,15 @@
+---
+source: tests/src/partial.rs
+info:
+  range:
+    start: 17
+    end: 20
+  range_node:
+    start: 17
+    end: 30
+input_file: tests/fixtures/partial/erroneous.typ
+snapshot_kind: text
+---
+let a=(1,2,3)
+---
+let a = (1, 2, 3)

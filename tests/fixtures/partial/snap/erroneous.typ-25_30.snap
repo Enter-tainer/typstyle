@@ -1,0 +1,15 @@
+---
+source: tests/src/partial.rs
+info:
+  range:
+    start: 25
+    end: 30
+  range_node:
+    start: 23
+    end: 30
+input_file: tests/fixtures/partial/erroneous.typ
+snapshot_kind: text
+---
+(1,2,3)
+---
+(1, 2, 3)

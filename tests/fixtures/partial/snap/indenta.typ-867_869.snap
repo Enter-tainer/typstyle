@@ -1,0 +1,16 @@
+---
+source: tests/src/partial.rs
+info:
+  range:
+    start: 867
+    end: 869
+  range_node:
+    start: 867
+    end: 916
+input_file: tests/fixtures/partial/indenta.typ
+snapshot_kind: text
+---
+if e==parbreak(){st=2}
+      else if e!=[ ]{st=0}
+---
+if e == parbreak() { st = 2 } else if e != [ ] { st = 0 }
