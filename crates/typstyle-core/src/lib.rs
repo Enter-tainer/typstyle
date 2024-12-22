@@ -2,11 +2,16 @@ pub mod attr;
 pub mod ext;
 pub mod pretty;
 
+mod config;
+mod utils;
+
 pub use attr::AttrStore;
-pub use pretty::Config;
+pub use config::Config;
 pub use pretty::PrettyPrinter;
 
 use typst_syntax::Source;
+
+use pretty::ArenaDoc;
 
 #[derive(Debug)]
 pub enum Error {
@@ -41,6 +46,15 @@ impl Typstyle {
 
     /// Format typst source.
     pub fn format_source(self, source: &Source) -> Result<String, Error> {
+        self.format_source_inspect(source, |_| {})
+    }
+
+    /// Format typst source, and inspect the pretty document.
+    pub fn format_source_inspect(
+        self,
+        source: &Source,
+        inspector: impl FnOnce(&ArenaDoc<'_>),
+    ) -> Result<String, Error> {
         let root = source.root();
         if root.erroneous() {
             return Err(Error::SyntaxError);
@@ -49,8 +63,9 @@ impl Typstyle {
         let printer = PrettyPrinter::new(self.config.clone(), attr_store);
         let markup = root.cast().unwrap();
         let doc = printer.convert_markup(markup);
+        inspector(&doc);
         let result = doc.pretty(self.config.max_width).to_string();
-        let result = strip_trailing_whitespace(&result);
+        let result = utils::strip_trailing_whitespace(&result);
         Ok(result)
     }
 }
@@ -63,17 +78,6 @@ pub fn format_with_width(content: &str, width: usize) -> String {
     Typstyle::new(config)
         .format_content(content)
         .unwrap_or_else(|_| content.to_string())
-}
-
-#[doc(hidden)]
-/// Strip trailing whitespace in each line of the input string.
-pub fn strip_trailing_whitespace(s: &str) -> String {
-    let res = s
-        .lines()
-        .map(|line| line.trim_end())
-        .collect::<Vec<_>>()
-        .join("\n");
-    res + "\n"
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "wasm"))]

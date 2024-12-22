@@ -6,7 +6,6 @@ mod code_chain;
 mod code_flow;
 mod code_list;
 mod comment;
-mod config;
 mod flow;
 mod func_call;
 mod import;
@@ -18,20 +17,18 @@ mod plain;
 mod table;
 mod util;
 
-pub use config::Config;
-
 use std::cell::RefCell;
 
 use itertools::Itertools;
 use pretty::{Arena, DocAllocator, DocBuilder};
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::{ext::StrExt, AttrStore};
+use crate::{ext::StrExt, AttrStore, Config};
 use doc_ext::DocExt;
 use mode::Mode;
 use style::FoldStyle;
 
-type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
+pub type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
 pub struct PrettyPrinter<'a> {
     config: Config,
