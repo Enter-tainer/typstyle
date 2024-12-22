@@ -1,0 +1,31 @@
+---
+source: tests/src/partial.rs
+info:
+  range:
+    start: 387
+    end: 713
+  range_fmt:
+    start: 389
+    end: 713
+input_file: tests/fixtures/partial/indenta.typ
+snapshot_kind: text
+---
+let _is_inline(e,fn)=fn==text or fn==box or (fn==math.equation and not e.block) or (fn==raw and not (e.has("block") and e.block)) or fn==highlight or fn==overline or fn==smartquote or fn==strike or fn==sub or fn==super or fn==underline or fn==emph or fn==strong or fn==ref or (fn==quote and not (e.has("block") and e.block))
+---
+let _is_inline(e, fn) = (
+    fn == text
+      or fn == box
+      or (fn == math.equation and not e.block)
+      or (fn == raw and not (e.has("block") and e.block))
+      or fn == highlight
+      or fn == overline
+      or fn == smartquote
+      or fn == strike
+      or fn == sub
+      or fn == super
+      or fn == underline
+      or fn == emph
+      or fn == strong
+      or fn == ref
+      or (fn == quote and not (e.has("block") and e.block))
+  )

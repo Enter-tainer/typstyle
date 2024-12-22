@@ -6,6 +6,8 @@ use typst_syntax::Source;
 use typstyle_consistency::{cmp::compare_docs, universe::make_universe_formatted};
 use typstyle_core::Typstyle;
 
+use crate::common::test_dir;
+
 #[derive(Debug, Clone)]
 struct Testcase {
     name: Cow<'static, str>,
@@ -150,7 +152,7 @@ pub(super) fn collect_tests() -> Vec<Trial> {
 }
 
 fn run_testcase(testcase: Testcase) -> anyhow::Result<()> {
-    let e2e_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("e2e");
+    let e2e_dir = test_dir().join("e2e");
     // do mkdir -p project_root/tests/e2e
     let _ = fs::create_dir_all(&e2e_dir);
     let testcase_dir = e2e_dir.join(&*testcase.name);

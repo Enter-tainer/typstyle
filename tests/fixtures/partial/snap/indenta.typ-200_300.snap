@@ -1,0 +1,26 @@
+---
+source: tests/src/partial.rs
+info:
+  range:
+    start: 200
+    end: 300
+  range_node:
+    start: 110
+    end: 299
+input_file: tests/fixtures/partial/indenta.typ
+snapshot_kind: text
+---
+fn==heading or (fn==math.equation and e.block) or (fn==raw and e.has("block") and e.block) or fn==figure or fn==block or fn==list.item or fn==enum.item or fn==table or fn==grid or fn==align
+---
+(
+    fn == heading
+      or (fn == math.equation and e.block)
+      or (fn == raw and e.has("block") and e.block)
+      or fn == figure
+      or fn == block
+      or fn == list.item
+      or fn == enum.item
+      or fn == table
+      or fn == grid
+      or fn == align
+  )
