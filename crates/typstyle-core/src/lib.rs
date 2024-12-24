@@ -82,8 +82,10 @@ pub fn strip_trailing_whitespace(s: &str) -> String {
         .lines()
         .map(|line| line.trim_end())
         .collect::<Vec<_>>()
-        .join("\n");
-    res + "\n"
+        .join("\n")
+        .trim()
+        .to_owned();
+    res
 }
 
 #[cfg(all(target_arch = "wasm32", feature = "wasm"))]
