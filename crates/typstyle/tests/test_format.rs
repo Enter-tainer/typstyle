@@ -13,7 +13,6 @@ fn test_one() {
     ----- stdout -----
     #let a = 0
 
-
     ----- stderr -----
     ");
 
@@ -46,7 +45,6 @@ fn test_one_quiet() {
     exit_code: 0
     ----- stdout -----
     #let a = 0
-
 
     ----- stderr -----
     ");
@@ -81,9 +79,7 @@ fn test_two_0() {
     exit_code: 0
     ----- stdout -----
     #let a = 0
-
     #let b = 1
-
 
     ----- stderr -----
     ");
@@ -102,9 +98,7 @@ fn test_two_1() {
     exit_code: 0
     ----- stdout -----
     #let a = 0
-
     #let b = 1
-
 
     ----- stderr -----
     ");
@@ -123,9 +117,7 @@ fn test_two_2() {
     exit_code: 0
     ----- stdout -----
     #let a = 0
-
     #let b = 1
-
 
     ----- stderr -----
     ");
