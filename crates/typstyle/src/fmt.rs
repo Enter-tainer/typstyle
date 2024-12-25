@@ -181,7 +181,7 @@ pub fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<Format
         }
         FormatResult::Changed(res) | FormatResult::Unchanged(res) => {
             if !args.inplace && !args.check {
-                println!("{}", res);
+                print!("{}", res);
             }
         }
         FormatResult::Erroneous => {
