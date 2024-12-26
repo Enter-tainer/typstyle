@@ -3,6 +3,8 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/articles/book.typ
 snapshot_kind: text
 ---
+// DUMMY
+
 // #import "@preview/book:0.2.2": *
 
 #show: book

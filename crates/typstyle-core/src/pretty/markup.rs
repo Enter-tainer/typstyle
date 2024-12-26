@@ -12,16 +12,35 @@ use super::{
 
 #[derive(Default)]
 struct MarkupStyle {
-    pub strip_space: bool,
+    /// Whether this markup is top-level.
+    pub is_top_level: bool,
+    /// Whether the spaces can be safely stripped.
+    pub can_strip_space: bool,
 }
 
 impl<'a> PrettyPrinter<'a> {
     pub fn convert_markup(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
+        self.convert_markup_impl(
+            markup,
+            MarkupStyle {
+                is_top_level: true,
+                ..Default::default()
+            },
+        )
+    }
+
+    pub fn convert_markup_in_block(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
         self.convert_markup_impl(markup, Default::default())
     }
 
     fn convert_markup_stripped(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
-        self.convert_markup_impl(markup, MarkupStyle { strip_space: true })
+        self.convert_markup_impl(
+            markup,
+            MarkupStyle {
+                can_strip_space: true,
+                ..Default::default()
+            },
+        )
     }
 
     fn convert_markup_impl(&'a self, markup: Markup<'a>, sty: MarkupStyle) -> ArenaDoc<'a> {
@@ -33,7 +52,7 @@ impl<'a> PrettyPrinter<'a> {
             return self.arena.space();
         }
 
-        let items = collect_markup_items(markup);
+        let items = collect_markup_items(markup, sty.is_top_level);
 
         let mut doc = self.arena.nil();
         for MarkupItem {
@@ -64,7 +83,7 @@ impl<'a> PrettyPrinter<'a> {
         // Only turn space into, not the other way around.
         let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
         if items.has_leading_space && items.has_trailing_space {
-            if sty.strip_space {
+            if sty.can_strip_space {
                 doc
             } else if has_line_break {
                 doc.enclose(self.arena.hardline(), self.arena.hardline())
@@ -74,7 +93,7 @@ impl<'a> PrettyPrinter<'a> {
         } else {
             // The asymmetric case
             let get_delim = |has_space: bool| {
-                if !has_space || sty.strip_space {
+                if !has_space || sty.can_strip_space {
                     self.arena.nil()
                 } else if has_line_break {
                     self.arena.hardline()
@@ -162,7 +181,7 @@ struct MarkupItems<'a> {
 // Break markup into lines, split by stmt, parbreak, newline, multiline raw,
 // equation if a line contains text, it will be skipped by the formatter
 // to keep the original format.
-fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
+fn collect_markup_items(markup: Markup<'_>, is_top_level: bool) -> MarkupItems {
     let mut items = MarkupItems {
         items: vec![],
         has_leading_space: false,
@@ -195,7 +214,10 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
         }
         if node.kind() == SyntaxKind::Space && items.items.is_empty() {
             // Discard leading space and mark it.
-            items.has_leading_space = true;
+            if !is_top_level || node.text().has_linebreak() {
+                // Only spaces with linebreaks are counted at document level
+                items.has_leading_space = true;
+            }
         } else {
             items.items.push(MarkupItem {
                 node,
@@ -229,7 +251,8 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
     }
 
     // Check space inside comments
-    if !items.has_leading_space
+    if !is_top_level
+        && !items.has_leading_space
         && items
             .items
             .iter()
@@ -238,7 +261,8 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
     {
         items.has_leading_space = true;
     }
-    if !items.has_trailing_space
+    if !is_top_level
+        && !items.has_trailing_space
         && items
             .items
             .iter()
