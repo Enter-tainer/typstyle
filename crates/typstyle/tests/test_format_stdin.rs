@@ -14,7 +14,6 @@ fn test_nothing() {
     ----- stdout -----
 
 
-
     ----- stderr -----
     ");
 }
@@ -28,7 +27,6 @@ fn test_stdin() {
     exit_code: 0
     ----- stdout -----
     #let x = (1 + 2)
-
 
     ----- stderr -----
     ");
@@ -60,7 +58,6 @@ fn test_stdin_column() {
       1
         + 2
     )
-
 
     ----- stderr -----
     ");
@@ -144,7 +141,6 @@ fn test_stdin_debug_ast() {
         ],
     ]
     #let x = (1 + 2)
-
 
     ----- stderr -----
     "##);
