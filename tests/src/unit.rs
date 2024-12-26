@@ -101,7 +101,13 @@ fn check_snapshot(path: &Path, width: usize) -> Result<(), Failed> {
             insta::assert_snapshot!(snap_name, "");
         } else {
             let cfg = Config::new().with_width(width);
-            let formatted = Typstyle::new(cfg).format_source(&source).unwrap();
+            let mut formatted = Typstyle::new(cfg).format_source(&source).unwrap();
+            if formatted.starts_with('\n') {
+                formatted.insert_str(0, "// DUMMY\n");
+            }
+            if formatted.ends_with("\n\n") {
+                formatted.push_str("// DUMMY\n");
+            }
 
             insta::assert_snapshot!(snap_name, formatted);
         }

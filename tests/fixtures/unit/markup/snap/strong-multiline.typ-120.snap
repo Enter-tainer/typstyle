@@ -3,6 +3,8 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/strong-multiline.typ
 snapshot_kind: text
 ---
+// DUMMY
+
 *11111
 111*
 
@@ -11,6 +13,10 @@ snapshot_kind: text
 
 *22222
 222
+*
+
+*
+333
 *
 
 * #text( fill:   red)[555]

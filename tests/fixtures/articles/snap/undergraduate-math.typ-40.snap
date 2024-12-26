@@ -3,6 +3,8 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/articles/undergraduate-math.typ
 snapshot_kind: text
 ---
+// DUMMY
+
 // Meta data
 #set document(
   title: "Typst Math for Undergrads",

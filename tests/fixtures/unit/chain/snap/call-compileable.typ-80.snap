@@ -16,3 +16,5 @@ snapshot_kind: text
 
 
 #("a": ("b": (1, 2))).a.b.rev().rev().rev().len()
+
+// DUMMY
