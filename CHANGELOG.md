@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.12.14 - [2024-12-27]
+
+- Fix: typstyle-cli previously add an extra newline at the end of the file. Now it is fixed.
+- Fix: typstyle now correctly strip leading spaces in markup
+- Feat: typstyle-core now has very basic support for range formatting.
+
 ## v0.12.13 - [2024-12-21]
 
 - Fix: typstyle previously incorrectly remove comments in math equations. Now it is fixed.
