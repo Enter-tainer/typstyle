@@ -3,8 +3,6 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/packages/codly.typ
 snapshot_kind: text
 ---
-// DUMMY
-
 /*
  * This test case is copied from [codly]
  * Original source: [https://github.com/Dherse/codly/blob/main/codly.typ]

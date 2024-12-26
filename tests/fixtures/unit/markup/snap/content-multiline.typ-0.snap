@@ -3,8 +3,6 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/content-multiline.typ
 snapshot_kind: text
 ---
-// DUMMY
-
 #[]
 #[ ]
 #[ ]

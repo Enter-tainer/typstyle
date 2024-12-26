@@ -3,8 +3,6 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cetz-tree.typ
 snapshot_kind: text
 ---
-// DUMMY
-
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
 #import "../draw.typ"

@@ -3,7 +3,5 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/document/top-comment-00.typ
 snapshot_kind: text
 ---
-// DUMMY
-
 /// This is a module
 Something else

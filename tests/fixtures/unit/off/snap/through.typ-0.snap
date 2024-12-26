@@ -3,8 +3,6 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/off/through.typ
 snapshot_kind: text
 ---
-// DUMMY
-
 /* @typstyle off */
 #1
 #let aaa = 123

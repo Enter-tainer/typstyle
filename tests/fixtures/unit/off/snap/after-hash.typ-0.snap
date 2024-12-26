@@ -3,8 +3,6 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/off/after-hash.typ
 snapshot_kind: text
 ---
-// DUMMY
-
 /* @typstyle off */
 #let x   =  1  +  2
 #let y = (

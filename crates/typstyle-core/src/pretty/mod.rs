@@ -274,7 +274,7 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
         let content = self
-            .convert_markup(content_block.body())
+            .convert_markup_in_block(content_block.body())
             .group()
             .nest(self.config.tab_spaces as isize);
         content.brackets()
