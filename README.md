@@ -14,6 +14,7 @@ You can install `typstyle` using any of the following methods:
 
 1. Download the binary from the [release page](https://github.com/Enter-tainer/typstyle/releases/).
 2. Install it from your package manager: <https://repology.org/project/typstyle/versions>.
+   1. Notably, typstyle is available in [Archlinux CN](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/) repo.
 3. Install using [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall):
 
    ```sh
