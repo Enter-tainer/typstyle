@@ -2722,7 +2722,7 @@ checksum = "12d0f851e0a0be6291218f139b878baccd7adc93f952887e4afb0524408db64f"
 dependencies = [
  "cfg-if",
  "typst",
- "typst-syntax",
+ "typst-syntax 0.12.0",
 ]
 
 [[package]]
@@ -3917,9 +3917,9 @@ dependencies = [
  "typed-arena",
  "typst-assets",
  "typst-macros",
- "typst-syntax",
- "typst-timing",
- "typst-utils",
+ "typst-syntax 0.12.0",
+ "typst-timing 0.12.0",
+ "typst-utils 0.12.0",
  "unicode-bidi",
  "unicode-math-class",
  "unicode-script",
@@ -3971,7 +3971,7 @@ dependencies = [
  "typst",
  "typst-assets",
  "typst-macros",
- "typst-timing",
+ "typst-timing 0.12.0",
  "unscanny",
  "xmp-writer",
 ]
@@ -3992,7 +3992,7 @@ dependencies = [
  "ttf-parser",
  "typst",
  "typst-macros",
- "typst-timing",
+ "typst-timing 0.12.0",
  "usvg",
 ]
 
@@ -4006,7 +4006,25 @@ dependencies = [
  "once_cell",
  "serde",
  "toml",
- "typst-utils",
+ "typst-utils 0.12.0",
+ "unicode-ident",
+ "unicode-math-class",
+ "unicode-script",
+ "unicode-segmentation",
+ "unscanny",
+]
+
+[[package]]
+name = "typst-syntax"
+version = "0.13.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb399d907ab219419b3e878b90cd67f62afd88de64704c6154edabce26708392"
+dependencies = [
+ "ecow",
+ "serde",
+ "toml",
+ "typst-timing 0.13.0-rc1",
+ "typst-utils 0.13.0-rc1",
  "unicode-ident",
  "unicode-math-class",
  "unicode-script",
@@ -4023,7 +4041,18 @@ dependencies = [
  "parking_lot",
  "serde",
  "serde_json",
- "typst-syntax",
+ "typst-syntax 0.12.0",
+]
+
+[[package]]
+name = "typst-timing"
+version = "0.13.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f17c136f66e19d46a997cf9f8d4392909e758100ff4741e55cd16dcad93c929"
+dependencies = [
+ "parking_lot",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -4040,6 +4069,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "typst-utils"
+version = "0.13.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "37a7c14b1f7aae8c0fd515a4b33c6d036cd91b3cf6f8a1c7dcef503456cbbe30"
+dependencies = [
+ "once_cell",
+ "portable-atomic",
+ "rayon",
+ "siphasher 1.0.1",
+ "thin-vec",
+ "unicode-math-class",
+]
+
+[[package]]
 name = "typstyle"
 version = "0.12.14"
 dependencies = [
@@ -4052,7 +4095,7 @@ dependencies = [
  "insta-cmd",
  "log",
  "tempfile",
- "typst-syntax",
+ "typst-syntax 0.13.0-rc1",
  "typstyle-core",
  "vergen",
  "vergen-gitcl",
@@ -4087,7 +4130,7 @@ dependencies = [
  "pretty",
  "rustc-hash",
  "serde",
- "typst-syntax",
+ "typst-syntax 0.13.0-rc1",
  "wasm-bindgen",
 ]
 
@@ -4099,7 +4142,7 @@ dependencies = [
  "insta",
  "libtest-mimic",
  "pretty_assertions",
- "typst-syntax",
+ "typst-syntax 0.13.0-rc1",
  "typstyle-consistency",
  "typstyle-core",
 ]

@@ -1,17 +1,16 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/raw-backtick.typ
-snapshot_kind: text
 ---
 #(
   ``` ` ```,
 )
 #(
-  ```js ` ```
+  ```js` ```
 )
 #(
-  ```js `code` ```
+  ```js`code` ```
 )
 #(
-  ```md `code`+other`code` ```
+  ```md`code`+other`code` ```
 )
