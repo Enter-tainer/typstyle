@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/convergence.typ
-snapshot_kind: text
 ---
 #[
   /* bar
@@ -11,11 +10,11 @@ snapshot_kind: text
 - /* bar
    */ 123
 
-- /* bar
-   */
+-  /* bar
+    */
 
-- /* foo
-   */
+-  /* foo
+    */
 
 #[
   /* Somebody write this up:

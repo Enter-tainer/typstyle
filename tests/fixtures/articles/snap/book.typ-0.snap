@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/articles/book.typ
-snapshot_kind: text
 ---
 // DUMMY
 
@@ -80,9 +79,9 @@ snapshot_kind: text
               none,
               section: "6.1.1.1",
             )[Draft chapter]
-          // - #chapter(none, section: "6.1.1.2")[chapter with - markers]
-          // - #chapter(none, "= Introduction", section: "6.1.1.2")
-          // - #chapter(none, section: "6.1.1.2")[#text("= Introduction")]
+        // - #chapter(none, section: "6.1.1.2")[chapter with - markers]
+        // - #chapter(none, "= Introduction", section: "6.1.1.2")
+        // - #chapter(none, section: "6.1.1.2")[#text("= Introduction")]
         - #chapter(
             "format/build-meta.typ",
             section: "6.1.2",
