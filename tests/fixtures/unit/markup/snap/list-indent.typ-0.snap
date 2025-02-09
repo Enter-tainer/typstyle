@@ -22,7 +22,7 @@ input_file: tests/fixtures/unit/markup/list-indent.typ
 
 - //foo
   - xyz
-  //bar
+//bar
 
 - foo
   // - bar
@@ -30,11 +30,11 @@ input_file: tests/fixtures/unit/markup/list-indent.typ
 
 - foo
   - bar
-  // - baz
+// - baz
 
 - foo
   - bar
-    // - baz
+// - baz
 
 #[
   - 123

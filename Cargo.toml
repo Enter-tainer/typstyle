@@ -19,7 +19,7 @@ typstyle = { path = "crates/typstyle", version = "0.12.15" }
 typstyle-consistency = { path = "crates/typstyle-consistency" }
 
 # Used in core
-typst-syntax = "0.12.0"
+typst-syntax = "0.13.0-rc1"
 
 ecow = "0.2.3"
 itertools = "0.13.0"
