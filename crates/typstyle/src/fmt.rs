@@ -70,7 +70,9 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
         let Ok(content) = std::fs::read_to_string(entry.path()) else {
             continue;
         };
-        let cfg = Config::new().with_width(args.style.column);
+        let cfg = Config::new()
+            .with_width(args.style.column)
+            .with_tab_spaces(args.style.tab_width);
         let Ok(res) = Typstyle::new(cfg).format_content(&content) else {
             warn!("Failed to format: {}", entry.path().display());
             continue;
@@ -215,7 +217,9 @@ fn format_debug(content: String, args: &CliArguments) -> FormatResult {
         println!("{:#?}", root);
     }
 
-    let config = Config::new().with_width(args.style.column);
+    let config = Config::new()
+        .with_width(args.style.column)
+        .with_tab_spaces(args.style.tab_width);
     let res = match Typstyle::new(config).format_source_inspect(&source, |doc| {
         if args.debug.pretty_doc {
             println!("{:#?}", doc);

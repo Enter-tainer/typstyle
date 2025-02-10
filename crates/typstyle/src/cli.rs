@@ -74,6 +74,16 @@ pub struct StyleArgs {
         help_heading = "Format Configuration"
     )]
     pub column: usize,
+
+    /// Spaces per level of indentation in the output
+    #[arg(
+        short,
+        long,
+        default_value_t = 2,
+        global = true,
+        help_heading = "Format Configuration"
+    )]
+    pub tab_width: usize,
 }
 
 #[derive(Args)]

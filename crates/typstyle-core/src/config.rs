@@ -30,6 +30,11 @@ impl Config {
         self
     }
 
+    pub fn with_tab_spaces(mut self, tab_spaces: usize) -> Self {
+        self.tab_spaces = tab_spaces;
+        self
+    }
+
     pub fn chain_width(&self) -> usize {
         const CHAIN_WIDTH_RATIO: f32 = 0.6;
         (self.max_width as f32 * CHAIN_WIDTH_RATIO) as usize
