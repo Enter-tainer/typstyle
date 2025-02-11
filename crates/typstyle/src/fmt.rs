@@ -61,9 +61,9 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
     // Walk through all the files in the directory
     let entries = WalkDir::new(directory)
         .into_iter()
-        .filter_entry(|e| !is_hidden(e));
+        .filter_entry(|e| !is_hidden(e))
+        .filter_map(Result::ok);
     for entry in entries {
-        let Ok(entry) = entry else { continue };
         if !(entry.file_type().is_file() && entry.path().extension() == Some("typ".as_ref())) {
             continue;
         }
@@ -101,20 +101,24 @@ pub fn format_all(directory: &Option<PathBuf>, args: &CliArguments) -> Result<Fo
 
     if args.check {
         info!(
-            "{} files would be reformatted ({} already formatted), checked in {:?}",
-            summary.format_count, summary.unchanged_count, duration
+            "{} would be reformatted ({} already formatted), checked in {:?}",
+            num_files(summary.format_count),
+            summary.unchanged_count,
+            duration
         );
     } else {
         info!(
-            "Successfully formatted {} files ({} unchanged) in {:?}",
-            summary.format_count, summary.unchanged_count, duration
+            "Successfully formatted {} ({} unchanged) in {:?}",
+            num_files(summary.format_count),
+            summary.unchanged_count,
+            duration
         );
     }
     if summary.error_count > 0 {
         // Syntax errors are not counted here.
         bail!(
-            "failed to format {} files due to IO error",
-            summary.error_count
+            "failed to format {} due to IO error",
+            num_files(summary.error_count)
         );
     }
 
@@ -146,7 +150,10 @@ pub fn format_many(input: &[PathBuf], args: &CliArguments) -> Result<FormatStatu
     }
 
     if error_count > 0 {
-        bail!("failed to format {error_count} files due to IO error");
+        bail!(
+            "failed to format {} due to IO error",
+            num_files(error_count)
+        );
     }
     Ok(status)
 }
@@ -250,4 +257,12 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .file_name()
         .to_str()
         .is_some_and(|s| s.starts_with('.'))
+}
+
+fn num_files(num: usize) -> String {
+    if num > 1 {
+        format!("{num} files")
+    } else {
+        format!("{num} file")
+    }
 }
