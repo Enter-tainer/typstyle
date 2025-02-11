@@ -38,10 +38,11 @@ jobs:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
       - name: Install the latest version of rye
-        uses: eifinger/setup-rye@v3
+        uses: eifinger/setup-rye@v4
         with:
           enable-cache: true
           cache-prefix: 'typstyle-rye'
+
       - name: Build wasm
         run: |
           cd crates/typstyle-core
@@ -55,6 +56,7 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Build demo
         run: |
           cd web
@@ -64,13 +66,14 @@ jobs:
         run: |
           rye sync
           rye run docs-build
+
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           # Upload `/github-pages` sub directory
           path: "site"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
