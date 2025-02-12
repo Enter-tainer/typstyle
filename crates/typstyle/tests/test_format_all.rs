@@ -217,7 +217,7 @@ for i in range(0, 5) {
     success: true
     exit_code: 0
     ----- stdout -----
-    Successfully formatted 1 files (0 unchanged) in [DURATION]
+    Successfully formatted 1 file (0 unchanged) in [DURATION]
 
     ----- stderr -----
     ");
