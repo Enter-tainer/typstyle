@@ -5,13 +5,13 @@ use ecow::EcoVec;
 use itertools::Itertools;
 use reflexo_typst::{
     error::{diag_from_std, DiagMessage},
-    CompileDriver,
+    CompileDriver, TypstPagedDocument,
 };
 use reflexo_world::{CompilerWorld, SystemCompilerFeat, TypstSystemUniverse};
-use typst::{diag::SourceDiagnostic, foundations::Smart, layout::Page, model::Document};
+use typst::{diag::SourceDiagnostic, foundations::Smart, layout::Page};
 use typst_pdf::{PdfOptions, PdfStandards};
 
-type CompilationResult = Result<Arc<Document>, EcoVec<SourceDiagnostic>>;
+type CompilationResult = Result<Arc<TypstPagedDocument>, EcoVec<SourceDiagnostic>>;
 
 pub fn compare_docs(
     name: &str,
@@ -80,7 +80,7 @@ fn compile_universe(
     (doc, driver.snapshot())
 }
 
-fn check_doc_meta(left: &Document, right: &Document, message: &str) {
+fn check_doc_meta(left: &TypstPagedDocument, right: &TypstPagedDocument, message: &str) {
     pretty_assertions::assert_eq!(
         left.pages.len(),
         right.pages.len(),
@@ -103,8 +103,12 @@ fn check_doc_meta(left: &Document, right: &Document, message: &str) {
     );
 }
 
-fn check_pdf(before: &Document, after: &Document, name: &str) -> anyhow::Result<String> {
-    let render_pdf = |doc: &Document, ident: &'static str| {
+fn check_pdf(
+    before: &TypstPagedDocument,
+    after: &TypstPagedDocument,
+    name: &str,
+) -> anyhow::Result<String> {
+    let render_pdf = |doc: &TypstPagedDocument, ident: &'static str| {
         typst_pdf::pdf(
             doc,
             &PdfOptions {
@@ -133,13 +137,18 @@ fn check_pdf(before: &Document, after: &Document, name: &str) -> anyhow::Result<
     Ok(message)
 }
 
-fn check_png(before: &Document, after: &Document, name: &str) -> anyhow::Result<()> {
+fn check_png(
+    before: &TypstPagedDocument,
+    after: &TypstPagedDocument,
+    name: &str,
+) -> anyhow::Result<()> {
     let render_png = |page: &Page, number: usize| {
         typst_render::render(
             &Page {
                 frame: page.frame.clone(),
                 fill: Smart::Auto,
                 numbering: None,
+                supplement: Default::default(),
                 number,
             },
             2.0,

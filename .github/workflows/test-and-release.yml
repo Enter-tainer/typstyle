@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.80.0
+      - uses: dtolnay/rust-toolchain@1.81.0
       - uses: Swatinem/rust-cache@v2
       - run: cargo check --workspace
 
@@ -72,7 +72,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install fonts-noto-cjk fonts-noto-cjk-extra
       - name: Install typst
-        uses: typst-community/setup-typst@v3
+        uses: typst-community/setup-typst@v4
       - name: Warmup typst package cache
         run: |
           python ./scripts/generate-imports.py
