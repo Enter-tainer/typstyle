@@ -193,11 +193,17 @@ pub fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<Format
                 print!("{}", res);
             }
         }
-        FormatResult::Erroneous => {
+        FormatResult::Erroneous(content) => {
+            if !args.inplace && !args.check {
+                print!("{}", content); // still prints the original content to enable piping
+            }
             if let Some(path) = input {
-                warn!("Failed to parse {}", path.display());
+                warn!(
+                    "Failed to parse {}. The source is erroneous.",
+                    path.display()
+                );
             } else {
-                warn!("Failed to parse stdin");
+                warn!("Failed to parse stdin. The source is erroneous.");
             }
         }
     }
@@ -207,7 +213,7 @@ pub fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<Format
 enum FormatResult {
     Changed(String),
     Unchanged(String),
-    Erroneous,
+    Erroneous(String),
 }
 
 fn format_debug(content: String, args: &CliArguments) -> FormatResult {
@@ -226,7 +232,7 @@ fn format_debug(content: String, args: &CliArguments) -> FormatResult {
         }
     }) {
         Ok(res) => res,
-        Err(_) => return FormatResult::Erroneous,
+        Err(_) => return FormatResult::Erroneous(content),
     };
 
     // Compare `res` with `content` to perform CI checks

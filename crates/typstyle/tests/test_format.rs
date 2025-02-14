@@ -7,7 +7,7 @@ fn test_one() {
     let mut space = Workspace::new();
     space.write_tracked("a.typ", "#let a  =  0");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -24,7 +24,7 @@ fn test_one_inplace() {
     let mut space = Workspace::new();
     space.write_tracked("a.typ", "#let a  =  0");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("-i"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "-i"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -40,7 +40,7 @@ fn test_one_quiet() {
     let mut space = Workspace::new();
     space.write_tracked("a.typ", "#let a  =  0");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("-q"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "-q"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -53,11 +53,45 @@ fn test_one_quiet() {
 }
 
 #[test]
+fn test_one_erroneous() {
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let");
+
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ"]), @r"
+    success: true
+    exit_code: 0
+    ----- stdout -----
+    #let
+    ----- stderr -----
+    warn: Failed to parse a.typ. The source is erroneous.
+    ");
+
+    assert!(space.all_unmodified());
+}
+
+#[test]
+fn test_one_inplace_erroneous() {
+    let mut space = Workspace::new();
+    space.write_tracked("a.typ", "#let");
+
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "-i"]), @r"
+    success: true
+    exit_code: 0
+    ----- stdout -----
+
+    ----- stderr -----
+    warn: Failed to parse a.typ. The source is erroneous.
+    ");
+
+    assert!(space.all_unmodified());
+}
+
+#[test]
 fn test_one_check_quiet() {
     let mut space = Workspace::new();
     space.write_tracked("a.typ", "#let a  =  0");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("--check").arg("-q"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "--check", "-q"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----
@@ -74,7 +108,7 @@ fn test_two_0() {
     space.write_tracked("a.typ", "#let a = 0\n");
     space.write_tracked("b.typ", "#let b = 1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -93,7 +127,7 @@ fn test_two_1() {
     space.write_tracked("a.typ", "#let a = 0\n");
     space.write_tracked("b.typ", "#let b  =  1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -112,7 +146,7 @@ fn test_two_2() {
     space.write_tracked("a.typ", "#let a  =  0\n");
     space.write_tracked("b.typ", "#let b  =  1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -131,7 +165,7 @@ fn test_two_0_inplace() {
     space.write_tracked("a.typ", "#let a = 0\n");
     space.write_tracked("b.typ", "#let b = 1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ").arg("-i"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ", "-i"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -149,7 +183,7 @@ fn test_two_1_inplace() {
     space.write_tracked("a.typ", "#let a = 0\n");
     space.write_tracked("b.typ", "#let b  =  1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ").arg("-i"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ", "-i"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -167,7 +201,7 @@ fn test_two_2_inplace() {
     space.write_tracked("a.typ", "#let a  =  0\n");
     space.write_tracked("b.typ", "#let b  =  1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ").arg("-i"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ", "-i"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -185,7 +219,7 @@ fn test_two_0_check() {
     space.write_tracked("a.typ", "#let a = 0\n");
     space.write_tracked("b.typ", "#let b = 1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ").arg("--check"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ", "--check"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -202,7 +236,7 @@ fn test_two_1_check() {
     space.write_tracked("a.typ", "#let a = 0\n");
     space.write_tracked("b.typ", "#let b  =  1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ").arg("--check"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ", "--check"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----
@@ -220,7 +254,7 @@ fn test_two_2_check() {
     space.write_tracked("a.typ", "#let a  =  0\n");
     space.write_tracked("b.typ", "#let b  =  1\n");
 
-    typstyle_cmd_snapshot!(space.cli().arg("a.typ").arg("b.typ").arg("--check"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["a.typ", "b.typ", "--check"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----

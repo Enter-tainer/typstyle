@@ -10,7 +10,7 @@ fn test_all_0() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -33,7 +33,7 @@ fn test_all_1() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -56,7 +56,7 @@ fn test_all_2() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -80,7 +80,7 @@ fn test_all_0_check() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----
@@ -101,7 +101,7 @@ fn test_all_1_check() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----
@@ -122,7 +122,7 @@ fn test_all_2_check() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -141,7 +141,7 @@ fn test_all_erroneous() {
     space.write_tracked("x/b.typ", "#let b  =  1");
     space.write_tracked("x/y/c.typ", "#let c  =  2; #");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -163,7 +163,7 @@ fn test_all_erroneous_check() {
     space.write_tracked("x/b.typ", "#let b  =  1");
     space.write_tracked("x/y/c.typ", "#let c  =  2; #");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("--check").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----
@@ -182,7 +182,7 @@ fn test_all_column() {
     let space = Workspace::new();
     space.write("a.typ", "#let a  =  (1 + 2)");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-c=0").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-c=0", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -213,7 +213,7 @@ for i in range(0, 5) {
 }",
     );
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("-t=4").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-t=4", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -240,7 +240,7 @@ fn test_dir_all_check() {
     space.write("x/b.typ", "#let b  =  1");
     space.write("x/y/.c.typ", "#let c  =  2");
 
-    typstyle_cmd_snapshot!(space.cli().arg("format-all").arg("x").arg("--check").arg("-v"), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["format-all", "x", "--check", "-v"]), @r"
     success: false
     exit_code: 1
     ----- stdout -----
