@@ -40,9 +40,9 @@ fn test_stdin_erroneous() {
     success: true
     exit_code: 0
     ----- stdout -----
-
+    #
     ----- stderr -----
-    warn: Failed to parse stdin
+    warn: Failed to parse stdin. The source is erroneous.
     ");
 }
 
@@ -50,7 +50,7 @@ fn test_stdin_erroneous() {
 fn test_stdin_column() {
     let space = Workspace::new();
 
-    typstyle_cmd_snapshot!(space.cli().arg("-c=0").pass_stdin(STDIN), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["-c=0"]).pass_stdin(STDIN), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -67,7 +67,7 @@ fn test_stdin_column() {
 fn test_stdin_check() {
     let space = Workspace::new();
 
-    typstyle_cmd_snapshot!(space.cli().arg("--check").pass_stdin(STDIN), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["--check"]).pass_stdin(STDIN), @r"
     success: false
     exit_code: 1
     ----- stdout -----
@@ -80,7 +80,7 @@ fn test_stdin_check() {
 fn test_stdin_inplace() {
     let space = Workspace::new();
 
-    typstyle_cmd_snapshot!(space.cli().arg("-i").pass_stdin(STDIN), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["-i"]).pass_stdin(STDIN), @r"
     success: false
     exit_code: 2
     ----- stdout -----
@@ -98,7 +98,7 @@ fn test_stdin_inplace() {
 fn test_stdin_inplace_check() {
     let space = Workspace::new();
 
-    typstyle_cmd_snapshot!(space.cli().arg("-i").arg("--check").pass_stdin(STDIN), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["-i", "--check"]).pass_stdin(STDIN), @r"
     success: false
     exit_code: 2
     ----- stdout -----
@@ -116,7 +116,7 @@ fn test_stdin_inplace_check() {
 fn test_stdin_debug_ast() {
     let space = Workspace::new();
 
-    typstyle_cmd_snapshot!(space.cli().arg("-a").pass_stdin(STDIN), @r##"
+    typstyle_cmd_snapshot!(space.cli().args(["-a"]).pass_stdin(STDIN), @r##"
     success: true
     exit_code: 0
     ----- stdout -----
