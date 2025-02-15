@@ -191,16 +191,6 @@ impl<'a> PrettyPrinter<'a> {
         self.arena.hardline().repeat_n(newline_count)
     }
 
-    fn convert_strong(&'a self, strong: Strong<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_markup(strong.body());
-        body.enclose("*", "*")
-    }
-
-    fn convert_emph(&'a self, emph: Emph<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_markup(emph.body());
-        body.enclose("_", "_")
-    }
-
     fn convert_raw(&'a self, raw: Raw<'a>) -> ArenaDoc<'a> {
         let mut doc = self.arena.nil();
         for child in raw.to_untyped().children() {
@@ -270,14 +260,6 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
         self.convert_verbatim(ident)
-    }
-
-    fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
-        let content = self
-            .convert_markup_in_block(content_block.body())
-            .group()
-            .nest(self.config.tab_spaces as isize);
-        content.brackets()
     }
 
     fn convert_array_item(&'a self, array_item: ArrayItem<'a>) -> ArenaDoc<'a> {

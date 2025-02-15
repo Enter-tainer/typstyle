@@ -10,40 +10,97 @@ use super::{
     ArenaDoc, PrettyPrinter,
 };
 
-#[derive(Default)]
-struct MarkupStyle {
-    /// Whether this markup is top-level.
-    pub is_top_level: bool,
-    /// Whether the spaces can be safely stripped.
-    pub can_strip_space: bool,
+#[allow(unused)]
+#[derive(Debug, PartialEq, Eq)]
+enum MarkupScope {
+    /// The top-level markup.
+    Document,
+    /// Markup enclosed by `[]`.
+    ContentBlock,
+    /// Strong or Emph.
+    Strong,
+    /// ListItem, EnumItem, TermItem, Heading. Spaces without linebreaks can be stripped.
+    Item,
 }
 
 impl<'a> PrettyPrinter<'a> {
     pub fn convert_markup(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
-        self.convert_markup_impl(
-            markup,
-            MarkupStyle {
-                is_top_level: true,
-                ..Default::default()
-            },
-        )
+        self.convert_markup_impl(markup, MarkupScope::Document)
     }
 
-    pub fn convert_markup_in_block(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
-        self.convert_markup_impl(markup, Default::default())
+    pub(super) fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
+        let content = self
+            .convert_markup_impl(content_block.body(), MarkupScope::ContentBlock)
+            .nest(self.config.tab_spaces as isize);
+        content.brackets()
     }
 
-    fn convert_markup_stripped(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
-        self.convert_markup_impl(
-            markup,
-            MarkupStyle {
-                can_strip_space: true,
-                ..Default::default()
-            },
-        )
+    pub(super) fn convert_strong(&'a self, strong: Strong<'a>) -> ArenaDoc<'a> {
+        let body = self.convert_markup(strong.body());
+        body.enclose("*", "*")
     }
 
-    fn convert_markup_impl(&'a self, markup: Markup<'a>, sty: MarkupStyle) -> ArenaDoc<'a> {
+    pub(super) fn convert_emph(&'a self, emph: Emph<'a>) -> ArenaDoc<'a> {
+        let body = self.convert_markup(emph.body());
+        body.enclose("_", "_")
+    }
+
+    pub(super) fn convert_heading(&'a self, heading: Heading<'a>) -> ArenaDoc<'a> {
+        self.convert_flow_like(heading.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::HeadingMarker {
+                FlowItem::spaced(self.arena.text(child.text().as_str()))
+            } else if let Some(markup) = child.cast() {
+                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
+            } else {
+                FlowItem::none()
+            }
+        })
+    }
+
+    pub(super) fn convert_list_item(&'a self, list_item: ListItem<'a>) -> ArenaDoc<'a> {
+        self.convert_flow_like(list_item.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::ListMarker {
+                FlowItem::spaced(self.arena.text(child.text().as_str()))
+            } else if let Some(markup) = child.cast() {
+                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
+            } else {
+                FlowItem::none()
+            }
+        })
+        .nest(self.config.tab_spaces as isize)
+    }
+
+    pub(super) fn convert_enum_item(&'a self, enum_item: EnumItem<'a>) -> ArenaDoc<'a> {
+        self.convert_flow_like(enum_item.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::EnumMarker {
+                FlowItem::spaced(self.arena.text(child.text().as_str()))
+            } else if let Some(markup) = child.cast() {
+                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
+            } else {
+                FlowItem::none()
+            }
+        })
+        .nest(self.config.tab_spaces as isize)
+    }
+
+    pub(super) fn convert_term_item(&'a self, term: TermItem<'a>) -> ArenaDoc<'a> {
+        let mut seen_term = false;
+        self.convert_flow_like(term.to_untyped(), |child| {
+            if child.kind() == SyntaxKind::TermMarker {
+                FlowItem::spaced(self.arena.text(child.text().as_str()))
+            } else if child.kind() == SyntaxKind::Colon {
+                FlowItem::tight_spaced(self.arena.text(child.text().as_str()))
+            } else if let Some(markup) = child.cast() {
+                seen_term = true;
+                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
+            } else {
+                FlowItem::none()
+            }
+        })
+        .nest(self.config.tab_spaces as isize)
+    }
+
+    fn convert_markup_impl(&'a self, markup: Markup<'a>, scope: MarkupScope) -> ArenaDoc<'a> {
         let _g = self.with_mode(Mode::Markup);
 
         if is_only_one_and(markup.to_untyped().children(), |node| {
@@ -52,7 +109,7 @@ impl<'a> PrettyPrinter<'a> {
             return self.arena.space();
         }
 
-        let items = collect_markup_items(markup, sty.is_top_level);
+        let items = collect_markup_items(markup);
 
         let mut doc = self.arena.nil();
         for MarkupItem {
@@ -82,88 +139,39 @@ impl<'a> PrettyPrinter<'a> {
         // Add line or space (if any) to both sides.
         // Only turn space into, not the other way around.
         let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
-        if items.has_leading_space && items.has_trailing_space {
-            if sty.can_strip_space {
-                doc
-            } else if has_line_break {
-                doc.enclose(self.arena.hardline(), self.arena.hardline())
-            } else {
-                doc.enclose(self.arena.line(), self.arena.line())
-            }
-        } else {
-            // The asymmetric case
-            let get_delim = |has_space: bool| {
-                if !has_space || sty.can_strip_space {
-                    self.arena.nil()
-                } else if has_line_break {
+        let is_symmetric = items.start_bound != Boundary::Nil && items.end_bound != Boundary::Nil;
+        let get_delim = |bound: Boundary| {
+            if scope == MarkupScope::Document || scope == MarkupScope::Item {
+                // should not add extra lines to the document
+                return if bound == Boundary::Break {
                     self.arena.hardline()
                 } else {
-                    self.arena.space()
+                    self.arena.nil()
+                };
+            }
+            match bound {
+                Boundary::Nil => self.arena.nil(),
+                Boundary::NilOrBreak => {
+                    if scope == MarkupScope::Item || !is_symmetric && !has_line_break {
+                        self.arena.nil()
+                    } else {
+                        self.arena.line_()
+                    }
                 }
-            };
-            doc.enclose(
-                get_delim(items.has_leading_space),
-                get_delim(items.has_trailing_space),
-            )
-        }
-    }
-
-    pub(super) fn convert_heading(&'a self, heading: Heading<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(heading.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::HeadingMarker {
-                FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_stripped(markup))
-            } else {
-                FlowItem::none()
+                Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
+                    if is_symmetric || has_line_break {
+                        self.arena.line()
+                    } else if scope == MarkupScope::Item {
+                        // the space can be safely eaten
+                        self.arena.nil()
+                    } else {
+                        self.arena.space()
+                    }
+                }
+                Boundary::Break | Boundary::WeakBreak => self.arena.hardline(),
             }
-        })
-    }
-
-    pub(super) fn convert_list_item(&'a self, list_item: ListItem<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(list_item.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::ListMarker {
-                FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(
-                    self.convert_markup_stripped(markup)
-                        .nest(self.config.tab_spaces as isize),
-                )
-            } else {
-                FlowItem::none()
-            }
-        })
-    }
-
-    pub(super) fn convert_enum_item(&'a self, enum_item: EnumItem<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(enum_item.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::EnumMarker {
-                FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(
-                    self.convert_markup_stripped(markup)
-                        .nest(self.config.tab_spaces as isize),
-                )
-            } else {
-                FlowItem::none()
-            }
-        })
-    }
-
-    pub(super) fn convert_term_item(&'a self, term: TermItem<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(term.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::TermMarker {
-                FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if child.kind() == SyntaxKind::Colon {
-                FlowItem::tight_spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                // Here we can safely strip the space. Should never turn space into line.
-                let doc = self.convert_markup_stripped(markup);
-                FlowItem::spaced(doc.nest(self.config.tab_spaces as isize))
-            } else {
-                FlowItem::none()
-            }
-        })
+        };
+        doc.enclose(get_delim(items.start_bound), get_delim(items.end_bound))
     }
 }
 
@@ -174,18 +182,53 @@ struct MarkupItem<'a> {
 
 struct MarkupItems<'a> {
     items: Vec<MarkupItem<'a>>,
-    has_leading_space: bool,
-    has_trailing_space: bool,
+    start_bound: Boundary,
+    end_bound: Boundary,
+}
+
+/// Markup boundary, deciding whether can break.
+#[derive(Debug, PartialEq, Eq)]
+enum Boundary {
+    /// Should add no blank.
+    Nil,
+    /// Can add a space or linebreak when multiline.
+    NilOrBreak,
+    /// Can turn to a linebreak.
+    SpaceOrBreak,
+    /// Always breaks.
+    Break,
+    /// Can turn to a linebreak if not in document scope.
+    WeakSpaceOrBreak,
+    /// Always breaks if not in document scope.
+    WeakBreak,
+}
+
+impl Boundary {
+    fn from_space(space: &str) -> Self {
+        if space.has_linebreak() {
+            Self::Break
+        } else {
+            Self::SpaceOrBreak
+        }
+    }
+
+    fn from_space_weak(space: &str) -> Self {
+        if space.has_linebreak() {
+            Self::WeakBreak
+        } else {
+            Self::WeakSpaceOrBreak
+        }
+    }
 }
 
 // Break markup into lines, split by stmt, parbreak, newline, multiline raw,
 // equation if a line contains text, it will be skipped by the formatter
 // to keep the original format.
-fn collect_markup_items(markup: Markup<'_>, is_top_level: bool) -> MarkupItems {
+fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
     let mut items = MarkupItems {
         items: vec![],
-        has_leading_space: false,
-        has_trailing_space: false,
+        start_bound: Boundary::Nil,
+        end_bound: Boundary::Nil,
     };
     let mut cursor = 0;
     let mut current_line_has_text = false;
@@ -214,10 +257,7 @@ fn collect_markup_items(markup: Markup<'_>, is_top_level: bool) -> MarkupItems {
         }
         if node.kind() == SyntaxKind::Space && items.items.is_empty() {
             // Discard leading space and mark it.
-            if !is_top_level || node.text().has_linebreak() {
-                // Only spaces with linebreaks are counted at document level
-                items.has_leading_space = true;
-            }
+            items.start_bound = Boundary::from_space(node.text());
         } else {
             items.items.push(MarkupItem {
                 node,
@@ -240,37 +280,44 @@ fn collect_markup_items(markup: Markup<'_>, is_top_level: bool) -> MarkupItems {
         }
     }
 
-    // Remove trailing spaces
-    while items
-        .items
-        .last()
-        .is_some_and(|last| last.node.kind() == SyntaxKind::Space)
-    {
-        items.items.pop();
-        items.has_trailing_space = true;
+    fn is_block_elem(it: &MarkupItem<'_>) -> bool {
+        matches!(
+            it.node.kind(),
+            SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
+        )
     }
 
-    // Check space inside comments
-    if !is_top_level
-        && !items.has_leading_space
-        && items
-            .items
-            .iter()
-            .find(|item| !is_comment_node(item.node))
-            .is_some_and(|it| it.node.kind() == SyntaxKind::Space)
-    {
-        items.has_leading_space = true;
+    // Remove trailing spaces
+    while let Some(last) = items.items.last() {
+        if last.node.kind() != SyntaxKind::Space {
+            break;
+        }
+        items.end_bound = Boundary::from_space(last.node.text());
+        items.items.pop();
     }
-    if !is_top_level
-        && !items.has_trailing_space
-        && items
-            .items
-            .iter()
-            .rev()
-            .find(|item| !is_comment_node(item.node))
-            .is_some_and(|it| it.node.kind() == SyntaxKind::Space)
-    {
-        items.has_trailing_space = true;
+
+    // Check boundary through comments
+    if items.start_bound == Boundary::Nil {
+        match items.items.iter().find(|item| !is_comment_node(item.node)) {
+            Some(it) if it.node.kind() == SyntaxKind::Space => {
+                items.start_bound = Boundary::from_space_weak(it.node.text());
+            }
+            Some(it) if is_block_elem(it) => {
+                items.start_bound = Boundary::NilOrBreak;
+            }
+            _ => {}
+        }
+    }
+    if items.end_bound == Boundary::Nil {
+        match (items.items.iter().rev()).find(|item| !is_comment_node(item.node)) {
+            Some(it) if it.node.kind() == SyntaxKind::Space => {
+                items.end_bound = Boundary::from_space_weak(it.node.text());
+            }
+            Some(it) if is_block_elem(it) => {
+                items.end_bound = Boundary::NilOrBreak;
+            }
+            _ => {}
+        }
     }
 
     items

@@ -1,0 +1,11 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/content-compact.typ
+---
+#[
+  - 123
+]
+#[$12345$]
+#[= 123]
+#[#{ }]
+#[#[]]

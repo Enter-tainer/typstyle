@@ -7,16 +7,6 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_comment(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         comment(&self.arena, node)
     }
-
-    /// Convert block comment or line comment with a line break.
-    pub(super) fn convert_comment_br(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
-        let doc = comment(&self.arena, node);
-        if node.kind() == SyntaxKind::LineComment {
-            doc + self.arena.hardline()
-        } else {
-            doc
-        }
-    }
 }
 
 enum CommentStyle {
