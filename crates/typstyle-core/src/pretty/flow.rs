@@ -1,6 +1,8 @@
 use pretty::DocAllocator;
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
+use crate::ext::StrExt;
+
 use super::{util::is_comment_node, ArenaDoc, PrettyPrinter};
 
 /// An item in the flow. A space is added only when the item before and the item after both allow it.
@@ -69,7 +71,7 @@ impl<'a> FlowStylist<'a> {
     }
 
     pub fn push_comment(&mut self, node: &'a SyntaxNode) {
-        let doc = self.printer.convert_comment_br(node);
+        let doc = self.printer.convert_comment(node);
         if node.kind() == SyntaxKind::BlockComment {
             self.push_doc(doc, true, true);
         } else {
@@ -99,13 +101,24 @@ impl<'a> PrettyPrinter<'a> {
         mut producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
     ) -> ArenaDoc<'a> {
         let mut flow = FlowStylist::new(self);
+        let mut seen_line_comment = false;
         for child in node.children() {
+            let peek_line_comment = seen_line_comment;
+            seen_line_comment = false;
             if child.kind().is_keyword()
                 && !matches!(child.kind(), SyntaxKind::None | SyntaxKind::Auto)
             {
                 flow.push_doc(self.arena.text(child.text().as_str()), true, true);
             } else if is_comment_node(child) {
+                if child.kind() == SyntaxKind::LineComment {
+                    seen_line_comment = true; // defers the linebreak
+                }
                 flow.push_comment(child);
+            } else if peek_line_comment
+                && child.kind() == SyntaxKind::Space
+                && child.text().has_linebreak()
+            {
+                flow.push_doc(self.arena.hardline(), false, false);
             } else {
                 let item = producer(child);
                 if let Some(repr) = item.0 {

@@ -1,11 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/term-multiline.typ
-snapshot_kind: text
 ---
-/ Lorem ipsum dolor sit amet: consectetur adipiscing elit
+/ Lorem ipsum dolor sit amet:
+  consectetur adipiscing elit
 
-/ Lorem ipsum dolor sit amet: consectetur adipiscing elit
+/ Lorem ipsum dolor sit amet:
+  consectetur adipiscing elit
 
 / Lorem ipsum dolor sit amet:
 consectetur adipiscing elit

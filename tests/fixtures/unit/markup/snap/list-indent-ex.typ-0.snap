@@ -1,0 +1,44 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/list-indent-ex.typ
+---
+#{
+  [
+    - single
+  ]
+  [
+    - indented
+    - less
+  ]
+  [
+    - indented
+    - same
+    - then less
+      - then same
+  ]
+  [
+    - indented
+      - more
+    - then same
+    - then less
+  ]
+}
+---
+#{
+  [
+    - indented
+      - less
+  ]
+  [
+    - indented
+      - same
+      - then less
+        - then same
+  ]
+  [
+    - indented
+      - more
+      - then same
+      - then less
+  ]
+}
