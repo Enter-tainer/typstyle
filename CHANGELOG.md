@@ -1,5 +1,93 @@
 # Changelog
 
+## v0.12.15 - [2025-02-16]
+
+- Feat: add `--tab-width` cli option to set the number of spaces for indentation. The default value is 2.
+- Fix: typstyle-cli now outputs the original source when the input syntax is erroneous.
+- Fix: issues with list/enum/term item indent and linebreak with comments are fixed. Now linebreaks in items are preserved. Items in content blocks will be surrounded with linebreaks when necessary (also to avoid ambiguity).
+
+For example, the code
+
+```typst
++
+  + xyz
+
+-
+  xyz
+
+- //foo
+  - xyz
+  //bar
+
+/ 4:
+  // 4
+  / 44: // 44
+    444
+```
+
+was incorrectly formatted to
+
+```typst
++ + xyz
+
+- xyz
+
+- //foo
+- xyz
+  //bar
+
+/ 4: // 4
+  / 44: // 44
+  444
+```
+
+Now it is correctly unchanged.
+
+And
+
+```typst
+#{
+  [- single]
+  [- indented
+  - less
+  ]
+  [- indented
+   - same
+  - then less
+   - then same
+  ]
+  [- indented
+    - more
+   - then same
+  - then less
+  ]
+}
+```
+
+will be correctly formatted to
+
+```typst
+#{
+  [- single]
+  [
+    - indented
+    - less
+  ]
+  [
+    - indented
+    - same
+    - then less
+      - then same
+  ]
+  [
+    - indented
+      - more
+    - then same
+    - then less
+  ]
+}
+```
+
 ## v0.12.14 - [2024-12-27]
 
 - Fix: typstyle-cli previously add an extra newline at the end of the file. Now it is fixed.
