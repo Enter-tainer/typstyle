@@ -4,6 +4,7 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use crate::{ext::StrExt, pretty::mode::Mode};
 
 use super::{
+    doc_ext::DocExt,
     flow::FlowItem,
     trivia_strip_prefix,
     util::{is_comment_node, is_only_one_and},
@@ -58,44 +59,35 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_list_item(&'a self, list_item: ListItem<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(list_item.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::ListMarker {
-                FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
-            } else {
-                FlowItem::none()
-            }
-        })
-        .nest(self.config.tab_spaces as isize)
+        self.convert_list_item_like(list_item.to_untyped())
     }
 
     pub(super) fn convert_enum_item(&'a self, enum_item: EnumItem<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(enum_item.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::EnumMarker {
-                FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
-            } else {
-                FlowItem::none()
-            }
-        })
-        .nest(self.config.tab_spaces as isize)
+        self.convert_list_item_like(enum_item.to_untyped())
     }
 
-    pub(super) fn convert_term_item(&'a self, term: TermItem<'a>) -> ArenaDoc<'a> {
-        let mut seen_term = false;
-        self.convert_flow_like(term.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::TermMarker {
+    pub(super) fn convert_term_item(&'a self, term_item: TermItem<'a>) -> ArenaDoc<'a> {
+        self.convert_list_item_like(term_item.to_untyped())
+    }
+
+    fn convert_list_item_like(&'a self, item: &'a SyntaxNode) -> ArenaDoc<'a> {
+        self.convert_flow_like(item, |child| match child.kind() {
+            SyntaxKind::ListMarker | SyntaxKind::EnumMarker | SyntaxKind::TermMarker => {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
-            } else if child.kind() == SyntaxKind::Colon {
-                FlowItem::tight_spaced(self.arena.text(child.text().as_str()))
-            } else if let Some(markup) = child.cast() {
-                seen_term = true;
-                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
-            } else {
-                FlowItem::none()
             }
+            SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(child.text().as_str())),
+            SyntaxKind::Space if child.text().has_linebreak() => {
+                FlowItem::tight(self.arena.hardline())
+            }
+            SyntaxKind::Parbreak => FlowItem::tight(
+                self.arena
+                    .hardline()
+                    .repeat_n(child.text().count_linebreaks()),
+            ),
+            SyntaxKind::Markup => FlowItem::spaced(
+                self.convert_markup_impl(child.cast().expect("markup"), MarkupScope::Item),
+            ),
+            _ => FlowItem::none(),
         })
         .nest(self.config.tab_spaces as isize)
     }

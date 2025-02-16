@@ -46,3 +46,11 @@ input_file: tests/fixtures/unit/markup/list-indent.typ
       aaa
       - 789
 ]
+- 123
+
+
+  - 456
+
+    aaa
+
+    - 789
