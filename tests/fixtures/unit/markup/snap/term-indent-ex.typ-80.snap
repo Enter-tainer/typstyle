@@ -1,6 +1,6 @@
 ---
 source: tests/src/unit.rs
-input_file: tests/fixtures/unit/markup/enum-indent-ex.typ
+input_file: tests/fixtures/unit/markup/term-indent-ex.typ
 ---
 #{
   [/ single: ]

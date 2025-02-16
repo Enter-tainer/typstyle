@@ -2,6 +2,13 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/term-multiline.typ
 ---
+/ 0:
+
+  000
+
+/ 1:
+
+
 / Lorem ipsum dolor sit amet:
   consectetur adipiscing elit
 

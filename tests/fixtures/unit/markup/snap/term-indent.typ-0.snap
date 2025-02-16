@@ -1,9 +1,9 @@
 ---
 source: tests/src/unit.rs
-input_file: tests/fixtures/unit/markup/enum-indent.typ
+input_file: tests/fixtures/unit/markup/term-indent.typ
 ---
 / 0:
-  000
+000
 
 / 1: // 1
   111
@@ -20,3 +20,13 @@ input_file: tests/fixtures/unit/markup/enum-indent.typ
   // 4
   / 44: // 44
     444
+
+/ 5:
+
+  // 5
+
+
+  / 55: // 55
+
+
+    555
