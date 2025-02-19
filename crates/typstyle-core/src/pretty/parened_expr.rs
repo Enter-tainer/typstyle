@@ -58,8 +58,8 @@ impl<'a> PrettyPrinter<'a> {
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
 fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>, indent: usize) -> ArenaDoc<'a> {
-    let open = (arena.text("(") + arena.line()).flat_alt(arena.nil());
-    let close = (arena.line() + arena.text(")")).flat_alt(arena.nil());
+    let open = (arena.text("(") + arena.hardline()).flat_alt(arena.nil());
+    let close = (arena.hardline() + arena.text(")")).flat_alt(arena.nil());
     ((open + body).nest(indent as isize) + close).group()
 }
 

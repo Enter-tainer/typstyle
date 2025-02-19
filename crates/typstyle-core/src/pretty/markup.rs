@@ -33,7 +33,7 @@ impl<'a> PrettyPrinter<'a> {
         let content = self
             .convert_markup_impl(content_block.body(), MarkupScope::ContentBlock)
             .nest(self.config.tab_spaces as isize);
-        content.brackets()
+        content.group().brackets()
     }
 
     pub(super) fn convert_strong(&'a self, strong: Strong<'a>) -> ArenaDoc<'a> {

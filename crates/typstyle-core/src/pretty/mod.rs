@@ -162,7 +162,6 @@ impl<'a> PrettyPrinter<'a> {
             Expr::Return(r) => self.convert_return(r),
             Expr::Contextual(c) => self.convert_contextual(c),
         }
-        .group()
     }
 
     fn convert_trivia(&'a self, node: impl AstNode<'a>) -> ArenaDoc<'a> {
@@ -225,18 +224,20 @@ impl<'a> PrettyPrinter<'a> {
         }
 
         let _g = self.with_mode(Mode::Math);
-        let mut doc = self.convert_math(equation.body());
-        if equation.block() {
+        let body = self.convert_math(equation.body());
+        let doc = if equation.block() {
             let is_multi_line = self.attr_store.is_multiline(equation.to_untyped());
-            let block_sep = if is_multi_line {
-                self.arena.hardline()
+            if is_multi_line {
+                (self.arena.hardline() + body).nest(self.config.tab_spaces as isize)
+                    + self.arena.hardline()
             } else {
-                self.arena.line()
-            };
-            doc = (block_sep.clone() + doc).nest(self.config.tab_spaces as isize) + block_sep;
+                ((self.arena.line() + body).nest(self.config.tab_spaces as isize)
+                    + self.arena.line())
+                .group()
+            }
         } else {
-            doc = doc.nest(self.config.tab_spaces as isize);
-        }
+            body.nest(self.config.tab_spaces as isize)
+        };
         doc.enclose("$", "$")
     }
 
