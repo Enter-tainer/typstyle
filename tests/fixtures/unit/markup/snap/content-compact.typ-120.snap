@@ -2,7 +2,12 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/content-compact.typ
 ---
-#[- 123]
+#[- 111]
+#[- 222]
+#[- 333]
+#[/ 444:]
+#[/ 555:]
+#[/ 666:]
 #[$12345$]
 #[= 123]
 #[#{ }]

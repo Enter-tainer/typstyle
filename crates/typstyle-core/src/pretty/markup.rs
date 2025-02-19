@@ -84,9 +84,12 @@ impl<'a> PrettyPrinter<'a> {
                     .hardline()
                     .repeat_n(child.text().count_linebreaks()),
             ),
-            SyntaxKind::Markup => FlowItem::spaced(
-                self.convert_markup_impl(child.cast().expect("markup"), MarkupScope::Item),
-            ),
+            SyntaxKind::Markup if child.children().next().is_some() => {
+                // empty markup is ignored here
+                FlowItem::spaced(
+                    self.convert_markup_impl(child.cast().expect("markup"), MarkupScope::Item),
+                )
+            }
             _ => FlowItem::none(),
         })
         .nest(self.config.tab_spaces as isize)
@@ -211,6 +214,13 @@ impl Boundary {
             Self::WeakSpaceOrBreak
         }
     }
+
+    fn strip_space(self) -> Self {
+        match self {
+            Self::SpaceOrBreak => Self::NilOrBreak,
+            _ => self,
+        }
+    }
 }
 
 // Break markup into lines, split by stmt, parbreak, newline, multiline raw,
@@ -251,6 +261,9 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
             // Discard leading space and mark it.
             items.start_bound = Boundary::from_space(node.text());
         } else {
+            if items.items.is_empty() && is_block_elem_untyped(node) {
+                items.start_bound = items.start_bound.strip_space();
+            }
             items.items.push(MarkupItem {
                 node,
                 format_disabled: false,
@@ -272,16 +285,12 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
         }
     }
 
-    fn is_block_elem(it: &MarkupItem<'_>) -> bool {
-        matches!(
-            it.node.kind(),
-            SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
-        )
-    }
-
     // Remove trailing spaces
     while let Some(last) = items.items.last() {
         if last.node.kind() != SyntaxKind::Space {
+            if is_block_elem(last) {
+                items.end_bound = items.end_bound.strip_space();
+            }
             break;
         }
         items.end_bound = Boundary::from_space(last.node.text());
@@ -313,4 +322,15 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
     }
 
     items
+}
+
+fn is_block_elem(it: &MarkupItem<'_>) -> bool {
+    is_block_elem_untyped(it.node)
+}
+
+fn is_block_elem_untyped(it: &'_ SyntaxNode) -> bool {
+    matches!(
+        it.kind(),
+        SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
+    )
 }
