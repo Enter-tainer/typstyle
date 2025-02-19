@@ -129,7 +129,6 @@ impl<'a> PrettyPrinter<'a> {
             .filter_map(|node| node.cast::<ContentBlock>());
         self.arena
             .concat(args.map(|arg| self.convert_content_block(arg)))
-            .group()
     }
 
     pub(super) fn convert_arg(&'a self, arg: Arg<'a>) -> ArenaDoc<'a> {
