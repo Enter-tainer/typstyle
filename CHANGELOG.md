@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.13.0 - [2025-02-22]
+
+- Bump to typst v0.13.0
+- Regression: In typst v0.13.0, PR [#5310](https://github.com/typst/typst/pull/5310) changes the parsing behavior of comments when it presenting in list, enum and term list. In this verison, the indent level of the comment in list, enum and term list determined by the **next** item, not the previous item. For example,
+```typst
+- Fruit
+  - Apple
+  - Banana
+  // - Orange
+- Vegetable
+  - Carrot
+  - Tomato
+```
+
+will be formatted as this in this version. Note that the `// - Orange` is misindented. It is indented to the same level as `- Vegetable`. It works perfectly in previous versions. So if you want to keep the old behavior, please keep using typstyle v0.12.x at this moment.
+```typst
+- Fruit
+  - Apple
+  - Banana
+// - Orange
+- Vegetable
+  - Carrot
+  - Tomato
+```
+
 ## v0.12.15 - [2025-02-16]
 
 - Feat: add `--tab-width` cli option to set the number of spaces for indentation. The default value is 2.

@@ -161,6 +161,7 @@ impl<'a> PrettyPrinter<'a> {
             Expr::Continue(c) => self.convert_continue(c),
             Expr::Return(r) => self.convert_return(r),
             Expr::Contextual(c) => self.convert_contextual(c),
+            Expr::MathText(math_text) => self.convert_trivia(math_text),
         }
     }
 

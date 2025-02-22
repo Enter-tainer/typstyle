@@ -6,6 +6,7 @@ use std::{
 };
 
 use anyhow::Context;
+use reflexo_typst::Bytes;
 use reflexo_world::{
     config::CompileOpts, CompilerUniverse, EntryOpts, ShadowApi, TypstSystemUniverse,
 };
@@ -18,7 +19,10 @@ pub fn make_universe(content: &str) -> anyhow::Result<TypstSystemUniverse> {
         ..Default::default()
     })?
     .with_entry_file(root.join("main.typ"));
-    univ.map_shadow(&root.join("main.typ"), content.as_bytes().into())?;
+    univ.map_shadow(
+        &root.join("main.typ"),
+        Bytes::from_string(content.to_string()),
+    )?;
     Ok(univ)
 }
 
@@ -55,23 +59,16 @@ pub fn make_universe_formatted(
         }
         let path = entry.path();
         let rel_path = path.strip_prefix(source_dir)?;
-        let content = fs::read(path)?;
-        world.map_shadow(&root.join(rel_path), content.clone().into())?;
+        let content = Bytes::new(fs::read(path)?);
+        world.map_shadow(&root.join(rel_path), content.clone())?;
         formatted_world.map_shadow(
             &root.join(rel_path),
             if path.extension() == Some("typ".as_ref())
-                && !blacklist.contains(
-                    path.file_name()
-                        .unwrap()
-                        .to_string_lossy()
-                        .to_string()
-                        .as_str(),
-                )
+                && !blacklist.contains(path.file_name().unwrap().to_str().unwrap())
             {
-                let content = String::from_utf8(content)?;
-                formatter(content, rel_path).as_bytes().into()
+                Bytes::new(formatter(content.as_str().unwrap().to_string(), rel_path))
             } else {
-                content.into()
+                content
             },
         )?;
     }
