@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tablex.typ
-snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -35,9 +34,9 @@ snapshot_kind: text
 #let _int-type = type(5)
 #let _float-type = type(5.0)
 #let _fraction-type = type(5fr)
-#let _function-type = type(x => (
+#let _function-type = type(x => {
   x
-))
+})
 #let _content-type = type([])
 // note: since 0.8.0, alignment and 2d alignment are the same
 // but keep it like this for pre-0.8.0
@@ -78,7 +77,7 @@ snapshot_kind: text
   (
     a,
     b,
-  ) => (
+  ) => {
     calc.floor(a)
       - calc.floor(
         b
@@ -87,7 +86,7 @@ snapshot_kind: text
               / b,
           ),
       )
-  )
+  }
 }
 
 // Returns the sign of the operand.
@@ -120,10 +119,10 @@ snapshot_kind: text
     (
       a,
       x,
-    ) => (
+    ) => {
       a
         + x
-    ),
+    },
   )
 }
 
@@ -174,13 +173,13 @@ snapshot_kind: text
     assert(
       fit-spans
         .keys()
-        .all(k => (
+        .all(k => {
           k
             in (
               "x",
               "y",
             )
-        )),
+        }),
       message: "Tablex error:"
         + error-prefix
         + " 'fit-spans', if a dictionary, must only have the keys x and y.",
@@ -188,10 +187,10 @@ snapshot_kind: text
     assert(
       fit-spans
         .values()
-        .all(v => (
+        .all(v => {
           type(v)
             == _bool-type
-        )),
+        }),
       message: "Tablex error:"
         + error-prefix
         + " keys 'x' and 'y' in the 'fit-spans' dictionary must be booleans (true/false).",
@@ -443,10 +442,10 @@ snapshot_kind: text
 
   // maximum explicit 'y' specified
   let max_explicit_y = items
-    .filter(c => (
+    .filter(c => {
       c.y
         != auto
-    ))
+    })
     .fold(
       0,
       (
@@ -805,9 +804,9 @@ snapshot_kind: text
     init_function
       == none
   ) {
-    init_function = () => (
+    init_function = () => {
       element
-    )
+    }
   }
 
   range(amount).map(i => init_function())
@@ -1632,9 +1631,9 @@ snapshot_kind: text
   grid,
   x,
   y,
-  fill_with: grid => (
+  fill_with: grid => {
     none
-  ),
+  },
 ) = {
   let rows = grid-count-rows(grid)
   let rowws = rows
@@ -2480,25 +2479,25 @@ snapshot_kind: text
 ) = {
   let frac-tracks = tracks
     .enumerate()
-    .filter(t => (
+    .filter(t => {
       type(
         t.at(1),
       )
         == _fraction-type
-    ))
+    })
 
   let amount-frac = frac-tracks.fold(
     0,
     (
       acc,
       el,
-    ) => (
+    ) => {
       acc
         + (
           el.at(1)
             / 1fr
         )
-    ),
+    },
   )
 
   if (
@@ -2713,12 +2712,12 @@ snapshot_kind: text
 
   let all-frac-columns = columns
     .enumerate()
-    .filter(i-col => (
+    .filter(i-col => {
       type(
         i-col.at(1),
       )
         == _fraction-type
-    ))
+    })
     .map(i-col => i-col.at(0))
   for (
     i,
@@ -2788,7 +2787,7 @@ snapshot_kind: text
                 > 1
                 and all-frac-columns.len()
                   > 0
-                and all-frac-columns.all(i => (
+                and all-frac-columns.all(i => {
                   pcell.x
                     <= i
                     and i
@@ -2796,7 +2795,7 @@ snapshot_kind: text
                         pcell.x
                           + pcell.colspan
                       )
-                ))
+                })
             )
             if (
               cell-spans-all-frac-columns
@@ -3732,10 +3731,10 @@ snapshot_kind: text
         )
       }
     })
-    .filter(x => (
+    .filter(x => {
       x
         != none
-    ))
+    })
 
   let vlines = vlines
     .filter(v => {
@@ -3791,10 +3790,10 @@ snapshot_kind: text
         )
       }
     })
-    .filter(x => (
+    .filter(x => {
       x
         != none
-    ))
+    })
 
   (
     hlines: hlines,
@@ -3842,10 +3841,10 @@ snapshot_kind: text
   styles: none,
 ) = {
   _largest-stroke-among-lines(
-    hlines.filter(h => (
+    hlines.filter(h => {
       h.y
         == y
-    )),
+    }),
     stroke-auto: stroke-auto,
     styles: styles,
   )
@@ -3858,10 +3857,10 @@ snapshot_kind: text
   styles: none,
 ) = {
   _largest-stroke-among-lines(
-    vlines.filter(v => (
+    vlines.filter(v => {
       v.x
         == x
-    )),
+    }),
     stroke-auto: stroke-auto,
     styles: styles,
   )
@@ -4555,12 +4554,12 @@ snapshot_kind: text
             repeat-header
               != false
           ) {
-            header-pages-state.update(l => (
+            header-pages-state.update(l => {
               l
                 + (
                   page,
                 )
-            ))
+            })
             if (
               (
                 repeat-header
@@ -4777,11 +4776,11 @@ snapshot_kind: text
           let hlines_below_header = first-row-group
             .row_group
             .hlines
-            .filter(h => (
+            .filter(h => {
               h.y
                 == header_last_y
                   + 1
-            ))
+            })
 
           (
             hlines
@@ -5105,7 +5104,7 @@ snapshot_kind: text
             box: cell_box,
           ))
 
-        let hlines = hlines.filter(h => (
+        let hlines = hlines.filter(h => {
           this_row_group
             .hlines
             .filter(
@@ -5113,12 +5112,12 @@ snapshot_kind: text
             )
             .len()
             == 0
-        ))
+        })
 
-        let vlines = vlines.filter(v => (
+        let vlines = vlines.filter(v => {
           v
             not in this_row_group.vlines
-        ))
+        })
 
         this_row_group.hlines += hlines
         this_row_group.vlines += vlines
@@ -5343,15 +5342,15 @@ snapshot_kind: text
       row_len
         + 1,
     )
-      .filter(y => (
+      .filter(y => {
         hlines
-          .filter(h => (
+          .filter(h => {
             h.y
               == y
-          ))
+          })
           .len()
           == 0
-      ))
+      })
       .map(y => hlinex(
         y: y,
       ))
@@ -5363,15 +5362,15 @@ snapshot_kind: text
       col_len
         + 1,
     )
-      .filter(x => (
+      .filter(x => {
         vlines
-          .filter(v => (
+          .filter(v => {
             v.x
               == x
-          ))
+          })
           .len()
           == 0
-      ))
+      })
       .map(x => vlinex(
         x: x,
       ))
@@ -5797,10 +5796,10 @@ snapshot_kind: text
   } else if (
     type(repeat-header)
       == _array-type
-      and repeat-header.any(i => (
+      and repeat-header.any(i => {
         type(i)
           != _int-type
-      ))
+      })
   ) {
     panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
   }

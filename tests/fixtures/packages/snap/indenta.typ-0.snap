@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/indenta.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [indenta]
@@ -20,7 +19,7 @@ snapshot_kind: text
     let _is_block(
       e,
       fn,
-    ) = (
+    ) = {
       fn
         == heading
         or (
@@ -54,12 +53,12 @@ snapshot_kind: text
             and e.has("block")
             and e.block
         )
-    )
+    }
     // TODO: smallcaps returns styled(...)
     let _is_inline(
       e,
       fn,
-    ) = (
+    ) = {
       fn
         == text
         or fn
@@ -105,7 +104,7 @@ snapshot_kind: text
                 and e.block
             )
         )
-    )
+    }
     let st = 2
     for e in (
       it.children

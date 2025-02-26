@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/utils.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -349,9 +348,9 @@ snapshot_kind: text
     ))
     return headings.at(-1, default: none)
   }
-  let headings = query(heading).filter(h => (
+  let headings = query(heading).filter(h => {
     h.location().page() <= current-page and h.level <= depth
-  ))
+  })
   if headings == () {
     return
   }

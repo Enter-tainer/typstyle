@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-draw.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -217,9 +216,9 @@ snapshot_kind: text
 // If `from < 0pt` and `to > 0pt`, the path length of the edge increases.
 #let cap-offsets(edge, y) = {
   (0, 1).map(pos => {
-    let mark = edge.marks.find(mark => (
+    let mark = edge.marks.find(mark => {
       calc.abs(mark.pos - pos) < 1e-3
-    ))
+    })
     if mark == none { return 0pt }
 
     let is-tip = (pos == 0) == mark.rev
@@ -246,12 +245,12 @@ snapshot_kind: text
     return path
   }
 
-  let has-mark-at(t) = (
-    edge.marks.find(mark => (
+  let has-mark-at(t) = {
+    edge.marks.find(mark => {
       calc.abs(mark.pos - t) < 1e-3
-    ))
+    })
       != none
-  )
+  }
 
   let decor = edge.decorations.with(
     stroke: edge.stroke,
@@ -389,9 +388,9 @@ snapshot_kind: text
     let (δ-start, δ-stop) = cap-offsets(
       edge,
       shift,
-    ).map(arclen => (
+    ).map(arclen => {
       -bend-dir * arclen / radius * 1rad
-    ))
+    })
 
     let obj = cetz.draw.arc(
       center,
@@ -559,7 +558,7 @@ snapshot_kind: text
   // phase keeps track of how to offset dash patterns
   // to ensure continuity between segments
   let phase = 0pt
-  let stroke-with-phase(phase) = (
+  let stroke-with-phase(phase) = {
     stroke-to-dict(edge.stroke)
       + (
         dash: if type(edge.stroke.dash)
@@ -573,7 +572,7 @@ snapshot_kind: text
           )
         },
       )
-  )
+  }
 
   // draw each segment
   for i in range(n-segments) {
@@ -1298,9 +1297,9 @@ snapshot_kind: text
   if key == none { return () }
 
   if type(key) == label {
-    return nodes.filter(node => (
+    return nodes.filter(node => {
       node.name == key
-    ))
+    })
   }
 
   if (
@@ -1327,13 +1326,13 @@ snapshot_kind: text
     if candidates.len() > 0 {
       // filter out nodes with lower snap priority
       let max-snap-priority = calc.max(
-        ..candidates.map(node => (
+        ..candidates.map(node => {
           node.snap
-        )),
+        }),
       )
-      candidates = candidates.filter(node => (
+      candidates = candidates.filter(node => {
         node.snap == max-snap-priority
-      ))
+      })
     }
 
     return candidates

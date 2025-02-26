@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/spread.typ
-snapshot_kind: text
 ---
 #let tree(
   root,
@@ -17,6 +16,6 @@ snapshot_kind: text
 
 #let f = (
   ..,
-) => (
+) => {
   1
-)
+}

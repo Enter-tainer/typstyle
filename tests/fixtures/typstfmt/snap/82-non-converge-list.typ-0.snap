@@ -1,13 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/82-non-converge-list.typ
-snapshot_kind: text
 ---
 #let f(
   t,
-) = (
+) = {
   t
-)
+}
 We have next things:
 - thing 1;
 - thing 2;

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-closure.typ
-snapshot_kind: text
 ---
 #let conf(
   title: none, //comments
@@ -14,28 +13,28 @@ snapshot_kind: text
   doc
 }
 
-#let f() /* 0 */ = /* 1 */ () => /* 2 */ (
+#let f() /* 0 */ = /* 1 */ () => /* 2 */ {
   none
-)
+}
 #let g(
   ..,
-) /* 0 */ = /* 1 */ () => /* 2 */ (
+) /* 0 */ = /* 1 */ () => /* 2 */ {
   none
-)
+}
 #let h(
   ..,
 ) /* 0 */ = /* 1 */ () => /* 2 */ {
   none
 }
 
-#let f = /* 0 */ () /* 1 */ => /* 2 */ (
+#let f = /* 0 */ () /* 1 */ => /* 2 */ {
   none
-)
+}
 #let g = /* 0 */ (
   ..,
-) /* 1 */ => /* 2 */ (
+) /* 1 */ => /* 2 */ {
   none
-)
+}
 #let h = /* 0 */ (
   ..,
 ) /* 1 */ => /* 2 */ {

@@ -119,7 +119,9 @@ impl<'a> PrettyPrinter<'a> {
                 }
                 LookAhead::Body => {
                     if let Some(expr) = child.cast() {
-                        return FlowItem::spaced(self.convert_expr_with_optional_paren(expr));
+                        return FlowItem::spaced(
+                            self.convert_expr_with_optional_paren(expr, ("{", "}")),
+                        );
                     }
                 }
             }
@@ -189,7 +191,9 @@ impl<'a> PrettyPrinter<'a> {
                 LookAhead::Iterable => {
                     if let Some(expr) = child.cast() {
                         look_ahead = LookAhead::Body;
-                        return FlowItem::spaced(self.convert_expr_with_optional_paren(expr));
+                        return FlowItem::spaced(
+                            self.convert_expr_with_optional_paren(expr, ("(", ")")),
+                        );
                     }
                 }
                 LookAhead::Body => {

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/func_call.typ
-snapshot_kind: text
 ---
 #text[123]
 
@@ -19,9 +18,9 @@ snapshot_kind: text
 
 #let f = (
   ..args,
-) => (
+) => {
   args
-)
+}
 #f({
   "aaaaaaaaaaaaaaaaaaaaa"
 })
