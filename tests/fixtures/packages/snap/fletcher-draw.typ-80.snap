@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-draw.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -181,9 +180,9 @@ snapshot_kind: text
 #let with-decorations(edge, path) = {
   if edge.decorations == none { return path }
 
-  let has-mark-at(t) = (
+  let has-mark-at(t) = {
     edge.marks.find(mark => calc.abs(mark.pos - t) < 1e-3) != none
-  )
+  }
 
   let decor = edge.decorations.with(stroke: edge.stroke)
 
@@ -279,9 +278,9 @@ snapshot_kind: text
   // Draw arc(s), one for each extrusion shift
   for shift in edge.extrude {
     // Adjust arc angles to accommodate for cap offsets
-    let (δ-start, δ-stop) = cap-offsets(edge, shift).map(arclen => (
+    let (δ-start, δ-stop) = cap-offsets(edge, shift).map(arclen => {
       -bend-dir * arclen / radius * 1rad
-    ))
+    })
 
     let obj = cetz.draw.arc(
       center,
@@ -401,14 +400,14 @@ snapshot_kind: text
   // phase keeps track of how to offset dash patterns
   // to ensure continuity between segments
   let phase = 0pt
-  let stroke-with-phase(phase) = (
+  let stroke-with-phase(phase) = {
     stroke-to-dict(edge.stroke)
       + (
         dash: if type(edge.stroke.dash) == dictionary {
           (array: edge.stroke.dash.array, phase: phase)
         },
       )
-  )
+  }
 
   // draw each segment
   for i in range(n-segments) {

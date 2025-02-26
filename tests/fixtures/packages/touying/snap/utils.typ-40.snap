@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/utils.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -492,10 +491,10 @@ snapshot_kind: text
       default: none,
     )
   }
-  let headings = query(heading).filter(h => (
+  let headings = query(heading).filter(h => {
     h.location().page() <= current-page
       and h.level <= depth
-  ))
+  })
   if headings == () {
     return
   }
@@ -729,9 +728,9 @@ snapshot_kind: text
             + it
               .text
               .split("\n")
-              .map(l => (
+              .map(l => {
                 "\n" + indent * " " + l
-              ))
+              })
               .sum(default: "")
             + "\n"
             + indent * " "

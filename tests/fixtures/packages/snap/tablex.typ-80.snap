@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tablex.typ
-snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -1481,9 +1480,9 @@ snapshot_kind: text
             let cell-spans-all-frac-columns = (
               pcell.colspan > 1
                 and all-frac-columns.len() > 0
-                and all-frac-columns.all(i => (
+                and all-frac-columns.all(i => {
                   pcell.x <= i and i < (pcell.x + pcell.colspan)
-                ))
+                })
             )
             if (
               cell-spans-all-frac-columns
@@ -2732,9 +2731,9 @@ snapshot_kind: text
             and not is-header
             and start-y == header_last_y + 1
         ) {
-          let hlines_below_header = first-row-group.row_group.hlines.filter(h => (
+          let hlines_below_header = first-row-group.row_group.hlines.filter(h => {
             h.y == header_last_y + 1
-          ))
+          })
 
           hlines + hlines_below_header
         } else {
@@ -2938,9 +2937,9 @@ snapshot_kind: text
 
         this_row_group.rows.last().push((cell: cell, box: cell_box))
 
-        let hlines = hlines.filter(h => (
+        let hlines = hlines.filter(h => {
           this_row_group.hlines.filter(is-same-hline.with(h)).len() == 0
-        ))
+        })
 
         let vlines = vlines.filter(v => v not in this_row_group.vlines)
 

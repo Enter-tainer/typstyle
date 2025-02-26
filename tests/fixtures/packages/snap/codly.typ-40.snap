@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/codly.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [codly]
@@ -417,9 +416,9 @@ snapshot_kind: text
   }
 
   // Filter the highlights to only keep the relevant ones.
-  let highlights = highlights.filter(x => (
+  let highlights = highlights.filter(x => {
     x.line == (it.number - 1)
-  ))
+  })
   let highlighted = it.body
 
   // Smart indentation code.

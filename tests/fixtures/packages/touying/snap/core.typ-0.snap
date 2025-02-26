@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/core.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -1299,9 +1298,9 @@ snapshot_kind: text
 /// - `note` is the content of the speaker note.
 #let speaker-note(
   mode: "typ",
-  setting: it => (
+  setting: it => {
     it
-  ),
+  },
   note,
 ) = {
   touying-fn-wrapper(
@@ -1462,9 +1461,9 @@ snapshot_kind: text
 /// - `..args` is the arguments of the reducer function.
 #let touying-reducer(
   reduce: arr => arr.sum(),
-  cover: arr => (
+  cover: arr => {
     none
-  ),
+  },
   ..args,
 ) = utils.label-it(
   metadata((
@@ -2846,9 +2845,9 @@ snapshot_kind: text
       and type(margin)
         != relative
   ) {
-    return it => (
+    return it => {
       it
-    )
+    }
   }
   let cell = block.with(
     width: 100%,
@@ -3251,9 +3250,9 @@ snapshot_kind: text
   self: none,
   config: (:),
   repeat: auto,
-  setting: body => (
+  setting: body => {
     body
-  ),
+  },
   composer: auto,
   ..bodies,
 ) = {
@@ -3775,9 +3774,9 @@ snapshot_kind: text
 #let slide(
   config: (:),
   repeat: auto,
-  setting: body => (
+  setting: body => {
     body
-  ),
+  },
   composer: auto,
   ..bodies,
 ) = touying-slide-wrapper(self => {
@@ -3818,9 +3817,9 @@ snapshot_kind: text
 #let empty-slide(
   config: (:),
   repeat: auto,
-  setting: body => (
+  setting: body => {
     body
-  ),
+  },
   composer: auto,
   ..bodies,
 ) = touying-slide-wrapper(self => {

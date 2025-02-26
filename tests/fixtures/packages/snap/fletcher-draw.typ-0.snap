@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-draw.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -345,13 +344,13 @@ snapshot_kind: text
   ).map(pos => {
     let mark = edge
       .marks
-      .find(mark => (
+      .find(mark => {
         calc.abs(
           mark.pos
             - pos,
         )
           < 1e-3
-      ))
+      })
     if (
       mark
         == none
@@ -419,18 +418,18 @@ snapshot_kind: text
 
   let has-mark-at(
     t,
-  ) = (
+  ) = {
     edge
       .marks
-      .find(mark => (
+      .find(mark => {
         calc.abs(
           mark.pos
             - t,
         )
           < 1e-3
-      ))
+      })
       != none
-  )
+  }
 
   let decor = edge
     .decorations
@@ -640,12 +639,12 @@ snapshot_kind: text
     ) = cap-offsets(
       edge,
       shift,
-    ).map(arclen => (
+    ).map(arclen => {
       -bend-dir
         * arclen
         / radius
         * 1rad
-    ))
+    })
 
     let obj = cetz
       .draw
@@ -931,7 +930,7 @@ snapshot_kind: text
   let phase = 0pt
   let stroke-with-phase(
     phase,
-  ) = (
+  ) = {
     stroke-to-dict(
       edge.stroke,
     )
@@ -951,7 +950,7 @@ snapshot_kind: text
           )
         },
       )
-  )
+  }
 
   // draw each segment
   for i in range(n-segments) {
@@ -1133,10 +1132,10 @@ snapshot_kind: text
         )
         mark
       })
-      .filter(mark => (
+      .filter(mark => {
         mark.pos
           != none
-      ))
+      })
 
     let label-pos = lerp-scale(
       edge.label-pos,
@@ -2096,10 +2095,10 @@ snapshot_kind: text
     type(key)
       == label
   ) {
-    return nodes.filter(node => (
+    return nodes.filter(node => {
       node.name
         == key
-    ))
+    })
   }
 
   if (
@@ -2136,14 +2135,14 @@ snapshot_kind: text
     ) {
       // filter out nodes with lower snap priority
       let max-snap-priority = calc.max(
-        ..candidates.map(node => (
+        ..candidates.map(node => {
           node.snap
-        )),
+        }),
       )
-      candidates = candidates.filter(node => (
+      candidates = candidates.filter(node => {
         node.snap
           == max-snap-priority
-      ))
+      })
     }
 
     return candidates

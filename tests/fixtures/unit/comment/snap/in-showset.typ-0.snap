@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-showset.typ
-snapshot_kind: text
 ---
 #show: none
 #show "foo": "bar"
@@ -28,9 +27,9 @@ snapshot_kind: text
   numbering/* 2 */: /* 3 */ (
     /* 4 */
     ../* 5 */num, /* 6 */
-  ) /* 1 */ => (
+  ) /* 1 */ => {
     none
-  ),
+  },
 )
 #set /* 0 */ text(
   /* 1 */

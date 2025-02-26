@@ -30,12 +30,21 @@ impl<'a> PrettyPrinter<'a> {
     /// If the expression is a parenthesized expression, a code block, a content block, or a function call,
     /// the expression will be converted without parentheses.
     /// Otherwise, the expression will be converted with parentheses if it is layouted on multiple lines.
-    pub(super) fn convert_expr_with_optional_paren(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_expr_with_optional_paren(
+        &'a self,
+        expr: Expr<'a>,
+        delims: (&'static str, &'static str),
+    ) -> ArenaDoc<'a> {
         if !is_paren_needed(expr) {
             return self.convert_expr(expr);
         }
         let _g = self.with_mode(Mode::CodeCont);
-        optional_paren(&self.arena, self.convert_expr(expr), self.config.tab_spaces)
+        optional_paren(
+            &self.arena,
+            self.convert_expr(expr),
+            self.config.tab_spaces,
+            delims,
+        )
     }
 
     /// Parenthesize the body if necessary.
@@ -52,14 +61,19 @@ impl<'a> PrettyPrinter<'a> {
         // - If without paren, the entire expression is in one line, thus safe.
         // - If with paren, surely safe.
         let _g = self.with_mode(Mode::CodeCont);
-        optional_paren(&self.arena, body(), self.config.tab_spaces)
+        optional_paren(&self.arena, body(), self.config.tab_spaces, ("(", ")"))
     }
 }
 
 /// Wrap the body with parentheses if the body is layouted on multiple lines.
-fn optional_paren<'a>(arena: &'a Arena<'a>, body: ArenaDoc<'a>, indent: usize) -> ArenaDoc<'a> {
-    let open = (arena.text("(") + arena.hardline()).flat_alt(arena.nil());
-    let close = (arena.hardline() + arena.text(")")).flat_alt(arena.nil());
+fn optional_paren<'a>(
+    arena: &'a Arena<'a>,
+    body: ArenaDoc<'a>,
+    indent: usize,
+    delims: (&'static str, &'static str),
+) -> ArenaDoc<'a> {
+    let open = (arena.text(delims.0) + arena.hardline()).flat_alt(arena.nil());
+    let close = (arena.hardline() + arena.text(delims.1)).flat_alt(arena.nil());
     ((open + body).nest(indent as isize) + close).group()
 }
 

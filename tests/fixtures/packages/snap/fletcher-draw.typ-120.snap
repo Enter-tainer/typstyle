@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-draw.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -386,14 +385,14 @@ snapshot_kind: text
   // phase keeps track of how to offset dash patterns
   // to ensure continuity between segments
   let phase = 0pt
-  let stroke-with-phase(phase) = (
+  let stroke-with-phase(phase) = {
     stroke-to-dict(edge.stroke)
       + (
         dash: if type(edge.stroke.dash) == dictionary {
           (array: edge.stroke.dash.array, phase: phase)
         },
       )
-  )
+  }
 
   // draw each segment
   for i in range(n-segments) {
