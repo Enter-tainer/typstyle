@@ -28,15 +28,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Add PR remote
+      - name: Add upstream
         env:
-          PR_REMOTE_URL: ${{ github.event.pull_request.head.repo.git_url }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          UPSTREAM_URL: ${{ github.event.pull_request.base.repo.git_url }}
+          UPSTREAM_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          git remote add pr-remote "$PR_REMOTE_URL"
-          git fetch pr-remote "$PR_HEAD_REF" --no-tags --depth=1
+          git remote add upstream "$UPSTREAM_URL"
+          git fetch upstream "$UPSTREAM_REF" --no-tags --depth=1
 
       # 设置 Rust 工具链
       - uses: dtolnay/rust-toolchain@stable
@@ -83,8 +83,8 @@ jobs:
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '### 📊 Benchmark Performance Report'
+          comment-author: "github-actions[bot]"
+          body-includes: "### 📊 Benchmark Performance Report"
 
       # 更新或创建评论
       - name: Create or update comment
