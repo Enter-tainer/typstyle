@@ -18,7 +18,7 @@ jobs:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          cancel_others: "true"
+          cancel_others: true
 
   bench:
     name: Run benches
@@ -28,37 +28,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Add PR remote
-        env:
-          PR_REMOTE_URL: ${{ github.event.pull_request.head.repo.git_url }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
-        run: |
-          git remote add pr-remote "$PR_REMOTE_URL"
-          git fetch pr-remote "$PR_HEAD_REF" --no-tags --depth=1
-
-      # 设置 Rust 工具链
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      # 安装 critcmp
       - name: Install critcmp
         run: cargo install critcmp
 
-      # 先在基分支上运行基准测试
       - name: Run benchmark on base branch
         run: |
           git checkout ${{ github.event.pull_request.base.sha }}
           cargo bench --workspace -- --save-baseline base
 
-      # 切换到 PR 分支运行基准测试
       - name: Run benchmark on PR
         run: |
           git checkout ${{ github.event.pull_request.head.sha }}
           cargo bench --workspace -- --save-baseline pr
 
-      # 比较结果并生成评论
       - name: Compare and comment results
         run: |
           # 生成比较结果
@@ -77,16 +67,14 @@ jobs:
 
           echo "$BENCH_RESULT"
 
-      # 查找之前的评论
       - name: Find Comment
         uses: peter-evans/find-comment@v3
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '### 📊 Benchmark Performance Report'
+          comment-author: "github-actions[bot]"
+          body-includes: "### 📊 Benchmark Performance Report"
 
-      # 更新或创建评论
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v4
         with:
