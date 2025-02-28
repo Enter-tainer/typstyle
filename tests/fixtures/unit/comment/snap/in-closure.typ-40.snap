@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-closure.typ
-snapshot_kind: text
 ---
 #let conf(
   title: none, //comments
@@ -12,9 +11,9 @@ snapshot_kind: text
   doc, // all comments will be kept by typstyle
 ) = { doc }
 
-#let f() /* 0 */ = /* 1 */ () => /* 2 */ (
+#let f() /* 0 */ = /* 1 */ () => /* 2 */ {
   none
-)
+}
 #let g(
   ..,
 ) /* 0 */ = /* 1 */ () => /* 2 */ none
@@ -24,9 +23,9 @@ snapshot_kind: text
   none
 }
 
-#let f = /* 0 */ () /* 1 */ => /* 2 */ (
+#let f = /* 0 */ () /* 1 */ => /* 2 */ {
   none
-)
+}
 #let g = /* 0 */ (
   ..,
 ) /* 1 */ => /* 2 */ none

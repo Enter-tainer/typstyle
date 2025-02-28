@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/codly.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [codly]
@@ -479,9 +478,9 @@ snapshot_kind: text
     } else {
       highlights
         .sorted(
-          key: x => (
+          key: x => {
             x.line
-          ),
+          },
         )
         .map(x => {
           if (
@@ -1319,9 +1318,9 @@ snapshot_kind: text
     ) {
       (
         ..,
-      ) => (
+      ) => {
         none
-      )
+      }
     } else if (
       fn
         == auto
@@ -1633,9 +1632,9 @@ snapshot_kind: text
       fn
         == none
     ) {
-      _ => (
+      _ => {
         none
-      )
+      }
     } else {
       fn
     }
@@ -1665,9 +1664,9 @@ snapshot_kind: text
     } else {
       annotations
         .sorted(
-          key: x => (
+          key: x => {
             x.start
-          ),
+          },
         )
         .map(x => {
           if (
@@ -1752,13 +1751,13 @@ snapshot_kind: text
 
   // Get the widest annotation.
   let annot-bodies-width = annotations
-    .map(x => (
+    .map(x => {
       x.content
-    ))
+    })
     .map(measure)
-    .map(x => (
+    .map(x => {
       x.width
-    ))
+    })
   let num = annotation-format(
     annotations.len(),
   )

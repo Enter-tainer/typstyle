@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/utils.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -716,9 +715,9 @@ snapshot_kind: text
   hierachical: true,
   depth: 9999,
   style: (
-    setting: body => (
+    setting: body => {
       body
-    ),
+    },
     numbered: true,
     current-heading,
   ) => setting({
@@ -833,9 +832,9 @@ snapshot_kind: text
   level: auto,
   hierachical: true,
   depth: 9999,
-  setting: body => (
+  setting: body => {
     body
-  ),
+  },
   ..sty,
 ) = (
   context {
@@ -2020,14 +2019,14 @@ snapshot_kind: text
     context {
       let sizes = contents.map(c => measure(c))
       let max-width = calc.max(
-        ..sizes.map(sz => (
+        ..sizes.map(sz => {
           sz.width
-        )),
+        }),
       )
       let max-height = calc.max(
-        ..sizes.map(sz => (
+        ..sizes.map(sz => {
           sz.height
-        )),
+        }),
       )
       for (
         subslides,
@@ -2210,9 +2209,9 @@ snapshot_kind: text
 #let speaker-note(
   self: none,
   mode: "typ",
-  setting: it => (
+  setting: it => {
     it
-  ),
+  },
   note,
 ) = {
   if self.at(
