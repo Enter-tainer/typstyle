@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/closure-simple.typ
-snapshot_kind: text
 ---
 #show raw: it => {
   it
@@ -36,9 +35,9 @@ snapshot_kind: text
 #set heading(
   numbering: (
     ..num,
-  ) => (
+  ) => {
     none
-  ),
+  },
 )
 
 #show raw.where(
@@ -61,15 +60,15 @@ snapshot_kind: text
     n,
     c,
   ),
-) => (
+) => {
   none
-))
+})
 
 #a.map((
   n,
   c,
-) => (
+) => {
   none
-))
+})
 
 #range(amount).map(i => init_function())

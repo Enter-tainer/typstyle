@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tablex.typ
-snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -35,9 +34,9 @@ snapshot_kind: text
 #let _int-type = type(5)
 #let _float-type = type(5.0)
 #let _fraction-type = type(5fr)
-#let _function-type = type(x => (
+#let _function-type = type(x => {
   x
-))
+})
 #let _content-type = type([])
 // note: since 0.8.0, alignment and 2d alignment are the same
 // but keep it like this for pre-0.8.0
@@ -805,9 +804,9 @@ snapshot_kind: text
     init_function
       == none
   ) {
-    init_function = () => (
+    init_function = () => {
       element
-    )
+    }
   }
 
   range(amount).map(i => init_function())
@@ -1632,9 +1631,9 @@ snapshot_kind: text
   grid,
   x,
   y,
-  fill_with: grid => (
+  fill_with: grid => {
     none
-  ),
+  },
 ) = {
   let rows = grid-count-rows(grid)
   let rowws = rows

@@ -72,7 +72,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_binary(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
         // Layout every binary expression except assignment as chain.
-        if binary.op().precedence() > BinOp::Assign.precedence() {
+        if is_chainable_binary(binary) {
             return self.parenthesize_if_necessary(|| self.convert_binary_chain(binary));
         }
         self.convert_flow_like(binary.to_untyped(), |child| {
@@ -119,7 +119,14 @@ impl<'a> PrettyPrinter<'a> {
                 }
                 LookAhead::Body => {
                     if let Some(expr) = child.cast() {
-                        return FlowItem::spaced(self.convert_expr_with_optional_paren(expr));
+                        let use_braces = if let Expr::Binary(binary) = expr {
+                            !is_chainable_binary(binary)
+                        } else {
+                            true
+                        };
+                        return FlowItem::spaced(
+                            self.convert_expr_with_optional_paren(expr, use_braces),
+                        );
                     }
                 }
             }
@@ -189,7 +196,9 @@ impl<'a> PrettyPrinter<'a> {
                 LookAhead::Iterable => {
                     if let Some(expr) = child.cast() {
                         look_ahead = LookAhead::Body;
-                        return FlowItem::spaced(self.convert_expr_with_optional_paren(expr));
+                        return FlowItem::spaced(
+                            self.convert_expr_with_optional_paren(expr, false),
+                        );
                     }
                 }
                 LookAhead::Body => {
@@ -236,4 +245,13 @@ impl<'a> PrettyPrinter<'a> {
             }
         })
     }
+}
+
+/// Returns whether a binary expression is chainable.
+///
+/// A binary expression is considered chainable if its operator precedence is
+/// higher than that of the assignment operator. This is used to determine if the
+/// expression should be laid out as a chain of binary operations.
+fn is_chainable_binary(binary: Binary<'_>) -> bool {
+    binary.op().precedence() > BinOp::Assign.precedence()
 }

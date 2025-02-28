@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-draw.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -2136,9 +2135,9 @@ snapshot_kind: text
     ) {
       // filter out nodes with lower snap priority
       let max-snap-priority = calc.max(
-        ..candidates.map(node => (
+        ..candidates.map(node => {
           node.snap
-        )),
+        }),
       )
       candidates = candidates.filter(node => (
         node.snap

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/chain/call.typ
-snapshot_kind: text
 ---
 #{
   a
@@ -138,9 +137,9 @@ snapshot_kind: text
         point,
         offset,
       ),
-    ) => (
+    ) => {
       none
-    ))
+    })
 
   (
     (

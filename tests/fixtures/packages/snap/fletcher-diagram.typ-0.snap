@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-diagram.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -179,9 +178,9 @@ snapshot_kind: text
   rects = expand-fractional-rects(rects)
 
   // all points in diagram that should be spanned by coordinate grid
-  let points = rects.map(r => (
+  let points = rects.map(r => {
     r.center
-  ))
+  })
   points += verts
 
   if (
@@ -931,13 +930,13 @@ snapshot_kind: text
 
     // nodes and edges whose uv coordinates can be resolved without knowing the grid
     let rects-affecting-grid = nodes
-      .filter(node => (
+      .filter(node => {
         not is-nan-vector(
           node
             .pos
             .uv,
         )
-      ))
+      })
       .map(node => (
         center: node
           .pos
@@ -960,9 +959,9 @@ snapshot_kind: text
         .join()
         + ()
     ) // coerce none to ()
-    vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
+    vertices-affecting-grid = vertices-affecting-grid.filter(vert => {
       not is-nan-vector(vert)
-    ))
+    })
 
 
     // determine diagram's elastic grid layout

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-diagram.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -541,9 +540,9 @@ snapshot_kind: text
         .join()
         + ()
     ) // coerce none to ()
-    vertices-affecting-grid = vertices-affecting-grid.filter(vert => (
+    vertices-affecting-grid = vertices-affecting-grid.filter(vert => {
       not is-nan-vector(vert)
-    ))
+    })
 
 
     // determine diagram's elastic grid layout
