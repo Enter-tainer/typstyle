@@ -14,13 +14,10 @@ doc = false
 
 [dependencies]
 anyhow.workspace = true
-ecow.workspace = true
-itertools.workspace = true
 walkdir.workspace = true
-
 pretty_assertions.workspace = true
-reflexo-world.workspace = true
-reflexo-typst.workspace = true
+
+tinymist-world.workspace = true
 typst-assets.workspace = true
 typst-render.workspace = true
 typst-pdf.workspace = true

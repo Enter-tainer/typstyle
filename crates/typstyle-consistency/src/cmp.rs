@@ -1,17 +1,10 @@
-use std::{env, marker::PhantomData, sync::Arc};
+use std::env;
 
 use anyhow::{bail, Context};
-use ecow::EcoVec;
-use itertools::Itertools;
-use reflexo_typst::{
-    error::{diag_from_std, DiagMessage},
-    CompileDriver, TypstPagedDocument,
-};
-use reflexo_world::{CompilerWorld, SystemCompilerFeat, TypstSystemUniverse};
-use typst::{diag::SourceDiagnostic, foundations::Smart, layout::Page};
+use tinymist_world::TypstSystemUniverse;
+use typst::layout::PagedDocument;
+use typst::{foundations::Smart, layout::Page};
 use typst_pdf::{PdfOptions, PdfStandards};
-
-type CompilationResult = Result<Arc<TypstPagedDocument>, EcoVec<SourceDiagnostic>>;
 
 pub fn compare_docs(
     name: &str,
@@ -19,17 +12,11 @@ pub fn compare_docs(
     after: TypstSystemUniverse,
     output_pdf: bool,
 ) -> anyhow::Result<()> {
-    fn format_diag(
-        res: EcoVec<SourceDiagnostic>,
-        world: &CompilerWorld<SystemCompilerFeat>,
-    ) -> Vec<DiagMessage> {
-        res.into_iter()
-            .map(|e| diag_from_std(e, Some(world)))
-            .collect_vec()
-    }
+    let compile_universe =
+        |universe: TypstSystemUniverse| typst::compile(&universe.snapshot()).output;
 
-    let (doc_bf, world_bf) = compile_universe(before);
-    let (doc_af, world_af) = compile_universe(after);
+    let doc_bf = compile_universe(before);
+    let doc_af = compile_universe(after);
 
     match (doc_bf, doc_af) {
         (Ok(doc_bf), Ok(doc_af)) => {
@@ -57,30 +44,16 @@ pub fn compare_docs(
             }
         }
         (Err(res1), _) => {
-            bail!(
-                "Original doc failed to compile: {:#?}",
-                format_diag(res1, &world_bf)
-            );
+            bail!("Original doc failed to compile: {:#?}", res1);
         }
         (_, Err(res2)) => {
-            bail!(
-                "Formatted doc failed to compile: {:#?}",
-                format_diag(res2, &world_af)
-            );
+            bail!("Formatted doc failed to compile: {:#?}", res2);
         }
     }
     Ok(())
 }
 
-fn compile_universe(
-    universe: TypstSystemUniverse,
-) -> (CompilationResult, CompilerWorld<SystemCompilerFeat>) {
-    let mut driver = CompileDriver::new(PhantomData, universe);
-    let doc = driver.compile(&mut Default::default()).map(|x| x.output);
-    (doc, driver.snapshot())
-}
-
-fn check_doc_meta(left: &TypstPagedDocument, right: &TypstPagedDocument, message: &str) {
+fn check_doc_meta(left: &PagedDocument, right: &PagedDocument, message: &str) {
     pretty_assertions::assert_eq!(
         left.pages.len(),
         right.pages.len(),
@@ -103,12 +76,8 @@ fn check_doc_meta(left: &TypstPagedDocument, right: &TypstPagedDocument, message
     );
 }
 
-fn check_pdf(
-    before: &TypstPagedDocument,
-    after: &TypstPagedDocument,
-    name: &str,
-) -> anyhow::Result<String> {
-    let render_pdf = |doc: &TypstPagedDocument, ident: &'static str| {
+fn check_pdf(before: &PagedDocument, after: &PagedDocument, name: &str) -> anyhow::Result<String> {
+    let render_pdf = |doc: &PagedDocument, ident: &'static str| {
         typst_pdf::pdf(
             doc,
             &PdfOptions {
@@ -137,11 +106,7 @@ fn check_pdf(
     Ok(message)
 }
 
-fn check_png(
-    before: &TypstPagedDocument,
-    after: &TypstPagedDocument,
-    name: &str,
-) -> anyhow::Result<()> {
+fn check_png(before: &PagedDocument, after: &PagedDocument, name: &str) -> anyhow::Result<()> {
     let render_png = |page: &Page, number: usize| {
         typst_render::render(
             &Page {
