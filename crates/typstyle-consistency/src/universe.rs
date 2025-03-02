@@ -6,10 +6,8 @@ use std::{
 };
 
 use anyhow::Context;
-use reflexo_typst::Bytes;
-use reflexo_world::{
-    config::CompileOpts, CompilerUniverse, EntryOpts, ShadowApi, TypstSystemUniverse,
-};
+use tinymist_world::{config::CompileOpts, EntryOpts, ShadowApi, TypstSystemUniverse};
+use typst::foundations::Bytes;
 
 pub fn make_universe(content: &str) -> anyhow::Result<TypstSystemUniverse> {
     let root = os_root();
@@ -40,7 +38,7 @@ pub fn make_universe_formatted(
     );
 
     let make_world = || -> anyhow::Result<TypstSystemUniverse> {
-        let univ = CompilerUniverse::new(CompileOpts {
+        let univ = TypstSystemUniverse::new(CompileOpts {
             entry: EntryOpts::new_rooted(root.clone(), Some(entrypoint.to_path_buf())),
             with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
             ..Default::default()
