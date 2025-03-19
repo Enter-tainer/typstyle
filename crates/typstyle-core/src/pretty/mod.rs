@@ -226,6 +226,16 @@ impl<'a> PrettyPrinter<'a> {
 
         let _g = self.with_mode(Mode::Math);
         let body = self.convert_math(equation.body());
+        let has_trailing_linebreak = equation
+            .body()
+            .exprs()
+            .last()
+            .is_some_and(|expr| matches!(expr, Expr::Linebreak(_)));
+        let body = if !equation.block() && has_trailing_linebreak {
+            body + self.arena.space()
+        } else {
+            body
+        };
         let doc = if equation.block() {
             let is_multi_line = self.attr_store.is_multiline(equation.to_untyped());
             if is_multi_line {
