@@ -1,7 +1,7 @@
 use rustc_hash::FxHashMap;
 
 use typst_syntax::{
-    ast::{Args, AstNode, Math, Raw},
+    ast::{Args, AstNode, Math, ModuleImport, Raw},
     Span, SyntaxKind, SyntaxNode,
 };
 
@@ -170,6 +170,10 @@ impl AttrStore {
         }
         if commented {
             self.set_commented(node);
+        }
+        if commented && node.cast::<ModuleImport>().is_some() {
+            // no format module import if it has comments inside
+            self.set_format_disabled(node);
         }
     }
 

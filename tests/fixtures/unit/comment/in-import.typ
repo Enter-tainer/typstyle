@@ -21,3 +21,6 @@
 /* 1 */  node/* 2 */,/* 3 */edge/* 4 */
 /* 5 */
   /* 6 */)
+#import "block-short.typ": (
+  // test
+  o)
