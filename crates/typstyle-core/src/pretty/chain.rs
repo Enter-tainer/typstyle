@@ -81,7 +81,7 @@ impl<'a> ChainStylist<'a> {
     /// - `op_converter`: A function that converts operators into Docs (if some).
     /// - `rhs_converter`: A function that converts right-hand side nodes into Docs (if some).
     /// - `fallback_converter`: A function that provides a fallback conversion for nodes that
-    ///    do not match the primary criteria. Used for sticky args and innermost expressions.
+    ///   do not match the primary criteria. Used for sticky args and innermost expressions.
     pub fn process(
         mut self,
         nodes: Vec<&'a SyntaxNode>,
