@@ -4,7 +4,7 @@ members = ["crates/*", "tests"]
 default-members = ["crates/typstyle"]
 
 [workspace.package]
-version = "0.13.0"
+version = "0.13.1"
 rust-version = "1.83"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
@@ -14,8 +14,8 @@ repository = "https://github.com/Enter-tainer/typstyle"
 homepage = "https://enter-tainer.github.io/typstyle/"
 
 [workspace.dependencies]
-typstyle-core = { path = "crates/typstyle-core", version = "0.13.0" }
-typstyle = { path = "crates/typstyle", version = "0.13.0" }
+typstyle-core = { path = "crates/typstyle-core", version = "0.13.1" }
+typstyle = { path = "crates/typstyle", version = "0.13.1" }
 typstyle-consistency = { path = "crates/typstyle-consistency" }
 
 # Used in core
@@ -45,7 +45,9 @@ libtest-mimic = "0.8.1"
 pretty_assertions = "1.4.1"
 tempfile = "3"
 
-tinymist-world = { version = "0.13.2", default-features = false, features = ["system"] }
+tinymist-world = { version = "0.13.2", default-features = false, features = [
+  "system",
+] }
 
 typst-assets = { version = "0.13.1", features = ["fonts"] }
 typst-render = "0.13.1"

@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.13.1 - [2025-03-20]
+
+- Bump to typst v0.13.1
+- Typstyle now uses braces ({}) instead of parens (()) when the closure body is not a chainable binary expression
+
+```typst
+#fun(() => {
+  aaa
+})
+instead of
+#fun(() => (
+  aaa
+))
+```
+- Fix mis-format when linebreak `\` appears at the end of a inline math equation.
+- Fix mis-format when line comment appears in a multiline `import` statement.
+
 ## v0.13.0 - [2025-02-22]
 
 - Bump to typst v0.13.0
