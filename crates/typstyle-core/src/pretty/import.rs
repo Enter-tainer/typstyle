@@ -5,30 +5,66 @@ use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(import.to_untyped(), |child| {
-            if child.kind() == SyntaxKind::Colon {
-                FlowItem::tight_spaced(self.arena.text(":"))
-            } else if child.kind() == SyntaxKind::Star {
-                // wildcard import
-                FlowItem::spaced(self.arena.text("*"))
-            } else if let Some(ident) = child.cast() {
-                // new_name
-                FlowItem::spaced(self.convert_ident(ident))
-            } else if let Some(expr) = child.cast() {
-                // source
-                FlowItem::spaced(self.convert_expr(expr))
-            } else if let Some(import_items) = child.cast::<ImportItems>() {
-                // imports
-                if import_items.iter().count() > 0 {
-                    FlowItem::spaced(self.convert_import_items(import_items))
-                } else {
-                    // We should avoid a space after `:` if the import items are empty.
-                    FlowItem::none()
-                }
+        // ImportItems are optional and may be wrapped in parentheses.
+        let nodes = import.to_untyped().children().as_slice();
+
+        // Find the index where import items start (either at a left parenthesis or directly as ImportItems).
+        let divider_index = nodes
+            .iter()
+            .position(|node| {
+                node.kind() == SyntaxKind::LeftParen || node.kind() == SyntaxKind::ImportItems
+            })
+            .unwrap_or(nodes.len());
+
+        // Split nodes into the prefix and import items parts.
+        let import_items_part = &nodes[divider_index..];
+        let prefix_part =
+            if divider_index > 0 && nodes[divider_index - 1].kind() == SyntaxKind::Space {
+                // Remove the trailing space from the prefix.
+                &nodes[..divider_index - 1]
             } else {
-                FlowItem::none()
+                &nodes[..divider_index]
+            };
+
+        // Convert the prefix section.
+        let prefix_doc = self.convert_flow_like_sliced(prefix_part.iter(), |child| {
+            match child.kind() {
+                SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(":")),
+                SyntaxKind::Star => FlowItem::spaced(self.arena.text("*")), // wildcard import
+                _ => {
+                    if let Some(ident) = child.cast() {
+                        // new_name
+                        FlowItem::spaced(self.convert_ident(ident))
+                    } else if let Some(expr) = child.cast() {
+                        // source
+                        FlowItem::spaced(self.convert_expr(expr))
+                    } else {
+                        FlowItem::none()
+                    }
+                }
             }
-        })
+        });
+
+        // If there are no import items, return the prefix.
+        if import_items_part.is_empty() {
+            return prefix_doc;
+        }
+
+        // Flatten and collect the import item nodes.
+        let mut import_items_nodes = vec![];
+        for node in import_items_part.iter() {
+            if let Some(items) = node.cast::<ImportItems>() {
+                import_items_nodes.extend(items.to_untyped().children());
+            } else {
+                import_items_nodes.push(node);
+            }
+        }
+        if import_items_nodes.is_empty() {
+            return prefix_doc;
+        }
+
+        let import_items_doc = self.convert_import_items(import_items_nodes);
+        prefix_doc + self.arena.space() + import_items_doc
     }
 
     pub(super) fn convert_import_item_path(

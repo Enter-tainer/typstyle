@@ -1,4 +1,4 @@
-use typst_syntax::{ast::*, SyntaxKind};
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
     list::{ListStyle, ListStylist},
@@ -147,11 +147,13 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    pub(super) fn convert_import_items(&'a self, import_items: ImportItems<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_import_items(
+        &'a self,
+        import_items_nodes: Vec<&'a SyntaxNode>,
+    ) -> ArenaDoc<'a> {
         // Note that `ImportItem` does not implement `AstNode`.
         ListStylist::new(self)
-            .with_fold_style(self.get_fold_style(import_items))
-            .process_list_impl(import_items.to_untyped(), |child| match child.kind() {
+            .process_iterable_impl(import_items_nodes.into_iter(), |child| match child.kind() {
                 SyntaxKind::RenamedImportItem => child
                     .cast()
                     .map(|item| self.convert_import_item_renamed(item)),

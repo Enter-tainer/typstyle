@@ -98,11 +98,19 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_flow_like(
         &'a self,
         node: &'a SyntaxNode,
+        producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like_sliced(node.children(), producer)
+    }
+
+    pub(super) fn convert_flow_like_sliced(
+        &'a self,
+        children: std::slice::Iter<'a, SyntaxNode>,
         mut producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
     ) -> ArenaDoc<'a> {
         let mut flow = FlowStylist::new(self);
         let mut seen_line_comment = false;
-        for child in node.children() {
+        for child in children {
             let peek_line_comment = seen_line_comment;
             seen_line_comment = false;
             if child.kind().is_keyword()
