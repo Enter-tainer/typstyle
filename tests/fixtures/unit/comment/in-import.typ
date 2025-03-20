@@ -8,6 +8,9 @@
   node,edge
 
   )
+#import"@preview/fletcher:0.5.2"as fletcher:(
+  node,
+      edge )
 
 #import/* 0 */"test.typ"/* 1 */
 #import/* 0 */"test.typ"/* 1 */:/* 2 */
@@ -21,3 +24,17 @@
 /* 1 */  node/* 2 */,/* 3 */edge/* 4 */
 /* 5 */
   /* 6 */)
+#import"@preview/fletcher:0.5.2"as fletcher:(/* 0 */
+/* 1 */  node/* 2 */,
+/* 3 */edge/* 4 */
+/* 5 */
+  /* 6 */)
+#import "block-short.typ":/* 0 */ (
+  // 1
+  a)
+#import "block-short.typ":/* 0 */ (
+  // 1
+  b
+  )
+#import "block-short.typ":/* 0 */ (   // 1
+  c)

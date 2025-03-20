@@ -1,12 +1,15 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-import.typ
-snapshot_kind: text
 ---
 #import "test.typ"
 #import "test.typ":
 #import "test.typ": *
 #import "test.typ": a.b.c.d, eee as fff
+#import "@preview/fletcher:0.5.2" as fletcher: (
+  node,
+  edge,
+)
 #import "@preview/fletcher:0.5.2" as fletcher: (
   node,
   edge,
@@ -34,11 +37,33 @@ snapshot_kind: text
   node, /* 5 */
   /* 6 */ edge,
 )
-#import "@preview/fletcher:0.5.2" as fletcher: /* 0 */ /* 1 */ (
-  node, /* 2 */
-  /* 3 */ edge,
-) /* 4 */ /* 5 */
-#import "@preview/fletcher:0.5.2" as fletcher: /* 0 */ /* 1 */ (
-  node, /* 2 */
-  /* 3 */ edge,
-) /* 4 */ /* 5 */ /* 6 */
+#import "@preview/fletcher:0.5.2" as fletcher: /* 0 */ (
+  /* 1 */ node, /* 2 */
+  /* 3 */ edge, /* 4 */ /* 5 */
+)
+#import "@preview/fletcher:0.5.2" as fletcher: (
+  /* 0 */
+  /* 1 */ node, /* 2 */
+  /* 3 */ edge, /* 4 */
+  /* 5 */
+  /* 6 */
+)
+#import "@preview/fletcher:0.5.2" as fletcher: (
+  /* 0 */
+  /* 1 */ node, /* 2 */
+  /* 3 */ edge, /* 4 */
+  /* 5 */
+  /* 6 */
+)
+#import "block-short.typ": /* 0 */ (
+  // 1
+  a,
+)
+#import "block-short.typ": /* 0 */ (
+  // 1
+  b,
+)
+#import "block-short.typ": /* 0 */ (
+  // 1
+  c,
+)
