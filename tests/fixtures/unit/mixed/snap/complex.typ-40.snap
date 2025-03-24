@@ -1,0 +1,128 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/mixed/complex.typ
+---
+#let complex_function(
+  param1,
+  param2,
+  param3: 5,
+  param4: "string",
+) = { }
+
+= Poorly Formatted * Heading* with _ emphasis _
+
+This paragraph has excessive spacing and random
+#text(
+  font: "Comic Sans MS",
+  weight: "bold",
+  size: 12pt,
+)[inserted function] line
+breaks. It also has*bold text*without proper spacing and_emphasized_content stuck together.
+
+#grid(
+  columns: (
+    1fr,
+    2fr,
+  ),
+  rows: (
+    auto,
+    auto,
+  ),
+  [ First cell],
+  [Second
+    cell],
+)[Third *nested* content #align(
+    center,
+  )[with aligned
+    content]]
+
+- First list item with bad spacing
+  #stack(dir: ltr, spacing: 1em)[stacked
+    content] in the middle of a list
+  - Nested item with
+  code: `let x =
+  5`
+- Second item with equation: $x^2 +
+    y^2 = z^2$
+  #underline(stroke: 2pt + blue)[
+    underlined text
+  ]
+
+#box(width: 80%)[
+  Content in a box that's poorly indented
+  with random spacing
+  #place(
+    dx: 20pt,
+    dy: -5pt,
+  )[*placed* content
+  ]
+]
+
+== Code Block with Poor Spacing
+
+$
+  sum_(i=0)^n i =
+  (n(n+1)) / 2
+$
+
+#figure(
+  caption: [
+    A figure with
+    * badly * formatted
+    _caption_
+    #highlight(
+      fill: yellow.lighten(50%),
+    )[
+      highlighted text]
+  ],
+  supplement: none,
+)[
+  #rect(
+    width: 100pt,
+    height: 50pt,
+    fill: blue.lighten(30%),
+  )
+  #circle(
+    radius: 15pt,
+    fill: red.darken(20%),
+  )
+]
+
+/ Term: Definition with
+  weird formatting
+  #h(1em) #strike[struck text]
+/ Another term: Definition with extra spaces
+  #block(
+    width: 50%,
+    inset: (
+      left: 2em,
+      top: 5pt,
+    ),
+  )[indented definition]
+
+#table(
+  columns: (1fr, 2fr),
+  [ * Header 1 *], [*Header 2*],
+  [Cell 1],
+  [
+    Cell with
+    #text(
+      style: "italic",
+      fill: green,
+    )[styled]
+    line break],
+)
+
+#lorem(40) +
+#[This content is *oddly* _mixed_ with various
+  syntactic elements] +
+#v(1cm) +
+#pad(
+  x: 2em,
+  top: 5pt,
+  bottom: 8pt,
+)[Padded content with
+  #box(
+    width: 50pt,
+    height: auto,
+  )"image.jpg"]

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/content-multiline.typ
-snapshot_kind: text
 ---
 #[]
 #[ ]
@@ -111,16 +110,16 @@ snapshot_kind: text
 ]
 
 #[/*
- */00/*
- */]
+   */00/*
+        */]
 #[ /*
- */ 10/*
- */]
+    */ 10/*
+          */]
 #[/*
- */01 /*
- */ ]
+   */01 /*
+         */ ]
 #[
   /*
- */ 11 /*
- */
+   */ 11 /*
+          */
 ]

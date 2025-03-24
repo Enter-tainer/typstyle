@@ -19,7 +19,7 @@ mod util;
 
 pub use mode::Mode;
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 
 use itertools::Itertools;
 use pretty::{Arena, DocAllocator, DocBuilder};
@@ -35,6 +35,7 @@ pub struct PrettyPrinter<'a> {
     config: Config,
     attr_store: AttrStore,
     mode: RefCell<Vec<Mode>>,
+    break_suppressed: Cell<bool>,
     arena: Arena<'a>,
 }
 
@@ -44,8 +45,13 @@ impl<'a> PrettyPrinter<'a> {
             config,
             attr_store,
             mode: vec![].into(),
+            break_suppressed: false.into(),
             arena: Arena::new(),
         }
+    }
+
+    pub fn is_break_suppressed(&self) -> bool {
+        self.break_suppressed.get()
     }
 
     fn get_fold_style(&self, node: impl AstNode<'a>) -> FoldStyle {
@@ -53,6 +59,13 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn get_fold_style_untyped(&self, node: &'a SyntaxNode) -> FoldStyle {
+        if self.is_break_suppressed() {
+            return if self.attr_store.is_multiline(node) {
+                FoldStyle::Fit
+            } else {
+                FoldStyle::Always
+            };
+        }
         if self.attr_store.is_multiline_flavor(node) {
             FoldStyle::Never
         } else {
@@ -237,8 +250,10 @@ impl<'a> PrettyPrinter<'a> {
             body
         };
         let doc = if equation.block() {
-            let is_multi_line = self.attr_store.is_multiline(equation.to_untyped());
-            if is_multi_line {
+            if self.is_break_suppressed() {
+                (self.arena.space() + body).nest(self.config.tab_spaces as isize)
+                    + self.arena.space()
+            } else if self.attr_store.is_multiline(equation.to_untyped()) {
                 (self.arena.hardline() + body).nest(self.config.tab_spaces as isize)
                     + self.arena.hardline()
             } else {

@@ -1,10 +1,9 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/content.typ
-snapshot_kind: text
 ---
 #[
-    123123123
+  123123123
 ]123
 
 a#emph[abc]d

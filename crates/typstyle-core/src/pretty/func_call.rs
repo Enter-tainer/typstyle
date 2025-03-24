@@ -71,25 +71,27 @@ impl<'a> PrettyPrinter<'a> {
         };
         let arg_count = children().filter(|it| it.is::<Arg>()).count();
 
-        is_only_one_and(args.items().take(arg_count), |arg| {
-            let inner = match arg {
-                Arg::Pos(p) => *p,
-                Arg::Named(_) => {
-                    fold_style = FoldStyle::Fit;
-                    return false;
-                }
-                Arg::Spread(s) => s.expr(),
-            };
-            fold_style = if matches!(
-                inner,
-                Expr::FuncCall(_) | Expr::FieldAccess(_) | Expr::Unary(_) | Expr::Binary(_)
-            ) {
-                FoldStyle::Fit
-            } else {
-                FoldStyle::Always
-            };
-            true
-        });
+        if !self.is_break_suppressed() {
+            is_only_one_and(args.items().take(arg_count), |arg| {
+                let inner = match arg {
+                    Arg::Pos(p) => *p,
+                    Arg::Named(_) => {
+                        fold_style = FoldStyle::Fit;
+                        return false;
+                    }
+                    Arg::Spread(s) => s.expr(),
+                };
+                fold_style = if matches!(
+                    inner,
+                    Expr::FuncCall(_) | Expr::FieldAccess(_) | Expr::Unary(_) | Expr::Binary(_)
+                ) {
+                    FoldStyle::Fit
+                } else {
+                    FoldStyle::Always
+                };
+                true
+            });
+        }
 
         ListStylist::new(self)
             .keep_linebreak(self.config.blank_lines_upper_bound)
