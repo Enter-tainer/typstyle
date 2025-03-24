@@ -27,6 +27,9 @@ impl<'a> PrettyPrinter<'a> {
 
     /// Convert the node as dot chain, if in code, or in markup with at least two FieldAccess and one FuncCall.
     pub(super) fn try_convert_dot_chain(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
+        if self.is_break_suppressed() {
+            return None;
+        }
         let mut dot_num = 0;
         let mut call_num = 0;
         let mut has_comment = false;

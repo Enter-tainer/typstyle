@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/136-raw.typ
-snapshot_kind: text
 ---
 - ```
   my beautiful raw block !
@@ -22,7 +21,7 @@ if b {
 
 #text[
   J'ai fait un snippet neovim qui crée des banners ! ```
-                      //////////////////////
-                      // This is a banner //
-                      //////////////////////
-                      ```]
+  //////////////////////
+  // This is a banner //
+  //////////////////////
+  ```]

@@ -11,7 +11,6 @@ use super::{
     ArenaDoc, PrettyPrinter,
 };
 
-#[allow(unused)]
 #[derive(Debug, PartialEq, Eq)]
 enum MarkupScope {
     /// The top-level markup.
@@ -37,12 +36,12 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_strong(&'a self, strong: Strong<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_markup(strong.body());
+        let body = self.convert_markup_impl(strong.body(), MarkupScope::Strong);
         body.enclose("*", "*")
     }
 
     pub(super) fn convert_emph(&'a self, emph: Emph<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_markup(emph.body());
+        let body = self.convert_markup_impl(emph.body(), MarkupScope::Strong);
         body.enclose("_", "_")
     }
 
@@ -107,11 +106,7 @@ impl<'a> PrettyPrinter<'a> {
         let items = collect_markup_items(markup);
 
         let mut doc = self.arena.nil();
-        for MarkupItem {
-            node,
-            format_disabled,
-        } in items.items
-        {
+        for MarkupItem { node, mixed_text } in items.items {
             if let Some(space) = node.cast::<Space>() {
                 doc += self.convert_space(space);
                 continue;
@@ -120,10 +115,16 @@ impl<'a> PrettyPrinter<'a> {
                 doc += self.convert_parbreak(pb);
                 continue;
             }
-            doc += if format_disabled {
-                self.format_disabled(node)
-            } else if let Some(expr) = node.cast::<Expr>() {
-                self.convert_expr(expr)
+            doc += if let Some(expr) = node.cast::<Expr>() {
+                if mixed_text {
+                    let break_suppressed = self.break_suppressed.get();
+                    self.break_suppressed.set(true);
+                    let doc = self.convert_expr(expr);
+                    self.break_suppressed.set(break_suppressed);
+                    doc
+                } else {
+                    self.convert_expr(expr)
+                }
             } else if is_comment_node(node) {
                 self.convert_comment(node)
             } else {
@@ -135,6 +136,7 @@ impl<'a> PrettyPrinter<'a> {
         // Only turn space into, not the other way around.
         let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
         let is_symmetric = items.start_bound != Boundary::Nil && items.end_bound != Boundary::Nil;
+        let break_suppressed = self.is_break_suppressed();
         let get_delim = |bound: Boundary| {
             if scope == MarkupScope::Document || scope == MarkupScope::Item {
                 // should not add extra lines to the document
@@ -147,14 +149,17 @@ impl<'a> PrettyPrinter<'a> {
             match bound {
                 Boundary::Nil => self.arena.nil(),
                 Boundary::NilOrBreak => {
-                    if scope == MarkupScope::Item || !is_symmetric && !has_line_break {
+                    if scope == MarkupScope::Item
+                        || !is_symmetric && !has_line_break
+                        || break_suppressed
+                    {
                         self.arena.nil()
                     } else {
                         self.arena.line_()
                     }
                 }
                 Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
-                    if is_symmetric || has_line_break {
+                    if is_symmetric && !break_suppressed || has_line_break {
                         self.arena.line()
                     } else if scope == MarkupScope::Item {
                         // the space can be safely eaten
@@ -172,7 +177,7 @@ impl<'a> PrettyPrinter<'a> {
 
 struct MarkupItem<'a> {
     node: &'a SyntaxNode,
-    format_disabled: bool,
+    mixed_text: bool,
 }
 
 struct MarkupItems<'a> {
@@ -243,7 +248,7 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
             break_line = true;
         } else if let Some(expr) = node.cast::<Expr>() {
             match expr {
-                Expr::Text(_) => current_line_has_text = true,
+                Expr::Text(_) | Expr::Strong(_) | Expr::Emph(_) => current_line_has_text = true,
                 Expr::Raw(r) => {
                     if r.block() {
                         break_line = true;
@@ -251,7 +256,6 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
                         current_line_has_text = true;
                     }
                 }
-                Expr::Strong(_) | Expr::Emph(_) => current_line_has_text = true,
                 Expr::Code(_) => break_line = true,
                 Expr::Equation(e) if e.block() => break_line = true,
                 _ => (),
@@ -266,13 +270,13 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
             }
             items.items.push(MarkupItem {
                 node,
-                format_disabled: false,
+                mixed_text: false,
             });
         }
         if break_line {
             if current_line_has_text {
                 for item in &mut items.items[cursor..] {
-                    item.format_disabled = true;
+                    item.mixed_text = true;
                 }
             }
             cursor = items.items.len();
@@ -281,7 +285,7 @@ fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
     }
     if current_line_has_text {
         for item in &mut items.items[cursor..] {
-            item.format_disabled = true;
+            item.mixed_text = true;
         }
     }
 

@@ -72,7 +72,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_binary(&'a self, binary: Binary<'a>) -> ArenaDoc<'a> {
         // Layout every binary expression except assignment as chain.
-        if is_chainable_binary(binary) {
+        if !self.is_break_suppressed() && is_chainable_binary(binary) {
             return self.parenthesize_if_necessary(|| self.convert_binary_chain(binary));
         }
         self.convert_flow_like(binary.to_untyped(), |child| {
