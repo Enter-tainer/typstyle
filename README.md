@@ -135,6 +135,10 @@ Add this to your `.pre-commit-config.yaml`:
 - **NPM**: <https://www.npmjs.com/package/typstyle-core>
 - **Rust**: <https://crates.io/crates/typstyle-core>
 
+### Use as a GitHub Action
+
+The [typstyle-action](https://github.com/grayespinoza/typstyle-action) can install and run typstyle.
+
 ## Features & Design
 
 ### Design Goals
