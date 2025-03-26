@@ -84,6 +84,15 @@ pub struct StyleArgs {
         help_heading = "Format Configuration"
     )]
     pub tab_width: usize,
+
+    /// Whether to reorder import items.
+    #[arg(
+        long,
+        default_value_t = false,
+        global = true,
+        help_heading = "Format Configuration"
+    )]
+    pub reorder_import_items: bool,
 }
 
 #[derive(Args)]

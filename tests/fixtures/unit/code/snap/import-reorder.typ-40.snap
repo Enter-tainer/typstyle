@@ -1,0 +1,92 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/import-reorder.typ
+---
+/// typstyle: reorder-import-items
+
+// Single import with mixed styles in random order
+#import "module.typ": (
+  a.b.c,
+  alpha,
+  beta,
+  func as renamed,
+  gamma,
+  h.i.j,
+  j.k.l as util,
+  m.n,
+  p.q as custom,
+  widget as tool,
+  x.y as short,
+  xyz,
+  z.y.x,
+)
+
+// Multiple imports from same module, should ideally be merged and reordered
+#import "common.typ": format
+#import "common.typ": (
+  layout as l,
+  render,
+)
+#import "common.typ": (
+  style.color,
+  transform as t,
+)
+#import "common.typ": (
+  data.chart as graph,
+  data.table,
+)
+
+// Imports with special names and deep nesting
+#import "special.typ": (
+  _hidden,
+  _private.func as _f,
+  a.b.c.d.e.f,
+  very.deep.nested.module.function as fn,
+  x-y-z as x_y_z,
+)
+
+// Conflicting names that should be preserved
+#import "math.typ": sum
+#import "stats.typ": (
+  sum as statistical_sum,
+)
+
+// Empty and single item imports
+#import "empty.typ":
+#import "single.typ": only_item
+#import "wildcard.typ": *
+
+// Case 1: Import with comments between items - should not reorder
+#import "commented.typ": (
+  bbb,
+  aaa,
+  // This comment should prevent reordering
+)
+#import "commented.typ": (
+  ddd,
+  /* Another comment type */ ccc,
+)
+
+// Case 2: Import with duplicate item names - should not reorder
+// Same name imported twice
+#import "duplicates.typ": (
+  helper,
+  widget,
+  helper,
+  formatter,
+)
+
+// Same name imported directly and via alias
+#import "alias-duplicates.typ": (
+  config,
+  settings as config,
+  template,
+)
+
+// Two aliases with the same target name
+#import "same-alias.typ": (
+  render,
+  format as util,
+  transform as util,
+  aliases,
+)

@@ -8,6 +8,9 @@ pub struct Config {
     pub max_width: usize,
     /// Maximum number of blank lines which can be put between items.
     pub blank_lines_upper_bound: usize,
+    /// Whether to reorder import items.
+    /// When enabled, import items will be sorted alphabetically.
+    pub reorder_import_items: bool,
 }
 
 impl Default for Config {
@@ -16,6 +19,7 @@ impl Default for Config {
             tab_spaces: 2,
             max_width: 80,
             blank_lines_upper_bound: 2,
+            reorder_import_items: false,
         }
     }
 }

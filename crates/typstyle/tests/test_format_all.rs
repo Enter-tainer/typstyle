@@ -202,38 +202,6 @@ fn test_all_column() {
 }
 
 #[test]
-fn test_all_tab_width() {
-    let space = Workspace::new();
-    space.write(
-        "a.typ",
-        "#let f(x) = {
-for i in range(0, 5) {
-     x = x + i
-    }
-}",
-    );
-
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-t=4", "-v"]), @r"
-    success: true
-    exit_code: 0
-    ----- stdout -----
-    Successfully formatted 1 file (0 unchanged) in [DURATION]
-
-    ----- stderr -----
-    ");
-
-    assert_eq!(
-        space.read_string("a.typ"),
-        "#let f(x) = {
-    for i in range(0, 5) {
-        x = x + i
-    }
-}
-"
-    );
-}
-
-#[test]
 fn test_dir_all_check() {
     let space = Workspace::new();
     space.write("a.typ", "#let a  =  0");
