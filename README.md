@@ -135,10 +135,9 @@ Add this to your `.pre-commit-config.yaml`:
 - **NPM**: <https://www.npmjs.com/package/typstyle-core>
 - **Rust**: <https://crates.io/crates/typstyle-core>
 
-### Use as a GitHub Action
+### [3rd party] Use as a GitHub Action
 
-The [typstyle-action](https://github.com/grayespinoza/typstyle-action) can install and run typstyle.
-
+The [typstyle-action](https://github.com/grayespinoza/typstyle-action) maintained by @grayespinoza can install and run typstyle in github action.
 ## Features & Design
 
 ### Design Goals
