@@ -1,4 +1,4 @@
-use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
+use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
     list::{ListStyle, ListStylist},
@@ -143,28 +143,6 @@ impl<'a> PrettyPrinter<'a> {
             .always_fold_if(|| is_single_simple)
             .print_doc(ListStyle {
                 omit_delim_single: is_single_simple,
-                ..Default::default()
-            })
-    }
-
-    pub(super) fn convert_import_items(
-        &'a self,
-        import_items_nodes: Vec<&'a SyntaxNode>,
-    ) -> ArenaDoc<'a> {
-        // Note that `ImportItem` does not implement `AstNode`.
-        ListStylist::new(self)
-            .process_iterable_impl(import_items_nodes.into_iter(), |child| match child.kind() {
-                SyntaxKind::RenamedImportItem => child
-                    .cast()
-                    .map(|item| self.convert_import_item_renamed(item)),
-                SyntaxKind::ImportItemPath => {
-                    child.cast().map(|item| self.convert_import_item_path(item))
-                }
-                _ => Option::None,
-            })
-            .print_doc(ListStyle {
-                omit_delim_flat: true,
-                omit_delim_empty: true,
                 ..Default::default()
             })
     }

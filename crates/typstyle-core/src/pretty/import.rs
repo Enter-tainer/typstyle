@@ -1,7 +1,14 @@
-use pretty::DocAllocator;
-use typst_syntax::{ast::*, SyntaxKind};
+use std::collections::HashSet;
 
-use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
+use pretty::DocAllocator;
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
+
+use super::{
+    flow::FlowItem,
+    list::{ListStyle, ListStylist},
+    util::is_comment_node,
+    ArenaDoc, PrettyPrinter,
+};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
@@ -67,10 +74,35 @@ impl<'a> PrettyPrinter<'a> {
         prefix_doc + self.arena.space() + import_items_doc
     }
 
-    pub(super) fn convert_import_item_path(
-        &'a self,
-        import_item_path: ImportItemPath<'a>,
-    ) -> ArenaDoc<'a> {
+    fn convert_import_items(&'a self, mut import_items_nodes: Vec<&'a SyntaxNode>) -> ArenaDoc<'a> {
+        // Sort import items if the configuration allows it.
+        // The sorting is only applied if all nodes are not comments and if there are no duplicate names.
+        if self.config.reorder_import_items
+            && import_items_nodes.iter().all(|node| !is_comment_node(node))
+            && check_import_name_duplication(&import_items_nodes)
+        {
+            // Sort import items by their text representation.
+            import_items_nodes.sort_by_key(|&node| node.clone().into_text());
+        }
+        // Note that `ImportItem` does not implement `AstNode`.
+        ListStylist::new(self)
+            .process_iterable_impl(import_items_nodes.into_iter(), |child| match child.kind() {
+                SyntaxKind::RenamedImportItem => child
+                    .cast()
+                    .map(|item| self.convert_import_item_renamed(item)),
+                SyntaxKind::ImportItemPath => {
+                    child.cast().map(|item| self.convert_import_item_path(item))
+                }
+                _ => Option::None,
+            })
+            .print_doc(ListStyle {
+                omit_delim_flat: true,
+                omit_delim_empty: true,
+                ..Default::default()
+            })
+    }
+
+    fn convert_import_item_path(&'a self, import_item_path: ImportItemPath<'a>) -> ArenaDoc<'a> {
         self.convert_flow_like(import_item_path.to_untyped(), |child| {
             if child.kind() == SyntaxKind::Dot {
                 FlowItem::tight(self.arena.text("."))
@@ -82,7 +114,7 @@ impl<'a> PrettyPrinter<'a> {
         })
     }
 
-    pub(super) fn convert_import_item_renamed(
+    fn convert_import_item_renamed(
         &'a self,
         import_item_renamed: RenamedImportItem<'a>,
     ) -> ArenaDoc<'a> {
@@ -96,4 +128,25 @@ impl<'a> PrettyPrinter<'a> {
             }
         })
     }
+}
+
+/// Check for duplicate import names in the given import items nodes.
+/// Returns `true` if no duplicates are found, `false` otherwise.
+fn check_import_name_duplication(import_items_nodes: &[&SyntaxNode]) -> bool {
+    let mut seen = HashSet::new();
+    for node in import_items_nodes.iter() {
+        let name = match node.kind() {
+            SyntaxKind::ImportItemPath => node.cast::<ImportItemPath>().unwrap().name().as_str(),
+            SyntaxKind::RenamedImportItem => node
+                .cast::<RenamedImportItem>()
+                .unwrap()
+                .new_name()
+                .as_str(),
+            _ => continue,
+        };
+        if !seen.insert(name) {
+            return false; // Duplicate found
+        }
+    }
+    true // No duplicates found
 }
