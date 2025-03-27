@@ -11,6 +11,7 @@ mod func_call;
 mod import;
 mod list;
 mod markup;
+mod math;
 mod mode;
 mod parened_expr;
 mod plain;
@@ -48,10 +49,6 @@ impl<'a> PrettyPrinter<'a> {
             break_suppressed: false.into(),
             arena: Arena::new(),
         }
-    }
-
-    pub fn is_break_suppressed(&self) -> bool {
-        self.break_suppressed.get()
     }
 
     fn get_fold_style(&self, node: impl AstNode<'a>) -> FoldStyle {
@@ -115,6 +112,10 @@ impl<'a> PrettyPrinter<'a> {
                 return res;
             }
         }
+        self.convert_expr_impl(expr)
+    }
+
+    fn convert_expr_impl(&'a self, expr: Expr<'a>) -> ArenaDoc<'a> {
         match expr {
             Expr::Text(t) => self.convert_text(t),
             Expr::Space(s) => self.convert_space(s),
@@ -135,6 +136,7 @@ impl<'a> PrettyPrinter<'a> {
             Expr::Term(t) => self.convert_term_item(t),
             Expr::Equation(e) => self.convert_equation(e),
             Expr::Math(m) => self.convert_math(m),
+            Expr::MathText(math_text) => self.convert_trivia(math_text),
             Expr::MathIdent(mi) => self.convert_verbatim(mi),
             Expr::MathAlignPoint(map) => self.convert_verbatim(map),
             Expr::MathDelimited(md) => self.convert_math_delimited(md),
@@ -144,8 +146,8 @@ impl<'a> PrettyPrinter<'a> {
             Expr::MathRoot(mr) => self.convert_math_root(mr),
             Expr::MathShorthand(ms) => self.convert_verbatim(ms),
             Expr::Ident(i) => self.convert_ident(i),
-            Expr::None(n) => self.convert_verbatim(n),
-            Expr::Auto(a) => self.convert_verbatim(a),
+            Expr::None(_) => self.convert_literal("none"),
+            Expr::Auto(_) => self.convert_literal("auto"),
             Expr::Bool(b) => self.convert_verbatim(b),
             Expr::Int(i) => self.convert_verbatim(i),
             Expr::Float(f) => self.convert_verbatim(f),
@@ -165,17 +167,20 @@ impl<'a> PrettyPrinter<'a> {
             Expr::DestructAssign(da) => self.convert_destruct_assignment(da),
             Expr::Set(s) => self.convert_set_rule(s),
             Expr::Show(s) => self.convert_show_rule(s),
+            Expr::Contextual(c) => self.convert_contextual(c),
             Expr::Conditional(c) => self.convert_conditional(c),
             Expr::While(w) => self.convert_while_loop(w),
             Expr::For(f) => self.convert_for_loop(f),
             Expr::Import(i) => self.convert_import(i),
             Expr::Include(i) => self.convert_include(i),
-            Expr::Break(b) => self.convert_break(b),
-            Expr::Continue(c) => self.convert_continue(c),
+            Expr::Break(_) => self.convert_literal("break"),
+            Expr::Continue(_) => self.convert_literal("continue"),
             Expr::Return(r) => self.convert_return(r),
-            Expr::Contextual(c) => self.convert_contextual(c),
-            Expr::MathText(math_text) => self.convert_trivia(math_text),
         }
+    }
+
+    fn convert_literal(&'a self, literal: &'a str) -> ArenaDoc<'a> {
+        self.arena.text(literal)
     }
 
     fn convert_trivia(&'a self, node: impl AstNode<'a>) -> ArenaDoc<'a> {
@@ -267,24 +272,6 @@ impl<'a> PrettyPrinter<'a> {
         doc.enclose("$", "$")
     }
 
-    fn convert_math(&'a self, math: Math<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(math.to_untyped()) {
-            return res;
-        }
-        let mut doc = self.arena.nil();
-        for node in math.to_untyped().children() {
-            if let Some(expr) = node.cast::<Expr>() {
-                let expr_doc = self.convert_expr(expr);
-                doc += expr_doc;
-            } else if let Some(space) = node.cast::<Space>() {
-                doc += self.convert_space(space);
-            } else {
-                doc += self.convert_trivia_untyped(node);
-            }
-        }
-        doc
-    }
-
     fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
         self.convert_verbatim(ident)
     }
@@ -333,146 +320,6 @@ impl<'a> PrettyPrinter<'a> {
             DestructuringItem::Named(n) => self.convert_named(n),
             DestructuringItem::Pattern(p) => self.convert_pattern(p),
         }
-    }
-
-    fn convert_break(&'a self, _break: LoopBreak<'a>) -> ArenaDoc<'a> {
-        self.arena.text("break")
-    }
-
-    fn convert_continue(&'a self, _continue: LoopContinue<'a>) -> ArenaDoc<'a> {
-        self.arena.text("continue")
-    }
-
-    fn convert_math_delimited(&'a self, math_delimited: MathDelimited<'a>) -> ArenaDoc<'a> {
-        fn has_spaces(math_delimited: MathDelimited<'_>) -> (bool, bool) {
-            let mut has_space_before_math = false;
-            let mut has_space_after_math = false;
-            let mut is_before_math = true;
-            for child in math_delimited.to_untyped().children() {
-                if child.kind() == SyntaxKind::Math {
-                    is_before_math = false;
-                } else if child.kind() == SyntaxKind::Space {
-                    if is_before_math {
-                        has_space_before_math = true;
-                    } else {
-                        has_space_after_math = true;
-                    }
-                }
-            }
-            (has_space_before_math, has_space_after_math)
-        }
-        let open = self.convert_expr(math_delimited.open());
-        let close = self.convert_expr(math_delimited.close());
-        let body = self.convert_math(math_delimited.body());
-        let (has_space_before_math, has_space_after_math) = has_spaces(math_delimited);
-
-        body.enclose(
-            if has_space_before_math {
-                self.arena.space()
-            } else {
-                self.arena.nil()
-            },
-            if has_space_after_math {
-                self.arena.space()
-            } else {
-                self.arena.nil()
-            },
-        )
-        .nest(self.config.tab_spaces as isize)
-        .enclose(open, close)
-    }
-
-    fn convert_math_attach(&'a self, math_attach: MathAttach<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.convert_expr(math_attach.base());
-        let prime_index = math_attach
-            .to_untyped()
-            .children()
-            .enumerate()
-            .skip_while(|(_i, node)| node.cast::<Expr<'_>>().is_none())
-            .nth(1)
-            .filter(|(_i, n)| n.cast::<MathPrimes>().is_some())
-            .map(|(i, _n)| i);
-
-        let bottom_index = math_attach
-            .to_untyped()
-            .children()
-            .enumerate()
-            .skip_while(|(_i, node)| !matches!(node.kind(), SyntaxKind::Underscore))
-            .find_map(|(i, n)| SyntaxNode::cast::<Expr<'_>>(n).map(|n| (i, n)))
-            .map(|(i, _n)| i);
-
-        let top_index = math_attach
-            .to_untyped()
-            .children()
-            .enumerate()
-            .skip_while(|(_i, node)| !matches!(node.kind(), SyntaxKind::Hat))
-            .find_map(|(i, n)| SyntaxNode::cast::<Expr<'_>>(n).map(|n| (i, n)))
-            .map(|(i, _n)| i);
-
-        #[derive(Debug)]
-        enum IndexType {
-            Prime,
-            Bottom,
-            Top,
-        }
-
-        let mut index_types = [IndexType::Prime, IndexType::Bottom, IndexType::Top];
-        index_types.sort_by_key(|index_type| match index_type {
-            IndexType::Prime => prime_index,
-            IndexType::Bottom => bottom_index,
-            IndexType::Top => top_index,
-        });
-
-        for index in index_types {
-            match index {
-                IndexType::Prime => {
-                    if let Some(primes) = math_attach.primes() {
-                        doc += self.convert_math_primes(primes);
-                    }
-                }
-                IndexType::Bottom => {
-                    if let Some(bottom) = math_attach.bottom() {
-                        doc += self.arena.text("_") + self.convert_expr(bottom);
-                    }
-                }
-                IndexType::Top => {
-                    if let Some(top) = math_attach.top() {
-                        doc += self.arena.text("^") + self.convert_expr(top);
-                    }
-                }
-            }
-        }
-        doc
-    }
-
-    fn convert_math_primes(&'a self, math_primes: MathPrimes<'a>) -> ArenaDoc<'a> {
-        self.arena.text("'".repeat(math_primes.count()))
-    }
-
-    fn convert_math_frac(&'a self, math_frac: MathFrac<'a>) -> ArenaDoc<'a> {
-        let singleline = self.convert_expr(math_frac.num())
-            + self.arena.space()
-            + self.arena.text("/")
-            + self.arena.space()
-            + self.convert_expr(math_frac.denom());
-        // TODO: add multiline version
-        singleline
-    }
-
-    fn convert_math_root(&'a self, math_root: MathRoot<'a>) -> ArenaDoc<'a> {
-        let sqrt_sym = if let Some(index) = math_root.index() {
-            if index == 3 {
-                "∛"
-            } else if index == 4 {
-                "∜"
-            } else {
-                // TODO: actually unreachable
-                "√"
-            }
-        } else {
-            "√"
-        };
-        self.arena.text(sqrt_sym) + self.convert_expr(math_root.radicand())
     }
 }
 

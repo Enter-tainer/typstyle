@@ -59,3 +59,21 @@ impl Drop for ModeGuard<'_> {
         self.0.pop_mode();
     }
 }
+
+pub(super) struct BreakSuppressGuard<'a>(&'a PrettyPrinter<'a>, bool);
+
+impl<'a> PrettyPrinter<'a> {
+    pub fn is_break_suppressed(&self) -> bool {
+        self.break_suppressed.get()
+    }
+
+    pub(super) fn suppress_breaks(&'a self) -> BreakSuppressGuard<'a> {
+        BreakSuppressGuard(self, self.break_suppressed.replace(true))
+    }
+}
+
+impl Drop for BreakSuppressGuard<'_> {
+    fn drop(&mut self) {
+        self.0.break_suppressed.set(self.1);
+    }
+}

@@ -117,10 +117,8 @@ impl<'a> PrettyPrinter<'a> {
             }
             doc += if let Some(expr) = node.cast::<Expr>() {
                 if mixed_text {
-                    let break_suppressed = self.break_suppressed.get();
-                    self.break_suppressed.set(true);
+                    let _g = self.suppress_breaks();
                     let doc = self.convert_expr(expr);
-                    self.break_suppressed.set(break_suppressed);
                     doc
                 } else {
                     self.convert_expr(expr)
