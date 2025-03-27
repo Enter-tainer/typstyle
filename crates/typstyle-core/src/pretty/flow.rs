@@ -3,7 +3,7 @@ use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use crate::ext::StrExt;
 
-use super::{util::is_comment_node, ArenaDoc, PrettyPrinter};
+use super::{util::is_comment_node, ArenaDoc, Mode, PrettyPrinter};
 
 /// An item in the flow. A space is added only when the item before and the item after both allow it.
 pub struct FlowItem<'a>(Option<FlowItemRepr<'a>>);
@@ -100,34 +100,41 @@ impl<'a> PrettyPrinter<'a> {
         node: &'a SyntaxNode,
         producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like_sliced(node.children(), producer)
+        self.convert_flow_like_iter(node.children(), producer)
     }
 
-    pub(super) fn convert_flow_like_sliced(
+    pub(super) fn convert_flow_like_iter(
         &'a self,
-        children: std::slice::Iter<'a, SyntaxNode>,
+        children: impl Iterator<Item = &'a SyntaxNode>,
         mut producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
     ) -> ArenaDoc<'a> {
         let mut flow = FlowStylist::new(self);
-        let mut seen_line_comment = false;
+        let mut peek_line_comment = false;
+        let mut peek_hash = false;
         for child in children {
-            let peek_line_comment = seen_line_comment;
-            seen_line_comment = false;
+            let at_line_comment = peek_line_comment;
+            peek_line_comment = false;
+            let at_hash = peek_hash;
+            peek_hash = false;
             if child.kind().is_keyword()
                 && !matches!(child.kind(), SyntaxKind::None | SyntaxKind::Auto)
             {
                 flow.push_doc(self.arena.text(child.text().as_str()), true, true);
             } else if is_comment_node(child) {
                 if child.kind() == SyntaxKind::LineComment {
-                    seen_line_comment = true; // defers the linebreak
+                    peek_line_comment = true; // defers the linebreak
                 }
                 flow.push_comment(child);
-            } else if peek_line_comment
+            } else if at_line_comment
                 && child.kind() == SyntaxKind::Space
                 && child.text().has_linebreak()
             {
                 flow.push_doc(self.arena.hardline(), false, false);
+            } else if child.kind() == SyntaxKind::Hash {
+                flow.push_doc(self.arena.text("#"), true, false);
+                peek_hash = true;
             } else {
+                let _g = self.with_mode_if(Mode::Code, at_hash);
                 let item = producer(child);
                 if let Some(repr) = item.0 {
                     flow.push_doc(repr.doc, repr.space_before, repr.space_after);

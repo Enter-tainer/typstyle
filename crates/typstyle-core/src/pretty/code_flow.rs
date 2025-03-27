@@ -11,9 +11,6 @@ impl<'a> PrettyPrinter<'a> {
         self.convert_flow_like(named.to_untyped(), |child| {
             if child.kind() == SyntaxKind::Colon {
                 FlowItem::tight_spaced(self.arena.text(":"))
-            } else if child.kind() == SyntaxKind::Hash {
-                // name
-                FlowItem::spaced_tight(self.arena.text("#"))
             } else if let Some(expr) = child.cast() {
                 // expr
                 FlowItem::spaced_before(self.convert_expr(expr), seen_name.replace(true))

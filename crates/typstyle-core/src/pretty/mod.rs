@@ -210,6 +210,11 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_raw(&'a self, raw: Raw<'a>) -> ArenaDoc<'a> {
+        // no format multiline single backtick raw block
+        if !raw.block() && raw.lines().count() > 1 {
+            return self.format_disabled(raw.to_untyped());
+        }
+
         let mut doc = self.arena.nil();
         for child in raw.to_untyped().children() {
             if let Some(delim) = child.cast::<RawDelim>() {

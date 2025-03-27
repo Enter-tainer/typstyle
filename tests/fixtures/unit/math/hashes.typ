@@ -45,6 +45,8 @@ $ sum_(i=1)^#x i^2 = #{
 $mat(#(1,   2, 3),   #(4,   5, x))$
 $mat(#(1,   2, 3),  
  #(4,   5, x))$
+ $ mat(#(1,   2, 3),  
+ #(4,   5, x)) $
 
 // 8. Conditional expressions
 $ cases(

@@ -3,7 +3,7 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::ext::StrExt;
 
-use super::{doc_ext::DocExt, style::FoldStyle, util::is_comment_node, ArenaDoc, PrettyPrinter};
+use super::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Mode, PrettyPrinter};
 
 enum Item<'a> {
     /// Detached comments that can be put on a line.
@@ -23,6 +23,7 @@ pub struct ListStylist<'a> {
     printer: &'a PrettyPrinter<'a>,
     can_attach: bool,
     free_comments: Vec<ArenaDoc<'a>>,
+    peek_hash: bool,
     items: Vec<Item<'a>>,
     item_count: usize,
     has_comment: bool,
@@ -40,8 +41,10 @@ pub struct ListStyle {
     pub delim: (&'static str, &'static str),
     /// Whether to add an addition space inside the delimiters if the list is flat.
     pub add_delim_space: bool,
-    /// Whether a trailing single-line separator is need if the list contains only one item.
+    /// Whether a trailing separator is need if the list contains only one item.
     pub add_trailing_sep_single: bool,
+    /// Whether a trailing separator is always needed.
+    pub add_trailing_sep_always: bool,
     /// Whether can omit the delimiter if the list contains only one item.
     pub omit_delim_single: bool,
     /// Whether can omit the delimiter if the list is flat.
@@ -57,6 +60,7 @@ impl Default for ListStyle {
             delim: ("(", ")"),
             add_delim_space: false,
             add_trailing_sep_single: false,
+            add_trailing_sep_always: false,
             omit_delim_single: false,
             omit_delim_flat: false,
             omit_delim_empty: false,
@@ -70,6 +74,7 @@ impl<'a> ListStylist<'a> {
             printer,
             can_attach: false,
             free_comments: Default::default(),
+            peek_hash: false,
             items: Default::default(),
             item_count: 0,
             has_comment: false,
@@ -142,9 +147,12 @@ impl<'a> ListStylist<'a> {
         // If the back attachment appears before the comma, the comma is move to its front if multiline.
 
         for node in iterable {
+            let _g = self.printer.with_mode_if(Mode::Code, self.peek_hash);
             if let Some(item_body) = item_checker(node) {
                 self.add_item(item_body);
+                self.peek_hash = false;
             } else {
+                self.peek_hash = false;
                 self.process_trivia(node);
             }
         }
@@ -166,8 +174,13 @@ impl<'a> ListStylist<'a> {
         } else {
             arena.intersperse(self.free_comments.drain(..), arena.line()) + arena.line()
         };
+        let hash = if self.peek_hash {
+            arena.text("#")
+        } else {
+            arena.nil()
+        };
         self.items.push(Item::Commented {
-            body: (before + item_body).group(),
+            body: (before + hash + item_body).group(),
             after: None,
         });
         self.can_attach = true;
@@ -175,27 +188,35 @@ impl<'a> ListStylist<'a> {
 
     /// Handle non-items.
     fn process_trivia(&mut self, node: &'a SyntaxNode) {
-        if is_comment_node(node) {
-            self.has_comment = true;
-            // Line comment cannot appear in single line block
-            if node.kind() == SyntaxKind::LineComment {
-                self.has_line_comment = true;
-                self.fold_style = FoldStyle::Never;
+        match node.kind() {
+            SyntaxKind::LineComment | SyntaxKind::BlockComment => {
+                self.has_comment = true;
+                // Line comment cannot appear in single line block
+                if node.kind() == SyntaxKind::LineComment {
+                    self.has_line_comment = true;
+                    self.fold_style = FoldStyle::Never;
+                }
+                self.free_comments.push(self.printer.convert_comment(node));
             }
-            self.free_comments.push(self.printer.convert_comment(node));
-        } else if node.kind() == SyntaxKind::Comma {
-            self.try_attach_comments();
-        } else if node.kind() == SyntaxKind::Space {
-            let newline_cnt = node.text().count_linebreaks();
-            if newline_cnt > 0 {
-                self.attach_or_detach_comments();
-                self.can_attach = false;
-                if let Some(nl) = self.keep_linebreak {
-                    if newline_cnt >= 2 && !self.items.is_empty() {
-                        self.items.push(Item::Linebreak((newline_cnt - 1).min(nl)));
+            SyntaxKind::Comma => {
+                self.try_attach_comments();
+            }
+            SyntaxKind::Space => {
+                let newline_cnt = node.text().count_linebreaks();
+                if newline_cnt > 0 {
+                    self.attach_or_detach_comments();
+                    self.can_attach = false;
+                    if let Some(nl) = self.keep_linebreak {
+                        if newline_cnt >= 2 && !self.items.is_empty() {
+                            self.items.push(Item::Linebreak((newline_cnt - 1).min(nl)));
+                        }
                     }
                 }
             }
+            SyntaxKind::Hash => {
+                self.peek_hash = true;
+            }
+            _ => {}
         }
     }
 
@@ -291,7 +312,9 @@ impl<'a> ListStylist<'a> {
                             inner += body + after;
                             if i + 1 != self.item_count {
                                 inner += sep.clone() + arena.space();
-                            } else if is_single && sty.add_trailing_sep_single {
+                            } else if sty.add_trailing_sep_always
+                                || is_single && sty.add_trailing_sep_single
+                            {
                                 // trailing comma for one-size array
                                 inner += sep.clone();
                             }
@@ -319,7 +342,10 @@ impl<'a> ListStylist<'a> {
                             body,
                             after: Option::None,
                         } => {
-                            let follow = if is_single && sty.add_trailing_sep_single || !is_last {
+                            let follow = if !is_last
+                                || sty.add_trailing_sep_always
+                                || is_single && sty.add_trailing_sep_single
+                            {
                                 sep.clone()
                             } else {
                                 sep.clone().flat_alt(arena.nil())
@@ -332,12 +358,14 @@ impl<'a> ListStylist<'a> {
                             after: Some(after),
                         } => {
                             let follow_break = sep.clone() + after.clone();
-                            let follow_flat =
-                                if !is_last || is_single && sty.add_trailing_sep_single {
-                                    after + sep.clone()
-                                } else {
-                                    after
-                                };
+                            let follow_flat = if !is_last
+                                || sty.add_trailing_sep_always
+                                || is_single && sty.add_trailing_sep_single
+                            {
+                                after + sep.clone()
+                            } else {
+                                after
+                            };
                             let ln = if is_last { arena.line_() } else { arena.line() };
                             inner += body + follow_break.flat_alt(follow_flat) + ln;
                         }

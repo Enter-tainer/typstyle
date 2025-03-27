@@ -1,0 +1,50 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/args.typ
+---
+#let fun(..args) = raw(
+  lang: "typc",
+  repr(args),
+)
+$fun(1, #2 ; 3, 4)$
+$fun(1, named: #2 ; 3, 4)$
+$fun(1, named: #2;3, 4)$
+
+#let aaa = $x$
+$bold(#aaa)$
+$sin(2, named: #3,)$
+
+#(
+  $mat(1, #2 ; 3, 4)$
+    == $mat(#(1, 2), #(3, 4))$
+)
+$mat(1, #2, gap: #1em, ..#(), .. #(),)$
+$mat(1, #2; 3, 4; gap: #1em, ..#(), .. #(),)$
+$vec(1, 2, gap: #1em, ..#(), ..#(:))$
+$#text(red, size: 2em)[baka]$
+$#text(red, size: 2em)[baka]$
+
+// Comma and semicolon as terminator
+$mat(#1, #2)$ $mat(#1, #2)$ $mat(#1, #2)$
+#assert($mat(#1, #2)$ == $mat(#1, #2)$)
+#assert($mat(#1, #2)$ == $mat(#1, #2)$)
+
+$mat(#1;#2)$ $mat(#1; #2)$ $mat(#1 ; #2)$ $mat(#1 ; #2,)$ $mat(#1 ; #2; #3)$
+#assert($mat(#1;#2)$ != $mat(#1; #2)$)
+#assert($mat(#1;#2)$ != $mat(#1 ; #2)$)
+#assert(
+  $mat(#1, ; #2)$ != $mat(#1 ; #2)$,
+)
+#assert(
+  $mat(#1 ; #2)$ == $mat(#1 ; #2,)$,
+)
+#assert(
+  $mat(#1 ; #2)$ != $mat(#1 ; #2, ,)$,
+)
+#assert(
+  $mat(#1 ; #2, ,)$ != $mat(#1 ; #2,)$,
+)
+#assert(
+  $mat(#1 ; #2, ,)$
+    == $mat(#1 ; #2, ,)$,
+)

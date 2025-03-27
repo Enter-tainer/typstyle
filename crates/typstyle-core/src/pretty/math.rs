@@ -1,7 +1,7 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
-use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
+use super::{flow::FlowItem, ArenaDoc, Mode, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_math(&'a self, math: Math<'a>) -> ArenaDoc<'a> {
@@ -10,12 +10,19 @@ impl<'a> PrettyPrinter<'a> {
         }
         let _g = self.suppress_breaks();
         let mut doc = self.arena.nil();
+        let mut peek_hash = false;
         for node in math.to_untyped().children() {
+            let at_hash = peek_hash;
+            peek_hash = false;
             if let Some(expr) = node.cast::<Expr>() {
+                let _g = self.with_mode_if(Mode::Code, at_hash);
                 let expr_doc = self.convert_expr(expr);
                 doc += expr_doc;
             } else if let Some(space) = node.cast::<Space>() {
                 doc += self.convert_space(space);
+            } else if node.kind() == SyntaxKind::Hash {
+                doc += self.arena.text("#");
+                peek_hash = true;
             } else {
                 doc += self.convert_trivia_untyped(node);
             }
@@ -83,8 +90,6 @@ impl<'a> PrettyPrinter<'a> {
         self.convert_flow_like(math_frac.to_untyped(), |node| {
             if let Some(expr) = node.cast::<Expr>() {
                 FlowItem::spaced(self.convert_expr(expr))
-            } else if node.kind() == SyntaxKind::Hash {
-                FlowItem::spaced_tight(self.convert_literal("#"))
             } else if node.kind() != SyntaxKind::Space {
                 FlowItem::spaced(self.convert_verbatim_untyped(node))
             } else {

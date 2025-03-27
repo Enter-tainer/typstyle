@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/fn-comma.typ
-snapshot_kind: text
 ---
 $
   sin(x)
@@ -10,11 +9,20 @@ $
   sin(x,)
 $
 $
-  sin(x,,,)
+  sin(x, , ,)
 $
 $
-  mat(1,;,1)
+  sin(x, , ,)
 $
 $
-  mat(1,;,;,1;1)
+  mat(1, ; , 1)
+$
+$
+  mat(1, ; , ; , 1; 1)
+$
+$
+  mat(; , ; , 1; 1, ,)
+$
+$
+  mat(1, ; , ; , 1; 1)
 $
