@@ -77,14 +77,32 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
+    /// In math mode, we have `$fun(1, 2; 3, 4)$ == $fun(#(1, 2), #(3, 4))$`.
     pub(super) fn convert_array(&'a self, array: Array<'a>) -> ArenaDoc<'a> {
         let _g = self.with_mode(Mode::CodeCont);
+
+        // Whether the array has parens.
+        // This is also used to determine whether we need to add a trailing comma.
+        // Note that we should not strip trailing commas in math.
+        let is_explicit = array
+            .to_untyped()
+            .children()
+            .next()
+            .is_some_and(|child| child.kind() == SyntaxKind::LeftParen);
+        let ends_with_comma = !is_explicit
+            && array
+                .to_untyped()
+                .children()
+                .last()
+                .is_some_and(|child| child.kind() == SyntaxKind::Comma);
 
         ListStylist::new(self)
             .with_fold_style(self.get_fold_style(array))
             .process_list(array.to_untyped(), |node| self.convert_array_item(node))
             .print_doc(ListStyle {
-                add_trailing_sep_single: true,
+                add_trailing_sep_single: is_explicit,
+                add_trailing_sep_always: ends_with_comma,
+                delim: if is_explicit { ("(", ")") } else { ("", "") },
                 ..Default::default()
             })
     }

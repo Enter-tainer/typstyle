@@ -45,14 +45,21 @@ impl PrettyPrinter<'_> {
     }
 }
 
-pub(super) struct ModeGuard<'a>(&'a PrettyPrinter<'a>);
-
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn with_mode(&'a self, mode: Mode) -> ModeGuard<'a> {
+    pub fn with_mode(&'a self, mode: Mode) -> ModeGuard<'a> {
         self.push_mode(mode);
         ModeGuard(self)
     }
+
+    pub fn with_mode_if(&'a self, mode: Mode, cond: bool) -> ConditionalModeGuard<'a> {
+        if cond {
+            self.push_mode(mode);
+        }
+        ConditionalModeGuard(self, cond)
+    }
 }
+
+pub struct ModeGuard<'a>(&'a PrettyPrinter<'a>);
 
 impl Drop for ModeGuard<'_> {
     fn drop(&mut self) {
@@ -60,17 +67,27 @@ impl Drop for ModeGuard<'_> {
     }
 }
 
-pub(super) struct BreakSuppressGuard<'a>(&'a PrettyPrinter<'a>, bool);
+pub struct ConditionalModeGuard<'a>(&'a PrettyPrinter<'a>, bool);
+
+impl Drop for ConditionalModeGuard<'_> {
+    fn drop(&mut self) {
+        if self.1 {
+            self.0.pop_mode();
+        }
+    }
+}
 
 impl<'a> PrettyPrinter<'a> {
     pub fn is_break_suppressed(&self) -> bool {
         self.break_suppressed.get()
     }
 
-    pub(super) fn suppress_breaks(&'a self) -> BreakSuppressGuard<'a> {
+    pub fn suppress_breaks(&'a self) -> BreakSuppressGuard<'a> {
         BreakSuppressGuard(self, self.break_suppressed.replace(true))
     }
 }
+
+pub struct BreakSuppressGuard<'a>(&'a PrettyPrinter<'a>, bool);
 
 impl Drop for BreakSuppressGuard<'_> {
     fn drop(&mut self) {

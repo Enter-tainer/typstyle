@@ -2,7 +2,10 @@ use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
-use crate::{pretty::util::get_parenthesized_args, PrettyPrinter};
+use crate::{
+    pretty::{util::get_parenthesized_args, Mode},
+    PrettyPrinter,
+};
 
 use super::{
     util::{func_name, indent_func_name},
@@ -22,6 +25,8 @@ const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header",
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_table(&'a self, table: FuncCall<'a>, columns: usize) -> ArenaDoc<'a> {
+        let _g = self.with_mode(Mode::CodeCont);
+
         let mut doc = self.arena.hardline();
         for named in table.args().items().filter_map(|node| match node {
             Arg::Named(named) => Some(named),

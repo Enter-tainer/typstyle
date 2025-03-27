@@ -1,6 +1,9 @@
 use pretty::DocAllocator;
-use typst_syntax::{ast::*, SyntaxKind};
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
+use crate::ext::StrExt;
+
+use super::flow::FlowItem;
 use super::list::{ListStyle, ListStylist};
 use super::mode::Mode;
 use super::plain::PlainStylist;
@@ -31,9 +34,8 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_func_call_args(&'a self, func_call: FuncCall<'a>, args: Args<'a>) -> ArenaDoc<'a> {
         if self.current_mode().is_math() {
-            return self.format_disabled(args.to_untyped());
-        }
-        let _g = self.with_mode(Mode::CodeCont);
+            return self.convert_args_in_math(args);
+        };
 
         let mut doc = self.arena.nil();
         let has_parenthesized_args = has_parenthesized_args(args);
@@ -41,7 +43,7 @@ impl<'a> PrettyPrinter<'a> {
             if let Some(cols) = table::is_formatable_table(func_call) {
                 doc += self.convert_table(func_call, cols);
             } else if has_parenthesized_args {
-                doc += self.convert_parenthesized_args_as_is(args);
+                doc += self.convert_parenthesized_args_as_list(args);
             }
         } else if has_parenthesized_args {
             doc += self.convert_parenthesized_args(args);
@@ -105,7 +107,7 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    fn convert_parenthesized_args_as_is(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+    fn convert_parenthesized_args_as_list(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
         let _g = self.with_mode(Mode::CodeCont);
 
         let inner = PlainStylist::new(self)
@@ -114,6 +116,65 @@ impl<'a> PrettyPrinter<'a> {
             })
             .print_doc();
         inner.nest(self.config.tab_spaces as isize).parens()
+    }
+
+    fn convert_args_in_math(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+        // strip spaces
+        let children = {
+            let children = args.to_untyped().children().as_slice();
+            let i = children
+                .iter()
+                .position(|child| {
+                    !matches!(child.kind(), SyntaxKind::LeftParen | SyntaxKind::Space)
+                })
+                .unwrap_or(0);
+            let j = children
+                .iter()
+                .rposition(|child| {
+                    !matches!(child.kind(), SyntaxKind::RightParen | SyntaxKind::Space)
+                })
+                .unwrap_or(children.len().saturating_sub(1));
+            children[i..=j].iter()
+        };
+
+        let mut peek_hashed_arg = false;
+        let inner = self.convert_flow_like_iter(children, |child| {
+            let at_hashed_arg = peek_hashed_arg;
+            peek_hashed_arg = false;
+            match child.kind() {
+                SyntaxKind::Comma => FlowItem::tight_spaced(self.arena.text(",")),
+                SyntaxKind::Semicolon => {
+                    // We should avoid the semicolon counted the terminator of the previous hashed arg.
+                    FlowItem::new(self.arena.text(";"), at_hashed_arg, true)
+                }
+                SyntaxKind::Space => {
+                    peek_hashed_arg = at_hashed_arg;
+                    if child.text().has_linebreak() {
+                        FlowItem::tight(self.arena.hardline())
+                    } else {
+                        FlowItem::none()
+                    }
+                }
+                _ => {
+                    if let Some(arg) = child.cast::<Arg>() {
+                        if is_ends_with_hashed_expr(arg.to_untyped().children()) {
+                            peek_hashed_arg = true;
+                        }
+                        FlowItem::spaced(self.convert_arg(arg))
+                    } else {
+                        FlowItem::none()
+                    }
+                }
+            }
+        });
+        if self.attr_store.is_multiline(args.to_untyped()) {
+            ((self.arena.line_() + inner).nest(self.config.tab_spaces as isize)
+                + self.arena.line_())
+            .group()
+            .parens()
+        } else {
+            inner.parens()
+        }
     }
 
     /// Handle additional content blocks
@@ -140,4 +201,11 @@ impl<'a> PrettyPrinter<'a> {
             Arg::Spread(s) => self.convert_spread(s),
         }
     }
+}
+
+fn is_ends_with_hashed_expr(mut children: std::slice::Iter<'_, SyntaxNode>) -> bool {
+    children.next_back().is_some_and(|it| it.is::<Expr>())
+        && children
+            .next_back()
+            .is_some_and(|it| it.kind() == SyntaxKind::Hash)
 }

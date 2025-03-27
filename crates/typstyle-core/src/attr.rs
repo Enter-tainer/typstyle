@@ -1,16 +1,11 @@
 use rustc_hash::FxHashMap;
 
 use typst_syntax::{
-    ast::{Args, AstNode, Math, Raw},
+    ast::{Args, AstNode},
     Span, SyntaxKind, SyntaxNode,
 };
 
 use crate::ext::StrExt;
-
-#[derive(Clone, Copy)]
-struct State {
-    is_math: bool,
-}
 
 #[derive(Debug, Clone, Default)]
 pub struct Attributes {
@@ -118,30 +113,10 @@ impl AttrStore {
     }
 
     fn compute_no_format(&mut self, root: &SyntaxNode) {
-        self.compute_no_format_impl(root, State { is_math: false });
+        self.compute_no_format_impl(root);
     }
 
-    fn compute_no_format_impl(&mut self, node: &SyntaxNode, state: State) {
-        let state = if node.is::<Math>() {
-            State { is_math: true }
-        } else {
-            state
-        };
-
-        // no format multiline single backtick raw block
-        if node
-            .cast::<Raw>()
-            .is_some_and(|raw| !raw.block() && raw.lines().count() > 1)
-        {
-            self.set_format_disabled(node);
-            return;
-        }
-        // no format args in math blocks
-        if node.kind() == SyntaxKind::Args && state.is_math {
-            self.set_format_disabled(node);
-            return;
-        }
-
+    fn compute_no_format_impl(&mut self, node: &SyntaxNode) {
         let mut disable_next = false;
         let mut commented = false;
         for child in node.children() {
@@ -161,12 +136,7 @@ impl AttrStore {
                 disable_next = false;
                 continue;
             }
-            // no format hash related nodes in math blocks
-            // if child_kind == SyntaxKind::Hash && state.is_math {
-            //     self.set_format_disabled(node);
-            //     break;
-            // }
-            self.compute_no_format_impl(child, state);
+            self.compute_no_format_impl(child);
         }
         if commented {
             self.set_commented(node);
