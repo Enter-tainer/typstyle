@@ -1,0 +1,63 @@
+// Test hash (#) usage in math expressions
+#let x = 5
+#let y = 10
+#let f(x) = x*x + 2*x + 1
+
+// 1. Basic arithmetic with hashes
+$#x + #y$
+$#x - #y $
+$#x * #y$
+$#x/#y$
+$#x^#y$
+
+// 2. Functions and roots
+$abs(  #x - #y)$
+$floor(   #x/2   )$
+$ceil(#y / #x  )$
+$√#x$
+$∛#x$
+$∜#y$
+
+// 3. Subscripts and superscripts
+$x_#x^#y$
+$sum_(i=#x)^#y i$
+$α_#x + β_#y$
+
+// 4. Complex expressions
+$((#x + 1)/(#y - 2))^2$
+$sqrt(#x^2 + #y^2)$
+$#x/ 2 + #y /4$
+
+// 5. Function calls and evaluations
+$f(x) = #f(x)$
+$log_#x (y) = #calc.log(y,   base:  x)$
+$2^8 = #calc.pow(2,   8)$
+
+// 6. Code blocks in math
+$ sum_(i=1)^#x i^2 = #{ 
+  let   sum =   0
+    for i in range(1, x + 1) {
+        sum += i * i   }
+  sum
+} $
+
+// 7. Arrays and matrices
+$mat(#(1,   2, 3),   #(4,   5, x))$
+$mat(#(1,   2, 3),  
+ #(4,   5, x))$
+
+// 8. Conditional expressions
+$ cases(
+      #x/2 "if" x < 0,
+#y/4 "if"   x >= 0
+) $
+
+// 9. Text and formatting in math
+$"x = " #str(x)" cm"$
+$#text(red, $x + y$)$
+
+// 10. Code blocks
+$#for  i   in range( 10)   {   [#i,];[ -#i,]}$
+$ #for  i   in range(10 )   {[#i,] ;[-#i,  ]  } $
+$#(i=>i*2)(5 )$
+$ #(i=>i*2)( 5) $

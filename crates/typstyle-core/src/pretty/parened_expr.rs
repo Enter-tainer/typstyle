@@ -34,7 +34,7 @@ impl<'a> PrettyPrinter<'a> {
         expr: Expr<'a>,
         use_braces: bool,
     ) -> ArenaDoc<'a> {
-        if !is_paren_needed(expr) {
+        if self.is_break_suppressed() || !is_paren_needed(expr) {
             return self.convert_expr(expr);
         }
         let (mode, delims) = if use_braces {

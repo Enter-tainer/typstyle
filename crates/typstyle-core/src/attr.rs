@@ -162,10 +162,10 @@ impl AttrStore {
                 continue;
             }
             // no format hash related nodes in math blocks
-            if child_kind == SyntaxKind::Hash && state.is_math {
-                self.set_format_disabled(node);
-                break;
-            }
+            // if child_kind == SyntaxKind::Hash && state.is_math {
+            //     self.set_format_disabled(node);
+            //     break;
+            // }
             self.compute_no_format_impl(child, state);
         }
         if commented {
