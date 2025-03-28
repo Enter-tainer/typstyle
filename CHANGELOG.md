@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.13.2 - [2025-03-28]
+
+- Feature: Typstyle can format code in markup lines now. Linebreaks are suppressed inside to ensure compact layout.
+- Feature: Typstyle can format math equations with comments and hashes now. Previously they are skipped.
+- Feature: Improved formatting of math delimited. Linebreaks are kept as is.
+- Experimental feature: Typstyle CLI will sort import items in a single import statement if `--reorder-import-items` is passed. It would be enabled by default in the future.
+- Added a 3rd-party [typstyle-action](https://github.com/grayespinoza/typstyle-action) maintained by [@grayespinoza](https://github.com/grayespinoza).
+
 ## v0.13.1 - [2025-03-20]
 
 - Bump to typst v0.13.1
