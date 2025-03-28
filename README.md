@@ -119,17 +119,6 @@ Typstyle has been integrated into [tinymist](https://github.com/Myriad-Dreamin/t
 
 Try the online version of the formatter at: <https://enter-tainer.github.io/typstyle/demo/>. You can see how it formats your code.
 
-### Use with [pre-commit](https://github.com/pre-commit/pre-commit)
-
-Add this to your `.pre-commit-config.yaml`:
-
-```yaml
-- repo: https://github.com/Enter-tainer/typstyle
-  rev: "" # specify the revision or tag to use
-  hooks:
-    - id: typstyle
-```
-
 ### Use as a Library
 
 - **NPM**: <https://www.npmjs.com/package/typstyle-core>
@@ -137,7 +126,8 @@ Add this to your `.pre-commit-config.yaml`:
 
 ### [3rd party] Use as a GitHub Action
 
-The [typstyle-action](https://github.com/grayespinoza/typstyle-action) maintained by @grayespinoza can install and run typstyle in github action.
+The [typstyle-action](https://github.com/grayespinoza/typstyle-action) maintained by [@grayespinoza](https://github.com/grayespinoza) can install and run typstyle in github action.
+
 ## Features & Design
 
 ### Design Goals

@@ -1,66 +1,34 @@
-To ensure source code remains valid, typstyle will refrain from formatting in certain scenarios. Below is a list of cases where typstyle does not apply formatting.
+To ensure that source code remains valid, typstyle refrains from formatting in certain scenarios. The following cases outline situations where typstyle either does not apply formatting or applies only conservative changes.
 
 ## Overall
 
 ### `@typstyle off`
 
-Why: This directive explicitly disables formatting.
-
-### Markup Lines
-
-Typstyle only formats code and does not alter markup lines. These lines are preserved as-is. Specifically, if a line contains text (`ast::Expr::Text`), the entire line will remain unformatted.
-
-### Math Mode
-
-Formatting in math mode is minimal and not well-implemented at this time.
+This directive explicitly disables formatting.
 
 ### Expressions with Comments
 
-When a block comment is present as a child in math mode, the entire node is skipped for formatting:
+After months of work, we can now proudly format everything with comments!
 
-Why: This require special handling to bring better reading experience. Interspersing comments within them introduces additional complexity that is not yet resolved.
+We guarantee that in all supported cases the source will be formatted correctly and no comments will be lost.
+If you find that a comment is lost or the formatting result is unsatisfactory due to comments, please submit a PR to present the issue.
 
-We guarantee that in all formatable cases, no comments should be lost.
-If any comments are lost, please submit a PR to present the issue.
+### Spaces in Math
 
-### Multiline raw with single backtick
+Math mode is highly sensitive to spacing, and users may play on content magics. Therefore, typstyle avoids changing spaces within math mode to ensure the evaluation result unchanged.
 
-Why: These strings are whitespace-dependent.
-
-```typst
-`a
-  b`
-is not
-`a
-    b`
-```
-
-### Nodes with `#` in Math Mode
-
-If a child node contains `#` in math mode, typstyle will skip formatting the entire node.
-
-Why: Hashes can appear anywhere, and handling them accurately is challenging.
-
-```typst
-$f(a+b, size: #1em)$
-```
-
-### Args in Math Mode
-
-Why: Arguments in math mode behave differently, such as 2D arguments and trailing commas.
-
-```typst
-$mat(a,,;,b,;,,c)$
-```
+Additionally, typstyle will not convert spaces into line breaks (or vice versa) in math, as such changes can adversely affect the appearance of equations. We respect the user's intent regarding spaces and linebreaks.
 
 ## Special Cases
 
-### Table
+### Tables
 
-Typstyle attempts to format tables into a rectangular shape, but only when the table is simple enough. A table is considered "simple" if it meets the following conditions:
+Typstyle attempts to format tables into a neat, rectangular layout—but only when the table is simple enough. A table is considered "simple" if it meets all of the following conditions:
 
 1. No comments.
 2. No spread args.
 3. No named args, or named args appears before all pos args.
-4. No `table/grid.vline/hline/cell`.
+4. No `{table,grid}.{vline,hline,cell}`.
 5. `columns` is int or array.
+
+Note that we can only recognize functions named `table` and `grid`, and `{table,grid}.{header,footer}` as args. Aliases or wrappers of `std.{table,grid}` are not supported.
