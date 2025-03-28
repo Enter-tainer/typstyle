@@ -56,11 +56,19 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
                 .display()
                 .to_string();
 
+            let is_no_snap = path
+                .file_stem()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.starts_with('_'));
+            if !is_no_snap {
+                tests.extend([
+                    make_snapshot_test(&path, &name, 0),
+                    make_snapshot_test(&path, &name, 40),
+                    make_snapshot_test(&path, &name, 80),
+                    make_snapshot_test(&path, &name, 120),
+                ]);
+            }
             tests.extend([
-                make_snapshot_test(&path, &name, 0),
-                make_snapshot_test(&path, &name, 40),
-                make_snapshot_test(&path, &name, 80),
-                make_snapshot_test(&path, &name, 120),
                 make_convergence_test(&path, &name, 0),
                 make_convergence_test(&path, &name, 40),
                 make_convergence_test(&path, &name, 80),

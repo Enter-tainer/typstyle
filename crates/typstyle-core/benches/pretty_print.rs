@@ -2,15 +2,7 @@ use std::fs;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use typst_syntax::Source;
-use typstyle_core::{attr::AttrStore, Typstyle};
-
-fn bench_attrs(c: &mut Criterion, id: &str, path: &str) {
-    c.bench_function(id, |b| {
-        let content = fs::read_to_string(path).unwrap();
-        let source = Source::detached(content);
-        b.iter(|| AttrStore::new(source.root()))
-    });
-}
+use typstyle_core::Typstyle;
 
 fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
     fn pretty_print_source(source: Source) -> String {
@@ -27,8 +19,9 @@ fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
 }
 
 /// (path, name)
-const TEST_ASSETS: [(&str, &str); 8] = [
+const TEST_ASSETS: &[(&str, &str)] = &[
     ("articles/undergraduate-math", "undergraduate-math"),
+    ("articles/_cpe", "cpe"),
     ("packages/cetz-manual", "cetz-manual"),
     ("packages/codly", "codly"),
     ("packages/fletcher-diagram", "fletcher-diagram"),
@@ -37,16 +30,6 @@ const TEST_ASSETS: [(&str, &str); 8] = [
     ("packages/touying/core", "touying-core"),
     ("packages/touying/utils", "touying-utils"),
 ];
-
-fn benchmark_attrs(c: &mut Criterion) {
-    for (path, name) in TEST_ASSETS {
-        bench_attrs(
-            c,
-            &format!("attrs-{name}"),
-            &format!("../../tests/fixtures/{path}.typ"),
-        );
-    }
-}
 
 fn benchmark_pretty(c: &mut Criterion) {
     for (path, name) in TEST_ASSETS {
@@ -61,6 +44,6 @@ fn benchmark_pretty(c: &mut Criterion) {
 criterion_group! {
     name = benches;
     config = Criterion::default();
-    targets = benchmark_attrs, benchmark_pretty
+    targets = benchmark_pretty
 }
 criterion_main!(benches);
