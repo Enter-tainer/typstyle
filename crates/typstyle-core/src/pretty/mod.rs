@@ -107,11 +107,6 @@ impl<'a> PrettyPrinter<'a> {
         if let Some(res) = self.check_disabled(expr.to_untyped()) {
             return res;
         }
-        if self.current_mode().is_math() {
-            if let Some(res) = self.check_unformattable(expr.to_untyped()) {
-                return res;
-            }
-        }
         self.convert_expr_impl(expr)
     }
 
@@ -240,41 +235,6 @@ impl<'a> PrettyPrinter<'a> {
             doc += self.convert_content_block(supplement);
         }
         doc
-    }
-
-    fn convert_equation(&'a self, equation: Equation<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_unformattable(equation.to_untyped()) {
-            return res;
-        }
-
-        let _g = self.with_mode(Mode::Math);
-        let body = self.convert_math(equation.body());
-        let has_trailing_linebreak = equation
-            .body()
-            .exprs()
-            .last()
-            .is_some_and(|expr| matches!(expr, Expr::Linebreak(_)));
-        let body = if !equation.block() && has_trailing_linebreak {
-            body + self.arena.space()
-        } else {
-            body
-        };
-        let doc = if equation.block() {
-            if self.is_break_suppressed() {
-                (self.arena.space() + body).nest(self.config.tab_spaces as isize)
-                    + self.arena.space()
-            } else if self.attr_store.is_multiline(equation.to_untyped()) {
-                (self.arena.hardline() + body).nest(self.config.tab_spaces as isize)
-                    + self.arena.hardline()
-            } else {
-                ((self.arena.line() + body).nest(self.config.tab_spaces as isize)
-                    + self.arena.line())
-                .group()
-            }
-        } else {
-            body.nest(self.config.tab_spaces as isize)
-        };
-        doc.enclose("$", "$")
     }
 
     fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
