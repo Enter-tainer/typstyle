@@ -13,7 +13,17 @@ $A/* 8 */'/* 9 */'$
 $√/* 10 */2$
 $1/* 11 */ / /* 12 */ 2$
 
-$\ /* x */$
-$ \ /* x */$
-$ \ /* x */ $
-$\ /* x */ $
+$x +/* comment */y$
+$x +// comment
+y$
+
+$x_/* comment */i$
+$x^// exponent
+{n+1}$
+$sum_(i=1 /* start */ )^(n // end
+) x_i$
+
+$frac(// numerator
+x, /* denominator */ y)$
+$mat(1, /* row 1 */ 2; 3, // row 2
+4)$

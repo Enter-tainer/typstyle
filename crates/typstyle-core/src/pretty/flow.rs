@@ -59,6 +59,7 @@ pub struct FlowStylist<'a> {
     printer: &'a PrettyPrinter<'a>,
     doc: ArenaDoc<'a>,
     space_after: bool,
+    at_line_start: bool,
 }
 
 impl<'a> FlowStylist<'a> {
@@ -67,6 +68,7 @@ impl<'a> FlowStylist<'a> {
             doc: printer.arena.nil(),
             printer,
             space_after: false,
+            at_line_start: true,
         }
     }
 
@@ -75,7 +77,9 @@ impl<'a> FlowStylist<'a> {
         if node.kind() == SyntaxKind::BlockComment {
             self.push_doc(doc, true, true);
         } else {
-            self.space_after = true;
+            if !self.at_line_start {
+                self.space_after = true;
+            }
             self.push_doc(doc, true, false);
         }
     }
@@ -86,6 +90,11 @@ impl<'a> FlowStylist<'a> {
         }
         self.doc += doc;
         self.space_after = space_after;
+        self.at_line_start = false;
+    }
+
+    pub fn enter_new_line(&mut self) {
+        self.at_line_start = true;
     }
 
     pub fn into_doc(self) -> ArenaDoc<'a> {
@@ -130,6 +139,7 @@ impl<'a> PrettyPrinter<'a> {
                 && child.text().has_linebreak()
             {
                 flow.push_doc(self.arena.hardline(), false, false);
+                flow.enter_new_line();
             } else if child.kind() == SyntaxKind::Hash {
                 flow.push_doc(self.arena.text("#"), true, false);
                 peek_hash = true;
