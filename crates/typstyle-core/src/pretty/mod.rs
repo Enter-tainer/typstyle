@@ -80,15 +80,6 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    #[allow(dead_code)]
-    fn check_unformattable(&'a self, node: &'a SyntaxNode) -> Option<ArenaDoc<'a>> {
-        if self.attr_store.is_unformattable(node) {
-            Some(self.format_disabled(node))
-        } else {
-            None
-        }
-    }
-
     fn format_disabled(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         self.arena.text(node.clone().into_text().to_string())
     }

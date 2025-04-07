@@ -27,3 +27,10 @@ $frac(// numerator
 x, /* denominator */ y)$
 $mat(1, /* row 1 */ 2; 3, // row 2
 4)$
+$
+  mat(
+    1, /* row 1 */
+    2; 3, // row 2
+    4,
+  )
+$

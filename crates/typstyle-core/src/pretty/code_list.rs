@@ -103,6 +103,8 @@ impl<'a> PrettyPrinter<'a> {
                 add_trailing_sep_single: is_explicit,
                 add_trailing_sep_always: ends_with_comma,
                 delim: if is_explicit { ("(", ")") } else { ("", "") },
+                tight_delim: !is_explicit,
+                no_indent: !is_explicit,
                 ..Default::default()
             })
     }
