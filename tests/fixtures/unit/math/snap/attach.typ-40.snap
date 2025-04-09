@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/attach.typ
-snapshot_kind: text
 ---
 $ a_b^c $
 $ a^c_b $
@@ -11,3 +10,20 @@ $ a''^c_b $
 $ a''^(c+d)_b $
 $ a''^((c+d))_b $
 $ a''^(c+d)_(e^f) $
+
+$ a_b^c $
+$ a^c_b $
+$ a^c_b' ' $
+$ a^c ''_b $
+$ a ''^c_b $
+$ a''^(c +d)_b $
+$ a ''^((c+ d) )_b $
+$ a' '^(c+ d)_(e^f) $
+
+$ a'_bot'^top' $
+$ a'^top'_bot' $
+$ a^top^top^top_bot_bot^top $
+
+$ a' b' ' c '' d'/**/' $
+
+#assert($ a_b^c $ == $ a_b^c $)

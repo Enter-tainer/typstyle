@@ -3,12 +3,14 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-math.typ
 ---
 $
-  /* 0 */ arrow./* 1 */l
+  /* 0 */
+  arrow./* 1 */l
   (A/* 2 */A)
   a/* 3 */_/* 4 */b/* 5 */^/* 6 */c
   /* 7 */ A/* 8 */'/* 9 */'
   √/* 10 */2
-  1 /* 11 */ / /* 12 */ 2 /* 13 */
+  1 /* 11 */ / /* 12 */ 2
+  /* 13 */
 $
 
 $arrow./* 1 */l$
@@ -18,7 +20,27 @@ $A/* 8 */'/* 9 */'$
 $√/* 10 */2$
 $1 /* 11 */ / /* 12 */ 2$
 
-$\ /* x */$
-$\ /* x */$
-$ \ /* x */ $
-$\ /* x */$
+$x +/* comment */y$
+$x +// comment
+  y$
+
+$x_/* comment */i$
+$x^ // exponent
+  {n+1}$
+$sum_(i=1 /* start */ )^(n // end
+  ) x_i$
+
+$frac(
+    // numerator
+    x, /* denominator */ y
+  )$
+$mat(
+    1, /* row 1 */ 2; 3, // row 2
+    4,
+  )$
+$
+  mat(
+    1 /* row 1 */, 2; 3, // row 2
+    4,
+  )
+$

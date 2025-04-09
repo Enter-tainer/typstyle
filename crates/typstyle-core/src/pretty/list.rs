@@ -39,6 +39,8 @@ pub struct ListStyle {
     pub separator: &'static str,
     /// The delimiter of the list.
     pub delim: (&'static str, &'static str),
+    /// Whether can add linebreaks inside the delimiters.
+    pub tight_delim: bool,
     /// Whether to add an addition space inside the delimiters if the list is flat.
     pub add_delim_space: bool,
     /// Whether a trailing separator is need if the list contains only one item.
@@ -51,6 +53,8 @@ pub struct ListStyle {
     pub omit_delim_flat: bool,
     /// Whether can omit the delimiter if the list is empty.
     pub omit_delim_empty: bool,
+    /// Whether not to indent the items.
+    pub no_indent: bool,
 }
 
 impl Default for ListStyle {
@@ -58,12 +62,14 @@ impl Default for ListStyle {
         Self {
             separator: ",",
             delim: ("(", ")"),
+            tight_delim: false,
             add_delim_space: false,
             add_trailing_sep_single: false,
             add_trailing_sep_always: false,
             omit_delim_single: false,
             omit_delim_flat: false,
             omit_delim_empty: false,
+            no_indent: false,
         }
     }
 }
@@ -289,19 +295,27 @@ impl<'a> ListStylist<'a> {
         };
         match fold_style {
             FoldStyle::Never => {
-                let mut inner = arena.nil();
-                for item in self.items.into_iter() {
+                let mut inner = if sty.tight_delim {
+                    arena.nil()
+                } else {
+                    arena.hardline()
+                };
+                for (i, item) in self.items.into_iter().enumerate() {
                     match item {
                         Item::Comment(cmt) => inner += cmt + arena.hardline(),
                         Item::Commented { body, after } => {
-                            inner += body + sep.clone() + after + arena.hardline();
+                            inner += body + sep.clone() + after;
+                            if !sty.tight_delim || i + 1 != self.item_count {
+                                inner += arena.hardline();
+                            }
                         }
                         Item::Linebreak(n) => inner += arena.hardline().repeat_n(n),
                     }
                 }
-                (arena.hardline() + inner)
-                    .nest(indent as isize)
-                    .enclose(delim.0, delim.1)
+                if !sty.no_indent {
+                    inner = inner.nest(indent as isize);
+                }
+                inner.enclose(delim.0, delim.1)
             }
             FoldStyle::Always => {
                 let mut inner = arena.nil();
@@ -342,7 +356,9 @@ impl<'a> ListStylist<'a> {
                             body,
                             after: Option::None,
                         } => {
-                            let follow = if !is_last
+                            let follow = if is_last && sty.tight_delim {
+                                arena.nil()
+                            } else if !is_last
                                 || sty.add_trailing_sep_always
                                 || is_single && sty.add_trailing_sep_single
                             {
@@ -350,7 +366,15 @@ impl<'a> ListStylist<'a> {
                             } else {
                                 sep.clone().flat_alt(arena.nil())
                             };
-                            let ln = if is_last { arena.line_() } else { arena.line() };
+                            let ln = if is_last {
+                                if sty.tight_delim {
+                                    arena.nil()
+                                } else {
+                                    arena.line_()
+                                }
+                            } else {
+                                arena.line()
+                            };
                             inner += body + follow + ln;
                         }
                         Item::Commented {
@@ -366,7 +390,15 @@ impl<'a> ListStylist<'a> {
                             } else {
                                 after
                             };
-                            let ln = if is_last { arena.line_() } else { arena.line() };
+                            let ln = if is_last {
+                                if sty.tight_delim {
+                                    arena.nil()
+                                } else {
+                                    arena.line_()
+                                }
+                            } else {
+                                arena.line()
+                            };
                             inner += body + follow_break.flat_alt(follow_flat) + ln;
                         }
                         Item::Linebreak(n) => inner += arena.line().repeat_n(n),
@@ -375,7 +407,9 @@ impl<'a> ListStylist<'a> {
                 if is_single && sty.omit_delim_single {
                     inner.group()
                 } else {
-                    inner = (arena.line_() + inner).nest(indent as isize);
+                    if !sty.no_indent {
+                        inner = (arena.line_() + inner).nest(indent as isize);
+                    }
                     if sty.omit_delim_flat {
                         inner
                             .enclose(
