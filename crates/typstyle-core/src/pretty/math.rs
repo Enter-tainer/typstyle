@@ -36,32 +36,23 @@ impl<'a> PrettyPrinter<'a> {
             Some(body)
         };
 
-        if is_block {
-            let fold_style = if self.is_break_suppressed() {
-                FoldStyle::Always
-            } else if self.attr_store.is_multiline(equation.to_untyped()) {
-                FoldStyle::Never
-            } else {
-                FoldStyle::Fit
-            };
-            ListStylist::new(self)
-                .with_fold_style(fold_style)
-                .process_list_impl(equation.to_untyped(), convert_math_padded)
-                .print_doc(ListStyle {
-                    separator: "",
-                    delim: ("$", "$"),
-                    add_delim_space: is_block,
-                    ..Default::default()
-                })
+        let fold_style = if !is_block || self.is_break_suppressed() {
+            FoldStyle::Always
+        } else if self.attr_store.is_multiline(equation.to_untyped()) {
+            FoldStyle::Never
         } else {
-            self.convert_flow_like(equation.to_untyped(), |child| {
-                convert_math_padded(child)
-                    .map(FlowItem::spaced)
-                    .unwrap_or(FlowItem::none())
+            FoldStyle::Fit
+        };
+        ListStylist::new(self)
+            .with_fold_style(fold_style)
+            .process_list_impl(equation.to_untyped(), convert_math_padded)
+            .print_doc(ListStyle {
+                separator: "",
+                delim: ("$", "$"),
+                add_delim_space: is_block,
+                tight_delim: !is_block,
+                ..Default::default()
             })
-            .nest(self.config.tab_spaces as isize)
-            .enclose("$", "$")
-        }
     }
 
     pub(super) fn convert_math(&'a self, math: Math<'a>) -> ArenaDoc<'a> {

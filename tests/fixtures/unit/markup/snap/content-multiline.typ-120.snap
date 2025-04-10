@@ -108,12 +108,14 @@ input_file: tests/fixtures/unit/markup/content-multiline.typ
 #[/*
    */00/*
         */]
-#[ /*
-    */ 10/*
-          */]
+#[
+  /*
+   */ 10/*
+         */]
 #[/*
    */01 /*
-         */ ]
+         */
+]
 #[
   /*
    */ 11 /*

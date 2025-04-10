@@ -37,7 +37,7 @@ breaks. It also has*bold text*without proper spacing and_emphasized_content stuc
   code: `let x =
   5`
 - Second item with equation: $x^2 +
-    y^2 = z^2$
+  y^2 = z^2$
   #underline(stroke: 2pt + blue)[ underlined text ]
 
 #box(width: 80%)[

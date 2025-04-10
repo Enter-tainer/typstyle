@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/equation-flavor.typ
-snapshot_kind: text
 ---
 $
   F(x) = integral_0^x f(t) dif t
@@ -36,16 +35,16 @@ $
 $
 
 $G(0)
-  H(0)$
+H(0)$
 
 $G(1)
-  H(1)$
+H(1)$
 
 $G(2)
-  H(2)$
+H(2)$
 
 $G(3)
-  H(3)$
+H(3)$
 
 $
   G(4)
@@ -58,7 +57,7 @@ $
 $
 
 $G(6)
-  H(6)$
+H(6)$
 
 $
   G(7)

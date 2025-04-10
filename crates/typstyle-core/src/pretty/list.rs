@@ -5,6 +5,22 @@ use crate::ext::StrExt;
 
 use super::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Mode, PrettyPrinter};
 
+pub struct ListStylist<'a> {
+    printer: &'a PrettyPrinter<'a>,
+    can_attach: bool,
+    free_comments: Vec<ArenaDoc<'a>>,
+    peek_hash: bool,
+    items: Vec<Item<'a>>,
+    real_item_count: usize,
+    has_comment: bool,
+    has_line_comment: bool,
+    fold_style: FoldStyle,
+    disallow_front_comment: bool,
+    disallow_comment_detach: bool,
+    /// Some: max_consecutive_lines; None: ignore
+    keep_linebreak: Option<usize>,
+}
+
 enum Item<'a> {
     /// Detached comments that can be put on a line.
     Comment(ArenaDoc<'a>),
@@ -12,26 +28,13 @@ enum Item<'a> {
     Commented {
         /// The list item.
         body: ArenaDoc<'a>,
+        /// Comments attached in the front.
+        // before: Option<ArenaDoc<'a>>,
         /// Attached comments. Leading space included.
         after: Option<ArenaDoc<'a>>,
     },
     /// Linebreaks
     Linebreak(usize),
-}
-
-pub struct ListStylist<'a> {
-    printer: &'a PrettyPrinter<'a>,
-    can_attach: bool,
-    free_comments: Vec<ArenaDoc<'a>>,
-    peek_hash: bool,
-    items: Vec<Item<'a>>,
-    item_count: usize,
-    has_comment: bool,
-    has_line_comment: bool,
-    fold_style: FoldStyle,
-    disallow_front_comment: bool,
-    /// Some: max_consecutive_lines; None: ignore
-    keep_linebreak: Option<usize>,
 }
 
 pub struct ListStyle {
@@ -82,11 +85,12 @@ impl<'a> ListStylist<'a> {
             free_comments: Default::default(),
             peek_hash: false,
             items: Default::default(),
-            item_count: 0,
+            real_item_count: 0,
             has_comment: false,
             has_line_comment: false,
             fold_style: FoldStyle::Fit,
             disallow_front_comment: false,
+            disallow_comment_detach: false,
             keep_linebreak: None,
         }
     }
@@ -103,6 +107,9 @@ impl<'a> ListStylist<'a> {
 
     pub fn with_fold_style(mut self, fold_style: FoldStyle) -> Self {
         self.fold_style = fold_style;
+        if fold_style == FoldStyle::Always {
+            self.disallow_comment_detach = true;
+        }
         self
     }
 
@@ -171,14 +178,25 @@ impl<'a> ListStylist<'a> {
     fn add_item(&mut self, item_body: ArenaDoc<'a>) {
         let arena = &self.printer.arena;
 
-        self.item_count += 1;
+        self.real_item_count += 1;
         let before = if self.disallow_front_comment {
             self.detach_comments();
             arena.nil()
         } else if self.free_comments.is_empty() {
             arena.nil()
         } else {
-            arena.intersperse(self.free_comments.drain(..), arena.line()) + arena.line()
+            // TODO - this may work with FoldStyle::Always
+            let sep = if self.disallow_comment_detach {
+                arena.space()
+            } else {
+                arena.line()
+            };
+            let doc = arena.intersperse(self.free_comments.drain(..), sep.clone()) + sep;
+            if self.disallow_comment_detach {
+                doc
+            } else {
+                doc.group()
+            }
         };
         let hash = if self.peek_hash {
             arena.text("#")
@@ -186,13 +204,12 @@ impl<'a> ListStylist<'a> {
             arena.nil()
         };
         self.items.push(Item::Commented {
-            body: (before + hash + item_body).group(),
+            body: (before + hash + item_body),
             after: None,
         });
         self.can_attach = true;
     }
 
-    /// Handle non-items.
     fn process_trivia(&mut self, node: &'a SyntaxNode) {
         match node.kind() {
             SyntaxKind::LineComment | SyntaxKind::BlockComment => {
@@ -285,7 +302,7 @@ impl<'a> ListStylist<'a> {
             };
         }
 
-        let is_single = self.item_count == 1;
+        let is_single = self.real_item_count == 1;
         let sep = arena.text(sty.separator);
         let indent = self.printer.config.tab_spaces;
         let fold_style = if self.has_line_comment {
@@ -293,6 +310,8 @@ impl<'a> ListStylist<'a> {
         } else {
             self.fold_style
         };
+        let item_count = self.items.len();
+        let mut seen_real_items = 0;
         match fold_style {
             FoldStyle::Never => {
                 let mut inner = if sty.tight_delim {
@@ -301,11 +320,13 @@ impl<'a> ListStylist<'a> {
                     arena.hardline()
                 };
                 for (i, item) in self.items.into_iter().enumerate() {
+                    let is_last = i + 1 == item_count;
                     match item {
                         Item::Comment(cmt) => inner += cmt + arena.hardline(),
                         Item::Commented { body, after } => {
+                            seen_real_items += 1;
                             inner += body + sep.clone() + after;
-                            if !sty.tight_delim || i + 1 != self.item_count {
+                            if !sty.tight_delim || !is_last {
                                 inner += arena.hardline();
                             }
                         }
@@ -318,13 +339,23 @@ impl<'a> ListStylist<'a> {
                 inner.enclose(delim.0, delim.1)
             }
             FoldStyle::Always => {
+                // TODO - this may implies `tight_delim`
                 let mut inner = arena.nil();
                 for (i, item) in self.items.into_iter().enumerate() {
+                    let is_last = i + 1 == item_count;
                     match item {
-                        Item::Comment(cmt) => inner += cmt,
+                        Item::Comment(cmt) => {
+                            inner += if is_last && sty.tight_delim {
+                                cmt
+                            } else {
+                                cmt + arena.space()
+                            }
+                        }
                         Item::Commented { body, after } => {
+                            seen_real_items += 1;
+                            let is_last_real = seen_real_items == self.real_item_count;
                             inner += body + after;
-                            if i + 1 != self.item_count {
+                            if !is_last_real {
                                 inner += sep.clone() + arena.space();
                             } else if sty.add_trailing_sep_always
                                 || is_single && sty.add_trailing_sep_single
@@ -336,6 +367,7 @@ impl<'a> ListStylist<'a> {
                         Item::Linebreak(_) => (),
                     }
                 }
+                inner = inner.group();
                 if is_single && sty.omit_delim_single || sty.omit_delim_flat {
                     inner
                 } else if sty.add_delim_space {
@@ -347,90 +379,85 @@ impl<'a> ListStylist<'a> {
                 }
             }
             FoldStyle::Fit => {
-                let mut inner = arena.nil();
+                let mut inner = if sty.tight_delim {
+                    arena.nil()
+                } else {
+                    arena.line_()
+                };
                 for (i, item) in self.items.into_iter().enumerate() {
-                    let is_last = i + 1 == self.item_count;
+                    let is_last = i + 1 == item_count;
                     match item {
-                        Item::Comment(cmt) => inner += cmt + arena.line(),
-                        Item::Commented {
-                            body,
-                            after: Option::None,
-                        } => {
-                            let follow = if is_last && sty.tight_delim {
-                                arena.nil()
-                            } else if !is_last
-                                || sty.add_trailing_sep_always
-                                || is_single && sty.add_trailing_sep_single
-                            {
-                                sep.clone()
+                        Item::Comment(cmt) => {
+                            inner += if is_last && sty.tight_delim {
+                                cmt
                             } else {
-                                sep.clone().flat_alt(arena.nil())
-                            };
-                            let ln = if is_last {
-                                if sty.tight_delim {
-                                    arena.nil()
+                                cmt + arena.hardline()
+                            }
+                        }
+                        Item::Commented { body, after } => {
+                            seen_real_items += 1;
+                            let is_last_real = seen_real_items == self.real_item_count;
+                            let follow = if let Some(after) = after {
+                                let follow_break = sep.clone() + after.clone();
+                                let follow_flat = if !is_last_real
+                                    || sty.add_trailing_sep_always
+                                    || is_single && sty.add_trailing_sep_single
+                                {
+                                    after + sep.clone()
                                 } else {
-                                    arena.line_()
-                                }
+                                    after
+                                };
+                                follow_break.flat_alt(follow_flat)
                             } else {
+                                let follow = if is_last_real && sty.tight_delim {
+                                    arena.nil()
+                                } else if !is_last_real
+                                    || sty.add_trailing_sep_always
+                                    || is_single && sty.add_trailing_sep_single
+                                {
+                                    sep.clone()
+                                } else {
+                                    sep.clone().flat_alt(arena.nil())
+                                };
+                                follow
+                            };
+                            let ln = if !is_last_real {
                                 arena.line()
+                            } else if sty.tight_delim {
+                                arena.nil()
+                            } else {
+                                arena.line_()
                             };
                             inner += body + follow + ln;
-                        }
-                        Item::Commented {
-                            body,
-                            after: Some(after),
-                        } => {
-                            let follow_break = sep.clone() + after.clone();
-                            let follow_flat = if !is_last
-                                || sty.add_trailing_sep_always
-                                || is_single && sty.add_trailing_sep_single
-                            {
-                                after + sep.clone()
-                            } else {
-                                after
-                            };
-                            let ln = if is_last {
-                                if sty.tight_delim {
-                                    arena.nil()
-                                } else {
-                                    arena.line_()
-                                }
-                            } else {
-                                arena.line()
-                            };
-                            inner += body + follow_break.flat_alt(follow_flat) + ln;
                         }
                         Item::Linebreak(n) => inner += arena.line().repeat_n(n),
                     }
                 }
+                if !sty.no_indent {
+                    inner = inner.nest(indent as isize);
+                }
                 if is_single && sty.omit_delim_single {
                     inner.group()
+                } else if sty.omit_delim_flat {
+                    inner
+                        .enclose(
+                            arena.text(delim.0).flat_alt(arena.nil()),
+                            arena.text(delim.1).flat_alt(arena.nil()),
+                        )
+                        .group()
+                } else if sty.add_delim_space {
+                    inner
+                        .enclose(
+                            arena
+                                .text(delim.0)
+                                .flat_alt(arena.text(delim.0) + arena.space()),
+                            arena
+                                .text(delim.1)
+                                .flat_alt(arena.space() + arena.text(delim.1)),
+                        )
+                        .group()
                 } else {
-                    if !sty.no_indent {
-                        inner = (arena.line_() + inner).nest(indent as isize);
-                    }
-                    if sty.omit_delim_flat {
-                        inner
-                            .enclose(
-                                arena.text(delim.0).flat_alt(arena.nil()),
-                                arena.text(delim.1).flat_alt(arena.nil()),
-                            )
-                            .group()
-                    } else if sty.add_delim_space {
-                        inner
-                            .enclose(
-                                arena
-                                    .text(delim.0)
-                                    .flat_alt(arena.text(delim.0) + arena.space()),
-                                arena
-                                    .text(delim.1)
-                                    .flat_alt(arena.space() + arena.text(delim.1)),
-                            )
-                            .group()
-                    } else {
-                        inner.group().enclose(delim.0, delim.1)
-                    }
+                    inner.group().enclose(delim.0, delim.1)
                 }
             }
         }
