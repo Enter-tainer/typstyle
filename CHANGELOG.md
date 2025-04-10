@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.13.3 - [2025-04-10]
+
+- Feature: Unified equation layout and removed indent for non-block equations
+  - Non-block equations are no longer indented, which works well in most reasonable cases
+  - Nodes with multiline comments are now treated as multiline
+  - Improved comment attachment mechanism
+- Fix: Improved handling of comments directly in equations and spaces in math
+  - Correctly handles in-equation comments before and after `Math`
+  - Fixed infinite spaces added before `//` in math
+  - Fixed extra indent of array args in math
+  - Optimized spaces handling in `MathAttach` and `MathRoot`
+- Fix: Addressed list layout issues
+  - Fixed indent and grouping issues in list layouts
+  - Fixed missing separators in list layouts mixed with comments
+
 ## v0.13.2 - [2025-03-28]
 
 - Feature: Typstyle can format code in markup lines now. Linebreaks are suppressed inside to ensure compact layout.
