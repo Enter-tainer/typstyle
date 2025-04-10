@@ -92,6 +92,8 @@ impl AttrStore {
                     }
                 }
                 seen_space = true;
+            } else if child.kind() == SyntaxKind::BlockComment {
+                is_multiline |= child.text().has_linebreak();
             }
             is_multiline |= self.compute_multiline_impl(child);
         }

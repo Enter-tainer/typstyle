@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-showset.typ
-snapshot_kind: text
 ---
 #show: none
 #show "foo": "bar"
@@ -22,8 +21,7 @@ snapshot_kind: text
 ) /* 1 */ if /* 2 */ true
 
 #set heading(
-  /* 1 */
-  numbering/* 2 */: /* 3 */ (
+  /* 1 */ numbering/* 2 */: /* 3 */ (
     /* 4 */ ../* 5 */num, /* 6 */
   ) /* 1 */ => none,
 )

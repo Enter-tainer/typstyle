@@ -22,23 +22,22 @@ $1 /* 11 */ / /* 12 */ 2$
 
 $x +/* comment */y$
 $x +// comment
-  y$
+y$
 
 $x_/* comment */i$
 $x^ // exponent
-  {n+1}$
+{n+1}$
 $sum_(i=1 /* start */ )^(n // end
-  ) x_i$
+) x_i$
 
 $frac(
-    // numerator
-    x, /* denominator */ y
-  )$
+  // numerator
+  x, /* denominator */ y
+)$
 $mat(
-    1, /* row 1 */
-    2; 3, // row 2
-    4,
-  )$
+  1, /* row 1 */ 2; 3, // row 2
+  4,
+)$
 $
   mat(
     1, /* row 1 */

@@ -3,17 +3,17 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/delimited.typ
 ---
 $f(x) = sin(
-    cos(
-      tan (
-        x)
-    ) arctan
-    (y + 6 * (3 - 78 / 64)
-    )
-  )$
+  cos(
+    tan (
+      x)
+  ) arctan
+  (y + 6 * (3 - 78 / 64)
+  )
+)$
 
 $f(x) = a + (b
-    + c) + d +d
-  + f$
+  + c) + d +d
++ f$
 
 $
   f(x) = a + (

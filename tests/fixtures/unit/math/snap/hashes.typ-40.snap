@@ -51,9 +51,9 @@ $
 // 7. Arrays and matrices
 $mat(#(1, 2, 3), #(4, 5, x))$
 $mat(
-    #(1, 2, 3),
-    #(4, 5, x)
-  )$
+  #(1, 2, 3),
+  #(4, 5, x)
+)$
 $
   mat(
     #(1, 2, 3),
@@ -75,9 +75,9 @@ $#text(red, $x + y$)$
 
 // 10. Code blocks
 $#for i in range(10) {
-    [#i,]
-    [ -#i,]
-  }$
+  [#i,]
+  [ -#i,]
+}$
 $
   #for i in range(10) {
     [#i,]
