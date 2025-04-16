@@ -7,62 +7,78 @@ use super::{
         list::{ListStyle, ListStylist},
         plain::PlainStylist,
     },
-    mode::Mode,
     style::FoldStyle,
     table,
     util::{get_parenthesized_args_untyped, has_parenthesized_args, is_only_one_and},
-    ArenaDoc, PrettyPrinter,
+    ArenaDoc, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_func_call(
+        &'a self,
+        ctx: Context,
+        func_call: FuncCall<'a>,
+    ) -> ArenaDoc<'a> {
         if func_call.callee().to_untyped().kind() == SyntaxKind::FieldAccess {
-            if let Some(res) = self.try_convert_dot_chain(func_call.to_untyped()) {
+            if let Some(res) = self.try_convert_dot_chain(ctx, func_call.to_untyped()) {
                 return res;
             }
         }
-        self.convert_func_call_plain(func_call)
+        self.convert_func_call_plain(ctx, func_call)
     }
 
-    pub(super) fn convert_func_call_plain(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {
-        self.convert_expr(func_call.callee())
-            + self.convert_func_call_args(func_call, func_call.args())
+    pub(super) fn convert_func_call_plain(
+        &'a self,
+        ctx: Context,
+        func_call: FuncCall<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_expr(ctx, func_call.callee())
+            + self.convert_func_call_args(ctx, func_call, func_call.args())
     }
 
-    fn convert_func_call_args(&'a self, func_call: FuncCall<'a>, args: Args<'a>) -> ArenaDoc<'a> {
-        if self.current_mode().is_math() {
-            return self.convert_args_in_math(args);
+    fn convert_func_call_args(
+        &'a self,
+        ctx: Context,
+        func_call: FuncCall<'a>,
+        args: Args<'a>,
+    ) -> ArenaDoc<'a> {
+        if ctx.mode.is_math() {
+            return self.convert_args_in_math(ctx, args);
         };
 
         let mut doc = self.arena.nil();
         let has_parenthesized_args = has_parenthesized_args(args);
         if table::is_table(func_call) {
             if let Some(cols) = table::is_formatable_table(func_call) {
-                doc += self.convert_table(func_call, cols);
+                doc += self.convert_table(ctx, func_call, cols);
             } else if has_parenthesized_args {
-                doc += self.convert_parenthesized_args_as_list(args);
+                doc += self.convert_parenthesized_args_as_list(ctx, args);
             }
         } else if has_parenthesized_args {
-            doc += self.convert_parenthesized_args(args);
+            doc += self.convert_parenthesized_args(ctx, args);
         };
-        doc + self.convert_additional_args(args, has_parenthesized_args)
+        doc + self.convert_additional_args(ctx, args, has_parenthesized_args)
     }
 
-    pub(super) fn convert_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_args(&'a self, ctx: Context, args: Args<'a>) -> ArenaDoc<'a> {
         let has_parenthesized_args = has_parenthesized_args(args);
         let parenthesized = if has_parenthesized_args {
-            self.convert_parenthesized_args(args)
+            self.convert_parenthesized_args(ctx, args)
         } else {
             self.arena.nil()
         };
-        parenthesized + self.convert_additional_args(args, has_parenthesized_args)
+        parenthesized + self.convert_additional_args(ctx, args, has_parenthesized_args)
     }
 
-    pub(super) fn convert_parenthesized_args(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+    pub(super) fn convert_parenthesized_args(
+        &'a self,
+        ctx: Context,
+        args: Args<'a>,
+    ) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
-        let mut fold_style = self.get_fold_style(args);
+        let mut fold_style = self.get_fold_style(ctx, args);
 
         let children = || {
             args.to_untyped()
@@ -71,7 +87,7 @@ impl<'a> PrettyPrinter<'a> {
         };
         let arg_count = children().filter(|it| it.is::<Arg>()).count();
 
-        if !self.is_break_suppressed() {
+        if !ctx.break_suppressed {
             is_only_one_and(args.items().take(arg_count), |arg| {
                 let inner = match arg {
                     Arg::Pos(p) => *p,
@@ -96,27 +112,27 @@ impl<'a> PrettyPrinter<'a> {
         ListStylist::new(self)
             .keep_linebreak(self.config.blank_lines_upper_bound)
             .with_fold_style(fold_style)
-            .process_iterable_impl(children(), |child| {
+            .process_iterable_impl(ctx, children(), |ctx, child| {
                 // We should ignore additional args here.
-                child.cast().map(|arg| self.convert_arg(arg))
+                child.cast().map(|arg| self.convert_arg(ctx, arg))
             })
             .print_doc(ListStyle {
                 ..Default::default()
             })
     }
 
-    fn convert_parenthesized_args_as_list(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+    fn convert_parenthesized_args_as_list(&'a self, ctx: Context, args: Args<'a>) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         let inner = PlainStylist::new(self)
-            .process_iterable(get_parenthesized_args_untyped(args), |child| {
-                self.convert_arg(child)
+            .process_iterable(ctx, get_parenthesized_args_untyped(args), |ctx, child| {
+                self.convert_arg(ctx, child)
             })
             .print_doc();
         inner.nest(self.config.tab_spaces as isize).parens()
     }
 
-    fn convert_args_in_math(&'a self, args: Args<'a>) -> ArenaDoc<'a> {
+    fn convert_args_in_math(&'a self, ctx: Context, args: Args<'a>) -> ArenaDoc<'a> {
         // strip spaces
         let children = {
             let children = args.to_untyped().children().as_slice();
@@ -136,7 +152,7 @@ impl<'a> PrettyPrinter<'a> {
         };
 
         let mut peek_hashed_arg = false;
-        let inner = self.convert_flow_like_iter(children, |child| {
+        let inner = self.convert_flow_like_iter(ctx, children, |ctx, child| {
             let at_hashed_arg = peek_hashed_arg;
             peek_hashed_arg = false;
             match child.kind() {
@@ -158,7 +174,7 @@ impl<'a> PrettyPrinter<'a> {
                         if is_ends_with_hashed_expr(arg.to_untyped().children()) {
                             peek_hashed_arg = true;
                         }
-                        FlowItem::spaced(self.convert_arg(arg))
+                        FlowItem::spaced(self.convert_arg(ctx, arg))
                     } else {
                         FlowItem::none()
                     }
@@ -176,7 +192,12 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     /// Handle additional content blocks
-    fn convert_additional_args(&'a self, args: Args<'a>, has_paren: bool) -> ArenaDoc<'a> {
+    fn convert_additional_args(
+        &'a self,
+        ctx: Context,
+        args: Args<'a>,
+        has_paren: bool,
+    ) -> ArenaDoc<'a> {
         let args = args
             .to_untyped()
             .children()
@@ -189,14 +210,14 @@ impl<'a> PrettyPrinter<'a> {
             })
             .filter_map(|node| node.cast::<ContentBlock>());
         self.arena
-            .concat(args.map(|arg| self.convert_content_block(arg)))
+            .concat(args.map(|arg| self.convert_content_block(ctx, arg)))
     }
 
-    pub(super) fn convert_arg(&'a self, arg: Arg<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_arg(&'a self, ctx: Context, arg: Arg<'a>) -> ArenaDoc<'a> {
         match arg {
-            Arg::Pos(p) => self.convert_expr(p),
-            Arg::Named(n) => self.convert_named(n),
-            Arg::Spread(s) => self.convert_spread(s),
+            Arg::Pos(p) => self.convert_expr(ctx, p),
+            Arg::Named(n) => self.convert_named(ctx, n),
+            Arg::Spread(s) => self.convert_spread(ctx, s),
         }
     }
 }

@@ -1,10 +1,10 @@
 use pretty::{Arena, DocAllocator};
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
-use super::{ArenaDoc, PrettyPrinter};
+use super::{ArenaDoc, Context, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_comment(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+    pub(super) fn convert_comment(&'a self, _ctx: Context, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         comment(&self.arena, node)
     }
 }

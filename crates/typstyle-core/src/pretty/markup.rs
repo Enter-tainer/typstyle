@@ -6,9 +6,9 @@ use super::{
     doc_ext::DocExt,
     layout::flow::FlowItem,
     util::{is_comment_node, is_only_one_and},
-    ArenaDoc, PrettyPrinter,
+    ArenaDoc, Context, Mode, PrettyPrinter,
 };
-use crate::{ext::StrExt, pretty::mode::Mode};
+use crate::ext::StrExt;
 
 #[derive(Debug, PartialEq, Eq)]
 enum MarkupScope {
@@ -23,28 +23,32 @@ enum MarkupScope {
 }
 
 impl<'a> PrettyPrinter<'a> {
-    pub fn convert_markup(&'a self, markup: Markup<'a>) -> ArenaDoc<'a> {
-        self.convert_markup_impl(markup, MarkupScope::Document)
+    pub fn convert_markup(&'a self, ctx: Context, markup: Markup<'a>) -> ArenaDoc<'a> {
+        self.convert_markup_impl(ctx, markup, MarkupScope::Document)
     }
 
-    pub(super) fn convert_content_block(&'a self, content_block: ContentBlock<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_content_block(
+        &'a self,
+        ctx: Context,
+        content_block: ContentBlock<'a>,
+    ) -> ArenaDoc<'a> {
         let content = self
-            .convert_markup_impl(content_block.body(), MarkupScope::ContentBlock)
+            .convert_markup_impl(ctx, content_block.body(), MarkupScope::ContentBlock)
             .nest(self.config.tab_spaces as isize);
         content.group().brackets()
     }
 
-    pub(super) fn convert_strong(&'a self, strong: Strong<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_markup_impl(strong.body(), MarkupScope::Strong);
+    pub(super) fn convert_strong(&'a self, ctx: Context, strong: Strong<'a>) -> ArenaDoc<'a> {
+        let body = self.convert_markup_impl(ctx, strong.body(), MarkupScope::Strong);
         body.enclose("*", "*")
     }
 
-    pub(super) fn convert_emph(&'a self, emph: Emph<'a>) -> ArenaDoc<'a> {
-        let body = self.convert_markup_impl(emph.body(), MarkupScope::Strong);
+    pub(super) fn convert_emph(&'a self, ctx: Context, emph: Emph<'a>) -> ArenaDoc<'a> {
+        let body = self.convert_markup_impl(ctx, emph.body(), MarkupScope::Strong);
         body.enclose("_", "_")
     }
 
-    pub(super) fn convert_raw(&'a self, raw: Raw<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_raw(&'a self, _ctx: Context, raw: Raw<'a>) -> ArenaDoc<'a> {
         // no format multiline single backtick raw block
         if !raw.block() && raw.lines().count() > 1 {
             return self.convert_verbatim(raw);
@@ -56,53 +60,65 @@ impl<'a> PrettyPrinter<'a> {
                 doc += self.convert_trivia(delim);
             } else if let Some(lang) = child.cast::<RawLang>() {
                 doc += self.convert_trivia(lang);
-            } else if let Some(line) = child.cast::<Text>() {
-                doc += self.convert_text(line);
+            } else if let Some(text) = child.cast::<Text>() {
+                doc += self.convert_text(text);
             } else if child.kind() == SyntaxKind::RawTrimmed {
-                if child.text().has_linebreak() {
-                    doc += self.arena.hardline();
+                doc += if child.text().has_linebreak() {
+                    self.arena.hardline()
                 } else {
-                    doc += self.arena.space();
+                    self.arena.space()
                 }
             }
         }
         doc
     }
 
-    pub(super) fn convert_ref(&'a self, reference: Ref<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_ref(&'a self, ctx: Context, reference: Ref<'a>) -> ArenaDoc<'a> {
         let mut doc = self.arena.text("@") + self.arena.text(reference.target());
         if let Some(supplement) = reference.supplement() {
-            doc += self.convert_content_block(supplement);
+            doc += self.convert_content_block(ctx, supplement);
         }
         doc
     }
 
-    pub(super) fn convert_heading(&'a self, heading: Heading<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(heading.to_untyped(), |child| {
+    pub(super) fn convert_heading(&'a self, ctx: Context, heading: Heading<'a>) -> ArenaDoc<'a> {
+        self.convert_flow_like(ctx, heading.to_untyped(), |ctx, child| {
             if child.kind() == SyntaxKind::HeadingMarker {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_impl(markup, MarkupScope::Item))
+                FlowItem::spaced(self.convert_markup_impl(ctx, markup, MarkupScope::Item))
             } else {
                 FlowItem::none()
             }
         })
     }
 
-    pub(super) fn convert_list_item(&'a self, list_item: ListItem<'a>) -> ArenaDoc<'a> {
-        self.convert_list_item_like(list_item.to_untyped())
+    pub(super) fn convert_list_item(
+        &'a self,
+        ctx: Context,
+        list_item: ListItem<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_list_item_like(ctx, list_item.to_untyped())
     }
 
-    pub(super) fn convert_enum_item(&'a self, enum_item: EnumItem<'a>) -> ArenaDoc<'a> {
-        self.convert_list_item_like(enum_item.to_untyped())
+    pub(super) fn convert_enum_item(
+        &'a self,
+        ctx: Context,
+        enum_item: EnumItem<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_list_item_like(ctx, enum_item.to_untyped())
     }
 
-    pub(super) fn convert_term_item(&'a self, term_item: TermItem<'a>) -> ArenaDoc<'a> {
-        self.convert_list_item_like(term_item.to_untyped())
+    pub(super) fn convert_term_item(
+        &'a self,
+        ctx: Context,
+        term_item: TermItem<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_list_item_like(ctx, term_item.to_untyped())
     }
 
-    fn convert_list_item_like(&'a self, item: &'a SyntaxNode) -> ArenaDoc<'a> {
-        self.convert_flow_like(item, |child| match child.kind() {
+    fn convert_list_item_like(&'a self, ctx: Context, item: &'a SyntaxNode) -> ArenaDoc<'a> {
+        self.convert_flow_like(ctx, item, |ctx, child| match child.kind() {
             SyntaxKind::ListMarker | SyntaxKind::EnumMarker | SyntaxKind::TermMarker => {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             }
@@ -117,17 +133,24 @@ impl<'a> PrettyPrinter<'a> {
             ),
             SyntaxKind::Markup if child.children().next().is_some() => {
                 // empty markup is ignored here
-                FlowItem::spaced(
-                    self.convert_markup_impl(child.cast().expect("markup"), MarkupScope::Item),
-                )
+                FlowItem::spaced(self.convert_markup_impl(
+                    ctx,
+                    child.cast().expect("markup"),
+                    MarkupScope::Item,
+                ))
             }
             _ => FlowItem::none(),
         })
         .nest(self.config.tab_spaces as isize)
     }
 
-    fn convert_markup_impl(&'a self, markup: Markup<'a>, scope: MarkupScope) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::Markup);
+    fn convert_markup_impl(
+        &'a self,
+        ctx: Context,
+        markup: Markup<'a>,
+        scope: MarkupScope,
+    ) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::Markup);
 
         if is_only_one_and(markup.to_untyped().children(), |node| {
             node.kind() == SyntaxKind::Space
@@ -150,15 +173,14 @@ impl<'a> PrettyPrinter<'a> {
                 } else if let Some(text) = node.cast::<Text>() {
                     self.convert_text(text)
                 } else if let Some(expr) = node.cast::<Expr>() {
-                    if mixed_text {
-                        let _g = self.suppress_breaks();
-                        let doc = self.convert_expr(expr);
-                        doc
+                    let ctx = if mixed_text {
+                        ctx.suppress_breaks()
                     } else {
-                        self.convert_expr(expr)
-                    }
+                        ctx
+                    };
+                    self.convert_expr(ctx, expr)
                 } else if is_comment_node(node) {
-                    self.convert_comment(node)
+                    self.convert_comment(ctx, node)
                 } else {
                     // can be Hash, Semicolon, Shebang
                     self.convert_trivia_untyped(node)
@@ -173,7 +195,6 @@ impl<'a> PrettyPrinter<'a> {
         // Only turn space into, not the other way around.
         let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
         let is_symmetric = repr.start_bound != Boundary::Nil && repr.end_bound != Boundary::Nil;
-        let break_suppressed = self.is_break_suppressed();
         let get_delim = |bound: Boundary| {
             if scope == MarkupScope::Document || scope == MarkupScope::Item {
                 // should not add extra lines to the document
@@ -188,7 +209,7 @@ impl<'a> PrettyPrinter<'a> {
                 Boundary::NilOrBreak => {
                     if scope == MarkupScope::Item
                         || !is_symmetric && !has_line_break
-                        || break_suppressed
+                        || ctx.break_suppressed
                     {
                         self.arena.nil()
                     } else {
@@ -196,7 +217,7 @@ impl<'a> PrettyPrinter<'a> {
                     }
                 }
                 Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
-                    if is_symmetric && !break_suppressed || has_line_break {
+                    if is_symmetric && !ctx.break_suppressed || has_line_break {
                         self.arena.line()
                     } else if scope == MarkupScope::Item {
                         // the space can be safely eaten

@@ -9,11 +9,11 @@ use super::{
         list::{ListStyle, ListStylist},
     },
     util::is_comment_node,
-    ArenaDoc, PrettyPrinter,
+    ArenaDoc, Context, PrettyPrinter,
 };
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_import(&'a self, import: ModuleImport<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_import(&'a self, ctx: Context, import: ModuleImport<'a>) -> ArenaDoc<'a> {
         // ImportItems are optional and may be wrapped in parentheses.
         let nodes = import.to_untyped().children().as_slice();
 
@@ -36,7 +36,7 @@ impl<'a> PrettyPrinter<'a> {
             };
 
         // Convert the prefix section.
-        let prefix_doc = self.convert_flow_like_iter(prefix_part.iter(), |child| {
+        let prefix_doc = self.convert_flow_like_iter(ctx, prefix_part.iter(), |ctx, child| {
             match child.kind() {
                 SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(":")),
                 SyntaxKind::Star => FlowItem::spaced(self.arena.text("*")), // wildcard import
@@ -46,7 +46,7 @@ impl<'a> PrettyPrinter<'a> {
                         FlowItem::spaced(self.convert_ident(ident))
                     } else if let Some(expr) = child.cast() {
                         // source
-                        FlowItem::spaced(self.convert_expr(expr))
+                        FlowItem::spaced(self.convert_expr(ctx, expr))
                     } else {
                         FlowItem::none()
                     }
@@ -72,11 +72,15 @@ impl<'a> PrettyPrinter<'a> {
             return prefix_doc;
         }
 
-        let import_items_doc = self.convert_import_items(import_items_nodes);
+        let import_items_doc = self.convert_import_items(ctx, import_items_nodes);
         prefix_doc + self.arena.space() + import_items_doc
     }
 
-    fn convert_import_items(&'a self, mut import_items_nodes: Vec<&'a SyntaxNode>) -> ArenaDoc<'a> {
+    fn convert_import_items(
+        &'a self,
+        ctx: Context,
+        mut import_items_nodes: Vec<&'a SyntaxNode>,
+    ) -> ArenaDoc<'a> {
         // Sort import items if the configuration allows it.
         // The sorting is only applied if all nodes are not comments and if there are no duplicate names.
         if self.config.reorder_import_items
@@ -88,15 +92,19 @@ impl<'a> PrettyPrinter<'a> {
         }
         // Note that `ImportItem` does not implement `AstNode`.
         ListStylist::new(self)
-            .process_iterable_impl(import_items_nodes.into_iter(), |child| match child.kind() {
-                SyntaxKind::RenamedImportItem => child
-                    .cast()
-                    .map(|item| self.convert_import_item_renamed(item)),
-                SyntaxKind::ImportItemPath => {
-                    child.cast().map(|item| self.convert_import_item_path(item))
-                }
-                _ => Option::None,
-            })
+            .process_iterable_impl(
+                ctx,
+                import_items_nodes.into_iter(),
+                |ctx, child| match child.kind() {
+                    SyntaxKind::RenamedImportItem => child
+                        .cast()
+                        .map(|item| self.convert_import_item_renamed(ctx, item)),
+                    SyntaxKind::ImportItemPath => child
+                        .cast()
+                        .map(|item| self.convert_import_item_path(ctx, item)),
+                    _ => Option::None,
+                },
+            )
             .print_doc(ListStyle {
                 omit_delim_flat: true,
                 omit_delim_empty: true,
@@ -104,8 +112,12 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    fn convert_import_item_path(&'a self, import_item_path: ImportItemPath<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(import_item_path.to_untyped(), |child| {
+    fn convert_import_item_path(
+        &'a self,
+        ctx: Context,
+        import_item_path: ImportItemPath<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like(ctx, import_item_path.to_untyped(), |_ctx, child| {
             if child.kind() == SyntaxKind::Dot {
                 FlowItem::tight(self.arena.text("."))
             } else if let Some(ident) = child.cast() {
@@ -118,11 +130,12 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_import_item_renamed(
         &'a self,
+        ctx: Context,
         import_item_renamed: RenamedImportItem<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(import_item_renamed.to_untyped(), |child| {
+        self.convert_flow_like(ctx, import_item_renamed.to_untyped(), |ctx, child| {
             if let Some(path) = child.cast() {
-                FlowItem::spaced(self.convert_import_item_path(path))
+                FlowItem::spaced(self.convert_import_item_path(ctx, path))
             } else if let Some(ident) = child.cast() {
                 FlowItem::spaced(self.convert_ident(ident))
             } else {

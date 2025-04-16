@@ -1,7 +1,7 @@
 use pretty::{Arena, DocAllocator};
 use typst_syntax::ast::*;
 
-use super::{mode::Mode, util::has_comment_children, ArenaDoc};
+use super::{util::has_comment_children, ArenaDoc, Context, Mode};
 use crate::PrettyPrinter;
 
 impl<'a> PrettyPrinter<'a> {
@@ -9,19 +9,20 @@ impl<'a> PrettyPrinter<'a> {
     /// It is safe to treat it as `Pattern`, since `Pattern` can be `Expr`.
     pub(super) fn convert_parenthesized(
         &'a self,
+        ctx: Context,
         parenthesized: Parenthesized<'a>,
     ) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         if let Pattern::Parenthesized(paren) = parenthesized.pattern() {
             if !has_comment_children(parenthesized.to_untyped()) {
                 // Remove a layer of paren if no comment inside.
-                return self.convert_parenthesized(paren);
+                return self.convert_parenthesized(ctx, paren);
             }
         }
 
         // Treat is as a list with a single item.
-        self.convert_parenthesized_impl(parenthesized)
+        self.convert_parenthesized_impl(ctx, parenthesized)
     }
 
     /// Convert an expression with optional parentheses.
@@ -30,21 +31,22 @@ impl<'a> PrettyPrinter<'a> {
     /// Otherwise, the expression will be converted with parentheses if it is laid out on multiple lines.
     pub(super) fn convert_expr_with_optional_paren(
         &'a self,
+        ctx: Context,
         expr: Expr<'a>,
         use_braces: bool,
     ) -> ArenaDoc<'a> {
-        if self.is_break_suppressed() || !is_paren_needed(expr) {
-            return self.convert_expr(expr);
+        if ctx.break_suppressed || !is_paren_needed(expr) {
+            return self.convert_expr(ctx, expr);
         }
         let (mode, delims) = if use_braces {
             (Mode::Code, ("{", "}"))
         } else {
             (Mode::CodeCont, ("(", ")"))
         };
-        let _g = self.with_mode(mode);
+        let ctx = ctx.with_mode(mode);
         optional_paren(
             &self.arena,
-            self.convert_expr(expr),
+            self.convert_expr(ctx, expr),
             self.config.tab_spaces,
             delims,
         )
@@ -55,16 +57,17 @@ impl<'a> PrettyPrinter<'a> {
     /// We must enter continued-code mode before evaluating body.
     pub(super) fn parenthesize_if_necessary(
         &'a self,
-        body: impl FnOnce() -> ArenaDoc<'a>,
+        ctx: Context,
+        body: impl FnOnce(Context) -> ArenaDoc<'a>,
     ) -> ArenaDoc<'a> {
-        if self.current_mode().is_code_continued() {
-            return body();
+        if ctx.mode.is_code_continued() {
+            return body(ctx);
         }
         // SAFETY:
         // - If without paren, the entire expression is in one line, thus safe.
         // - If with paren, surely safe.
-        let _g = self.with_mode(Mode::CodeCont);
-        optional_paren(&self.arena, body(), self.config.tab_spaces, ("(", ")"))
+        let ctx = ctx.with_mode(Mode::CodeCont);
+        optional_paren(&self.arena, body(ctx), self.config.tab_spaces, ("(", ")"))
     }
 }
 

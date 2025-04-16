@@ -7,17 +7,17 @@ use super::{
         list::{ListStyle, ListStylist},
     },
     style::FoldStyle,
-    ArenaDoc, Mode, PrettyPrinter,
+    ArenaDoc, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_equation(&'a self, equation: Equation<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::Math);
+    pub(super) fn convert_equation(&'a self, ctx: Context, equation: Equation<'a>) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::Math);
 
         let is_block = equation.block();
 
-        let convert_math_padded = |child: &'a SyntaxNode| {
+        let convert_math_padded = |ctx: Context, child: &'a SyntaxNode| {
             let math = child.cast::<Math>()?;
             if math.to_untyped().children().len() == 0 {
                 return Option::None;
@@ -28,7 +28,7 @@ impl<'a> PrettyPrinter<'a> {
                     .is_some_and(|it| it.kind() == SyntaxKind::Space)
                 && (equation.to_untyped().children().nth_back(2))
                     .is_some_and(|it| it.kind() == SyntaxKind::Math);
-            let body = self.convert_math(math);
+            let body = self.convert_math(ctx, math);
             let body = if !is_block && has_trailing_linebreak {
                 body + self.arena.space()
             } else {
@@ -37,7 +37,7 @@ impl<'a> PrettyPrinter<'a> {
             Some(body)
         };
 
-        let fold_style = if !is_block || self.is_break_suppressed() {
+        let fold_style = if !is_block || ctx.break_suppressed {
             FoldStyle::Always
         } else if self.attr_store.is_multiline(equation.to_untyped()) {
             FoldStyle::Never
@@ -46,7 +46,7 @@ impl<'a> PrettyPrinter<'a> {
         };
         ListStylist::new(self)
             .with_fold_style(fold_style)
-            .process_list_impl(equation.to_untyped(), convert_math_padded)
+            .process_list_impl(ctx, equation.to_untyped(), convert_math_padded)
             .print_doc(ListStyle {
                 separator: "",
                 delim: ("$", "$"),
@@ -56,19 +56,19 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    pub(super) fn convert_math(&'a self, math: Math<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_math(&'a self, ctx: Context, math: Math<'a>) -> ArenaDoc<'a> {
         if let Some(res) = self.check_disabled(math.to_untyped()) {
             return res;
         }
-        let _g = self.suppress_breaks();
+        let ctx = ctx.suppress_breaks();
         let mut doc = self.arena.nil();
         let mut peek_hash = false;
         for node in math.to_untyped().children() {
             let at_hash = peek_hash;
             peek_hash = false;
             if let Some(expr) = node.cast::<Expr>() {
-                let _g = self.with_mode_if(Mode::Code, at_hash);
-                let expr_doc = self.convert_expr(expr);
+                let ctx = ctx.with_mode_if(Mode::Code, at_hash);
+                let expr_doc = self.convert_expr(ctx, expr);
                 doc += expr_doc;
             } else if let Some(space) = node.cast::<Space>() {
                 doc += self.convert_space(space);
@@ -85,6 +85,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_math_delimited(
         &'a self,
+        ctx: Context,
         math_delimited: MathDelimited<'a>,
     ) -> ArenaDoc<'a> {
         let mut inner_nodes = math_delimited.to_untyped().children().as_slice();
@@ -118,9 +119,9 @@ impl<'a> PrettyPrinter<'a> {
         } else {
             self.arena.nil()
         };
-        let body = self.convert_flow_like_iter(inner_nodes.iter(), |node| {
+        let body = self.convert_flow_like_iter(ctx, inner_nodes.iter(), |ctx, node| {
             if let Some(math) = node.cast::<Math>() {
-                FlowItem::tight(self.convert_math(math))
+                FlowItem::tight(self.convert_math(ctx, math))
             } else if node.kind() == SyntaxKind::Space {
                 // We can not arbitrarily break line here, as it may become ugly.
                 FlowItem::tight(if node.text().has_linebreak() {
@@ -132,16 +133,20 @@ impl<'a> PrettyPrinter<'a> {
                 FlowItem::none()
             }
         });
-        let open = self.convert_expr(math_delimited.open());
-        let close = self.convert_expr(math_delimited.close());
+        let open = self.convert_expr(ctx, math_delimited.open());
+        let close = self.convert_expr(ctx, math_delimited.close());
         ((open_space + body).nest(self.config.tab_spaces as isize) + close_space)
             .enclose(open, close)
     }
 
-    pub(super) fn convert_math_attach(&'a self, math_attach: MathAttach<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(math_attach.to_untyped(), |node| {
+    pub(super) fn convert_math_attach(
+        &'a self,
+        ctx: Context,
+        math_attach: MathAttach<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like(ctx, math_attach.to_untyped(), |ctx, node| {
             if let Some(expr) = node.cast::<Expr>() {
-                FlowItem::tight(self.convert_expr(expr))
+                FlowItem::tight(self.convert_expr(ctx, expr))
             } else if node.kind() == SyntaxKind::Space {
                 FlowItem::none()
             } else {
@@ -150,14 +155,22 @@ impl<'a> PrettyPrinter<'a> {
         })
     }
 
-    pub(super) fn convert_math_primes(&'a self, math_primes: MathPrimes<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_math_primes(
+        &'a self,
+        _ctx: Context,
+        math_primes: MathPrimes<'a>,
+    ) -> ArenaDoc<'a> {
         self.arena.text("'".repeat(math_primes.count()))
     }
 
-    pub(super) fn convert_math_frac(&'a self, math_frac: MathFrac<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(math_frac.to_untyped(), |node| {
+    pub(super) fn convert_math_frac(
+        &'a self,
+        ctx: Context,
+        math_frac: MathFrac<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like(ctx, math_frac.to_untyped(), |ctx, node| {
             if let Some(expr) = node.cast::<Expr>() {
-                FlowItem::spaced(self.convert_expr(expr))
+                FlowItem::spaced(self.convert_expr(ctx, expr))
             } else if node.kind() != SyntaxKind::Space {
                 FlowItem::spaced(self.convert_trivia_untyped(node))
             } else {
@@ -166,10 +179,14 @@ impl<'a> PrettyPrinter<'a> {
         })
     }
 
-    pub(super) fn convert_math_root(&'a self, math_root: MathRoot<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(math_root.to_untyped(), |node| {
+    pub(super) fn convert_math_root(
+        &'a self,
+        ctx: Context,
+        math_root: MathRoot<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like(ctx, math_root.to_untyped(), |ctx, node| {
             if let Some(expr) = node.cast::<Expr>() {
-                FlowItem::tight(self.convert_expr(expr))
+                FlowItem::tight(self.convert_expr(ctx, expr))
             } else if node.kind() == SyntaxKind::Space {
                 FlowItem::none()
             } else {

@@ -3,7 +3,7 @@ use typst_syntax::{ast::AstNode, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{doc_ext::DocExt, layout::flow::FlowStylist, ArenaDoc, PrettyPrinter},
+    pretty::{doc_ext::DocExt, layout::flow::FlowStylist, ArenaDoc, Context, PrettyPrinter},
 };
 
 #[derive(Debug)]
@@ -34,16 +34,18 @@ impl<'a> PlainStylist<'a> {
     #[allow(unused)]
     pub fn process<T: AstNode<'a>>(
         self,
+        ctx: Context,
         node: &'a SyntaxNode,
-        item_converter: impl Fn(T) -> ArenaDoc<'a>,
+        item_converter: impl Fn(Context, T) -> ArenaDoc<'a>,
     ) -> Self {
-        self.process_iterable(node.children(), item_converter)
+        self.process_iterable(ctx, node.children(), item_converter)
     }
 
     pub fn process_iterable<T: AstNode<'a>>(
         mut self,
+        ctx: Context,
         iterable: impl Iterator<Item = &'a SyntaxNode>,
-        item_converter: impl Fn(T) -> ArenaDoc<'a>,
+        item_converter: impl Fn(Context, T) -> ArenaDoc<'a>,
     ) -> Self {
         let nl = self.printer.config.blank_lines_upper_bound;
         for child in iterable {
@@ -64,14 +66,14 @@ impl<'a> PlainStylist<'a> {
                 }
                 SyntaxKind::LineComment => {
                     self.is_multiline = true;
-                    PlainItem::LineComment(self.printer.convert_comment(child))
+                    PlainItem::LineComment(self.printer.convert_comment(ctx, child))
                 }
                 SyntaxKind::BlockComment => {
-                    PlainItem::BlockComment(self.printer.convert_comment(child))
+                    PlainItem::BlockComment(self.printer.convert_comment(ctx, child))
                 }
                 _ => {
                     if let Some(item) = child.cast() {
-                        PlainItem::Item(item_converter(item))
+                        PlainItem::Item(item_converter(ctx, item))
                     } else {
                         continue;
                     }
