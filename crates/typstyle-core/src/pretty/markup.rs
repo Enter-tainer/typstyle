@@ -1,4 +1,5 @@
 use pretty::DocAllocator;
+use smallvec::SmallVec;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
@@ -135,37 +136,43 @@ impl<'a> PrettyPrinter<'a> {
             return self.arena.space();
         }
 
-        let items = collect_markup_items(markup);
+        let repr = collect_markup_repr(markup);
 
         let mut doc = self.arena.nil();
-        for MarkupItem { node, mixed_text } in items.items {
-            if let Some(space) = node.cast::<Space>() {
-                doc += self.convert_space(space);
-                continue;
-            }
-            if let Some(pb) = node.cast::<Parbreak>() {
-                doc += self.convert_parbreak(pb);
-                continue;
-            }
-            doc += if let Some(expr) = node.cast::<Expr>() {
-                if mixed_text {
-                    let _g = self.suppress_breaks();
-                    let doc = self.convert_expr(expr);
-                    doc
+        for MarkupLine {
+            nodes,
+            breaks,
+            mixed_text,
+        } in repr.lines
+        {
+            for node in nodes {
+                doc += if node.kind() == SyntaxKind::Space {
+                    self.arena.space()
+                } else if let Some(text) = node.cast::<Text>() {
+                    self.convert_text(text)
+                } else if let Some(expr) = node.cast::<Expr>() {
+                    if mixed_text {
+                        let _g = self.suppress_breaks();
+                        let doc = self.convert_expr(expr);
+                        doc
+                    } else {
+                        self.convert_expr(expr)
+                    }
+                } else if is_comment_node(node) {
+                    self.convert_comment(node)
                 } else {
-                    self.convert_expr(expr)
-                }
-            } else if is_comment_node(node) {
-                self.convert_comment(node)
-            } else {
-                trivia_strip_prefix(&self.arena, node)
-            };
+                    trivia_strip_prefix(&self.arena, node)
+                };
+            }
+            if breaks > 0 {
+                doc += self.arena.hardline().repeat_n(breaks);
+            }
         }
 
         // Add line or space (if any) to both sides.
         // Only turn space into, not the other way around.
         let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
-        let is_symmetric = items.start_bound != Boundary::Nil && items.end_bound != Boundary::Nil;
+        let is_symmetric = repr.start_bound != Boundary::Nil && repr.end_bound != Boundary::Nil;
         let break_suppressed = self.is_break_suppressed();
         let get_delim = |bound: Boundary| {
             if scope == MarkupScope::Document || scope == MarkupScope::Item {
@@ -201,17 +208,19 @@ impl<'a> PrettyPrinter<'a> {
                 Boundary::Break | Boundary::WeakBreak => self.arena.hardline(),
             }
         };
-        doc.enclose(get_delim(items.start_bound), get_delim(items.end_bound))
+        doc.enclose(get_delim(repr.start_bound), get_delim(repr.end_bound))
     }
 }
 
-struct MarkupItem<'a> {
-    node: &'a SyntaxNode,
+#[derive(Default)]
+struct MarkupLine<'a> {
+    nodes: SmallVec<[&'a SyntaxNode; 4]>,
+    breaks: usize,
     mixed_text: bool,
 }
 
-struct MarkupItems<'a> {
-    items: Vec<MarkupItem<'a>>,
+struct MarkupRepr<'a> {
+    lines: Vec<MarkupLine<'a>>,
     start_bound: Boundary,
     end_bound: Boundary,
 }
@@ -242,14 +251,6 @@ impl Boundary {
         }
     }
 
-    fn from_space_weak(space: &str) -> Self {
-        if space.has_linebreak() {
-            Self::WeakBreak
-        } else {
-            Self::WeakSpaceOrBreak
-        }
-    }
-
     fn strip_space(self) -> Self {
         match self {
             Self::SpaceOrBreak => Self::NilOrBreak,
@@ -261,108 +262,103 @@ impl Boundary {
 // Break markup into lines, split by stmt, parbreak, newline, multiline raw,
 // equation if a line contains text, it will be skipped by the formatter
 // to keep the original format.
-fn collect_markup_items(markup: Markup<'_>) -> MarkupItems {
-    let mut items = MarkupItems {
-        items: vec![],
+fn collect_markup_repr(markup: Markup<'_>) -> MarkupRepr {
+    let mut repr = MarkupRepr {
+        lines: vec![],
         start_bound: Boundary::Nil,
         end_bound: Boundary::Nil,
     };
-    let mut cursor = 0;
-    let mut current_line_has_text = false;
+    let mut current_line = MarkupLine::default();
     for node in markup.to_untyped().children() {
-        let mut break_line = false;
-        if (node.kind() == SyntaxKind::Space || node.kind() == SyntaxKind::Parbreak)
-            && node.text().has_linebreak()
-            || node.kind().is_stmt()
-        {
-            break_line = true;
-        } else if let Some(expr) = node.cast::<Expr>() {
-            match expr {
-                Expr::Text(_) | Expr::Strong(_) | Expr::Emph(_) => current_line_has_text = true,
-                Expr::Raw(r) => {
-                    if r.block() {
-                        break_line = true;
-                    } else {
-                        current_line_has_text = true;
-                    }
+        let break_line = match node.kind() {
+            SyntaxKind::Parbreak => {
+                current_line.breaks = node.text().count_linebreaks(); // This is >= 2
+                true
+            }
+            SyntaxKind::Space if current_line.nodes.is_empty() => {
+                repr.start_bound = Boundary::from_space(node.text());
+                continue;
+            }
+            SyntaxKind::Space if node.text().has_linebreak() => {
+                current_line.breaks = 1; // Must only one
+                true
+            }
+            _ => {
+                if matches!(
+                    node.kind(),
+                    SyntaxKind::Text | SyntaxKind::Strong | SyntaxKind::Emph | SyntaxKind::Raw
+                ) {
+                    current_line.mixed_text = true;
                 }
-                Expr::Code(_) => break_line = true,
-                Expr::Equation(e) if e.block() => break_line = true,
-                _ => (),
+                if current_line.nodes.is_empty() && is_block_elem(node) {
+                    repr.start_bound = repr.start_bound.strip_space();
+                }
+                current_line.nodes.push(node);
+                false
             }
-        }
-        if node.kind() == SyntaxKind::Space && items.items.is_empty() {
-            // Discard leading space and mark it.
-            items.start_bound = Boundary::from_space(node.text());
-        } else {
-            if items.items.is_empty() && is_block_elem_untyped(node) {
-                items.start_bound = items.start_bound.strip_space();
-            }
-            items.items.push(MarkupItem {
-                node,
-                mixed_text: false,
-            });
-        }
+        };
         if break_line {
-            if current_line_has_text {
-                for item in &mut items.items[cursor..] {
-                    item.mixed_text = true;
-                }
-            }
-            cursor = items.items.len();
-            current_line_has_text = false;
+            repr.lines.push(current_line);
+            current_line = MarkupLine::default();
         }
     }
-    if current_line_has_text {
-        for item in &mut items.items[cursor..] {
-            item.mixed_text = true;
-        }
+    if !current_line.nodes.is_empty() {
+        repr.lines.push(current_line);
     }
 
     // Remove trailing spaces
-    while let Some(last) = items.items.last() {
-        if last.node.kind() != SyntaxKind::Space {
-            if is_block_elem(last) {
-                items.end_bound = items.end_bound.strip_space();
-            }
-            break;
+    if let Some(last_line) = repr.lines.last_mut() {
+        if last_line.breaks > 0 {
+            last_line.breaks -= 1;
+            repr.end_bound = Boundary::Break;
         }
-        items.end_bound = Boundary::from_space(last.node.text());
-        items.items.pop();
+        while let Some(last) = last_line.nodes.last() {
+            if last.kind() == SyntaxKind::Space {
+                repr.end_bound = Boundary::from_space(last.text());
+                last_line.nodes.pop();
+            } else {
+                if is_block_elem(last) {
+                    repr.end_bound = repr.end_bound.strip_space();
+                }
+                break;
+            }
+        }
     }
 
     // Check boundary through comments
-    if items.start_bound == Boundary::Nil {
-        match items.items.iter().find(|item| !is_comment_node(item.node)) {
-            Some(it) if it.node.kind() == SyntaxKind::Space => {
-                items.start_bound = Boundary::from_space_weak(it.node.text());
+    if repr.start_bound == Boundary::Nil {
+        if let Some(first_line) = repr.lines.first() {
+            match first_line.nodes.iter().find(|it| !is_comment_node(it)) {
+                Some(it) if is_block_elem(it) => {
+                    repr.start_bound = Boundary::NilOrBreak;
+                }
+                Some(it) if it.kind() == SyntaxKind::Space => {
+                    repr.start_bound = Boundary::WeakSpaceOrBreak;
+                }
+                None if !first_line.nodes.is_empty() => repr.start_bound = Boundary::WeakBreak,
+                _ => {}
             }
-            Some(it) if is_block_elem(it) => {
-                items.start_bound = Boundary::NilOrBreak;
-            }
-            _ => {}
         }
     }
-    if items.end_bound == Boundary::Nil {
-        match (items.items.iter().rev()).find(|item| !is_comment_node(item.node)) {
-            Some(it) if it.node.kind() == SyntaxKind::Space => {
-                items.end_bound = Boundary::from_space_weak(it.node.text());
+    if repr.end_bound == Boundary::Nil {
+        if let Some(last_line) = repr.lines.last() {
+            match last_line.nodes.iter().rfind(|it| !is_comment_node(it)) {
+                Some(it) if is_block_elem(it) => {
+                    repr.end_bound = Boundary::NilOrBreak;
+                }
+                Some(it) if it.kind() == SyntaxKind::Space => {
+                    repr.end_bound = Boundary::WeakSpaceOrBreak;
+                }
+                None if !last_line.nodes.is_empty() => repr.end_bound = Boundary::WeakBreak,
+                _ => {}
             }
-            Some(it) if is_block_elem(it) => {
-                items.end_bound = Boundary::NilOrBreak;
-            }
-            _ => {}
         }
     }
 
-    items
+    repr
 }
 
-fn is_block_elem(it: &MarkupItem<'_>) -> bool {
-    is_block_elem_untyped(it.node)
-}
-
-fn is_block_elem_untyped(it: &'_ SyntaxNode) -> bool {
+fn is_block_elem(it: &'_ SyntaxNode) -> bool {
     matches!(
         it.kind(),
         SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
