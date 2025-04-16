@@ -7,9 +7,8 @@ use std::{
 use anyhow::{bail, Context, Result};
 use log::{debug, error, info, warn};
 use typst_syntax::Source;
-use walkdir::{DirEntry, WalkDir};
-
 use typstyle_core::{Config, Typstyle};
+use walkdir::{DirEntry, WalkDir};
 
 use crate::cli::{CliArguments, StyleArgs};
 

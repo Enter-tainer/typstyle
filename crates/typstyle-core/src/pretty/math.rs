@@ -1,14 +1,15 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::ext::StrExt;
-
 use super::{
-    flow::FlowItem,
-    list::{ListStyle, ListStylist},
+    layout::{
+        flow::FlowItem,
+        list::{ListStyle, ListStylist},
+    },
     style::FoldStyle,
     ArenaDoc, Mode, PrettyPrinter,
 };
+use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_equation(&'a self, equation: Equation<'a>) -> ArenaDoc<'a> {

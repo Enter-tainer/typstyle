@@ -1,34 +1,31 @@
 pub mod doc_ext;
 pub mod style;
 
-mod chain;
 mod code_chain;
 mod code_flow;
 mod code_list;
+mod code_misc;
 mod comment;
-mod flow;
 mod func_call;
 mod import;
-mod list;
+mod layout;
 mod markup;
 mod math;
 mod mode;
 mod parened_expr;
-mod plain;
 mod table;
+mod text;
 mod util;
-
-pub use mode::Mode;
 
 use std::cell::{Cell, RefCell};
 
 use itertools::Itertools;
+pub use mode::Mode;
 use pretty::{Arena, DocAllocator, DocBuilder};
-use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
-
-use crate::{ext::StrExt, AttrStore, Config};
-use doc_ext::DocExt;
 use style::FoldStyle;
+use typst_syntax::{ast::*, SyntaxNode};
+
+use crate::{AttrStore, Config};
 
 pub type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
@@ -175,107 +172,6 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_trivia_untyped(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
         trivia(&self.arena, node)
-    }
-
-    fn convert_text(&'a self, text: Text<'a>) -> ArenaDoc<'a> {
-        self.convert_trivia(text)
-    }
-
-    fn convert_space(&'a self, space: Space<'a>) -> ArenaDoc<'a> {
-        let node = space.to_untyped();
-        if node.text().has_linebreak() {
-            self.arena.hardline()
-        } else {
-            self.arena.space()
-        }
-    }
-
-    fn convert_parbreak(&'a self, parbreak: Parbreak<'a>) -> ArenaDoc<'a> {
-        let newline_count = parbreak.to_untyped().text().count_linebreaks();
-        self.arena.hardline().repeat_n(newline_count)
-    }
-
-    fn convert_raw(&'a self, raw: Raw<'a>) -> ArenaDoc<'a> {
-        // no format multiline single backtick raw block
-        if !raw.block() && raw.lines().count() > 1 {
-            return self.format_disabled(raw.to_untyped());
-        }
-
-        let mut doc = self.arena.nil();
-        for child in raw.to_untyped().children() {
-            if let Some(delim) = child.cast::<RawDelim>() {
-                doc += self.convert_verbatim(delim);
-            } else if let Some(lang) = child.cast::<RawLang>() {
-                doc += self.convert_verbatim(lang);
-            } else if let Some(line) = child.cast::<Text>() {
-                doc += self.convert_trivia(line);
-            } else if child.kind() == SyntaxKind::RawTrimmed {
-                if child.text().has_linebreak() {
-                    doc += self.arena.hardline();
-                } else {
-                    doc += self.arena.space();
-                }
-            }
-        }
-        doc
-    }
-
-    fn convert_ref(&'a self, reference: Ref<'a>) -> ArenaDoc<'a> {
-        let mut doc = self.arena.text("@") + self.arena.text(reference.target());
-        if let Some(supplement) = reference.supplement() {
-            doc += self.convert_content_block(supplement);
-        }
-        doc
-    }
-
-    fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
-        self.convert_verbatim(ident)
-    }
-
-    fn convert_array_item(&'a self, array_item: ArrayItem<'a>) -> ArenaDoc<'a> {
-        match array_item {
-            ArrayItem::Pos(p) => self.convert_expr(p),
-            ArrayItem::Spread(s) => self.convert_spread(s),
-        }
-    }
-
-    fn convert_dict_item(&'a self, dict_item: DictItem<'a>) -> ArenaDoc<'a> {
-        match dict_item {
-            DictItem::Named(n) => self.convert_named(n),
-            DictItem::Keyed(k) => self.convert_keyed(k),
-            DictItem::Spread(s) => self.convert_spread(s),
-        }
-    }
-
-    fn convert_param(&'a self, param: Param<'a>) -> ArenaDoc<'a> {
-        match param {
-            Param::Pos(p) => self.convert_pattern(p),
-            Param::Named(n) => self.convert_named(n),
-            Param::Spread(s) => self.convert_spread(s),
-        }
-    }
-
-    pub fn convert_pattern(&'a self, pattern: Pattern<'a>) -> ArenaDoc<'a> {
-        if let Some(res) = self.check_disabled(pattern.to_untyped()) {
-            return res;
-        }
-        match pattern {
-            Pattern::Normal(n) => self.convert_expr(n),
-            Pattern::Placeholder(p) => self.convert_verbatim(p),
-            Pattern::Destructuring(d) => self.convert_destructuring(d),
-            Pattern::Parenthesized(p) => self.convert_parenthesized(p),
-        }
-    }
-
-    fn convert_destructuring_item(
-        &'a self,
-        destructuring_item: DestructuringItem<'a>,
-    ) -> ArenaDoc<'a> {
-        match destructuring_item {
-            DestructuringItem::Spread(s) => self.convert_spread(s),
-            DestructuringItem::Named(n) => self.convert_named(n),
-            DestructuringItem::Pattern(p) => self.convert_pattern(p),
-        }
     }
 }
 

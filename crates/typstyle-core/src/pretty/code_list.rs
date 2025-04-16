@@ -1,7 +1,7 @@
 use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
-    list::{ListStyle, ListStylist},
+    layout::list::{ListStyle, ListStylist},
     mode::Mode,
     style::FoldStyle,
     util::{has_comment_children, is_only_one_and},

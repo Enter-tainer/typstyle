@@ -1,9 +1,12 @@
 use pretty::DocAllocator;
-use typst_syntax::{ast::*, SyntaxKind};
+use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::ext::BoolExt;
-
-use super::{flow::FlowItem, ArenaDoc, PrettyPrinter};
+use super::{
+    layout::flow::{FlowItem, FlowStylist},
+    util::is_comment_node,
+    ArenaDoc, Mode, PrettyPrinter,
+};
+use crate::ext::{BoolExt, StrExt};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_named(&'a self, named: Named<'a>) -> ArenaDoc<'a> {
@@ -236,6 +239,68 @@ impl<'a> PrettyPrinter<'a> {
                 FlowItem::tight_spaced(self.arena.text(":"))
             } else if let Some(expr) = child.cast() {
                 // selector or transform
+                FlowItem::spaced(self.convert_expr(expr))
+            } else {
+                FlowItem::none()
+            }
+        })
+    }
+
+    /// Convert a flow-like structure with given item producer.
+    pub(super) fn convert_flow_like(
+        &'a self,
+        node: &'a SyntaxNode,
+        producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
+    ) -> ArenaDoc<'a> {
+        self.convert_flow_like_iter(node.children(), producer)
+    }
+
+    pub(super) fn convert_flow_like_iter(
+        &'a self,
+        children: impl Iterator<Item = &'a SyntaxNode>,
+        mut producer: impl FnMut(&'a SyntaxNode) -> FlowItem<'a>,
+    ) -> ArenaDoc<'a> {
+        let mut flow = FlowStylist::new(self);
+        let mut peek_line_comment = false;
+        let mut peek_hash = false;
+        for child in children {
+            let at_line_comment = peek_line_comment;
+            peek_line_comment = false;
+            let at_hash = peek_hash;
+            peek_hash = false;
+            if child.kind().is_keyword()
+                && !matches!(child.kind(), SyntaxKind::None | SyntaxKind::Auto)
+            {
+                flow.push_doc(self.arena.text(child.text().as_str()), true, true);
+            } else if is_comment_node(child) {
+                if child.kind() == SyntaxKind::LineComment {
+                    peek_line_comment = true; // defers the linebreak
+                }
+                flow.push_comment(child);
+            } else if at_line_comment
+                && child.kind() == SyntaxKind::Space
+                && child.text().has_linebreak()
+            {
+                flow.push_doc(self.arena.hardline(), false, false);
+                flow.enter_new_line();
+            } else if child.kind() == SyntaxKind::Hash {
+                flow.push_doc(self.arena.text("#"), true, false);
+                peek_hash = true;
+            } else {
+                let _g = self.with_mode_if(Mode::Code, at_hash);
+                let item = producer(child);
+                if let Some(repr) = item.0 {
+                    flow.push_doc(repr.doc, repr.space_before, repr.space_after);
+                }
+            }
+        }
+        flow.into_doc()
+    }
+
+    /// Convert nodes with only keywords, exprs (followed by space), and comments.
+    pub(super) fn convert_expr_flow(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
+        self.convert_flow_like(node, |child| {
+            if let Some(expr) = child.cast() {
                 FlowItem::spaced(self.convert_expr(expr))
             } else {
                 FlowItem::none()

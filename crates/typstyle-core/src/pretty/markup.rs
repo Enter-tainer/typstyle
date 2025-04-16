@@ -1,15 +1,14 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::{ext::StrExt, pretty::mode::Mode};
-
 use super::{
     doc_ext::DocExt,
-    flow::FlowItem,
+    layout::flow::FlowItem,
     trivia_strip_prefix,
     util::{is_comment_node, is_only_one_and},
     ArenaDoc, PrettyPrinter,
 };
+use crate::{ext::StrExt, pretty::mode::Mode};
 
 #[derive(Debug, PartialEq, Eq)]
 enum MarkupScope {
@@ -43,6 +42,39 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_emph(&'a self, emph: Emph<'a>) -> ArenaDoc<'a> {
         let body = self.convert_markup_impl(emph.body(), MarkupScope::Strong);
         body.enclose("_", "_")
+    }
+
+    pub(super) fn convert_raw(&'a self, raw: Raw<'a>) -> ArenaDoc<'a> {
+        // no format multiline single backtick raw block
+        if !raw.block() && raw.lines().count() > 1 {
+            return self.format_disabled(raw.to_untyped());
+        }
+
+        let mut doc = self.arena.nil();
+        for child in raw.to_untyped().children() {
+            if let Some(delim) = child.cast::<RawDelim>() {
+                doc += self.convert_verbatim(delim);
+            } else if let Some(lang) = child.cast::<RawLang>() {
+                doc += self.convert_verbatim(lang);
+            } else if let Some(line) = child.cast::<Text>() {
+                doc += self.convert_text(line);
+            } else if child.kind() == SyntaxKind::RawTrimmed {
+                if child.text().has_linebreak() {
+                    doc += self.arena.hardline();
+                } else {
+                    doc += self.arena.space();
+                }
+            }
+        }
+        doc
+    }
+
+    pub(super) fn convert_ref(&'a self, reference: Ref<'a>) -> ArenaDoc<'a> {
+        let mut doc = self.arena.text("@") + self.arena.text(reference.target());
+        if let Some(supplement) = reference.supplement() {
+            doc += self.convert_content_block(supplement);
+        }
+        doc
     }
 
     pub(super) fn convert_heading(&'a self, heading: Heading<'a>) -> ArenaDoc<'a> {
