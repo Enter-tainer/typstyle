@@ -76,6 +76,7 @@ impl<'a> PrettyPrinter<'a> {
                 doc += self.arena.text("#");
                 peek_hash = true;
             } else {
+                // may be LeftParen, RightParen
                 doc += self.convert_trivia_untyped(node);
             }
         }
@@ -144,7 +145,7 @@ impl<'a> PrettyPrinter<'a> {
             } else if node.kind() == SyntaxKind::Space {
                 FlowItem::none()
             } else {
-                FlowItem::tight(self.convert_verbatim_untyped(node))
+                FlowItem::tight(self.convert_trivia_untyped(node))
             }
         })
     }
@@ -158,7 +159,7 @@ impl<'a> PrettyPrinter<'a> {
             if let Some(expr) = node.cast::<Expr>() {
                 FlowItem::spaced(self.convert_expr(expr))
             } else if node.kind() != SyntaxKind::Space {
-                FlowItem::spaced(self.convert_verbatim_untyped(node))
+                FlowItem::spaced(self.convert_trivia_untyped(node))
             } else {
                 FlowItem::none()
             }
@@ -172,7 +173,7 @@ impl<'a> PrettyPrinter<'a> {
             } else if node.kind() == SyntaxKind::Space {
                 FlowItem::none()
             } else {
-                FlowItem::tight(self.convert_verbatim_untyped(node))
+                FlowItem::tight(self.convert_trivia_untyped(node))
             }
         })
     }
