@@ -60,7 +60,7 @@ impl Typstyle {
         let attr_store = AttrStore::new(root);
         let printer = PrettyPrinter::new(self.config.clone(), attr_store);
         let markup = root.cast().unwrap();
-        let doc = printer.convert_markup(markup);
+        let doc = printer.convert_markup(Default::default(), markup);
         inspector(&doc);
         let result = doc.pretty(self.config.max_width).to_string();
         let result = utils::strip_trailing_whitespace(&result);

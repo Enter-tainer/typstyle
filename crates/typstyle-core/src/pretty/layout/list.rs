@@ -3,7 +3,7 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Mode, PrettyPrinter},
+    pretty::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Context, Mode, PrettyPrinter},
 };
 
 pub struct ListStylist<'a> {
@@ -125,47 +125,55 @@ impl<'a> ListStylist<'a> {
     /// Process a list of `AstNode`'s.
     pub fn process_list<T: AstNode<'a>>(
         self,
+        ctx: Context,
         list_node: &'a SyntaxNode,
-        item_converter: impl Fn(T) -> ArenaDoc<'a>,
+        item_converter: impl Fn(Context, T) -> ArenaDoc<'a>,
     ) -> Self {
-        self.process_list_impl(list_node, |node| node.cast().map(&item_converter))
+        self.process_list_impl(ctx, list_node, |ctx, node| {
+            node.cast().map(|node| item_converter(ctx, node))
+        })
     }
 
     /// Process a list of any nodes. Only use this when the node does not implement `AstNode`.
     pub fn process_list_impl(
         self,
+        ctx: Context,
         list_node: &'a SyntaxNode,
-        item_checker: impl FnMut(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
+        item_checker: impl FnMut(Context, &'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
-        self.process_iterable_impl(list_node.children(), item_checker)
+        self.process_iterable_impl(ctx, list_node.children(), item_checker)
     }
 
     pub fn process_iterable<T: AstNode<'a>>(
         self,
+        ctx: Context,
         iterable: impl Iterator<Item = &'a SyntaxNode>,
-        item_converter: impl Fn(T) -> ArenaDoc<'a>,
+        item_converter: impl Fn(Context, T) -> ArenaDoc<'a>,
     ) -> Self {
-        self.process_iterable_impl(iterable, |node| node.cast().map(&item_converter))
+        self.process_iterable_impl(ctx, iterable, |ctx, node| {
+            node.cast().map(|node| item_converter(ctx, node))
+        })
     }
 
     /// Process an iterable of nodes.
     pub fn process_iterable_impl(
         mut self,
+        ctx: Context,
         iterable: impl Iterator<Item = &'a SyntaxNode>,
-        mut item_checker: impl FnMut(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
+        mut item_checker: impl FnMut(Context, &'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
         // Each item can be attached with comments at the front and back.
         // Can break line after front attachments.
         // If the back attachment appears before the comma, the comma is move to its front if multiline.
 
         for node in iterable {
-            let _g = self.printer.with_mode_if(Mode::Code, self.peek_hash);
-            if let Some(item_body) = item_checker(node) {
+            let ctx = ctx.with_mode_if(Mode::Code, self.peek_hash);
+            if let Some(item_body) = item_checker(ctx, node) {
                 self.add_item(item_body);
                 self.peek_hash = false;
             } else {
                 self.peek_hash = false;
-                self.process_trivia(node);
+                self.process_trivia(ctx, node);
             }
         }
 
@@ -209,7 +217,7 @@ impl<'a> ListStylist<'a> {
         self.can_attach = true;
     }
 
-    fn process_trivia(&mut self, node: &'a SyntaxNode) {
+    fn process_trivia(&mut self, ctx: Context, node: &'a SyntaxNode) {
         match node.kind() {
             SyntaxKind::LineComment | SyntaxKind::BlockComment => {
                 self.has_comment = true;
@@ -218,7 +226,8 @@ impl<'a> ListStylist<'a> {
                     self.has_line_comment = true;
                     self.fold_style = FoldStyle::Never;
                 }
-                self.free_comments.push(self.printer.convert_comment(node));
+                self.free_comments
+                    .push(self.printer.convert_comment(ctx, node));
             }
             SyntaxKind::Comma => {
                 self.try_attach_comments();

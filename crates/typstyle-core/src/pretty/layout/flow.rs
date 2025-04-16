@@ -1,5 +1,4 @@
 use pretty::DocAllocator;
-use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use crate::pretty::{ArenaDoc, PrettyPrinter};
 
@@ -70,9 +69,8 @@ impl<'a> FlowStylist<'a> {
         }
     }
 
-    pub fn push_comment(&mut self, node: &'a SyntaxNode) {
-        let doc = self.printer.convert_comment(node);
-        if node.kind() == SyntaxKind::BlockComment {
+    pub fn push_comment(&mut self, doc: ArenaDoc<'a>, is_block: bool) {
+        if is_block {
             self.push_doc(doc, true, true);
         } else {
             if !self.at_line_start {

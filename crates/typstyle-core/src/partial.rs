@@ -5,7 +5,10 @@ use typst_syntax::{
     LinkedNode, Source, Span, SyntaxKind,
 };
 
-use crate::{pretty::Mode, utils, AttrStore, Error, PrettyPrinter, Typstyle};
+use crate::{
+    pretty::{Context, Mode},
+    utils, AttrStore, Error, PrettyPrinter, Typstyle,
+};
 
 impl Typstyle {
     /// Format the node with minimal span that covering the given range.
@@ -25,13 +28,13 @@ impl Typstyle {
 
         let attrs = AttrStore::new(node.get()); // Here we only compute the attributes of that subtree.
         let printer = PrettyPrinter::new(self.config.clone(), attrs);
-        printer.push_mode(mode);
+        let ctx = Context::default().with_mode(mode);
         let doc = if let Some(markup) = node.cast() {
-            printer.convert_markup(markup)
+            printer.convert_markup(ctx, markup)
         } else if let Some(expr) = node.cast() {
-            printer.convert_expr(expr)
+            printer.convert_expr(ctx, expr)
         } else if let Some(pattern) = node.cast() {
-            printer.convert_pattern(pattern)
+            printer.convert_pattern(ctx, pattern)
         } else {
             return Err(Error::SyntaxError);
         };

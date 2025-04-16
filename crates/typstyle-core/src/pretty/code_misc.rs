@@ -1,55 +1,64 @@
 use typst_syntax::ast::*;
 
-use super::{ArenaDoc, PrettyPrinter};
+use super::{ArenaDoc, Context, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
         self.convert_trivia(ident)
     }
 
-    pub(super) fn convert_array_item(&'a self, array_item: ArrayItem<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_array_item(
+        &'a self,
+        ctx: Context,
+        array_item: ArrayItem<'a>,
+    ) -> ArenaDoc<'a> {
         match array_item {
-            ArrayItem::Pos(p) => self.convert_expr(p),
-            ArrayItem::Spread(s) => self.convert_spread(s),
+            ArrayItem::Pos(p) => self.convert_expr(ctx, p),
+            ArrayItem::Spread(s) => self.convert_spread(ctx, s),
         }
     }
 
-    pub(super) fn convert_dict_item(&'a self, dict_item: DictItem<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_dict_item(
+        &'a self,
+        ctx: Context,
+        dict_item: DictItem<'a>,
+    ) -> ArenaDoc<'a> {
         match dict_item {
-            DictItem::Named(n) => self.convert_named(n),
-            DictItem::Keyed(k) => self.convert_keyed(k),
-            DictItem::Spread(s) => self.convert_spread(s),
+            DictItem::Named(n) => self.convert_named(ctx, n),
+            DictItem::Keyed(k) => self.convert_keyed(ctx, k),
+            DictItem::Spread(s) => self.convert_spread(ctx, s),
         }
     }
 
-    pub(super) fn convert_param(&'a self, param: Param<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_param(&'a self, ctx: Context, param: Param<'a>) -> ArenaDoc<'a> {
         match param {
-            Param::Pos(p) => self.convert_pattern(p),
-            Param::Named(n) => self.convert_named(n),
-            Param::Spread(s) => self.convert_spread(s),
+            Param::Pos(p) => self.convert_pattern(ctx, p),
+            Param::Named(n) => self.convert_named(ctx, n),
+            Param::Spread(s) => self.convert_spread(ctx, s),
         }
     }
 
-    pub fn convert_pattern(&'a self, pattern: Pattern<'a>) -> ArenaDoc<'a> {
+    pub fn convert_pattern(&'a self, ctx: Context, pattern: Pattern<'a>) -> ArenaDoc<'a> {
         if let Some(res) = self.check_disabled(pattern.to_untyped()) {
             return res;
         }
         match pattern {
-            Pattern::Normal(n) => self.convert_expr(n),
+            Pattern::Normal(n) => self.convert_expr(ctx, n),
             Pattern::Placeholder(_) => self.convert_literal("_"),
-            Pattern::Destructuring(d) => self.convert_destructuring(d),
-            Pattern::Parenthesized(p) => self.convert_parenthesized(p),
+            Pattern::Destructuring(d) => self.convert_destructuring(ctx, d),
+            Pattern::Parenthesized(p) => self.convert_parenthesized(ctx, p),
         }
     }
 
     pub(super) fn convert_destructuring_item(
         &'a self,
+        ctx: Context,
         destructuring_item: DestructuringItem<'a>,
     ) -> ArenaDoc<'a> {
         match destructuring_item {
-            DestructuringItem::Spread(s) => self.convert_spread(s),
-            DestructuringItem::Named(n) => self.convert_named(n),
-            DestructuringItem::Pattern(p) => self.convert_pattern(p),
+            DestructuringItem::Spread(s) => self.convert_spread(ctx, s),
+            DestructuringItem::Named(n) => self.convert_named(ctx, n),
+            DestructuringItem::Pattern(p) => self.convert_pattern(ctx, p),
         }
     }
 }

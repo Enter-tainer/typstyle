@@ -2,14 +2,17 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
     layout::list::{ListStyle, ListStylist},
-    mode::Mode,
     style::FoldStyle,
     util::{has_comment_children, is_only_one_and},
-    ArenaDoc, PrettyPrinter,
+    ArenaDoc, Context, Mode, PrettyPrinter,
 };
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_code_block(&'a self, code_block: CodeBlock<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_code_block(
+        &'a self,
+        ctx: Context,
+        code_block: CodeBlock<'a>,
+    ) -> ArenaDoc<'a> {
         if self
             .attr_store
             .is_format_disabled(code_block.body().to_untyped())
@@ -17,7 +20,7 @@ impl<'a> PrettyPrinter<'a> {
             return self.convert_verbatim(code_block);
         }
 
-        let _g = self.with_mode(Mode::Code);
+        let ctx = ctx.with_mode(Mode::Code);
 
         let mut nodes = vec![];
         for child in code_block.to_untyped().children() {
@@ -33,12 +36,14 @@ impl<'a> PrettyPrinter<'a> {
         ListStylist::new(self)
             .disallow_front_comment()
             .with_fold_style(if can_fold {
-                self.get_fold_style(code_block)
+                self.get_fold_style(ctx, code_block)
             } else {
                 FoldStyle::Never
             })
             .keep_linebreak(self.config.blank_lines_upper_bound)
-            .process_iterable(nodes.into_iter(), |expr| self.convert_expr(expr))
+            .process_iterable(ctx, nodes.into_iter(), |ctx, expr| {
+                self.convert_expr(ctx, expr)
+            })
             .print_doc(ListStyle {
                 separator: "",
                 delim: ("{", "}"),
@@ -49,6 +54,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_parenthesized_impl(
         &'a self,
+        ctx: Context,
         parenthesized: Parenthesized<'a>,
     ) -> ArenaDoc<'a> {
         // NOTE: This is a safe cast. The parentheses for patterns are all optional.
@@ -66,9 +72,9 @@ impl<'a> PrettyPrinter<'a> {
             && !has_comment_children(parenthesized.to_untyped());
 
         ListStylist::new(self)
-            .with_fold_style(self.get_fold_style(parenthesized))
-            .process_list(parenthesized.to_untyped(), |node| {
-                self.convert_pattern(node)
+            .with_fold_style(self.get_fold_style(ctx, parenthesized))
+            .process_list(ctx, parenthesized.to_untyped(), |ctx, node| {
+                self.convert_pattern(ctx, node)
             })
             .print_doc(ListStyle {
                 separator: "",
@@ -78,8 +84,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     /// In math mode, we have `$fun(1, 2; 3, 4)$ == $fun(#(1, 2), #(3, 4))$`.
-    pub(super) fn convert_array(&'a self, array: Array<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+    pub(super) fn convert_array(&'a self, ctx: Context, array: Array<'a>) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         // Whether the array has parens.
         // This is also used to determine whether we need to add a trailing comma.
@@ -97,8 +103,10 @@ impl<'a> PrettyPrinter<'a> {
                 .is_some_and(|child| child.kind() == SyntaxKind::Comma);
 
         ListStylist::new(self)
-            .with_fold_style(self.get_fold_style(array))
-            .process_list(array.to_untyped(), |node| self.convert_array_item(node))
+            .with_fold_style(self.get_fold_style(ctx, array))
+            .process_list(ctx, array.to_untyped(), |ctx, node| {
+                self.convert_array_item(ctx, node)
+            })
             .print_doc(ListStyle {
                 add_trailing_sep_single: is_explicit,
                 add_trailing_sep_always: ends_with_comma,
@@ -109,14 +117,16 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    pub(super) fn convert_dict(&'a self, dict: Dict<'a>) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+    pub(super) fn convert_dict(&'a self, ctx: Context, dict: Dict<'a>) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         let all_spread = dict.items().all(|item| matches!(item, DictItem::Spread(_)));
 
         ListStylist::new(self)
-            .with_fold_style(self.get_fold_style(dict))
-            .process_list(dict.to_untyped(), |node| self.convert_dict_item(node))
+            .with_fold_style(self.get_fold_style(ctx, dict))
+            .process_list(ctx, dict.to_untyped(), |ctx, node| {
+                self.convert_dict_item(ctx, node)
+            })
             .print_doc(ListStyle {
                 delim: (if all_spread { "(:" } else { "(" }, ")"),
                 ..Default::default()
@@ -125,18 +135,19 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_destructuring(
         &'a self,
+        ctx: Context,
         destructuring: Destructuring<'a>,
     ) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         let only_one_pattern = is_only_one_and(destructuring.items(), |it| {
             matches!(*it, DestructuringItem::Pattern(_))
         });
 
         ListStylist::new(self)
-            .with_fold_style(self.get_fold_style(destructuring))
-            .process_list(destructuring.to_untyped(), |node| {
-                self.convert_destructuring_item(node)
+            .with_fold_style(self.get_fold_style(ctx, destructuring))
+            .process_list(ctx, destructuring.to_untyped(), |ctx, node| {
+                self.convert_destructuring_item(ctx, node)
             })
             .always_fold_if(|| only_one_pattern)
             .print_doc(ListStyle {
@@ -145,9 +156,14 @@ impl<'a> PrettyPrinter<'a> {
             })
     }
 
-    pub(super) fn convert_params(&'a self, params: Params<'a>, is_unnamed: bool) -> ArenaDoc<'a> {
+    pub(super) fn convert_params(
+        &'a self,
+        ctx: Context,
+        params: Params<'a>,
+        is_unnamed: bool,
+    ) -> ArenaDoc<'a> {
         // SAFETY: The param must be simple if the parens is optional.
-        let _g = self.with_mode(Mode::CodeCont);
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         let is_single_simple = is_unnamed
             && is_only_one_and(params.children(), |it| {
@@ -158,8 +174,10 @@ impl<'a> PrettyPrinter<'a> {
             });
 
         ListStylist::new(self)
-            .with_fold_style(self.get_fold_style(params))
-            .process_list(params.to_untyped(), |node| self.convert_param(node))
+            .with_fold_style(self.get_fold_style(ctx, params))
+            .process_list(ctx, params.to_untyped(), |ctx, node| {
+                self.convert_param(ctx, node)
+            })
             .always_fold_if(|| is_single_simple)
             .print_doc(ListStyle {
                 omit_delim_single: is_single_simple,

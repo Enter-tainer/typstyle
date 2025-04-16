@@ -4,7 +4,7 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
     util::{func_name, indent_func_name},
-    ArenaDoc,
+    ArenaDoc, Context,
 };
 use crate::{
     pretty::{util::get_parenthesized_args, Mode},
@@ -23,15 +23,20 @@ const BLACK_LIST: [&str; 6] = [
 const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header", "grid.footer"];
 
 impl<'a> PrettyPrinter<'a> {
-    pub(super) fn convert_table(&'a self, table: FuncCall<'a>, columns: usize) -> ArenaDoc<'a> {
-        let _g = self.with_mode(Mode::CodeCont);
+    pub(super) fn convert_table(
+        &'a self,
+        ctx: Context,
+        table: FuncCall<'a>,
+        columns: usize,
+    ) -> ArenaDoc<'a> {
+        let ctx = ctx.with_mode(Mode::CodeCont);
 
         let mut doc = self.arena.hardline();
         for named in table.args().items().filter_map(|node| match node {
             Arg::Named(named) => Some(named),
             _ => None,
         }) {
-            doc += self.convert_named(named) + "," + self.arena.hardline();
+            doc += self.convert_named(ctx, named) + "," + self.arena.hardline();
         }
         #[derive(Debug)]
         struct Row<'a> {
@@ -82,7 +87,7 @@ impl<'a> PrettyPrinter<'a> {
             let mut row_doc = self.arena.nil();
             for (pos, cell) in row.cells.into_iter().with_position() {
                 row_doc = row_doc
-                    + self.convert_arg(cell)
+                    + self.convert_arg(ctx, cell)
                     + self.arena.text(",")
                     + (if has_predecessor(&pos) {
                         self.arena.line()

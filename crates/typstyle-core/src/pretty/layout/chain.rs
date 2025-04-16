@@ -6,7 +6,7 @@ use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{util::is_comment_node, ArenaDoc, PrettyPrinter},
+    pretty::{util::is_comment_node, ArenaDoc, Context, PrettyPrinter},
 };
 
 /// Intermediate representation in chain formatting.
@@ -56,15 +56,17 @@ impl<'a> ChainStylist<'a> {
     /// - Others: See [`Self::process`].
     pub fn process_resolved(
         self,
+        ctx: Context,
         nodes: impl Iterator<Item = &'a SyntaxNode>,
         operand_pred: impl Fn(&'a SyntaxNode) -> bool,
         op_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
-        rhs_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
-        fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
+        rhs_converter: impl Fn(Context, &'a SyntaxNode) -> Option<ArenaDoc<'a>>,
+        fallback_converter: impl Fn(Context, &'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
         let mut nodes = nodes.collect_vec();
         nodes.reverse();
         self.process(
+            ctx,
             nodes,
             operand_pred,
             op_converter,
@@ -86,11 +88,12 @@ impl<'a> ChainStylist<'a> {
     ///   do not match the primary criteria. Used for sticky args and innermost expressions.
     pub fn process(
         mut self,
+        ctx: Context,
         nodes: Vec<&'a SyntaxNode>,
         operand_pred: impl Fn(&'a SyntaxNode) -> bool,
         op_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
-        rhs_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
-        fallback_converter: impl Fn(&'a SyntaxNode) -> Option<ArenaDoc<'a>>,
+        rhs_converter: impl Fn(Context, &'a SyntaxNode) -> Option<ArenaDoc<'a>>,
+        fallback_converter: impl Fn(Context, &'a SyntaxNode) -> Option<ArenaDoc<'a>>,
     ) -> Self {
         let mut can_attach = false;
         for node in nodes {
@@ -102,7 +105,7 @@ impl<'a> ChainStylist<'a> {
                         seen_op = true;
                         self.items.push(ChainItem::Op(op));
                     } else if is_comment_node(child) {
-                        let doc = self.printer.convert_comment(child);
+                        let doc = self.printer.convert_comment(ctx, child);
                         self.items.push(if can_attach {
                             ChainItem::Attached(doc)
                         } else {
@@ -119,13 +122,13 @@ impl<'a> ChainStylist<'a> {
                             can_attach = false;
                         }
                     } else if seen_op {
-                        if let Some(rhs) = rhs_converter(child) {
+                        if let Some(rhs) = rhs_converter(ctx, child) {
                             self.items.push(ChainItem::Body(rhs));
                             can_attach = true;
                         }
                     }
                 }
-            } else if let Some(fallback) = fallback_converter(node) {
+            } else if let Some(fallback) = fallback_converter(ctx, node) {
                 // We must use this to handle args.
                 if let Some(ChainItem::Body(body)) = self.items.last_mut() {
                     *body += fallback;
