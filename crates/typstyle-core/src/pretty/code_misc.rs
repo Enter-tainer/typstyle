@@ -4,7 +4,7 @@ use super::{ArenaDoc, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
-        self.convert_verbatim(ident)
+        self.convert_trivia(ident)
     }
 
     pub(super) fn convert_array_item(&'a self, array_item: ArrayItem<'a>) -> ArenaDoc<'a> {
@@ -36,7 +36,7 @@ impl<'a> PrettyPrinter<'a> {
         }
         match pattern {
             Pattern::Normal(n) => self.convert_expr(n),
-            Pattern::Placeholder(p) => self.convert_verbatim(p),
+            Pattern::Placeholder(_) => self.convert_literal("_"),
             Pattern::Destructuring(d) => self.convert_destructuring(d),
             Pattern::Parenthesized(p) => self.convert_parenthesized(p),
         }

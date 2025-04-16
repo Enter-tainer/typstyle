@@ -14,7 +14,7 @@ impl<'a> PrettyPrinter<'a> {
             .attr_store
             .is_format_disabled(code_block.body().to_untyped())
         {
-            return self.format_disabled(code_block.to_untyped());
+            return self.convert_verbatim(code_block);
         }
 
         let _g = self.with_mode(Mode::Code);

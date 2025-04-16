@@ -6,6 +6,7 @@ use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_text(&'a self, text: Text<'a>) -> ArenaDoc<'a> {
+        // `Text` only consists of words joined by single spaces
         self.convert_trivia(text)
     }
 

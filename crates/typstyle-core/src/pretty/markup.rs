@@ -5,7 +5,6 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use super::{
     doc_ext::DocExt,
     layout::flow::FlowItem,
-    trivia_strip_prefix,
     util::{is_comment_node, is_only_one_and},
     ArenaDoc, PrettyPrinter,
 };
@@ -48,15 +47,15 @@ impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_raw(&'a self, raw: Raw<'a>) -> ArenaDoc<'a> {
         // no format multiline single backtick raw block
         if !raw.block() && raw.lines().count() > 1 {
-            return self.format_disabled(raw.to_untyped());
+            return self.convert_verbatim(raw);
         }
 
         let mut doc = self.arena.nil();
         for child in raw.to_untyped().children() {
             if let Some(delim) = child.cast::<RawDelim>() {
-                doc += self.convert_verbatim(delim);
+                doc += self.convert_trivia(delim);
             } else if let Some(lang) = child.cast::<RawLang>() {
-                doc += self.convert_verbatim(lang);
+                doc += self.convert_trivia(lang);
             } else if let Some(line) = child.cast::<Text>() {
                 doc += self.convert_text(line);
             } else if child.kind() == SyntaxKind::RawTrimmed {
@@ -161,7 +160,8 @@ impl<'a> PrettyPrinter<'a> {
                 } else if is_comment_node(node) {
                     self.convert_comment(node)
                 } else {
-                    trivia_strip_prefix(&self.arena, node)
+                    // can be Hash, Semicolon, Shebang
+                    self.convert_trivia_untyped(node)
                 };
             }
             if breaks > 0 {
