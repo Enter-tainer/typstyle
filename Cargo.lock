@@ -3768,6 +3768,7 @@ dependencies = [
  "pretty",
  "rustc-hash",
  "serde",
+ "smallvec",
  "typst-syntax",
  "wasm-bindgen",
 ]

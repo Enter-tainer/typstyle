@@ -1,13 +1,14 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-content.typ
-snapshot_kind: text
 ---
-#[/* 1 */
+#[
+  /* 1 */
 
 ]
 
-#[ /* 2 */
+#[
+  /* 2 */
 
 ]
 
@@ -27,4 +28,5 @@ snapshot_kind: text
 
 #[
 
-  /* 6 */]
+  /* 6 */
+]

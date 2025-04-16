@@ -26,6 +26,7 @@ itertools.workspace = true
 pretty.workspace = true
 rustc-hash.workspace = true
 serde = { workspace = true, optional = true }
+smallvec.workspace = true
 wasm-bindgen = { workspace = true, optional = true }
 
 [dev-dependencies]
