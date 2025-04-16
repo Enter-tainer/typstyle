@@ -35,7 +35,6 @@ pub enum Mode {
     Math,
 }
 
-#[allow(unused)]
 impl Mode {
     pub fn is_markup(self) -> bool {
         self == Self::Markup

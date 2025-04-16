@@ -37,9 +37,9 @@ impl<'a> PrettyPrinter<'a> {
             Some(body)
         };
 
-        let fold_style = if !is_block || ctx.break_suppressed {
+        let fold_style = if !is_block {
             FoldStyle::Always
-        } else if self.attr_store.is_multiline(equation.to_untyped()) {
+        } else if !ctx.break_suppressed && self.attr_store.is_multiline(equation.to_untyped()) {
             FoldStyle::Never
         } else {
             FoldStyle::Fit
