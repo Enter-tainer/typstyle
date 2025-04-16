@@ -2,14 +2,13 @@ use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
-use crate::{
-    pretty::{util::get_parenthesized_args, Mode},
-    PrettyPrinter,
-};
-
 use super::{
     util::{func_name, indent_func_name},
     ArenaDoc,
+};
+use crate::{
+    pretty::{util::get_parenthesized_args, Mode},
+    PrettyPrinter,
 };
 
 const BLACK_LIST: [&str; 6] = [

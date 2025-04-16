@@ -2,8 +2,10 @@ use std::env;
 
 use anyhow::{bail, Context};
 use tinymist_world::TypstSystemUniverse;
-use typst::layout::PagedDocument;
-use typst::{foundations::Smart, layout::Page};
+use typst::{
+    foundations::Smart,
+    layout::{Page, PagedDocument},
+};
 use typst_pdf::{PdfOptions, PdfStandards};
 
 pub fn compare_docs(

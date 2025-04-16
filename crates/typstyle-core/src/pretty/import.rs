@@ -4,8 +4,10 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
-    flow::FlowItem,
-    list::{ListStyle, ListStylist},
+    layout::{
+        flow::FlowItem,
+        list::{ListStyle, ListStylist},
+    },
     util::is_comment_node,
     ArenaDoc, PrettyPrinter,
 };

@@ -1,5 +1,4 @@
 use rustc_hash::FxHashMap;
-
 use typst_syntax::{
     ast::{Args, AstNode},
     Span, SyntaxKind, SyntaxNode,

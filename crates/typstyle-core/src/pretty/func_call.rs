@@ -1,21 +1,19 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::ext::StrExt;
-
-use super::flow::FlowItem;
-use super::list::{ListStyle, ListStylist};
-use super::mode::Mode;
-use super::plain::PlainStylist;
-use super::style::FoldStyle;
-use super::util::is_only_one_and;
-use super::PrettyPrinter;
-
 use super::{
+    layout::{
+        flow::FlowItem,
+        list::{ListStyle, ListStylist},
+        plain::PlainStylist,
+    },
+    mode::Mode,
+    style::FoldStyle,
     table,
-    util::{get_parenthesized_args_untyped, has_parenthesized_args},
-    ArenaDoc,
+    util::{get_parenthesized_args_untyped, has_parenthesized_args, is_only_one_and},
+    ArenaDoc, PrettyPrinter,
 };
+use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_func_call(&'a self, func_call: FuncCall<'a>) -> ArenaDoc<'a> {

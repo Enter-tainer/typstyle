@@ -1,9 +1,10 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::AstNode, SyntaxKind, SyntaxNode};
 
-use crate::ext::StrExt;
-
-use super::{doc_ext::DocExt, flow::FlowStylist, ArenaDoc, PrettyPrinter};
+use crate::{
+    ext::StrExt,
+    pretty::{doc_ext::DocExt, layout::flow::FlowStylist, ArenaDoc, PrettyPrinter},
+};
 
 #[derive(Debug)]
 enum PlainItem<'a> {

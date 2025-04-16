@@ -1,11 +1,13 @@
+use std::iter;
+
 use itertools::Itertools;
 use pretty::DocAllocator;
-use std::iter;
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
-use crate::ext::StrExt;
-
-use super::{util::is_comment_node, ArenaDoc, PrettyPrinter};
+use crate::{
+    ext::StrExt,
+    pretty::{util::is_comment_node, ArenaDoc, PrettyPrinter},
+};
 
 /// Intermediate representation in chain formatting.
 enum ChainItem<'a> {

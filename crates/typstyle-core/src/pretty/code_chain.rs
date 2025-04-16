@@ -2,13 +2,12 @@ use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::PrettyPrinter;
-
 use super::{
-    chain::{iterate_deep_nodes, ChainStyle, ChainStylist},
+    layout::chain::{iterate_deep_nodes, ChainStyle, ChainStylist},
     util::has_comment_children,
     ArenaDoc,
 };
+use crate::PrettyPrinter;
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_field_access(&'a self, field_access: FieldAccess<'a>) -> ArenaDoc<'a> {

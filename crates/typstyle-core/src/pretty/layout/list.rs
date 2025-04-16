@@ -1,9 +1,10 @@
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
-use crate::ext::StrExt;
-
-use super::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Mode, PrettyPrinter};
+use crate::{
+    ext::StrExt,
+    pretty::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Mode, PrettyPrinter},
+};
 
 pub struct ListStylist<'a> {
     printer: &'a PrettyPrinter<'a>,
@@ -28,8 +29,6 @@ enum Item<'a> {
     Commented {
         /// The list item.
         body: ArenaDoc<'a>,
-        /// Comments attached in the front.
-        // before: Option<ArenaDoc<'a>>,
         /// Attached comments. Leading space included.
         after: Option<ArenaDoc<'a>>,
     },

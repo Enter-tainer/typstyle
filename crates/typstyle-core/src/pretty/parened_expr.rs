@@ -1,9 +1,8 @@
 use pretty::{Arena, DocAllocator};
 use typst_syntax::ast::*;
 
-use crate::PrettyPrinter;
-
 use super::{mode::Mode, util::has_comment_children, ArenaDoc};
+use crate::PrettyPrinter;
 
 impl<'a> PrettyPrinter<'a> {
     /// We do not care whether it is `Pattern` or `Expr`.
