@@ -1,4 +1,4 @@
-/// typstyle: wrap_text relax_convergence
+/// typstyle: wrap_text
 
 Lorem ipsum   dolor sit amet, consectetur adipiscing elit.
 In vel justo a massa   consequat fermentum   et nec tellus.

@@ -2,7 +2,7 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/reflow.typ
 ---
-/// typstyle: wrap_text relax_convergence
+/// typstyle: wrap_text
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vel justo a massa consequat fermentum et nec tellus.
 
@@ -68,8 +68,10 @@ Technical terms like ```ts Array<T>``` mixed with *important notes* and $sum_(i=
     Multi-line block content with nested #strong[formatting] and extra spaces
   ]
 
-/ Functions with parameters: Definition using #text(weight: "bold", size: 12pt)[Formatted text with spaces] and
-  $"equations"$
+/ Functions with parameters: Definition using #text(
+    weight: "bold",
+    size: 12pt,
+  )[Formatted text with spaces] and $"equations"$
 
 = Heading with *mixed* `formatting` and $"math"$ elements
 Text between headings.

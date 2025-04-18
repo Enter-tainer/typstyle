@@ -229,7 +229,7 @@ impl<'a> PrettyPrinter<'a> {
                         self.convert_text(text)
                     }
                 } else if let Some(expr) = node.cast::<Expr>() {
-                    let ctx = if mixed_text {
+                    let ctx = if mixed_text && !can_wrap_text {
                         ctx.suppress_breaks()
                     } else {
                         ctx

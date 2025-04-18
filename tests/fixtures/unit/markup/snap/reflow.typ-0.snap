@@ -2,7 +2,7 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/reflow.typ
 ---
-/// typstyle: wrap_text relax_convergence
+/// typstyle: wrap_text
 
 Lorem
 ipsum
@@ -115,7 +115,9 @@ add
 a
 complex
 equation:
-$ integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2 $
+$
+  integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2
+$
 surrounded
 by
 text.
@@ -320,7 +322,9 @@ $sum_(i=1)^n x_i$.
   `code`
 + Item
   using
-  #text(size: 1.2em)[larger
+  #text(
+    size: 1.2em,
+  )[larger
     text]
   with
   spacing
@@ -481,7 +485,11 @@ elements:
   item
   with
   #text(
-    fill: rgb(10%, 20%, 30%),
+    fill: rgb(
+      10%,
+      20%,
+      30%,
+    ),
   )[
     Multi-line
     content
@@ -499,7 +507,10 @@ elements:
 - Item
   with
   #grid(
-    columns: (1fr, 1fr),
+    columns: (
+      1fr,
+      1fr,
+    ),
     [Cell
       with
       *formatting*],

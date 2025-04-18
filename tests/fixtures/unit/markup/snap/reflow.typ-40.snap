@@ -2,7 +2,7 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/reflow.typ
 ---
-/// typstyle: wrap_text relax_convergence
+/// typstyle: wrap_text
 
 Lorem ipsum dolor sit amet, consectetur
 adipiscing elit. In vel justo a massa
@@ -31,9 +31,9 @@ text.
 This line contains *strong text* mixed
 with `raw code` and regular words.
 
-Let's add a complex equation:
-$ integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2 $
-surrounded by text.
+Let's add a complex equation: $
+  integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2
+$ surrounded by text.
 
 Testing _multiple_ `inline` $"elements"$
 in a single line with various _spacing_
