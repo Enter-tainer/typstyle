@@ -15,10 +15,10 @@ pub fn fixtures_dir() -> PathBuf {
     test_dir().join("fixtures")
 }
 
-pub fn read_source_with_config(path: &Path) -> Result<(Source, Config), Failed> {
+pub fn read_source_with_options(path: &Path) -> Result<(Source, Options), Failed> {
     let content = read_content(path)?;
-    let config = parse_directives(&content)?;
-    Ok((Source::detached(content), config))
+    let options = parse_directives(&content)?;
+    Ok((Source::detached(content), options))
 }
 
 pub fn read_source(path: &Path) -> Result<Source, Failed> {
@@ -44,9 +44,17 @@ fn remove_crlf(content: String) -> String {
     }
 }
 
+pub struct Options {
+    pub config: Config,
+    pub relax_convergence: usize,
+}
+
 /// Parses typstyle directives from the first line of a file
-fn parse_directives(content: &str) -> Result<Config, Failed> {
-    let mut config = Config::new();
+fn parse_directives(content: &str) -> Result<Options, Failed> {
+    let mut options = Options {
+        config: Config::new(),
+        relax_convergence: 0,
+    };
 
     // Get the first line
     if let Some(first_line) = content.lines().next() {
@@ -66,15 +74,25 @@ fn parse_directives(content: &str) -> Result<Config, Failed> {
                     .split_once('=')
                     .map(|(key, value)| (key.trim(), Some(value.trim())))
                     .unwrap_or((directive, None));
-                match key {
-                    "reorder-import-items" => config.reorder_import_items = value != Some("false"),
-                    _ => return Err(format!("unknown directive: {key}").into()),
-                }
+                update_config(&mut options, key, value)?;
             }
         }
     }
 
-    Ok(config)
+    fn update_config(options: &mut Options, key: &str, value: Option<&str>) -> Result<(), Failed> {
+        let config = &mut options.config;
+        match key {
+            "relax_convergence" => {
+                options.relax_convergence = value.and_then(|v| v.parse().ok()).unwrap_or(1)
+            }
+            "reorder_import_items" => config.reorder_import_items = value != Some("false"),
+            "wrap_text" => config.wrap_text = value != Some("false"),
+            _ => return Err(format!("unknown directive: {key}").into()),
+        }
+        Ok(())
+    }
+
+    Ok(options)
 }
 
 #[cfg(test)]

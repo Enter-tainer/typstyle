@@ -11,6 +11,8 @@ pub struct Config {
     /// Whether to reorder import items.
     /// When enabled, import items will be sorted alphabetically.
     pub reorder_import_items: bool,
+    /// Whether to wrap texts in the markup.
+    pub wrap_text: bool,
 }
 
 impl Default for Config {
@@ -20,6 +22,7 @@ impl Default for Config {
             max_width: 80,
             blank_lines_upper_bound: 2,
             reorder_import_items: false,
+            wrap_text: false,
         }
     }
 }
