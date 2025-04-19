@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/line-attach.typ
-snapshot_kind: text
 ---
 #import "@preview/cheq:0.1.0": (
   checklist,
@@ -9,7 +8,9 @@ snapshot_kind: text
 
 #{
   show: checklist.with(
-    fill: luma(95%),
+    fill: luma(
+      95%,
+    ),
     stroke: blue,
     radius: .2em,
   ) // 复选框
@@ -17,7 +18,9 @@ snapshot_kind: text
 
 #{
   show: checklist.with(
-    fill: luma(95%),
+    fill: luma(
+      95%,
+    ),
     stroke: blue,
     radius: .2em,
   ) // 复选框
@@ -27,7 +30,9 @@ snapshot_kind: text
 #{
   // 复选框
   show: checklist.with(
-    fill: luma(95%),
+    fill: luma(
+      95%,
+    ),
     stroke: blue,
     radius: .2em,
   )

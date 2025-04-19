@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-diagram.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -131,10 +130,7 @@ snapshot_kind: text
     if grid.flip.y { indices.at(1) = -1 - indices.at(1) }
     for axis in (0, 1) {
       let size = if grid.flip.xy { rect.size.at(axis) } else { rect.size.at(1 - axis) }
-      cell-sizes.at(axis).at(indices.at(axis)) = calc.max(
-        cell-sizes.at(axis).at(indices.at(axis)),
-        rect.size.at(axis),
-      )
+      cell-sizes.at(axis).at(indices.at(axis)) = calc.max(cell-sizes.at(axis).at(indices.at(axis)), rect.size.at(axis))
     }
   }
 
@@ -162,7 +158,9 @@ snapshot_kind: text
       array.zip(cumsum(sizes), sizes, range(sizes.len())).map(((end, size, i)) => end - size / 2 + spacing * i)
     })
 
-  let bounding-size = array.zip(centers, grid.cell-sizes).map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
+  let bounding-size = array
+    .zip(centers, grid.cell-sizes)
+    .map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
 
   (
     centers: centers,
@@ -447,12 +445,7 @@ snapshot_kind: text
   node-defocus: 0.2,
   label-sep: 0.4em,
   label-size: 1em,
-  label-wrapper: edge => box(
-    [#edge.label],
-    inset: .2em,
-    radius: .2em,
-    fill: edge.label-fill,
-  ),
+  label-wrapper: edge => box([#edge.label], inset: .2em, radius: .2em, fill: edge.label-fill),
   mark-scale: 100%,
   crossing-fill: white,
   crossing-thickness: 5,

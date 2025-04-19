@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/destruction.typ
-snapshot_kind: text
 ---
 #let (
   n,
@@ -21,13 +20,15 @@ snapshot_kind: text
       authors.len(),
     ),
   gutter: 1em,
-  ..authors.map(author => align(
-    center,
-    text(
-      font: author-font,
-      author,
+  ..authors.map(
+    author => align(
+      center,
+      text(
+        font: author-font,
+        author,
+      ),
     ),
-  )),
+  ),
 )
 
 #let books = (

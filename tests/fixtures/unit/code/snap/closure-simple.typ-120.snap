@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/closure-simple.typ
-snapshot_kind: text
 ---
 #show raw: it => {
   it
@@ -17,11 +16,9 @@ snapshot_kind: text
   it
 }
 
-#set heading(
-  numbering: (..num) => if num.pos().len() < 4 {
-    numbering("1.1", ..num)
-  },
-)
+#set heading(numbering: (..num) => if num.pos().len() < 4 {
+  numbering("1.1", ..num)
+})
 
 #set heading(numbering: (..num) => none)
 

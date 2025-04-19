@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/dot-chain.typ
-snapshot_kind: text
 ---
 #{
   let a = (1, (2, (3, (4,))))

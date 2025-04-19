@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cetz-tree.typ
-snapshot_kind: text
 ---
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
@@ -37,10 +36,8 @@ snapshot_kind: text
   name: none,
   ..style,
 ) = {
-  assert(
-    parent-position
-      in ("begin", "center"),
-  )
+  assert(parent-position
+    in ("begin", "center"))
   assert(grow > 0)
   assert(spread > 0)
 
@@ -287,10 +284,8 @@ snapshot_kind: text
       node-position(node),
     )
     for child in node.children {
-      d += anchors(
-        child,
-        parent-path + str(node.n),
-      )
+      d += anchors(child, parent-path
+        + str(node.n))
     }
     return d
   }
@@ -304,16 +299,11 @@ snapshot_kind: text
     )
 
     let cmds = ()
-    cmds += draw.group(
-      name: name,
-      {
-        draw.move-to(
-          node-position(node),
-        )
-        draw.anchor("center", ())
-        draw-node(node, parent-name)
-      },
-    )
+    cmds += draw.group(name: name, {
+      draw.move-to(node-position(node))
+      draw.anchor("center", ())
+      draw-node(node, parent-name)
+    })
 
     if parent-name != none {
       cmds += draw-edge(

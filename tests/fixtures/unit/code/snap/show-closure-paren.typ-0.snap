@@ -1,22 +1,27 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/show-closure-paren.typ
-snapshot_kind: text
 ---
 #show raw: it => (
   it
     .text
-    .ends-with(">")
+    .ends-with(
+      ">",
+    )
 )
 
 #show raw: it => (
   it
     .text
-    .ends-with(">")
+    .ends-with(
+      ">",
+    )
 )
 
 #show raw: it => if true {
-  set text(1.2em)
+  set text(
+    1.2em,
+  )
 } else {
   it
 }

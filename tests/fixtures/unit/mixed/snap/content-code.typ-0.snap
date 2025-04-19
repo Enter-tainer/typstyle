@@ -1,13 +1,14 @@
 ---
 source: tests/src/unit.rs
-input_file: tests/fixtures/unit/markup/content-code.typ
-snapshot_kind: text
+input_file: tests/fixtures/unit/mixed/content-code.typ
 ---
 #let task(
   body,
   critical: false,
 ) = {
-  set text(red) if critical
+  set text(
+    red,
+  ) if critical
   [
     - #body
   ]

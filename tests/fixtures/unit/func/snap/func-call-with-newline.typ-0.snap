@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/func-call-with-newline.typ
-snapshot_kind: text
 ---
 #import "@preview/fletcher:0.5.0" as fletcher: (
   diagram,
@@ -24,7 +23,9 @@ snapshot_kind: text
   edge-stroke: 1pt,
   crossing-thickness: 5,
   mark-scale: 70%,
-  node-fill: luma(97%),
+  node-fill: luma(
+    97%,
+  ),
   node-outset: 3pt,
   node(
     (
@@ -33,7 +34,6 @@ snapshot_kind: text
     ),
     "magma",
   ),
-
   node(
     (
       -1,
@@ -55,7 +55,6 @@ snapshot_kind: text
     ),
     "quasigroup",
   ),
-
   node(
     (
       -1,
@@ -77,7 +76,6 @@ snapshot_kind: text
     ),
     "loop",
   ),
-
   node(
     (
       0,
@@ -85,7 +83,6 @@ snapshot_kind: text
     ),
     "group",
   ),
-
   {
     let quad(
       a,
@@ -94,7 +91,9 @@ snapshot_kind: text
       paint,
       ..args,
     ) = {
-      paint = paint.darken(25%)
+      paint = paint.darken(
+        25%,
+      )
       edge(
         a,
         b,

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/simple-paper.typ
-snapshot_kind: text
 ---
 #let project(
   title: "",
@@ -27,14 +26,10 @@ snapshot_kind: text
   let raw-font = code
 
   set document(author: authors, title: title)
-  set page(
-    numbering: "1",
-    number-align: center,
-    header: align(left)[
-      #set text(font: header-font)
-      #title
-    ],
-  )
+  set page(numbering: "1", number-align: center, header: align(left)[
+    #set text(font: header-font)
+    #title
+  ])
   set heading(numbering: "1.1")
   set text(font: body-font, lang: "zh", region: "cn")
   set bibliography(style: "gb-7114-2015-numeric")
@@ -62,16 +57,11 @@ snapshot_kind: text
   ]
 
   // Author information.
-  pad(
-    top: 0.5em,
-    bottom: 0.5em,
-    x: 2em,
-    grid(
-      columns: (1fr,) * calc.min(3, authors.len()),
-      gutter: 1em,
-      ..authors.map(author => align(center, text(font: author-font, author))),
-    ),
-  )
+  pad(top: 0.5em, bottom: 0.5em, x: 2em, grid(
+    columns: (1fr,) * calc.min(3, authors.len()),
+    gutter: 1em,
+    ..authors.map(author => align(center, text(font: author-font, author))),
+  ))
 
   // Main body
   set par(first-line-indent: 2em)
@@ -98,11 +88,7 @@ snapshot_kind: text
   show strong: set text(font: strong-font)
   show emph: set text(font: emph-font)
   show ref: set text(red)
-  show raw.where(block: true): block.with(
-    width: 100%,
-    fill: luma(240),
-    inset: 10pt,
-  )
+  show raw.where(block: true): block.with(width: 100%, fill: luma(240), inset: 10pt)
 
   show raw: set text(font: (raw-font, hei), size: 10pt)
   show link: underline
@@ -126,18 +112,10 @@ snapshot_kind: text
 #let problem(body) = {
   problem-counter.step()
   set enum(numbering: "(1)")
-  block(
-    fill: rgb(241, 241, 255),
-    inset: 8pt,
-    radius: 2pt,
-    width: 100%,
-  )[*题目 #problem-counter.display().* #h(0.75em) #body]
+  block(fill: rgb(241, 241, 255), inset: 8pt, radius: 2pt, width: 100%)[*题目 #problem-counter.display().* #h(0.75em) #body]
 }
 
 #let solution(body) = {
   set enum(numbering: "(1)")
-  block(
-    inset: 8pt,
-    width: 100%,
-  )[*解答.* #h(0.75em) #body]
+  block(inset: 8pt, width: 100%)[*解答.* #h(0.75em) #body]
 }

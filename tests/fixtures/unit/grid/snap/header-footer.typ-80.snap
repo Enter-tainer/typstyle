@@ -1,16 +1,10 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/grid/header-footer.typ
-snapshot_kind: text
 ---
 #table(
   columns: 3,
-  table.header(
-    [Substance],
-    [Subcritical °C],
-    [Supercritical °C],
-    repeat: true,
-  ),
+  table.header([Substance], [Subcritical °C], [Supercritical °C], repeat: true),
 
   [Hydrochloric Acid], [12.0], [92.1],
   [Sodium Myreth Sulfate], [16.6], [104],

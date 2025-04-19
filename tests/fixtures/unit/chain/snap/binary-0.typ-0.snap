@@ -10,7 +10,9 @@ input_file: tests/fixtures/unit/chain/binary-0.typ
   }
   f(
     "Unsupported content type "
-      + type(content)
+      + type(
+        content,
+      )
       + "! "
       + "Provide your own `draw-node` implementation.",
   )

@@ -20,7 +20,9 @@ input_file: tests/fixtures/articles/book.typ
   language: "en",
   summary: [
     // begin of summary
-    #prefix-chapter("introduction.typ")[Introduction]
+    #prefix-chapter(
+      "introduction.typ",
+    )[Introduction]
     = User Guide
     - #chapter(
         "guide/installation.typ",

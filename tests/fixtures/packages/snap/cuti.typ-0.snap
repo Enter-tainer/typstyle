@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cuti.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [cuti]
@@ -23,7 +22,9 @@ snapshot_kind: text
         auto,
         none,
       )
-      or type(base-weight)
+      or type(
+        base-weight,
+      )
         in (
           str,
           int,
@@ -33,7 +34,9 @@ snapshot_kind: text
   set text(
     weight: base-weight,
   ) if (
-    type(base-weight)
+    type(
+      base-weight,
+    )
       in (
         str,
         int,
@@ -45,7 +48,9 @@ snapshot_kind: text
     base-weight
       == auto
   )
-  set text(..params) if (
+  set text(
+    ..params,
+  ) if (
     params
       != ()
   )
@@ -64,7 +69,9 @@ snapshot_kind: text
   s,
   ..params,
 ) = {
-  show regex(reg-exp): it => {
+  show regex(
+    reg-exp,
+  ): it => {
     fakebold(
       base-weight: base-weight,
       it,
@@ -84,7 +91,9 @@ snapshot_kind: text
     .where(
       weight: "bold",
     )
-    .or(strong): it => {
+    .or(
+      strong,
+    ): it => {
     regex-fakebold(
       reg-exp: reg-exp,
       base-weight: base-weight,
@@ -124,7 +133,9 @@ snapshot_kind: text
   ang: -18.4deg,
   s,
 ) = {
-  show regex(reg-exp): it => {
+  show regex(
+    reg-exp,
+  ): it => {
     box(
       skew(
         ax: ang,
@@ -148,14 +159,20 @@ snapshot_kind: text
   s,
   scaling: 0.75,
 ) = {
-  show regex("\p{Ll}+"): it => {
+  show regex(
+    "\p{Ll}+",
+  ): it => {
     context text(
       scaling
         * 1em,
       stroke: 0.01em
         + text.fill,
-      upper(it),
+      upper(
+        it,
+      ),
     )
   }
-  text(s)
+  text(
+    s,
+  )
 }

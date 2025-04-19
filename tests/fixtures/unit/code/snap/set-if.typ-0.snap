@@ -6,7 +6,9 @@ input_file: tests/fixtures/unit/code/set-if.typ
   body,
   critical: false,
 ) = {
-  set text(red) if critical
+  set text(
+    red,
+  ) if critical
   [
     - #body
   ]

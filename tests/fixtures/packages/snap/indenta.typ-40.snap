@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/indenta.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [indenta]
@@ -50,7 +49,8 @@ snapshot_kind: text
         or (
           fn == raw
             and not (
-              e.has("block") and e.block
+              e.has("block")
+                and e.block
             )
         )
         or fn == highlight
@@ -66,7 +66,8 @@ snapshot_kind: text
         or (
           fn == quote
             and not (
-              e.has("block") and e.block
+              e.has("block")
+                and e.block
             )
         )
     )
@@ -89,7 +90,9 @@ snapshot_kind: text
               or e == parbreak()
           )
       ) {
-        if unsafe or _is_inline(e, fn) {
+        if (
+          unsafe or _is_inline(e, fn)
+        ) {
           context h(
             par.first-line-indent,
           )

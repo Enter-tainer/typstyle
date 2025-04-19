@@ -6,7 +6,9 @@ input_file: tests/fixtures/unit/math/args.typ
   ..args,
 ) = raw(
   lang: "typc",
-  repr(args),
+  repr(
+    args,
+  ),
 )
 $fun(1, #2 ; 3, 4)$
 $fun(1, named: #2 ; 3, 4)$
