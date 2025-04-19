@@ -35,16 +35,10 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 #let scriptsize = 7pt
 #let normalsize = 10pt
 #let large = 12pt
-#set text(
-  size: normalsize,
-  lang: "en",
-)
+#set text(size: normalsize, lang: "en")
 
 // Some horizontal spacing
-#let kern(length) = h(
-  length,
-  weak: true,
-)
+#let kern(length) = h(length, weak: true)
 #let enspace = kern(0.5em)
 
 // For table/grid, something like "lhs \enspace rhs"
@@ -80,27 +74,29 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
     + kern(-0.125em)
     + X)
 })
-#let LaTeX = style(styles => {
-  let l = measure(
-    text(10pt, "L"),
-    styles,
-  )
-  let a = measure(
-    text(7pt, "A"),
-    styles,
-  )
-  let L = "L"
-  let A = text(
-    7pt,
-    baseline: a.height - l.height,
-    "A",
-  )
-  box(L
-    + kern(-0.36em)
-    + A
-    + kern(-0.15em)
-    + TeX)
-})
+#let LaTeX = style(
+  styles => {
+    let l = measure(
+      text(10pt, "L"),
+      styles,
+    )
+    let a = measure(
+      text(7pt, "A"),
+      styles,
+    )
+    let L = "L"
+    let A = text(
+      7pt,
+      baseline: a.height - l.height,
+      "A",
+    )
+    box(L
+      + kern(-0.36em)
+      + A
+      + kern(-0.15em)
+      + TeX)
+  },
+)
 
 // Unavailable (last check version)
 #show "??": box(text(
@@ -108,10 +104,7 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
   [v#sys.version #emoji.crossmark],
 ))
 // Tricky
-#show "!!": box(text(
-  blue,
-  emoji.drops,
-))
+#show "!!": box(text(blue, emoji.drops))
 // No idea
 #show "?!": box(text(
   orange,
@@ -141,10 +134,7 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 }
 
 // Two-column layout
-#show: rest => columns(
-  2,
-  rest,
-)
+#show: rest => columns(2, rest)
 
 // Title
 #align(

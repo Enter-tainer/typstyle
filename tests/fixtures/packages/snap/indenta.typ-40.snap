@@ -76,10 +76,7 @@ input_file: tests/fixtures/packages/indenta.typ
       let fn = e.func()
       if fn == heading {
         st = 2
-      } else if _is_block(
-        e,
-        fn,
-      ) {
+      } else if _is_block(e, fn) {
         st = 1
       } else if st == 1 {
         if e == parbreak() {
@@ -88,20 +85,14 @@ input_file: tests/fixtures/packages/indenta.typ
       } else if (
         st == 2
           and not (
-            _is_block(
-              e,
-              fn,
-            )
+            _is_block(e, fn)
               or e == [ ]
               or e == parbreak()
           )
       ) {
         if (
           unsafe
-            or _is_inline(
-              e,
-              fn,
-            )
+            or _is_inline(e, fn)
         ) {
           context h(
             par.first-line-indent,

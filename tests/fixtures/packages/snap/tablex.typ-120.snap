@@ -466,10 +466,7 @@ input_file: tests/fixtures/packages/tablex.typ
     let em = len.em
     // Measure with abs (and later multiply by the sign) so negative em works.
     // Otherwise it would return 0pt, and we would need to measure again with abs.
-    let measured-em = (
-      calc-sign(em)
-        * measure(box(width: calc.abs(em) * 1em), styles).width
-    )
+    let measured-em = calc-sign(em) * measure(box(width: calc.abs(em) * 1em), styles).width
 
     return pt + measured-em
   }
@@ -561,8 +558,7 @@ input_file: tests/fixtures/packages/tablex.typ
     // em repr changed in 0.11.0 => need to use fields here
     // or use fields if they're supported anyway
     return (
-      convert-ratio-type-to-pt(len.ratio, page-size)
-        + convert-length-type-to-pt(len.length, styles: styles)
+      convert-ratio-type-to-pt(len.ratio, page-size) + convert-length-type-to-pt(len.length, styles: styles)
     )
   }
 
@@ -720,10 +716,7 @@ input_file: tests/fixtures/packages/tablex.typ
 #let grid-index-at(x, y, grid: none, width: none) = {
   width = default-if-none(grid, (width: width)).width
   width = calc.floor(width)
-  (
-    (y * width)
-      + calc-mod(x, width)
-  )
+  (y * width) + calc-mod(x, width)
 }
 
 // Gets the cell at the given grid x, y position.
@@ -742,8 +735,7 @@ input_file: tests/fixtures/packages/tablex.typ
 // Returns 'true' if the cell at (x, y)
 // exists in the grid.
 #let grid-has-pos(grid, x, y) = (
-  grid-index-at(x, y, grid: grid)
-    < grid.items.len()
+  grid-index-at(x, y, grid: grid) < grid.items.len()
 )
 
 // How many rows are in this grid? (Given its width)
@@ -753,10 +745,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
 // Converts a grid array index to (x, y)
 #let grid-index-to-pos(grid, index) = (
-  (
-    calc-mod(index, grid.width),
-    calc.floor(index / grid.width),
-  )
+  (calc-mod(index, grid.width), calc.floor(index / grid.width))
 )
 
 // Fetches an entire row of cells (all positions with the given y).
@@ -1008,11 +997,11 @@ input_file: tests/fixtures/packages/tablex.typ
     if "fit-spans" not in cell {
       cell.fit-spans = auto
     } else if cell.fit-spans != auto {
-      cell.fit-spans = validate-fit-spans(
-        cell.fit-spans,
-        default: fit-spans,
-        error-prefix: "At cell (" + str(this_x) + ", " + str(this_y) + "):",
-      )
+      cell.fit-spans = validate-fit-spans(cell.fit-spans, default: fit-spans, error-prefix: "At cell ("
+        + str(this_x)
+        + ", "
+        + str(this_y)
+        + "):")
     }
 
     // up to which 'y' does this cell go
@@ -1031,13 +1020,7 @@ input_file: tests/fixtures/packages/tablex.typ
         + ", which would exceed the available columns.")
     }
 
-    let cell_positions = positions-spanned-by(
-      cell,
-      x: this_x,
-      y: this_y,
-      x_limit: x_limit,
-      y_limit: none,
-    )
+    let cell_positions = positions-spanned-by(cell, x: this_x, y: this_y, x_limit: x_limit, y_limit: none)
 
     for position in cell_positions {
       let (px, py) = position
@@ -1077,22 +1060,11 @@ input_file: tests/fixtures/packages/tablex.typ
       } else {
         let index = grid-index-at(px, py)
 
-        grid.items.at(index) = occupied(
-          x: px,
-          y: py,
-          parent_x: this_x,
-          parent_y: this_y,
-        ) // indicate this position's parent cell (to join them later)
+        grid.items.at(index) = occupied(x: px, y: py, parent_x: this_x, parent_y: this_y) // indicate this position's parent cell (to join them later)
       }
     }
 
-    let next_pos = next-available-position(
-      grid,
-      x: this_x,
-      y: this_y,
-      x_limit: x_limit,
-      y_limit: y_limit,
-    )
+    let next_pos = next-available-position(grid, x: this_x, y: this_y, x_limit: x_limit, y_limit: y_limit)
 
     prev_x = this_x
     prev_y = this_y
@@ -1113,10 +1085,7 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   // while there are incomplete rows for some reason, add empty cells
-  while (
-    calc-mod(grid.items.len(), grid.width)
-      != 0
-  ) {
+  while calc-mod(grid.items.len(), grid.width) != 0 {
     grid.items.push(new_empty_cell(grid))
   }
 
@@ -1420,13 +1389,7 @@ input_file: tests/fixtures/packages/tablex.typ
           // simulate wrapping this cell in the final box,
           // but with unlimited width and height available
           // so we can measure its width.
-          let cell-box = make-cell-box(
-            pcell,
-            width: auto,
-            height: auto,
-            inset: cell_inset,
-            align_default: auto,
-          )
+          let cell-box = make-cell-box(pcell, width: auto, height: auto, inset: cell_inset, align_default: auto)
 
           let width = measure(cell-box, styles).width // + 2*cell_inset // the box already considers inset
 
@@ -1576,22 +1539,14 @@ input_file: tests/fixtures/packages/tablex.typ
 
     let remaining_size = available_size - total_auto_size
     if remaining_size >= 0pt {
-      let frac_res = determine-frac-tracks(
-        columns,
-        remaining: remaining_size,
-        gutter: col-gutter,
-      )
+      let frac_res = determine-frac-tracks(columns, remaining: remaining_size, gutter: col-gutter)
 
       columns = frac_res.tracks
       fixed-size-gutter = frac_res.gutter
     } else {
       // don't shrink on width 'auto'
       if page_width != 0pt {
-        columns = fit-auto-columns(
-          available: available_size,
-          auto-cols: auto_sizes,
-          columns: columns,
-        )
+        columns = fit-auto-columns(available: available_size, auto-cols: auto_sizes, columns: columns)
       }
 
       columns = columns.map(c => {
@@ -1667,13 +1622,7 @@ input_file: tests/fixtures/packages/tablex.typ
           // take extra inset as extra width or height on 'auto'
           let cell_inset = default-if-auto(pcell.inset, inset)
 
-          let cell-box = make-cell-box(
-            pcell,
-            width: width,
-            height: auto,
-            inset: cell_inset,
-            align_default: align,
-          )
+          let cell-box = make-cell-box(pcell, width: width, height: auto, inset: cell_inset, align_default: align)
 
           // measure the cell's actual height,
           // with its calculated width
@@ -1822,10 +1771,7 @@ input_file: tests/fixtures/packages/tablex.typ
 // -- width/height utilities --
 
 #let width-between(start: 0, end: none, columns: (), gutter: none, pre-gutter: false) = {
-  let col-gutter = default-if-none(
-    default-if-none(gutter, (col: 0pt)).col,
-    0pt,
-  )
+  let col-gutter = default-if-none(default-if-none(gutter, (col: 0pt)).col, 0pt)
   end = default-if-none(end, columns.len())
 
   let col_range = range(start, calc.min(columns.len() + 1, end))
@@ -1845,10 +1791,7 @@ input_file: tests/fixtures/packages/tablex.typ
 }
 
 #let height-between(start: 0, end: none, rows: (), gutter: none, pre-gutter: false) = {
-  let row-gutter = default-if-none(
-    default-if-none(gutter, (row: 0pt)).row,
-    0pt,
-  )
+  let row-gutter = default-if-none(default-if-none(gutter, (row: 0pt)).row, 0pt)
   end = default-if-none(end, rows.len())
 
   let row_range = range(start, calc.min(rows.len() + 1, end))
@@ -1868,23 +1811,11 @@ input_file: tests/fixtures/packages/tablex.typ
 }
 
 #let cell-width(x, colspan: 1, columns: (), gutter: none) = {
-  width-between(
-    start: x,
-    end: x + colspan,
-    columns: columns,
-    gutter: gutter,
-    pre-gutter: true,
-  )
+  width-between(start: x, end: x + colspan, columns: columns, gutter: gutter, pre-gutter: true)
 }
 
 #let cell-height(y, rowspan: 1, rows: (), gutter: none) = {
-  height-between(
-    start: y,
-    end: y + rowspan,
-    rows: rows,
-    gutter: gutter,
-    pre-gutter: true,
-  )
+  height-between(start: y, end: y + rowspan, rows: rows, gutter: gutter, pre-gutter: true)
 }
 
 // override start and end for vlines and hlines (keep styling options and stuff)
@@ -1916,10 +1847,7 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   // --##==   ;   ==##-- ;  #### ; ... : intersection.
-  (
-    calc.max(l_start, start),
-    calc.min(l_end, end),
-  )
+  (calc.max(l_start, start), calc.min(l_end, end))
 }
 
 // restrict hlines and vlines to the cells' borders.
@@ -1953,13 +1881,7 @@ input_file: tests/fixtures/packages/tablex.typ
     })
     .map(h => {
       // get the intersection between the hline and the cell's x-span.
-      let span = get-included-span(
-        h.start,
-        h.end,
-        start: cell.x,
-        end: cell.x + cell.colspan,
-        limit: x_limit,
-      )
+      let span = get-included-span(h.start, h.end, start: cell.x, end: cell.x + cell.colspan, limit: x_limit)
 
       if span == none {
         // no intersection!
@@ -1985,13 +1907,7 @@ input_file: tests/fixtures/packages/tablex.typ
     })
     .map(v => {
       // get the intersection between the hline and the cell's x-span.
-      let span = get-included-span(
-        v.start,
-        v.end,
-        start: cell.y,
-        end: cell.y + cell.rowspan,
-        limit: y_limit,
-      )
+      let span = get-included-span(v.start, v.end, start: cell.y, end: cell.y + cell.rowspan, limit: y_limit)
 
       if span == none {
         // no intersection!
@@ -2020,27 +1936,15 @@ input_file: tests/fixtures/packages/tablex.typ
 )
 
 #let _largest-stroke-among-lines(lines, stroke-auto: 1pt, styles: none) = (
-  calc.max(0pt, ..lines.map(l => stroke-len(
-    l.stroke,
-    stroke-auto: stroke-auto,
-    styles: styles,
-  )))
+  calc.max(0pt, ..lines.map(l => stroke-len(l.stroke, stroke-auto: stroke-auto, styles: styles)))
 )
 
 #let _largest-stroke-among-hlines-at-y(y, hlines: none, stroke-auto: 1pt, styles: none) = {
-  _largest-stroke-among-lines(
-    hlines.filter(h => h.y == y),
-    stroke-auto: stroke-auto,
-    styles: styles,
-  )
+  _largest-stroke-among-lines(hlines.filter(h => h.y == y), stroke-auto: stroke-auto, styles: styles)
 }
 
 #let _largest-stroke-among-vlines-at-x(x, vlines: none, stroke-auto: 1pt, styles: none) = {
-  _largest-stroke-among-lines(
-    vlines.filter(v => v.x == x),
-    stroke-auto: stroke-auto,
-    styles: styles,
-  )
+  _largest-stroke-among-lines(vlines.filter(v => v.x == x), stroke-auto: stroke-auto, styles: styles)
 }
 
 // -- end: width/height utilities --
@@ -2113,10 +2017,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let stroke = default-if-auto(hline.stroke, stroke)
   let stroke = parse-stroke(stroke)
 
-  if (
-    default-if-auto-or-none(start, 0)
-      == default-if-auto-or-none(end, columns.len())
-  ) { return }
+  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(end, columns.len()) { return }
 
   if (
     gutter != none
@@ -2130,50 +2031,23 @@ input_file: tests/fixtures/packages/tablex.typ
   let left-expand = default-if-auto-or-none(expand.at(0), 0pt)
   let right-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
-  if (
-    default-if-auto(hline.stroke-expand, true)
-      == true
-  ) {
+  if default-if-auto(hline.stroke-expand, true) == true {
     let largest-stroke = _largest-stroke-among-vlines-at-x.with(
       vlines: vlines,
       stroke-auto: stroke-auto,
       styles: styles,
     )
-    left-expand += (
-      largest-stroke(default-if-auto-or-none(start, 0))
-        / 2
-    ) // expand to the left to close stroke gap
-    right-expand += (
-      largest-stroke(default-if-auto-or-none(end, columns.len()))
-        / 2
-    ) // close stroke gap to the right
+    left-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2 // expand to the left to close stroke gap
+    right-expand += largest-stroke(default-if-auto-or-none(end, columns.len())) / 2 // close stroke gap to the right
   }
 
-  let y = height-between(
-    start: initial_y,
-    end: hline.y,
-    rows: rows,
-    gutter: gutter,
-    pre-gutter: pre-gutter,
-  )
+  let y = height-between(start: initial_y, end: hline.y, rows: rows, gutter: gutter, pre-gutter: pre-gutter)
   let start_x = (
-    width-between(
-      start: initial_x,
-      end: start,
-      columns: columns,
-      gutter: gutter,
-      pre-gutter: false,
-    )
-      - left-expand
+    width-between(start: initial_x, end: start, columns: columns, gutter: gutter, pre-gutter: false) - left-expand
   )
   let end_x = (
-    width-between(
-      start: initial_x,
-      end: end,
-      columns: columns,
-      gutter: gutter,
-      pre-gutter: hline.stop-pre-gutter == true,
-    )
+    width-between(start: initial_x, end: end, columns: columns, gutter: gutter, pre-gutter: hline.stop-pre-gutter
+      == true)
       + right-expand
   )
 
@@ -2226,10 +2100,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let stroke = default-if-auto(vline.stroke, stroke)
   let stroke = parse-stroke(stroke)
 
-  if (
-    default-if-auto-or-none(start, 0)
-      == default-if-auto-or-none(end, rows.len())
-  ) { return }
+  if default-if-auto-or-none(start, 0) == default-if-auto-or-none(end, rows.len()) { return }
 
   if (
     gutter != none
@@ -2243,44 +2114,21 @@ input_file: tests/fixtures/packages/tablex.typ
   let top-expand = default-if-auto-or-none(expand.at(0), 0pt)
   let bottom-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
-  if (
-    default-if-auto(vline.stroke-expand, true)
-      == true
-  ) {
+  if default-if-auto(vline.stroke-expand, true) == true {
     let largest-stroke = _largest-stroke-among-hlines-at-y.with(
       hlines: hlines,
       stroke-auto: stroke-auto,
       styles: styles,
     )
-    top-expand += (
-      largest-stroke(default-if-auto-or-none(start, 0))
-        / 2
-    ) // close stroke gap to the top
-    bottom-expand += (
-      largest-stroke(default-if-auto-or-none(end, rows.len()))
-        / 2
-    ) // close stroke gap to the bottom
+    top-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2 // close stroke gap to the top
+    bottom-expand += largest-stroke(default-if-auto-or-none(end, rows.len())) / 2 // close stroke gap to the bottom
   }
 
-  let x = width-between(
-    start: initial_x,
-    end: vline.x,
-    columns: columns,
-    gutter: gutter,
-    pre-gutter: pre-gutter,
-  )
-  let start_y = (
-    height-between(start: initial_y, end: start, rows: rows, gutter: gutter)
-      - top-expand
-  )
+  let x = width-between(start: initial_x, end: vline.x, columns: columns, gutter: gutter, pre-gutter: pre-gutter)
+  let start_y = height-between(start: initial_y, end: start, rows: rows, gutter: gutter) - top-expand
   let end_y = (
-    height-between(
-      start: initial_y,
-      end: end,
-      rows: rows,
-      gutter: gutter,
-      pre-gutter: stop-before-row-gutter or vline.stop-pre-gutter == true,
-    )
+    height-between(start: initial_y, end: end, rows: rows, gutter: gutter, pre-gutter: stop-before-row-gutter
+      or vline.stop-pre-gutter == true)
       + bottom-expand
   )
 
@@ -2320,10 +2168,12 @@ input_file: tests/fixtures/packages/tablex.typ
 // Requires placing 'get-page-dim-writer(the_returned_state)' on the
 // document.
 // The id is to differentiate the state for each table.
-#let get-page-dim-state(id) = state(
-  "tablex_tablex_page_dims__" + repr(id),
-  (width: 0pt, height: 0pt, top_left: none, bottom_right: none),
-)
+#let get-page-dim-state(id) = state("tablex_tablex_page_dims__" + repr(id), (
+  width: 0pt,
+  height: 0pt,
+  top_left: none,
+  bottom_right: none,
+))
 
 // A little trick to get the page max width and max height.
 // Places a component on the page (or outer container)'s top left,
@@ -2461,10 +2311,7 @@ input_file: tests/fixtures/packages/tablex.typ
           let y = cell_box.cell.y
           first_x = default-if-none(first_x, x)
           first_y = default-if-none(first_y, y)
-          rightmost_x = default-if-none(rightmost_x, width-between(
-            start: first_x,
-            end: none,
-          ))
+          rightmost_x = default-if-none(rightmost_x, width-between(start: first_x, end: none))
 
           // where to place the cell (horizontally)
           let dx = width-between(start: first_x, end: x)
@@ -2489,8 +2336,7 @@ input_file: tests/fixtures/packages/tablex.typ
           place(
             top + left,
             dx: dx,
-            dy: height-between(start: first_y, end: y)
-              + added_header_height,
+            dy: height-between(start: first_y, end: y) + added_header_height,
             cell_box.box,
           )
 
@@ -2525,16 +2371,8 @@ input_file: tests/fixtures/packages/tablex.typ
       )
 
       // ensure the lines are drawn absolutely, after the header
-      let draw-hline = (..args) => place(
-        top + left,
-        dy: added_header_height,
-        draw-hline(..args),
-      )
-      let draw-vline = (..args) => place(
-        top + left,
-        dy: added_header_height,
-        draw-vline(..args),
-      )
+      let draw-hline = (..args) => place(top + left, dy: added_header_height, draw-hline(..args))
+      let draw-vline = (..args) => place(top + left, dy: added_header_height, draw-vline(..args))
 
       let header_last_y = if first-row-group != none {
         first-row-group.row_group.y_span.at(1)
@@ -2683,10 +2521,7 @@ input_file: tests/fixtures/packages/tablex.typ
   // if one of their cells spans multiple rows.
   let first_row_group = none
 
-  let header_pages = state(
-    "tablex_tablex_header_pages__" + repr(table-id),
-    (table-loc.page(),),
-  )
+  let header_pages = state("tablex_tablex_header_pages__" + repr(table-id), (table-loc.page(),))
   let this_row_group = (rows: ((),), hlines: (), vlines: (), y_span: (0, 0))
 
   let total_width = width-between(end: none)
@@ -2849,15 +2684,11 @@ input_file: tests/fixtures/packages/tablex.typ
   let new_vlines = ()
 
   if auto-hlines {
-    new_hlines = range(0, row_len + 1)
-      .filter(y => hlines.filter(h => h.y == y).len() == 0)
-      .map(y => hlinex(y: y))
+    new_hlines = range(0, row_len + 1).filter(y => hlines.filter(h => h.y == y).len() == 0).map(y => hlinex(y: y))
   }
 
   if auto-vlines {
-    new_vlines = range(0, col_len + 1)
-      .filter(x => vlines.filter(v => v.x == x).len() == 0)
-      .map(x => vlinex(x: x))
+    new_vlines = range(0, col_len + 1).filter(x => vlines.filter(v => v.x == x).len() == 0).map(x => vlinex(x: x))
   }
 
   (new_hlines: new_hlines, new_vlines: new_vlines)
@@ -3058,10 +2889,7 @@ input_file: tests/fixtures/packages/tablex.typ
     return false // cannot repeat an empty header
   }
 
-  repeat-header = default-if-auto(
-    default-if-none(repeat-header, false),
-    false,
-  )
+  repeat-header = default-if-auto(default-if-none(repeat-header, false), false)
 
   if type(repeat-header) not in (_bool-type, _int-type, _array-type) {
     panic(
@@ -3311,13 +3139,7 @@ input_file: tests/fixtures/packages/tablex.typ
     hlines += auto_lines_res.new_hlines
     vlines += auto_lines_res.new_vlines
 
-    let parsed_lines = _parse-lines(
-      hlines,
-      vlines,
-      styles: styles,
-      page-width: page_width,
-      page-height: page_height,
-    )
+    let parsed_lines = _parse-lines(hlines, vlines, styles: styles, page-width: page_width, page-height: page_height)
     hlines = parsed_lines.hlines
     vlines = parsed_lines.vlines
 
@@ -3336,13 +3158,7 @@ input_file: tests/fixtures/packages/tablex.typ
     vlines = mapped_grid.vlines
 
     // re-parse just in case
-    let parsed_lines = _parse-lines(
-      hlines,
-      vlines,
-      styles: styles,
-      page-width: page_width,
-      page-height: page_height,
-    )
+    let parsed_lines = _parse-lines(hlines, vlines, styles: styles, page-width: page_width, page-height: page_height)
     hlines = parsed_lines.hlines
     vlines = parsed_lines.vlines
 

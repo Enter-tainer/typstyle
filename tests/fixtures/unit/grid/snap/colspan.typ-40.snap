@@ -34,26 +34,14 @@ input_file: tests/fixtures/unit/grid/colspan.typ
     [Friday],
   ),
   [Evelyn Archer],
-  table.cell(
-    colspan: 2,
-    ofi,
-  ),
-  table.cell(
-    colspan: 2,
-    rem,
-  ),
+  table.cell(colspan: 2, ofi),
+  table.cell(colspan: 2, rem),
   ofi,
   [Lila Montgomery],
-  table.cell(
-    colspan: 5,
-    lea,
-  ),
+  table.cell(colspan: 5, lea),
   [Nolan Pearce],
   rem,
-  table.cell(
-    colspan: 2,
-    ofi,
-  ),
+  table.cell(colspan: 2, ofi),
   rem,
   ofi,
 )

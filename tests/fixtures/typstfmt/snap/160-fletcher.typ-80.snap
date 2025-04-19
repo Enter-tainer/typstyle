@@ -14,16 +14,8 @@ input_file: tests/fixtures/typstfmt/160-fletcher.typ
   edge((0.25, .75), (+1.25, .75), "=>"),
 
   node((+0, 0), [pointer to \ variable], radius: 3em),
-  node(
-    (-1, 0),
-    [pointer to \ pointer to \ variable],
-    radius: 3em,
-  ),
-  node(
-    (-.75, .75),
-    [pointer to \ pointer to \ const],
-    radius: 3em,
-  ),
+  node((-1, 0), [pointer to \ pointer to \ variable], radius: 3em),
+  node((-.75, .75), [pointer to \ pointer to \ const], radius: 3em),
   node((+0.25, .75), [pointer to \ const], radius: 3em),
 
   edge((-1, 0), (+0, 0), "=>"),

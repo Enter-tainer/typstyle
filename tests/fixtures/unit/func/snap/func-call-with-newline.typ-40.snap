@@ -70,12 +70,7 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
       blue,
     )
 
-    quad(
-      (0, 0),
-      (0, 1),
-      "Id",
-      red,
-    )
+    quad((0, 0), (0, 1), "Id", red)
     quad(
       (-1, 1),
       (-1, 2),
@@ -90,19 +85,9 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
       red,
       label-pos: 0.3,
     )
-    quad(
-      (0, 2),
-      (0, 3),
-      "Id",
-      red,
-    )
+    quad((0, 2), (0, 3), "Id", red)
 
-    quad(
-      (0, 0),
-      (1, 1),
-      "Div",
-      yellow,
-    )
+    quad((0, 0), (1, 1), "Div", yellow)
     quad(
       (-1, 1),
       (0, 2),

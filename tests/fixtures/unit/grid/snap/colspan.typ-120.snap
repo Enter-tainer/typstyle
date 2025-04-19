@@ -18,14 +18,7 @@ input_file: tests/fixtures/unit/grid/colspan.typ
   ),
   fill: (_, y) => if y == 0 { black },
 
-  table.header(
-    [Team member],
-    [Monday],
-    [Tuesday],
-    [Wednesday],
-    [Thursday],
-    [Friday],
-  ),
+  table.header([Team member], [Monday], [Tuesday], [Wednesday], [Thursday], [Friday]),
   [Evelyn Archer],
   table.cell(colspan: 2, ofi),
   table.cell(colspan: 2, rem),

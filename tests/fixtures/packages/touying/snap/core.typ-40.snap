@@ -680,17 +680,11 @@ input_file: tests/fixtures/packages/touying/core.typ
       fields.offset = 0
       let new-heading = if lbl != none {
         utils.label-it(
-          heading(
-            ..fields,
-            child.body,
-          ),
+          heading(..fields, child.body),
           child.label,
         )
       } else {
-        heading(
-          ..fields,
-          child.body,
-        )
+        heading(..fields, child.body)
       }
       if new-start {
         current-slide.push(new-heading)
@@ -2154,10 +2148,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           base: repetitions,
           index: index,
           // Some functions (e.g. square) may have no body
-          child.at(
-            "body",
-            default: none,
-          ),
+          child.at("body", default: none),
         )
         let cont = conts.first()
         if (
@@ -2451,10 +2442,7 @@ input_file: tests/fixtures/packages/touying/core.typ
   if "rest" in margin {
     pad-args.x = -margin.rest
   }
-  it => pad(
-    ..pad-args,
-    cell(it),
-  )
+  it => pad(..pad-args, cell(it))
 }
 
 // get bottom pad for footer
@@ -2572,17 +2560,11 @@ input_file: tests/fixtures/packages/touying/core.typ
 #let _get-header-footer(self) = {
   let header = utils.call-or-display(
     self,
-    self.page.at(
-      "header",
-      default: none,
-    ),
+    self.page.at("header", default: none),
   )
   let footer = utils.call-or-display(
     self,
-    self.page.at(
-      "footer",
-      default: none,
-    ),
+    self.page.at("footer", default: none),
   )
   // negative padding
   if self.at(
@@ -2796,10 +2778,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       )) <touying-metadata>]
     // add headings for the first subslide
     if (
-      self.at(
-        "headings",
-        default: (),
-      )
+      self.at("headings", default: ())
         != ()
     ) {
       place(
@@ -2876,20 +2855,14 @@ input_file: tests/fixtures/packages/touying/core.typ
         ),
       )
     }
-    utils.call-or-display(
-      self,
-      self.at(
-        "slide-preamble",
-        default: none,
-      ),
-    )
-    utils.call-or-display(
-      self,
-      self.at(
-        "default-slide-preamble",
-        default: none,
-      ),
-    )
+    utils.call-or-display(self, self.at(
+      "slide-preamble",
+      default: none,
+    ))
+    utils.call-or-display(self, self.at(
+      "default-slide-preamble",
+      default: none,
+    ))
   }
   // preamble for the subslides
   let subslide-preamble(self) = {
@@ -2981,20 +2954,14 @@ input_file: tests/fixtures/packages/touying/core.typ
         }
       }
     }
-    utils.call-or-display(
-      self,
-      self.at(
-        "subslide-preamble",
-        default: none,
-      ),
-    )
-    utils.call-or-display(
-      self,
-      self.at(
-        "default-subslide-preamble",
-        default: none,
-      ),
-    )
+    utils.call-or-display(self, self.at(
+      "subslide-preamble",
+      default: none,
+    ))
+    utils.call-or-display(self, self.at(
+      "default-subslide-preamble",
+      default: none,
+    ))
   }
   // update states for every page
   let page-preamble(self) = {
@@ -3020,20 +2987,14 @@ input_file: tests/fixtures/packages/touying/core.typ
         }
       }
     }
-    utils.call-or-display(
-      self,
-      self.at(
-        "page-preamble",
-        default: none,
-      ),
-    )
-    utils.call-or-display(
-      self,
-      self.at(
-        "default-page-preamble",
-        default: none,
-      ),
-    )
+    utils.call-or-display(self, self.at(
+      "page-preamble",
+      default: none,
+    ))
+    utils.call-or-display(self, self.at(
+      "default-page-preamble",
+      default: none,
+    ))
   }
 
 

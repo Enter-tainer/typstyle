@@ -410,31 +410,33 @@ impl<'a> ListStylist<'a> {
                         last
                     };
                     let compact = last.clone();
-                    let sparse = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
-                    compact.union(sparse)
+                    let loose = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
+                    compact.union(loose)
                 } else {
+                    let width_limiter = arena.column(|c| {
+                        if c < self.printer.config.args_width() {
+                            arena.nil().into_doc()
+                        } else {
+                            arena.fail().into_doc()
+                        }
+                    });
                     let compact = (arena.intersperse(
                         docs.iter().map(|doc| doc.clone().flatten()),
                         sep.clone() + arena.space(),
                     )) + sep.clone()
+                        + width_limiter.clone()
                         + arena.space()
-                        + arena.column(|c| {
-                            if c < self.printer.config.chain_width() {
-                                arena.nil().into_doc()
-                            } else {
-                                arena.fail().into_doc()
-                            }
-                        })
                         + last.clone();
-                    let loose = (arena.hardline()
-                        + (arena.intersperse(docs.clone(), sep.clone() + arena.hardline()))
+                    let loose = (arena.line_()
+                        + (arena.intersperse(docs.clone(), sep.clone() + arena.line()))
                         + sep.clone()
-                        + arena.hardline()
+                        + width_limiter
+                        + arena.line()
                         + last
                         + sep.clone())
                     .nest(2)
-                        + arena.hardline();
-                    compact.union(loose)
+                        + arena.line_();
+                    compact.union(loose.group())
                 };
                 if is_single && sty.omit_delim_single {
                     inner.group()

@@ -46,9 +46,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     }
   }
 
-  if node.layer != 0 {
-    result = cetz.draw.on-layer(node.layer, result)
-  }
+  if node.layer != 0 { result = cetz.draw.on-layer(node.layer, result) }
 
   (node.post)(result) // post-process (e.g., hide)
 
@@ -166,10 +164,8 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
-  decor = decor.with(
-    start: if has-mark-at(0) { 0.1 } else { ε } * 100%,
-    stop: if has-mark-at(1) { 0.9 } else { 1 - ε } * 100%,
-  )
+  decor = decor.with(start: if has-mark-at(0) { 0.1 } else { ε } * 100%, stop: if has-mark-at(1) { 0.9 } else { 1 - ε }
+    * 100%)
 
   decor(path)
 }
@@ -242,11 +238,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let (from, to) = edge.final-vertices
 
   // Determine the arc from the stroke end points and bend angle
-  let (center, radius, start, stop) = get-arc-connecting-points(
-    from,
-    to,
-    edge.bend,
-  )
+  let (center, radius, start, stop) = get-arc-connecting-points(from, to, edge.bend)
 
   let bend-dir = if edge.bend > 0deg { +1 } else { -1 }
 
@@ -268,11 +260,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   // Draw marks
-  let curve(t) = vector.add(center, vector-polar(radius, lerp(
-    start,
-    stop,
-    t,
-  )))
+  let curve(t) = vector.add(center, vector-polar(radius, lerp(start, stop, t)))
   for mark in edge.marks {
     place-mark-on-curve(mark, curve, stroke: edge.stroke, debug: debug >= 3)
   }
@@ -436,11 +424,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           }
 
           if debug >= 4 {
-            cetz.draw.on-layer(1, cetz.draw.circle(
-              arc-center,
-              radius: arc-radius - d,
-              stroke: debug-stroke,
-            ))
+            cetz.draw.on-layer(1, cetz.draw.circle(arc-center, radius: arc-radius - d, stroke: debug-stroke))
           }
         }
 
@@ -549,20 +533,15 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if node == none { return (0pt, 0pt) }
   let μ = calc.pow(node.aspect, node.defocus)
   (
-    calc.max(0pt, node.size.at(0) / 2 * (1 - 1 / μ))
-      * calc.cos(θ),
-    calc.max(0pt, node.size.at(1) / 2 * (1 - μ / 1))
-      * calc.sin(θ),
+    calc.max(0pt, node.size.at(0) / 2 * (1 - 1 / μ)) * calc.cos(θ),
+    calc.max(0pt, node.size.at(1) / 2 * (1 - μ / 1)) * calc.sin(θ),
   )
 }
 
 
 #let draw-anchored-line(edge, nodes, debug: 0) = {
   let (from, to) = edge.final-vertices
-  let θ = (
-    angle-between(from, to)
-      + 90deg
-  )
+  let θ = angle-between(from, to) + 90deg
 
   // TODO: do defocus adjustment sensibly
   if nodes.at(0).len() == 1 {
@@ -674,13 +653,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     draw-anchored-arc(edge, nodes, ..args)
   } else if edge.kind == "poly" {
     draw-anchored-polyline(edge, nodes, ..args)
-  } else {
-    error("Invalid edge kind #0.", edge.kind)
-  }
+  } else { error("Invalid edge kind #0.", edge.kind) }
 
-  if edge.layer != 0 {
-    obj = cetz.draw.on-layer(edge.layer, obj)
-  }
+  if edge.layer != 0 { obj = cetz.draw.on-layer(edge.layer, obj) }
 
   obj
 }
@@ -715,9 +690,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   import cetz.draw
   draw.group({
     let (a, b) = array.zip(x-lims, y-lims)
-    if a == b {
-      b = vector.add(b, (1e-3pt, 1e-3pt))
-    }
+    if a == b { b = vector.add(b, (1e-3pt, 1e-3pt)) }
     draw.rect(a, b, stroke: DEBUG_COLOR + .5pt)
 
     draw.set-style(stroke: (
@@ -732,30 +705,18 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       let (min, max) = (y-lims, x-lims).at(axis)
       for (i, x) in x-range.enumerate() {
         // coordinate line
-        draw.line(swap(grid.centers.at(axis).at(i), min), swap(
-          grid.centers.at(axis).at(i),
-          max,
-        ))
+        draw.line(swap(grid.centers.at(axis).at(i), min), swap(grid.centers.at(axis).at(i), max))
         // size bracket
         let size = grid.cell-sizes.at(axis).at(i)
         draw.rect(
-          (
-            to: swap(grid.centers.at(axis).at(i), min),
-            rel: swap(-size / 2, 0),
-          ),
-          (
-            to: swap(grid.centers.at(axis).at(i), min),
-            rel: swap(+size / 2, -1pt),
-          ),
+          (to: swap(grid.centers.at(axis).at(i), min), rel: swap(-size / 2, 0)),
+          (to: swap(grid.centers.at(axis).at(i), min), rel: swap(+size / 2, -1pt)),
           fill: DEBUG_COLOR,
           stroke: none,
         )
         // coordinate label
         draw.content(
-          (
-            to: swap(grid.centers.at(axis).at(i), min),
-            rel: swap(0, -.2em),
-          ),
+          (to: swap(grid.centers.at(axis).at(i), min), rel: swap(0, -.2em)),
           text(fill: DEBUG_COLOR, size: .7em)[#x],
           anchor: if axis == 0 { "north" } else { "east" },
         )

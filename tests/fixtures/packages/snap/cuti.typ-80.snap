@@ -34,12 +34,7 @@ input_file: tests/fixtures/packages/cuti.typ
 
 #let show-fakebold(reg-exp: ".+", base-weight: auto, s, ..params) = {
   show text.where(weight: "bold").or(strong): it => {
-    regex-fakebold(
-      reg-exp: reg-exp,
-      base-weight: base-weight,
-      it,
-      ..params,
-    )
+    regex-fakebold(reg-exp: reg-exp, base-weight: base-weight, it, ..params)
   }
   s
 }
@@ -79,11 +74,7 @@ input_file: tests/fixtures/packages/cuti.typ
 
 #let fakesc(s, scaling: 0.75) = {
   show regex("\p{Ll}+"): it => {
-    context text(
-      scaling * 1em,
-      stroke: 0.01em + text.fill,
-      upper(it),
-    )
+    context text(scaling * 1em, stroke: 0.01em + text.fill, upper(it))
   }
   text(s)
 }

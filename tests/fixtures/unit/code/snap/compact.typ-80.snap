@@ -25,7 +25,8 @@ input_file: tests/fixtures/unit/code/compact.typ
 
   let base-weight = none
   assert(
-    base-weight in (auto, none) or type(base-weight) in (str, int),
+    base-weight in (auto, none)
+      or type(base-weight) in (str, int),
     message: "`base-weight` should be `auto`, `none`, `int` or `str` type.",
   )
 }

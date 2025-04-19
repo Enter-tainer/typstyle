@@ -40,21 +40,11 @@ input_file: tests/fixtures/packages/cuti.typ
 }
 
 #let cn-fakebold(s, ..params) = {
-  regex-fakebold(
-    reg-exp: "[\p{script=Han}！-･〇-〰—]+",
-    base-weight: "regular",
-    s,
-    ..params,
-  )
+  regex-fakebold(reg-exp: "[\p{script=Han}！-･〇-〰—]+", base-weight: "regular", s, ..params)
 }
 
 #let show-cn-fakebold(s, ..params) = {
-  show-fakebold(
-    reg-exp: "[\p{script=Han}！-･〇-〰—]+",
-    base-weight: "regular",
-    s,
-    ..params,
-  )
+  show-fakebold(reg-exp: "[\p{script=Han}！-･〇-〰—]+", base-weight: "regular", s, ..params)
 }
 
 #let regex-fakeitalic(reg-exp: ".+?", ang: -18.4deg, s) = {

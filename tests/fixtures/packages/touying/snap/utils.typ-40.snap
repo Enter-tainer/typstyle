@@ -50,10 +50,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
   )
   let res = init-dict
   for dict in dicts.pos() {
-    res = add-dicts(
-      res,
-      dict,
-    )
+    res = add-dicts(res, dict)
   }
   return res
 }
@@ -204,10 +201,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
   if named {
     if label != none and labeled {
       return label-it(
-        (it.func())(
-          ..fields,
-          ..new-body,
-        ),
+        (it.func())(..fields, ..new-body),
         label,
       )
     } else {
@@ -380,13 +374,12 @@ input_file: tests/fixtures/packages/touying/utils.typ
       type(self.methods.at(key))
         == function
     ) {
-      methods.insert(
-        key,
-        (..args) => self.methods.at(key)(
-          self: self,
-          ..args,
-        ),
-      )
+      methods.insert(key, (
+        ..args,
+      ) => self.methods.at(key)(
+        self: self,
+        ..args,
+      ))
     }
   }
   return methods
@@ -449,10 +442,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
       .convert-label-to-short-heading
   } else {
     (self: none, lbl) => titlecase(lbl
-      .replace(
-        regex("^[^:]*:"),
-        "",
-      )
+      .replace(regex("^[^:]*:"), "")
       .replace("_", " ")
       .replace("-", " "))
   }
@@ -496,10 +486,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
           and h.level == level
       ),
     )
-    return headings.at(
-      -1,
-      default: none,
-    )
+    return headings.at(-1, default: none)
   }
   let headings = query(heading).filter(
     h => (
@@ -907,10 +894,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
       container-size.width,
     )
   }
-  box(
-    width: mutable-width,
-    body,
-  )
+  box(width: mutable-width, body)
 }
 
 
@@ -987,10 +971,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
           } else {
             container-size.height
           }
-          _size-to-pt(
-            body,
-            dim,
-          )
+          _size-to-pt(body, dim)
         }
 
         // Provide a sensible initial width, which will define initial scale parameters.
@@ -1026,10 +1007,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
           mutable-width / size.width
         )
         let ratio = (
-          calc.min(
-            h-ratio,
-            w-ratio,
-          )
+          calc.min(h-ratio, w-ratio)
             * 100%
         )
 
@@ -1198,13 +1176,10 @@ input_file: tests/fixtures/packages/touying/utils.typ
           // In contrast, `outset` preserves spacing and alignment at the cost of adding
           // a slight, visible border when the covered object is right next to the edge
           // of a color change.
-          named.insert(
-            "outset",
-            (
-              top: 0.15em,
-              bottom: 0.25em,
-            ),
-          )
+          named.insert("outset", (
+            top: 0.15em,
+            bottom: 0.25em,
+          ))
         }
         stack(
           spacing: -wrapped-body-size.height,
@@ -1272,10 +1247,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
 #let alert-with-primary-color(
   self: none,
   body,
-) = text(
-  fill: self.colors.primary,
-  body,
-)
+) = text(fill: self.colors.primary, body)
 
 
 /// Alert content.
@@ -1374,10 +1346,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
     type(visible-subslides) == array
   ) {
     visible-subslides.any(
-      s => check-visible(
-        idx,
-        s,
-      ),
+      s => check-visible(idx, s),
     )
   } else if (
     type(visible-subslides) == str
@@ -1585,18 +1554,11 @@ input_file: tests/fixtures/packages/touying/utils.typ
       for (subslides, content) in (
         subslides-contents
       ) {
-        only(
-          self: self,
-          subslides,
-          box(
-            width: max-width,
-            height: max-height,
-            align(
-              position,
-              content,
-            ),
-          ),
-        )
+        only(self: self, subslides, box(
+          width: max-width,
+          height: max-height,
+          align(position, content),
+        ))
       }
     }
   } else {
@@ -1634,10 +1596,8 @@ input_file: tests/fixtures/packages/touying/utils.typ
 ) = {
   let contents = args.pos()
   let kwargs = args.named()
-  let subslides = range(
-    start,
-    start + contents.len(),
-  )
+  let subslides = range(start, start
+    + contents.len())
   if repeat-last {
     subslides.last() = (
       beginning: subslides.last(),
@@ -1686,10 +1646,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
     end
   }
 
-  let subslides = range(
-    start,
-    end,
-  )
+  let subslides = range(start, end)
   let contents = subslides.map(fn)
   alternatives-match(
     self: self,
@@ -1760,10 +1717,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
     ) {
       note.text
     } else {
-      markup-text(
-        note,
-        mode: mode,
-      ).trim()
+      markup-text(note, mode: mode).trim()
     }
     pdfpc.speaker-note(raw-text)
   }

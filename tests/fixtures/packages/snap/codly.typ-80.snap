@@ -17,22 +17,10 @@ input_file: tests/fixtures/packages/codly.typ
   if type(inset) == dictionary {
     let other = inset.at("rest", default: 0.32em)
     (
-      top: inset.at("top", default: inset.at(
-        "y",
-        default: other,
-      )),
-      right: inset.at("right", default: inset.at(
-        "x",
-        default: other,
-      )),
-      bottom: inset.at("bottom", default: inset.at(
-        "y",
-        default: other,
-      )),
-      left: inset.at("left", default: inset.at(
-        "x",
-        default: other,
-      )),
+      top: inset.at("top", default: inset.at("y", default: other)),
+      right: inset.at("right", default: inset.at("x", default: other)),
+      bottom: inset.at("bottom", default: inset.at("y", default: other)),
+      left: inset.at("left", default: inset.at("x", default: other)),
     )
   } else {
     (top: inset, right: inset, bottom: inset, left: inset)
@@ -384,10 +372,7 @@ input_file: tests/fixtures/packages/codly.typ
         let indent = match.end - match.start
 
         // Then measure the necessary indent.
-        let indent = first.text.slice(
-          match.start,
-          match.end,
-        )
+        let indent = first.text.slice(match.start, match.end)
         width = measure([#indent]).width
       }
     }
@@ -403,12 +388,7 @@ input_file: tests/fixtures/packages/codly.typ
       }
     }
 
-    let l = raw.line(
-      it.number,
-      it.count,
-      it.text,
-      highlighted,
-    )
+    let l = raw.line(it.number, it.count, it.text, highlighted)
 
     // Build a label if the code block has one.
     if block-label != none {
@@ -537,10 +517,9 @@ input_file: tests/fixtures/packages/codly.typ
           )(if "reference-number-format" in extra {
             extra.reference-number-format
           } else {
-            state(
-              "codly-reference-number-format",
-              __codly-args.reference-number-format.default,
-            ).get()
+            state("codly-reference-number-format", __codly-args
+              .reference-number-format
+              .default).get()
           })
 
           reference-number-format(it.number)
@@ -551,10 +530,9 @@ input_file: tests/fixtures/packages/codly.typ
           )
           hl.tag
         }
-        place(hide[#figure(
-            kind: "codly-referencer",
-            supplement: none,
-          )[#box(referenced)#box(str(block-label))]#hl.label])
+        place(hide[#figure(kind: "codly-referencer", supplement: none)[#box(
+              referenced,
+            )#box(str(block-label))]#hl.label])
       } else {
         none
       }
@@ -576,8 +554,7 @@ input_file: tests/fixtures/packages/codly.typ
           let height-col = measure(col).height
           let height-tag = measure(tag).height
           let max-height = (
-            calc.max(height-col, height-tag)
-              + 2 * highlight-inset
+            calc.max(height-col, height-tag) + 2 * highlight-inset
           )
           let hl-box = box(
             radius: (
@@ -627,12 +604,7 @@ input_file: tests/fixtures/packages/codly.typ
     }
   }
 
-  let l = raw.line(
-    it.number,
-    it.count,
-    it.text,
-    highlighted,
-  )
+  let l = raw.line(it.number, it.count, it.text, highlighted)
 
   // Build a label if the code block has one.
   if block-label != none {
@@ -967,17 +939,13 @@ input_file: tests/fixtures/packages/codly.typ
     .map(x => x.width)
   let num = annotation-format(annotations.len())
   let lr-width = if annotations.len() > 0 {
-    measure(math.lr("}", size: 5em)
-      + num).width
+    measure(math.lr("}", size: 5em) + num).width
   } else {
     0pt
   }
 
   let annot-width = (
-    annot-bodies-width.fold(0pt, (a, b) => calc.max(
-      a,
-      b,
-    ))
+    annot-bodies-width.fold(0pt, (a, b) => calc.max(a, b))
       + padding.left
       + padding.right
       + lr-width
@@ -1235,10 +1203,9 @@ input_file: tests/fixtures/packages/codly.typ
         } else {
           num
         }
-        place(hide[#figure(
-            kind: "codly-referencer",
-            supplement: none,
-          )[#box(referenced)#box(str(block-label))]#current-annot.label])
+        place(hide[#figure(kind: "codly-referencer", supplement: none)[#box(
+              referenced,
+            )#box(str(block-label))]#current-annot.label])
       } else {
         none
       }
@@ -1291,8 +1258,7 @@ input_file: tests/fixtures/packages/codly.typ
           line.number + offset,
           line.count,
           line.text,
-          box(height: height, width: 0pt)
-            + line.body,
+          box(height: height, width: 0pt) + line.body,
         )<codly-highlighted>]
     }
 
@@ -1396,8 +1362,7 @@ input_file: tests/fixtures/packages/codly.typ
           stroke: none,
           inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
           fill: (x, y) => if zebra-color != none
-            and calc.rem(y, 2)
-              == 0 {
+            and calc.rem(y, 2) == 0 {
             zebra-color
           } else {
             fill
@@ -1420,11 +1385,7 @@ input_file: tests/fixtures/packages/codly.typ
           fill: if is-complex-fill {
             none
           } else {
-            (x, y) => if (
-              zebra-color != none
-                and calc.rem(y, 2)
-                  == 0
-            ) {
+            (x, y) => if zebra-color != none and calc.rem(y, 2) == 0 {
               zebra-color
             } else {
               fill
@@ -1445,8 +1406,7 @@ input_file: tests/fixtures/packages/codly.typ
           stroke: none,
           align: (numbers-alignment, left + horizon),
           fill: (x, y) => if zebra-color != none
-            and calc.rem(y, 2)
-              == 0 {
+            and calc.rem(y, 2) == 0 {
             zebra-color
           } else {
             fill
@@ -1543,9 +1503,7 @@ input_file: tests/fixtures/packages/codly.typ
   ) {
     let segments = str(it.target).split(":")
     assert(segments.len() > 1, message: "codly: invalid label")
-    let lab = label(segments
-      .slice(0, -1)
-      .join(":"))
+    let lab = label(segments.slice(0, -1).join(":"))
 
     let sep = (
       __codly-args.reference-sep.type_check
@@ -1585,10 +1543,7 @@ input_file: tests/fixtures/packages/codly.typ
 ) = {
   show figure.where(kind: raw): fig => {
     if "label" in fig.fields() {
-      show raw.where(block: true): it => __codly-raw(
-        it,
-        block-label: fig.label,
-      )
+      show raw.where(block: true): it => __codly-raw(it, block-label: fig.label)
       fig
     } else {
       fig
@@ -1634,10 +1589,7 @@ input_file: tests/fixtures/packages/codly.typ
 
       let args = current + extra
       show ref: it => __codly-ref(it, extra: args)
-      show raw.where(block: true): it => __codly-raw(
-        it,
-        extra: args,
-      )
+      show raw.where(block: true): it => __codly-raw(it, extra: args)
       show figure.where(kind: raw): fig => {
         if "label" in fig.fields() {
           show raw.where(block: true, extra: args): it => __codly-raw(
@@ -1657,10 +1609,7 @@ input_file: tests/fixtures/packages/codly.typ
     let extra = args.named()
     state("codly-extra-args").update(extra)
     show ref: it => __codly-ref(it, extra: args)
-    show raw.where(block: true): it => __codly-raw(
-      it,
-      extra: extra,
-    )
+    show raw.where(block: true): it => __codly-raw(it, extra: extra)
     show figure.where(kind: raw): fig => {
       if "label" in fig.fields() {
         show raw.where(block: true, extra: args): it => __codly-raw(

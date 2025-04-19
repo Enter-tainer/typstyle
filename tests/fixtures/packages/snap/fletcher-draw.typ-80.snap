@@ -22,16 +22,18 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 #let draw-node(node, debug: 0) = {
   let result = {
     if node.stroke != none or node.fill != none {
-      cetz.draw.group({
-        cetz.draw.translate(node.pos.xyz)
-        for (i, extrude) in node.extrude.enumerate() {
-          cetz.draw.set-style(
-            fill: if i == 0 { node.fill },
-            stroke: node.stroke,
-          )
-          (node.shape)(node, extrude)
-        }
-      })
+      cetz.draw.group(
+        {
+          cetz.draw.translate(node.pos.xyz)
+          for (i, extrude) in node.extrude.enumerate() {
+            cetz.draw.set-style(
+              fill: if i == 0 { node.fill },
+              stroke: node.stroke,
+            )
+            (node.shape)(node, extrude)
+          }
+        },
+      )
     }
 
     if node.label != none {
@@ -49,9 +51,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     }
   }
 
-  if node.layer != 0 {
-    result = cetz.draw.on-layer(node.layer, result)
-  }
+  if node.layer != 0 { result = cetz.draw.on-layer(node.layer, result) }
 
   (node.post)(result) // post-process (e.g., hide)
 
@@ -68,18 +68,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   if debug >= 2 and node.radius != 0pt {
     // node bounding rectangle
-    cetz.draw.rect(
-      ..rect-at(node.pos.xyz, node.size),
-      stroke: DEBUG_COLOR + .1pt,
-    )
+    cetz.draw.rect(..rect-at(node.pos.xyz, node.size), stroke: DEBUG_COLOR
+      + .1pt)
 
     // node anchoring outline (what edges snap to)
     cetz.draw.group({
       cetz.draw.translate(node.pos.xyz)
-      cetz.draw.set-style(
-        stroke: DEBUG_COLOR2 + 0.25pt,
-        fill: none,
-      )
+      cetz.draw.set-style(stroke: DEBUG_COLOR2 + 0.25pt, fill: none)
       (node.shape)(node, node.outset)
     })
   }
@@ -105,10 +100,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let curve-point = curve(edge.label-pos)
   let curve-point-ε = curve(edge.label-pos + 1e-3)
 
-  let θ = wrap-angle-180(angle-between(
-    curve-point,
-    curve-point-ε,
-  ))
+  let θ = wrap-angle-180(angle-between(curve-point, curve-point-ε))
   let θ-normal = θ + if edge.label-side == right { +90deg } else { -90deg }
 
   if type(edge.label-angle) == alignment {
@@ -148,12 +140,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   )
 
   if debug >= 2 {
-    cetz.draw.circle(
-      label-pos,
-      radius: 0.75pt,
-      stroke: none,
-      fill: DEBUG_COLOR2,
-    )
+    cetz.draw.circle(label-pos, radius: 0.75pt, stroke: none, fill: DEBUG_COLOR2)
   }
 }
 
@@ -234,12 +221,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   // Draw marks
   let curve(t) = vector.lerp(from, to, t)
   for mark in edge.marks {
-    place-mark-on-curve(
-      mark,
-      curve,
-      stroke: edge.stroke,
-      debug: debug >= 3,
-    )
+    place-mark-on-curve(mark, curve, stroke: edge.stroke, debug: debug >= 3)
   }
 
   // Draw label
@@ -299,17 +281,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   // Draw marks
-  let curve(t) = vector.add(center, vector-polar(
-    radius,
-    lerp(start, stop, t),
-  ))
+  let curve(t) = vector.add(center, vector-polar(radius, lerp(
+    start,
+    stop,
+    t,
+  )))
   for mark in edge.marks {
-    place-mark-on-curve(
-      mark,
-      curve,
-      stroke: edge.stroke,
-      debug: debug >= 3,
-    )
+    place-mark-on-curve(mark, curve, stroke: edge.stroke, debug: debug >= 3)
   }
 
   // Draw label
@@ -385,10 +363,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       let dist = radius / calc.cos(Δθ / 2)
 
       (
-        arc-center: vector.add(pt, vector-polar(
-          dist,
-          θ-normal,
-        )),
+        arc-center: vector.add(pt, vector-polar(dist, θ-normal)),
         arc-radius: radius,
         start: θs.at(i - 1) - 90deg,
         delta: wrap-angle-180(Δθ),
@@ -459,10 +434,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       if i > 0 {
         // offset start of segment to give space for previous arc
         let (line-shift,) = rounded-corners.at(i - 1)
-        from = vector.add(from, vector-polar(
-          line-shift,
-          θs.at(i),
-        ))
+        from = vector.add(from, vector-polar(line-shift, θs.at(i)))
       }
 
       if i < θs.len() - 1 {
@@ -473,10 +445,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           delta,
           line-shift,
         ) = rounded-corners.at(i)
-        to = vector.add(to, vector-polar(
-          -line-shift,
-          θs.at(i),
-        ))
+        to = vector.add(to, vector-polar(-line-shift, θs.at(i)))
 
         Δphase += vector-len(vector.sub(from, to))
 
@@ -558,10 +527,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if objects == none { return callback(target) }
 
   let node-name = "intersection-finder"
-  cetz.draw.hide(cetz.draw.intersections(
-    node-name,
-    objects,
-  ))
+  cetz.draw.hide(cetz.draw.intersections(node-name, objects))
 
   cetz.draw.get-ctx(ctx => {
     let calculate-anchors = ctx.nodes.at(node-name).anchors
@@ -573,10 +539,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         point.at(1) *= -1
         vector-2d(vector.scale(point, 1cm))
       })
-      .sorted(key: point => vector-len(vector.sub(
-        point,
-        target,
-      )))
+      .sorted(key: point => vector-len(vector.sub(point, target)))
 
     let anchor = anchor-points.at(-1, default: target)
 
@@ -589,19 +552,11 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   (from-point, to-point),
   callback,
 ) = {
-  find-farthest-intersection(
-    from-group,
-    from-point,
-    from-anchor => {
-      find-farthest-intersection(
-        to-group,
-        to-point,
-        to-anchor => {
-          callback((from-anchor, to-anchor))
-        },
-      )
-    },
-  )
+  find-farthest-intersection(from-group, from-point, from-anchor => {
+    find-farthest-intersection(to-group, to-point, to-anchor => {
+      callback((from-anchor, to-anchor))
+    })
+  })
 }
 
 /// Get the anchor point around a node outline at a certain angle.
@@ -610,10 +565,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     cetz.draw.translate(node.pos.xyz)
     (node.shape)(node, node.outset)
   })
-  let dummy-line = cetz.draw.line(
-    node.pos.xyz,
-    (rel: (θ, 10 * node.radius)),
-  )
+  let dummy-line = cetz.draw.line(node.pos.xyz, (rel: (θ, 10 * node.radius)))
 
   find-farthest-intersection(
     outline + dummy-line,
@@ -633,20 +585,15 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if node == none { return (0pt, 0pt) }
   let μ = calc.pow(node.aspect, node.defocus)
   (
-    calc.max(0pt, node.size.at(0) / 2 * (1 - 1 / μ))
-      * calc.cos(θ),
-    calc.max(0pt, node.size.at(1) / 2 * (1 - μ / 1))
-      * calc.sin(θ),
+    calc.max(0pt, node.size.at(0) / 2 * (1 - 1 / μ)) * calc.cos(θ),
+    calc.max(0pt, node.size.at(1) / 2 * (1 - μ / 1)) * calc.sin(θ),
   )
 }
 
 
 #let draw-anchored-line(edge, nodes, debug: 0) = {
   let (from, to) = edge.final-vertices
-  let θ = (
-    angle-between(from, to)
-      + 90deg
-  )
+  let θ = angle-between(from, to) + 90deg
 
   // TODO: do defocus adjustment sensibly
   if nodes.at(0).len() == 1 {
@@ -656,10 +603,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     ))
   }
   if nodes.at(1).len() == 1 {
-    to = vector.add(to, defocus-adjustment(
-      nodes.at(1).at(0),
-      θ + 90deg,
-    ))
+    to = vector.add(to, defocus-adjustment(nodes.at(1).at(0), θ + 90deg))
   }
 
 
@@ -677,20 +621,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   })
 
 
-  find-anchor-pair(
-    intersection-objects,
-    (from, to),
-    anchors => {
-      let obj = draw-edge-line(
-        edge
-          + (
-            final-vertices: anchors,
-          ),
-        debug: debug,
-      )
-      (edge.post)(obj) // post-process (e.g., hide)
-    },
-  )
+  find-anchor-pair(intersection-objects, (from, to), anchors => {
+    let obj = draw-edge-line(
+      edge
+        + (
+          final-vertices: anchors,
+        ),
+      debug: debug,
+    )
+    (edge.post)(obj) // post-process (e.g., hide)
+  })
 }
 
 
@@ -719,17 +659,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       dummy-line
     })
 
-  find-anchor-pair(
-    intersection-objects,
-    (from, to),
-    anchors => {
-      let obj = draw-edge-arc(
-        edge + (final-vertices: anchors),
-        debug: debug,
-      )
-      (edge.post)(obj) // post-process (e.g., hide)
-    },
-  )
+  find-anchor-pair(intersection-objects, (from, to), anchors => {
+    let obj = draw-edge-arc(edge + (final-vertices: anchors), debug: debug)
+    (edge.post)(obj) // post-process (e.g., hide)
+  })
 }
 
 
@@ -761,17 +694,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       dummy-line
     })
 
-  find-anchor-pair(
-    intersection-objects,
-    (from, to),
-    anchors => {
-      let edge = edge
-      edge.final-vertices.at(0) = anchors.at(0)
-      edge.final-vertices.at(-1) = anchors.at(1)
-      let obj = draw-edge-polyline(edge, debug: debug)
-      (edge.post)(obj) // post-process (e.g., hide)
-    },
-  )
+  find-anchor-pair(intersection-objects, (from, to), anchors => {
+    let edge = edge
+    edge.final-vertices.at(0) = anchors.at(0)
+    edge.final-vertices.at(-1) = anchors.at(1)
+    let obj = draw-edge-polyline(edge, debug: debug)
+    (edge.post)(obj) // post-process (e.g., hide)
+  })
 }
 
 
@@ -782,13 +711,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     draw-anchored-arc(edge, nodes, ..args)
   } else if edge.kind == "poly" {
     draw-anchored-polyline(edge, nodes, ..args)
-  } else {
-    error("Invalid edge kind #0.", edge.kind)
-  }
+  } else { error("Invalid edge kind #0.", edge.kind) }
 
-  if edge.layer != 0 {
-    obj = cetz.draw.on-layer(edge.layer, obj)
-  }
+  if edge.layer != 0 { obj = cetz.draw.on-layer(edge.layer, obj) }
 
   obj
 }
@@ -823,9 +748,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   import cetz.draw
   draw.group({
     let (a, b) = array.zip(x-lims, y-lims)
-    if a == b {
-      b = vector.add(b, (1e-3pt, 1e-3pt))
-    }
+    if a == b { b = vector.add(b, (1e-3pt, 1e-3pt)) }
     draw.rect(a, b, stroke: DEBUG_COLOR + .5pt)
 
     draw.set-style(stroke: (
@@ -840,25 +763,19 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       let (min, max) = (y-lims, x-lims).at(axis)
       for (i, x) in x-range.enumerate() {
         // coordinate line
-        draw.line(
-          swap(grid.centers.at(axis).at(i), min),
-          swap(grid.centers.at(axis).at(i), max),
-        )
+        draw.line(swap(grid.centers.at(axis).at(i), min), swap(
+          grid.centers.at(axis).at(i),
+          max,
+        ))
         // size bracket
         let size = grid.cell-sizes.at(axis).at(i)
         draw.rect(
           (
-            to: swap(
-              grid.centers.at(axis).at(i),
-              min,
-            ),
+            to: swap(grid.centers.at(axis).at(i), min),
             rel: swap(-size / 2, 0),
           ),
           (
-            to: swap(
-              grid.centers.at(axis).at(i),
-              min,
-            ),
+            to: swap(grid.centers.at(axis).at(i), min),
             rel: swap(+size / 2, -1pt),
           ),
           fill: DEBUG_COLOR,
@@ -867,10 +784,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         // coordinate label
         draw.content(
           (
-            to: swap(
-              grid.centers.at(axis).at(i),
-              min,
-            ),
+            to: swap(grid.centers.at(axis).at(i), min),
             rel: swap(0, -.2em),
           ),
           text(fill: DEBUG_COLOR, size: .7em)[#x],
@@ -935,10 +849,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     return candidates
   }
 
-  error(
-    "Couldn't find node corresponding to #0 in diagram.",
-    key,
-  )
+  error("Couldn't find node corresponding to #0 in diagram.", key)
 }
 
 
@@ -949,10 +860,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   edges,
   debug: 0,
 ) = {
-  let node-finder = find-snapping-nodes.with(
-    grid,
-    nodes,
-  )
+  let node-finder = find-snapping-nodes.with(grid, nodes)
   let first-last(x) = (x.at(0), x.at(-1))
   for edge in edges {
     let snap-to-nodes = edge

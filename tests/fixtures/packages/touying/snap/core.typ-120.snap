@@ -136,18 +136,9 @@ input_file: tests/fixtures/packages/touying/core.typ
   let slide-fn = auto
   let new-section-slide-fn = self.at("new-section-slide-fn", default: none)
   let new-subsection-slide-fn = self.at("new-subsection-slide-fn", default: none)
-  let new-subsubsection-slide-fn = self.at(
-    "new-subsubsection-slide-fn",
-    default: none,
-  )
-  let new-subsubsubsection-slide-fn = self.at(
-    "new-subsubsubsection-slide-fn",
-    default: none,
-  )
-  let horizontal-line-to-pagebreak = self.at(
-    "horizontal-line-to-pagebreak",
-    default: true,
-  )
+  let new-subsubsection-slide-fn = self.at("new-subsubsection-slide-fn", default: none)
+  let new-subsubsubsection-slide-fn = self.at("new-subsubsubsection-slide-fn", default: none)
+  let horizontal-line-to-pagebreak = self.at("horizontal-line-to-pagebreak", default: true)
   let children = if utils.is-sequence(body) {
     body.children
   } else {
@@ -211,11 +202,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     // Main logic
     if utils.is-kind(child, "touying-slide-wrapper") {
       current-slide = utils.trim(current-slide)
-      if (
-        current-slide != ()
-          or _get-slide-fn(self + (headings: current-headings), default: none)
-            != none
-      ) {
+      if current-slide != () or _get-slide-fn(self + (headings: current-headings), default: none) != none {
         (cont, recaller-map, current-headings, current-slide, new-start, is-first-slide) = call-slide-fn-and-reset(
           self + (headings: current-headings, is-first-slide: is-first-slide),
           slide-fn,
@@ -269,8 +256,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
       if (
-        _get-slide-fn(self + (headings: current-headings), default: none)
-          != none
+        _get-slide-fn(self + (headings: current-headings), default: none) != none
           or child.depth <= last-heading-depth
           or current-slide != ()
           or (
@@ -342,10 +328,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           result.push(cont)
         }
       }
-    } else if (
-      self.at("auto-offset-for-heading", default: true)
-        and utils.is-heading(child)
-    ) {
+    } else if self.at("auto-offset-for-heading", default: true) and utils.is-heading(child) {
       let fields = child.fields()
       let lbl = fields.remove("label", default: none)
       let _ = fields.remove("body", default: none)
@@ -1164,17 +1147,9 @@ input_file: tests/fixtures/packages/touying/core.typ
             }
           }
           if repetitions <= index or not need-cover {
-            result.push((child.value.fn)(
-              self: self,
-              ..child.value.args,
-              ..extra-args,
-            ))
+            result.push((child.value.fn)(self: self, ..child.value.args, ..extra-args))
           } else {
-            cover-arr.push((child.value.fn)(
-              self: self,
-              ..child.value.args,
-              ..extra-args,
-            ))
+            cover-arr.push((child.value.fn)(self: self, ..child.value.args, ..extra-args))
           }
           repetitions = nextrepetitions
         } else if kind == "touying-delayed-wrapper" {
@@ -1244,17 +1219,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(utils.reconstruct(
-            child,
-            labeled: labeled(child.func()),
-            cont,
-          ))
+          result.push(utils.reconstruct(child, labeled: labeled(child.func()), cont))
         } else {
-          cover-arr.push(utils.reconstruct(
-            child,
-            labeled: labeled(child.func()),
-            cont,
-          ))
+          cover-arr.push(utils.reconstruct(child, labeled: labeled(child.func()), cont))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1268,17 +1235,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           ..child.children,
         )
         if repetitions <= index or not need-cover {
-          result.push(utils.reconstruct-table-like(
-            child,
-            labeled: labeled(child.func()),
-            conts,
-          ))
+          result.push(utils.reconstruct-table-like(child, labeled: labeled(child.func()), conts))
         } else {
-          cover-arr.push(utils.reconstruct-table-like(
-            child,
-            labeled: labeled(child.func()),
-            conts,
-          ))
+          cover-arr.push(utils.reconstruct-table-like(child, labeled: labeled(child.func()), conts))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1328,19 +1287,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(utils.reconstruct(
-            named: true,
-            labeled: labeled(child.func()),
-            child,
-            cont,
-          ))
+          result.push(utils.reconstruct(named: true, labeled: labeled(child.func()), child, cont))
         } else {
-          cover-arr.push(utils.reconstruct(
-            named: true,
-            labeled: labeled(child.func()),
-            child,
-            cont,
-          ))
+          cover-arr.push(utils.reconstruct(named: true, labeled: labeled(child.func()), child, cont))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1461,13 +1410,7 @@ input_file: tests/fixtures/packages/touying/core.typ
   if type(margin) != dictionary and type(margin) != length and type(margin) != relative {
     return it => it
   }
-  let cell = block.with(
-    width: 100%,
-    height: 100%,
-    above: 0pt,
-    below: 0pt,
-    breakable: false,
-  )
+  let cell = block.with(width: 100%, height: 100%, above: 0pt, below: 0pt, breakable: false)
   if type(margin) == length or type(margin) == relative {
     return it => pad(x: -margin, cell(it))
   }
@@ -1493,13 +1436,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     self.page.paper == "presentation-16-9" or self.page.paper == "presentation-4-3",
     message: "The paper of page should be presentation-16-9 or presentation-4-3",
   )
-  let cell = block.with(
-    width: 100%,
-    height: 100%,
-    above: 0pt,
-    below: 0pt,
-    breakable: false,
-  )
+  let cell = block.with(width: 100%, height: 100%, above: 0pt, below: 0pt, breakable: false)
   let page-height = if self.page.paper == "presentation-16-9" {
     473.56pt
   } else {
@@ -1565,10 +1502,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     let negative-pad = _get-negative-pad(self)
     footer = negative-pad(footer)
   }
-  if (
-    self.at("show-notes-on-second-screen", default: none)
-      == bottom
-  ) {
+  if self.at("show-notes-on-second-screen", default: none) == bottom {
     let bottom-pad = _get-bottom-pad(self)
     footer = bottom-pad(footer)
   }
@@ -1588,11 +1522,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     } else {
       595.28pt
     }
-    let show-notes = (self.methods.show-notes)(
-      self: self,
-      width: page-width,
-      height: page-height,
-    )
+    let show-notes = (self.methods.show-notes)(self: self, width: page-width, height: page-height)
     let margin-left = if type(self.page.margin) != dictionary {
       self.page.margin
     } else if "left" in self.page.margin {
@@ -1685,10 +1615,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     }
     [#metadata((kind: "touying-new-slide")) <touying-metadata>]
     // add headings for the first subslide
-    if (
-      self.at("headings", default: ())
-        != ()
-    ) {
+    if self.at("headings", default: ()) != () {
       place(hide({
         set heading(offset: 0)
         let headings = self
@@ -1733,11 +1660,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       slide-preamble(self)
     }
     [#metadata((kind: "touying-new-subslide")) <touying-metadata>]
-    if (
-      self.at("enable-frozen-states-and-counters", default: true)
-        and not self.handout
-        and self.repeat > 1
-    ) {
+    if self.at("enable-frozen-states-and-counters", default: true) and not self.handout and self.repeat > 1 {
       if self.subslide == 1 {
         // save the states and counters
         context {

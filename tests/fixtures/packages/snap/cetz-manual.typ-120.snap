@@ -149,12 +149,7 @@ content((name: "line", anchor: 50pt), [50pt])
 == Styling <styling>
 You can style draw elements by passing the relevant named arguments to their draw functions. All elements that draw something have stroke and fill styling unless said otherwise.
 
-#doc-style.show-parameter-block(
-  "fill",
-  ("color", "none"),
-  default: none,
-  [How to fill the drawn element.],
-)
+#doc-style.show-parameter-block("fill", ("color", "none"), default: none, [How to fill the drawn element.])
 #doc-style.show-parameter-block(
   "stroke",
   ("none", "auto", "length", "color", "dictionary", "stroke"),
@@ -245,9 +240,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
         }
         (
           raw(name),
-          name-to-mnemonic
-            .at(name, default: ([],))
-            .join([, ]),
+          name-to-mnemonic.at(name, default: ([],)).join([, ]),
           cetz.canvas(cetz.draw.line((), (1, 0), mark: (end: name))),
         )
       }
@@ -314,12 +307,7 @@ line(..c)
   [A factor that is applied to the mark's length, width and inset.],
   default: 1,
 )
-#doc-style.show-parameter-block(
-  "sep",
-  "number",
-  [The distance between multiple marks along their path.],
-  default: 0.1cm,
-)
+#doc-style.show-parameter-block("sep", "number", [The distance between multiple marks along their path.], default: 0.1cm)
 #doc-style.show-parameter-block(
   "flex",
   "boolean",
@@ -357,18 +345,8 @@ line(..c)
   [When true only the top half of the mark is drawn.],
   default: false,
 )
-#doc-style.show-parameter-block(
-  "flip",
-  "boolean",
-  [When true the mark is flipped along its axis.],
-  default: false,
-)
-#doc-style.show-parameter-block(
-  "reverse",
-  "boolean",
-  [Reverses the direction of the mark.],
-  default: false,
-)
+#doc-style.show-parameter-block("flip", "boolean", [When true the mark is flipped along its axis.], default: false)
+#doc-style.show-parameter-block("reverse", "boolean", [Reverses the direction of the mark.], default: false)
 #doc-style.show-parameter-block(
   "xy-up",
   "vector",
@@ -652,18 +630,8 @@ line("p2.south-east", ((), "-|", "yline.end")) // Short form
 Use this to linearly interpolate between two coordinates `a` and `b` with a given distance `number`. If `number` is a `<number>` the position will be at the absolute distance away from `a` towards `b`, a `<ratio>` can be given instead to be the relative distance between `a` and `b`.
 An angle can also be given for the general meaning: "First consider the line from `a` to `b`. Then rotate this line by `angle` around point `a`. Then the two endpoints of this line will be `a` and some point `c`. Use this point `c` for the subsequent computation."
 
-#doc-style.show-parameter-block(
-  show-default: false,
-  "a",
-  "coordinate",
-  [The coordinate to interpolate from.],
-)
-#doc-style.show-parameter-block(
-  show-default: false,
-  "b",
-  "coordinate",
-  [The coordinate to interpolate to.],
-)
+#doc-style.show-parameter-block(show-default: false, "a", "coordinate", [The coordinate to interpolate from.])
+#doc-style.show-parameter-block(show-default: false, "b", "coordinate", [The coordinate to interpolate to.])
 #doc-style.show-parameter-block(
   show-default: false,
   "number",
@@ -840,33 +808,18 @@ plot.plot(
 ==== Styling
 *Root:* `legend`
 ===== Keys
-#doc-style.show-parameter-block(
-  "orientation",
-  "direction",
-  default: ttb,
-  [
-    The direction the legend items get laid out to.
-  ],
-)
-#doc-style.show-parameter-block(
-  "default-position",
-  ("string", "coordinate"),
-  default: "legend.north-east",
-  [
-    The default position the legend gets placed at.
-  ],
-)
+#doc-style.show-parameter-block("orientation", "direction", default: ttb, [
+  The direction the legend items get laid out to.
+])
+#doc-style.show-parameter-block("default-position", ("string", "coordinate"), default: "legend.north-east", [
+  The default position the legend gets placed at.
+])
 #doc-style.show-parameter-block("layer", "number", default: 1, [
   The layer index the legend gets drawn at, see on-layer.
 ])
-#doc-style.show-parameter-block(
-  "fill",
-  "paint",
-  default: rgb(255, 255, 255, 200),
-  [
-    The legends frame background color.
-  ],
-)
+#doc-style.show-parameter-block("fill", "paint", default: rgb(255, 255, 255, 200), [
+  The legends frame background color.
+])
 #doc-style.show-parameter-block("stroke", "stroke", default: black, [
   The legends frame stroke style.
 ])
@@ -879,38 +832,18 @@ plot.plot(
 #doc-style.show-parameter-block("spacing", "number", default: .1, [
   The spacing between the legend position and its frame.
 ])
-#doc-style.show-parameter-block(
-  "item.spacing",
-  "number",
-  default: .05,
-  [
-    The spacing between two legend items in canvas units.
-  ],
-)
-#doc-style.show-parameter-block(
-  "item.preview.width",
-  "number",
-  default: .75,
-  [
-    The width of a legend items preview picture, a small preview of the graph the legend item belongs to.
-  ],
-)
-#doc-style.show-parameter-block(
-  "item.preview.height",
-  "number",
-  default: .3,
-  [
-    The height of a legend items preview picture.
-  ],
-)
-#doc-style.show-parameter-block(
-  "item.preview.margin",
-  "number",
-  default: .1,
-  [
-    Margin between the preview picture and the item label.
-  ],
-)
+#doc-style.show-parameter-block("item.spacing", "number", default: .05, [
+  The spacing between two legend items in canvas units.
+])
+#doc-style.show-parameter-block("item.preview.width", "number", default: .75, [
+  The width of a legend items preview picture, a small preview of the graph the legend item belongs to.
+])
+#doc-style.show-parameter-block("item.preview.height", "number", default: .3, [
+  The height of a legend items preview picture.
+])
+#doc-style.show-parameter-block("item.preview.margin", "number", default: .1, [
+  Margin between the preview picture and the item label.
+])
 
 
 #doc-style.parse-show-module("/src/lib/plot/line.typ")
@@ -1068,10 +1001,7 @@ The palette library provides some predefined palettes.
   canvas(length: 1em, {
     import cetz.draw: *
     for i in range(0, p("len")) {
-      if (
-        calc.rem(i, 10)
-          == 0
-      ) { move-to((rel: (0, -.5))) }
+      if calc.rem(i, 10) == 0 { move-to((rel: (0, -.5))) }
       rect((), (rel: (1, .5)), name: "r", ..p(i))
       move-to("r.south-east")
     }

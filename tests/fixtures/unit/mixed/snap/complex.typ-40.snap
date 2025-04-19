@@ -96,10 +96,7 @@ $
   [Cell 1],
   [
     Cell with
-    #text(
-      style: "italic",
-      fill: green,
-    )[styled]
+    #text(style: "italic", fill: green)[styled]
     line break],
 )
 

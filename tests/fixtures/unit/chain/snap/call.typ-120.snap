@@ -26,9 +26,7 @@ input_file: tests/fixtures/unit/chain/call.typ
 #a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
 
 #{
-  (1,)
-    .rev()
-    .map(((n, c)) => f(n, c, 1))
+  (1,).rev().map(((n, c)) => f(n, c, 1))
 }
 
 #{
@@ -47,10 +45,7 @@ input_file: tests/fixtures/unit/chain/call.typ
 }
 
 #{
-  aaaaaaaa(bbbbbbb, ccccccc)
-    .ddddddddd()()
-    .eeeeeeeee[]
-    .ffffffffff
+  aaaaaaaa(bbbbbbb, ccccccc).ddddddddd()().eeeeeeeee[].ffffffffff
 
 
   let points = (

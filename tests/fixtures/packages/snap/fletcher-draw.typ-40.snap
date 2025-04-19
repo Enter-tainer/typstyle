@@ -39,10 +39,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             },
             stroke: node.stroke,
           )
-          (node.shape)(
-            node,
-            extrude,
-          )
+          (node.shape)(node, extrude)
         }
       })
     }
@@ -92,10 +89,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if debug >= 2 and node.radius != 0pt {
     // node bounding rectangle
     cetz.draw.rect(
-      ..rect-at(
-        node.pos.xyz,
-        node.size,
-      ),
+      ..rect-at(node.pos.xyz, node.size),
       stroke: DEBUG_COLOR + .1pt,
     )
 
@@ -106,10 +100,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         stroke: DEBUG_COLOR2 + 0.25pt,
         fill: none,
       )
-      (node.shape)(
-        node,
-        node.outset,
-      )
+      (node.shape)(node, node.outset)
     })
   }
 }
@@ -286,10 +277,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 /// - debug (int): Level of debug details to draw.
 #let draw-edge-line(edge, debug: 0) = {
   let (from, to) = edge.final-vertices
-  let θ = angle-between(
-    from,
-    to,
-  )
+  let θ = angle-between(from, to)
 
   // Draw line(s), one for each extrusion shift
   for shift in edge.extrude {
@@ -320,18 +308,11 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       stroke: edge.stroke,
     )
 
-    with-decorations(
-      edge,
-      obj,
-    )
+    with-decorations(edge, obj)
   }
 
   // Draw marks
-  let curve(t) = vector.lerp(
-    from,
-    to,
-    t,
-  )
+  let curve(t) = vector.lerp(from, to, t)
   for mark in edge.marks {
     place-mark-on-curve(
       mark,
@@ -410,23 +391,17 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       stroke: edge.stroke,
     )
 
-    with-decorations(
-      edge,
-      obj,
-    )
+    with-decorations(edge, obj)
   }
 
   // Draw marks
   let curve(t) = vector.add(
     center,
-    vector-polar(
-      radius,
-      lerp(
-        start,
-        stop,
-        t,
-      ),
-    ),
+    vector-polar(radius, lerp(
+      start,
+      stop,
+      t,
+    )),
   )
   for mark in edge.marks {
     place-mark-on-curve(
@@ -486,10 +461,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         vert != vert-next,
         message: "Adjacent vertices must be distinct.",
       )
-      angle-between(
-        vert,
-        vert-next,
-      )
+      angle-between(vert, vert-next)
     },
   )
 
@@ -540,10 +512,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       (
         arc-center: vector.add(
           pt,
-          vector-polar(
-            dist,
-            θ-normal,
-          ),
+          vector-polar(dist, θ-normal),
         ),
         arc-radius: radius,
         start: θs.at(i - 1) - 90deg,
@@ -557,10 +526,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   let rounded-corners
   if edge.corner-radius != none {
-    rounded-corners = range(
-      1,
-      θs.len(),
-    ).map(calculate-rounded-corner)
+    rounded-corners = range(1, θs.len()).map(
+      calculate-rounded-corner,
+    )
   }
 
   let lerp-scale(t, i) = {
@@ -810,10 +778,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         )
         .sorted(
           key: point => vector-len(
-            vector.sub(
-              point,
-              target,
-            ),
+            vector.sub(point, target),
           ),
         )
 
@@ -905,11 +870,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 ) = {
   let (from, to) = edge.final-vertices
   let θ = (
-    angle-between(
-      from,
-      to,
-    )
-      + 90deg
+    angle-between(from, to) + 90deg
   )
 
   // TODO: do defocus adjustment sensibly
@@ -941,15 +902,17 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let intersection-objects = nodes.map(
     nodes => {
       for node in nodes {
-        cetz.draw.group({
-          cetz.draw.translate(node
-            .pos
-            .xyz)
-          (node.shape)(
-            node,
-            node.outset,
-          )
-        })
+        cetz.draw.group(
+          {
+            cetz.draw.translate(node
+              .pos
+              .xyz)
+            (node.shape)(
+              node,
+              node.outset,
+            )
+          },
+        )
       }
       // if node == none { return }
       dummy-line
@@ -980,10 +943,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   debug: 0,
 ) = {
   let (from, to) = edge.final-vertices
-  let θ = angle-between(
-    from,
-    to,
-  )
+  let θ = angle-between(from, to)
   let θs = (
     θ + edge.bend,
     θ - edge.bend + 180deg,
@@ -993,28 +953,27 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .zip(θs)
     .map(((point, φ)) => cetz.draw.line(
       point,
-      vector.add(
-        point,
-        vector-polar(
-          10cm,
-          φ,
-        ),
-      ), // ray emanating from node
+      vector.add(point, vector-polar(
+        10cm,
+        φ,
+      )), // ray emanating from node
     ))
 
   let intersection-objects = nodes
     .zip(dummy-lines)
     .map(((nodes, dummy-line)) => {
       for node in nodes {
-        cetz.draw.group({
-          cetz.draw.translate(node
-            .pos
-            .xyz)
-          (node.shape)(
-            node,
-            node.outset,
-          )
-        })
+        cetz.draw.group(
+          {
+            cetz.draw.translate(node
+              .pos
+              .xyz)
+            (node.shape)(
+              node,
+              node.outset,
+            )
+          },
+        )
       }
       // if node == none { return }
       dummy-line
@@ -1067,15 +1026,17 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .zip(dummy-lines)
     .map(((nodes, dummy-line)) => {
       for node in nodes {
-        cetz.draw.group({
-          cetz.draw.translate(node
-            .pos
-            .xyz)
-          (node.shape)(
-            node,
-            node.outset,
-          )
-        })
+        cetz.draw.group(
+          {
+            cetz.draw.translate(node
+              .pos
+              .xyz)
+            (node.shape)(
+              node,
+              node.outset,
+            )
+          },
+        )
       }
       // if node == none { return }
       dummy-line
@@ -1177,14 +1138,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if grid.flip.xy {
     (u-len, v-len) = (v-len, u-len)
   }
-  let v-range = range(
-    v-min,
-    v-min + v-len,
-  )
-  let u-range = range(
-    u-min,
-    u-min + u-len,
-  )
+  let v-range = range(v-min, v-min
+    + v-len)
+  let u-range = range(u-min, u-min
+    + u-len)
 
   if grid.flip.x {
     u-range = u-range.rev()
@@ -1207,10 +1164,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         y-lims,
       )
       if a == b {
-        b = vector.add(
-          b,
-          (1e-3pt, 1e-3pt),
-        )
+        b = vector.add(b, (
+          1e-3pt,
+          1e-3pt,
+        ))
       }
       draw.rect(
         a,
@@ -1271,10 +1228,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
                   .at(i),
                 min,
               ),
-              rel: swap(
-                -size / 2,
-                0,
-              ),
+              rel: swap(-size / 2, 0),
             ),
             (
               to: swap(
@@ -1284,10 +1238,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
                   .at(i),
                 min,
               ),
-              rel: swap(
-                +size / 2,
-                -1pt,
-              ),
+              rel: swap(+size / 2, -1pt),
             ),
             fill: DEBUG_COLOR,
             stroke: none,
@@ -1302,10 +1253,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
                   .at(i),
                 min,
               ),
-              rel: swap(
-                0,
-                -.2em,
-              ),
+              rel: swap(0, -.2em),
             ),
             text(
               fill: DEBUG_COLOR,
@@ -1465,10 +1413,8 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   if debug >= 1 {
-    draw-debug-axes(
-      grid,
-      debug: debug >= 2,
-    )
+    draw-debug-axes(grid, debug: debug
+      >= 2)
   }
 }
 

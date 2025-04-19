@@ -962,12 +962,7 @@ plot.plot(
 #doc-style.show-parameter-block(
   "fill",
   "paint",
-  default: rgb(
-    255,
-    255,
-    255,
-    200,
-  ),
+  default: rgb(255, 255, 255, 200),
   [
     The legends frame background color.
   ],
@@ -1221,10 +1216,9 @@ The palette library provides some predefined palettes.
   canvas(length: 1em, {
     import cetz.draw: *
     for i in range(0, p("len")) {
-      if (
-        calc.rem(i, 10)
-          == 0
-      ) { move-to((rel: (0, -.5))) }
+      if calc.rem(i, 10) == 0 {
+        move-to((rel: (0, -.5)))
+      }
       rect(
         (),
         (rel: (1, .5)),

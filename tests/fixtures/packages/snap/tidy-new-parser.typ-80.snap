@@ -14,10 +14,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 #let split-once(string, delimiter) = {
   let pos = string.position(delimiter)
   if pos == none { return string }
-  (
-    string.slice(0, pos),
-    string.slice(pos + 1),
-  )
+  (string.slice(0, pos), string.slice(pos + 1))
 }
 
 #let parse-argument-list(text) = {
@@ -144,14 +141,8 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
   let types = none
   if description.contains("->") {
     let parts = description.split("->")
-    types = parts
-      .last()
-      .replace(",", "|")
-      .split("|")
-      .map(str.trim)
-    description = parts
-      .slice(0, -1)
-      .join("->")
+    types = parts.last().replace(",", "|").split("|").map(str.trim)
+    description = parts.slice(0, -1).join("->")
   }
 
   return (
@@ -160,45 +151,37 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
   )
 }
 
-#assert.eq(
-  parse-description-and-types(("asd",)),
-  (description: "asd", types: none),
-)
-#assert.eq(
-  parse-description-and-types(("->int",)),
-  (description: "", types: ("int",)),
-)
-#assert.eq(
-  parse-description-and-types((" -> int",)),
-  (description: "", types: ("int",)),
-)
-#assert.eq(
-  parse-description-and-types(("abcdefg -> int",)),
-  (description: "abcdefg", types: ("int",)),
-)
-#assert.eq(
-  parse-description-and-types(("abcdefg", "-> int")),
-  (description: "abcdefg", types: ("int",)),
-)
+#assert.eq(parse-description-and-types(("asd",)), (
+  description: "asd",
+  types: none,
+))
+#assert.eq(parse-description-and-types(("->int",)), (
+  description: "",
+  types: ("int",),
+))
+#assert.eq(parse-description-and-types((" -> int",)), (
+  description: "",
+  types: ("int",),
+))
+#assert.eq(parse-description-and-types(("abcdefg -> int",)), (
+  description: "abcdefg",
+  types: ("int",),
+))
+#assert.eq(parse-description-and-types(("abcdefg", "-> int")), (
+  description: "abcdefg",
+  types: ("int",),
+))
 
 
 
 #let trim-trailing-comments(line) = {
   let pos = line.position("//")
   if pos == none { return line }
-  return line
-    .slice(0, pos)
-    .trim()
+  return line.slice(0, pos).trim()
 }
 
-#assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23"),
-  "1+2+3+4",
-)
-#assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23 // 3"),
-  "1+2+3+4",
-)
+#assert.eq(trim-trailing-comments("1+2+3+4 // 23"), "1+2+3+4")
+#assert.eq(trim-trailing-comments("1+2+3+4 // 23 // 3"), "1+2+3+4")
 
 
 
@@ -225,10 +208,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
     if types != none {
       param-info.types = types
     }
-    processed-params.insert(
-      param-parts.first(),
-      param-info,
-    )
+    processed-params.insert(param-parts.first(), param-info)
   }
   processed-params
 }
@@ -363,10 +343,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
           curry-info = (name: curry.name)
           param-parser = param-parser-default
           param-parser.state = "running"
-          param-parser = parameter-parser(
-            param-parser,
-            curry.rest,
-          )
+          param-parser = parameter-parser(param-parser, curry.rest)
           if param-parser.state == "finished" {
             finished-definition = true
             param-parser = param-parser-default
@@ -378,10 +355,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
       }
     }
     if param-parser.state == "running" {
-      param-parser = parameter-parser(
-        param-parser,
-        line,
-      )
+      param-parser = parameter-parser(param-parser, line)
       if param-parser.state == "running" { continue }
     }
 
@@ -415,10 +389,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
           if match.captures.at(1) != "" {
             // it's a function
             param-parser.state = "running"
-            param-parser = parameter-parser(
-              param-parser,
-              line.slice(match.end),
-            )
+            param-parser = parameter-parser(param-parser, line.slice(match.end))
           } else {
             // it's a variable
             args = none

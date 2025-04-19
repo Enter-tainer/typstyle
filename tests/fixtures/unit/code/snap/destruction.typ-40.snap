@@ -14,10 +14,7 @@ input_file: tests/fixtures/unit/code/destruction.typ
   gutter: 1em,
   ..authors.map(author => align(
     center,
-    text(
-      font: author-font,
-      author,
-    ),
+    text(font: author-font, author),
   )),
 )
 

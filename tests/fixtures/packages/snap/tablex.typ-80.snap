@@ -92,12 +92,9 @@ input_file: tests/fixtures/packages/tablex.typ
     assert(fit-spans.len() > 0, message: "Tablex error:"
       + error-prefix
       + " 'fit-spans', if a dictionary, must not be empty.")
-    assert(
-      fit-spans.keys().all(k => k in ("x", "y")),
-      message: "Tablex error:"
-        + error-prefix
-        + " 'fit-spans', if a dictionary, must only have the keys x and y.",
-    )
+    assert(fit-spans.keys().all(k => k in ("x", "y")), message: "Tablex error:"
+      + error-prefix
+      + " 'fit-spans', if a dictionary, must only have the keys x and y.")
     assert(
       fit-spans.values().all(v => type(v) == _bool-type),
       message: "Tablex error:"
@@ -211,27 +208,11 @@ input_file: tests/fixtures/packages/tablex.typ
   is-tablex-dict(x) and x.tablex-dict-type in dict_types.pos()
 )
 
-#let is-tablex-cell(x) = is-tablex-dict-type(
-  x,
-  "cell",
-)
-#let is-tablex-hline(x) = is-tablex-dict-type(
-  x,
-  "hline",
-)
-#let is-tablex-vline(x) = is-tablex-dict-type(
-  x,
-  "vline",
-)
-#let is-some-tablex-line(x) = is-tablex-dict-type(
-  x,
-  "hline",
-  "vline",
-)
-#let is-tablex-occupied(x) = is-tablex-dict-type(
-  x,
-  "occupied",
-)
+#let is-tablex-cell(x) = is-tablex-dict-type(x, "cell")
+#let is-tablex-hline(x) = is-tablex-dict-type(x, "hline")
+#let is-tablex-vline(x) = is-tablex-dict-type(x, "vline")
+#let is-some-tablex-line(x) = is-tablex-dict-type(x, "hline", "vline")
+#let is-tablex-occupied(x) = is-tablex-dict-type(x, "occupied")
 
 #let table-item-convert(item, keep_empty: true) = {
   if type(item) == _function-type {
@@ -448,18 +429,10 @@ input_file: tests/fixtures/packages/tablex.typ
 }
 
 // Default 'x' to a certain value if it is none
-#let default-if-none(x, default) = default-if-not(
-  x,
-  default,
-  if_isnt: none,
-)
+#let default-if-none(x, default) = default-if-not(x, default, if_isnt: none)
 
 // Default 'x' to a certain value if it is auto
-#let default-if-auto(x, default) = default-if-not(
-  x,
-  default,
-  if_isnt: auto,
-)
+#let default-if-auto(x, default) = default-if-not(x, default, if_isnt: auto)
 
 // Default 'x' to a certain value if it is auto or none
 #let default-if-auto-or-none(x, default) = if x in (auto, none) {
@@ -518,10 +491,7 @@ input_file: tests/fixtures/packages/tablex.typ
     // Otherwise it would return 0pt, and we would need to measure again with abs.
     let measured-em = (
       calc-sign(em)
-        * measure(
-          box(width: calc.abs(em) * 1em),
-          styles,
-        ).width
+        * measure(box(width: calc.abs(em) * 1em), styles).width
     )
 
     return pt + measured-em
@@ -623,10 +593,7 @@ input_file: tests/fixtures/packages/tablex.typ
     // or use fields if they're supported anyway
     return (
       convert-ratio-type-to-pt(len.ratio, page-size)
-        + convert-length-type-to-pt(
-          len.length,
-          styles: styles,
-        )
+        + convert-length-type-to-pt(len.length, styles: styles)
     )
   }
 
@@ -700,11 +667,7 @@ input_file: tests/fixtures/packages/tablex.typ
   } else if type(len) == _ratio-type {
     convert-ratio-type-to-pt(len, page-size)
   } else if type(len) == _fraction-type {
-    convert-fraction-type-to-pt(
-      len,
-      frac-amount,
-      frac-total,
-    )
+    convert-fraction-type-to-pt(len, frac-amount, frac-total)
   } else if type(len) == _rel-len-type {
     convert-relative-type-to-pt(len, styles, page-size: page-size)
   } else {
@@ -725,10 +688,7 @@ input_file: tests/fixtures/packages/tablex.typ
   } else if type(stroke) == _stroke-type {
     if typst-fields-supported {
       // No need for any repr() parsing, just use the thickness field.
-      let thickness = default-if-auto(
-        stroke.thickness,
-        1pt,
-      )
+      let thickness = default-if-auto(stroke.thickness, 1pt)
       return convert-length-to-pt(thickness, styles: styles)
     }
 
@@ -800,10 +760,7 @@ input_file: tests/fixtures/packages/tablex.typ
 #let grid-index-at(x, y, grid: none, width: none) = {
   width = default-if-none(grid, (width: width)).width
   width = calc.floor(width)
-  (
-    (y * width)
-      + calc-mod(x, width)
-  )
+  (y * width) + calc-mod(x, width)
 }
 
 // Gets the cell at the given grid x, y position.
@@ -822,8 +779,7 @@ input_file: tests/fixtures/packages/tablex.typ
 // Returns 'true' if the cell at (x, y)
 // exists in the grid.
 #let grid-has-pos(grid, x, y) = (
-  grid-index-at(x, y, grid: grid)
-    < grid.items.len()
+  grid-index-at(x, y, grid: grid) < grid.items.len()
 )
 
 // How many rows are in this grid? (Given its width)
@@ -833,10 +789,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
 // Converts a grid array index to (x, y)
 #let grid-index-to-pos(grid, index) = (
-  (
-    calc-mod(index, grid.width),
-    calc.floor(index / grid.width),
-  )
+  (calc-mod(index, grid.width), calc.floor(index / grid.width))
 )
 
 // Fetches an entire row of cells (all positions with the given y).
@@ -850,10 +803,10 @@ input_file: tests/fixtures/packages/tablex.typ
   } else {
     // position right after the last cell in this row
     let next-row-pos = first-row-pos + grid.width
-    let cell-row = grid.items.slice(
-      first-row-pos,
-      calc.min(len, next-row-pos),
-    )
+    let cell-row = grid.items.slice(first-row-pos, calc.min(
+      len,
+      next-row-pos,
+    ))
     let cell-row-len = cell-row.len()
     if cell-row-len < grid.width {
       // the row isn't complete because the grid wasn't large enough.
@@ -866,11 +819,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
 // Fetches an entire column of cells (all positions with the given x).
 #let grid-get-column(grid, x) = {
-  range(grid-count-rows(grid)).map(y => grid-at(
-    grid,
-    x,
-    y,
-  ))
+  range(grid-count-rows(grid)).map(y => grid-at(grid, x, y))
 }
 
 // Expand grid to the given coords (add the missing cells)
@@ -1150,10 +1099,7 @@ input_file: tests/fixtures/packages/tablex.typ
       let currently_there = grid-at(grid, px, py)
 
       if currently_there != none {
-        let parent_cell = get-parent-cell(
-          currently_there,
-          grid: grid,
-        )
+        let parent_cell = get-parent-cell(currently_there, grid: grid)
 
         panic("Error: Multiple cells attempted to occupy the cell position at "
           + repr((px, py))
@@ -1224,18 +1170,12 @@ input_file: tests/fixtures/packages/tablex.typ
   // for missing cell positions: add empty cell
   for (index, item) in grid.items.enumerate() {
     if item == none {
-      grid.items.at(index) = new_empty_cell(
-        grid,
-        index: index,
-      )
+      grid.items.at(index) = new_empty_cell(grid, index: index)
     }
   }
 
   // while there are incomplete rows for some reason, add empty cells
-  while (
-    calc-mod(grid.items.len(), grid.width)
-      != 0
-  ) {
+  while calc-mod(grid.items.len(), grid.width) != 0 {
     grid.items.push(new_empty_cell(grid))
   }
 
@@ -1306,10 +1246,7 @@ input_file: tests/fixtures/packages/tablex.typ
       // use mod to make the fill value pattern
       // repeat if there are more columns than
       // fill values.
-      cell_fill = cell_fill.at(calc-mod(
-        cell.x,
-        fill_len,
-      ))
+      cell_fill = cell_fill.at(calc-mod(cell.x, fill_len))
     }
   }
 
@@ -1335,10 +1272,7 @@ input_file: tests/fixtures/packages/tablex.typ
       // use mod to make the align value pattern
       // repeat if there are more columns than
       // align values.
-      cell_align = cell_align.at(calc-mod(
-        cell.x,
-        align_len,
-      ))
+      cell_align = cell_align.at(calc-mod(cell.x, align_len))
     }
   }
 
@@ -1425,10 +1359,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
   for (i, col) in columns.enumerate() {
     if i in cell-cols and col == auto {
-      last_auto_col = max-if-not-none(
-        last_auto_col,
-        i,
-      )
+      last_auto_col = max-if-not-none(last_auto_col, i)
     }
   }
 
@@ -1443,10 +1374,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
   for (i, row) in rows.enumerate() {
     if i in cell-rows and row == auto {
-      last_auto_row = max-if-not-none(
-        last_auto_row,
-        i,
-      )
+      last_auto_row = max-if-not-none(last_auto_row, i)
     }
   }
 
@@ -1517,10 +1445,7 @@ input_file: tests/fixtures/packages/tablex.typ
           }
 
           let pcell = get-parent-cell(cell, grid: grid) // in case this is a colspan
-          let last-auto-col = get-colspan-last-auto-col(
-            pcell,
-            columns: columns,
-          )
+          let last-auto-col = get-colspan-last-auto-col(pcell, columns: columns)
 
           let fit-this-span = if (
             "fit-spans" in pcell and pcell.fit-spans != auto
@@ -1568,10 +1493,7 @@ input_file: tests/fixtures/packages/tablex.typ
             }
 
             // take extra inset as extra width or height on 'auto'
-            let cell_inset = default-if-auto(
-              pcell.inset,
-              inset,
-            )
+            let cell_inset = default-if-auto(pcell.inset, inset)
 
             // simulate wrapping this cell in the final box,
             // but with unlimited width and height available
@@ -1812,10 +1734,7 @@ input_file: tests/fixtures/packages/tablex.typ
           }
 
           let pcell = get-parent-cell(cell, grid: grid) // in case this is a rowspan
-          let last-auto-row = get-rowspan-last-auto-row(
-            pcell,
-            rows: rows,
-          )
+          let last-auto-row = get-rowspan-last-auto-row(pcell, rows: rows)
 
           let fit-this-span = if (
             "fit-spans" in pcell and pcell.fit-spans != auto
@@ -1835,16 +1754,10 @@ input_file: tests/fixtures/packages/tablex.typ
           // `fit-spans.y == true` (it requests to not expand
           // rows).
           if last-auto-row == i and this-cell-can-expand-rows {
-            let width = get-colspan-fixed-size-covered(
-              pcell,
-              columns: columns,
-            )
+            let width = get-colspan-fixed-size-covered(pcell, columns: columns)
 
             // take extra inset as extra width or height on 'auto'
-            let cell_inset = default-if-auto(
-              pcell.inset,
-              inset,
-            )
+            let cell_inset = default-if-auto(pcell.inset, inset)
 
             let cell-box = make-cell-box(
               pcell,
@@ -2026,10 +1939,7 @@ input_file: tests/fixtures/packages/tablex.typ
   )
   end = default-if-none(end, columns.len())
 
-  let col_range = range(start, calc.min(
-    columns.len() + 1,
-    end,
-  ))
+  let col_range = range(start, calc.min(columns.len() + 1, end))
 
   let sum = 0pt
   for i in col_range {
@@ -2058,10 +1968,7 @@ input_file: tests/fixtures/packages/tablex.typ
   )
   end = default-if-none(end, rows.len())
 
-  let row_range = range(start, calc.min(
-    rows.len() + 1,
-    end,
-  ))
+  let row_range = range(start, calc.min(rows.len() + 1, end))
 
   let sum = 0pt
   for i in row_range {
@@ -2126,10 +2033,7 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   // --##==   ;   ==##-- ;  #### ; ... : intersection.
-  (
-    calc.max(l_start, start),
-    calc.min(l_end, end),
-  )
+  (calc.max(l_start, start), calc.min(l_end, end))
 }
 
 // restrict hlines and vlines to the cells' borders.
@@ -2182,11 +2086,7 @@ input_file: tests/fixtures/packages/tablex.typ
         // no intersection!
         none
       } else {
-        v-or-hline-with-span(
-          h,
-          start: span.at(0),
-          end: span.at(1),
-        )
+        v-or-hline-with-span(h, start: span.at(0), end: span.at(1))
       }
     })
     .filter(x => x != none)
@@ -2218,11 +2118,7 @@ input_file: tests/fixtures/packages/tablex.typ
         // no intersection!
         none
       } else {
-        v-or-hline-with-span(
-          v,
-          start: span.at(0),
-          end: span.at(1),
-        )
+        v-or-hline-with-span(v, start: span.at(0), end: span.at(1))
       }
     })
     .filter(x => x != none)
@@ -2309,37 +2205,22 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   let parent = get-top-parent(line)
-  let parent-start = default-if-auto-or-none(
-    parent.start,
-    0,
-  )
-  let parent-end = default-if-auto-or-none(
-    parent.end,
-    spanned-tracks-len,
-  )
+  let parent-start = default-if-auto-or-none(parent.start, 0)
+  let parent-end = default-if-auto-or-none(parent.end, spanned-tracks-len)
 
-  let start = default-if-auto-or-none(
-    line.start,
-    0,
-  )
+  let start = default-if-auto-or-none(line.start, 0)
   let end = default-if-auto-or-none(line.end, spanned-tracks-len)
 
   let expansion = (none, none)
 
   if start == parent-start {
     // starts where its parent starts
-    expansion.at(0) = default-if-auto(
-      line.expand.at(0),
-      0pt,
-    ) // => expand to the left
+    expansion.at(0) = default-if-auto(line.expand.at(0), 0pt) // => expand to the left
   }
 
   if end == parent-end {
     // ends where its parent ends
-    expansion.at(1) = default-if-auto(
-      line.expand.at(1),
-      0pt,
-    ) // => expand to the right
+    expansion.at(1) = default-if-auto(line.expand.at(1), 0pt) // => expand to the right
   }
 
   expansion
@@ -2382,37 +2263,20 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   let expand = get-actual-expansion(hline, spanned-tracks-len: columns.len())
-  let left-expand = default-if-auto-or-none(
-    expand.at(0),
-    0pt,
-  )
-  let right-expand = default-if-auto-or-none(
-    expand.at(1),
-    0pt,
-  )
+  let left-expand = default-if-auto-or-none(expand.at(0), 0pt)
+  let right-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
-  if (
-    default-if-auto(hline.stroke-expand, true)
-      == true
-  ) {
+  if default-if-auto(hline.stroke-expand, true) == true {
     let largest-stroke = _largest-stroke-among-vlines-at-x.with(
       vlines: vlines,
       stroke-auto: stroke-auto,
       styles: styles,
     )
     left-expand += (
-      largest-stroke(default-if-auto-or-none(
-        start,
-        0,
-      ))
-        / 2
+      largest-stroke(default-if-auto-or-none(start, 0)) / 2
     ) // expand to the left to close stroke gap
     right-expand += (
-      largest-stroke(default-if-auto-or-none(
-        end,
-        columns.len(),
-      ))
-        / 2
+      largest-stroke(default-if-auto-or-none(end, columns.len())) / 2
     ) // close stroke gap to the right
   }
 
@@ -2510,37 +2374,20 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   let expand = get-actual-expansion(vline, spanned-tracks-len: rows.len())
-  let top-expand = default-if-auto-or-none(
-    expand.at(0),
-    0pt,
-  )
-  let bottom-expand = default-if-auto-or-none(
-    expand.at(1),
-    0pt,
-  )
+  let top-expand = default-if-auto-or-none(expand.at(0), 0pt)
+  let bottom-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
-  if (
-    default-if-auto(vline.stroke-expand, true)
-      == true
-  ) {
+  if default-if-auto(vline.stroke-expand, true) == true {
     let largest-stroke = _largest-stroke-among-hlines-at-y.with(
       hlines: hlines,
       stroke-auto: stroke-auto,
       styles: styles,
     )
     top-expand += (
-      largest-stroke(default-if-auto-or-none(
-        start,
-        0,
-      ))
-        / 2
+      largest-stroke(default-if-auto-or-none(start, 0)) / 2
     ) // close stroke gap to the top
     bottom-expand += (
-      largest-stroke(default-if-auto-or-none(
-        end,
-        rows.len(),
-      ))
-        / 2
+      largest-stroke(default-if-auto-or-none(end, rows.len())) / 2
     ) // close stroke gap to the bottom
   }
 
@@ -2552,12 +2399,7 @@ input_file: tests/fixtures/packages/tablex.typ
     pre-gutter: pre-gutter,
   )
   let start_y = (
-    height-between(
-      start: initial_y,
-      end: start,
-      rows: rows,
-      gutter: gutter,
-    )
+    height-between(start: initial_y, end: start, rows: rows, gutter: gutter)
       - top-expand
   )
   let end_y = (
@@ -2680,14 +2522,8 @@ input_file: tests/fixtures/packages/tablex.typ
   global-hlines: (),
   global-vlines: (),
 ) = {
-  let width-between = width-between.with(
-    columns: columns,
-    gutter: gutter,
-  )
-  let height-between = height-between.with(
-    rows: rows,
-    gutter: gutter,
-  )
+  let width-between = width-between.with(columns: columns, gutter: gutter)
+  let height-between = height-between.with(rows: rows, gutter: gutter)
   let draw-hline = draw-hline.with(
     columns: columns,
     rows: rows,
@@ -2748,20 +2584,14 @@ input_file: tests/fixtures/packages/tablex.typ
                     and rel_page in repeat-header
                 )
             ) {
-              let measures = measure(
-                first-row-group.content,
-                styles,
-              )
+              let measures = measure(first-row-group.content, styles)
               place(top + left, first-row-group.content) // add header
               added_header_height = measures.height
             }
           }
         }
 
-        let row_gutter_dy = default-if-none(
-          gutter.row,
-          0pt,
-        )
+        let row_gutter_dy = default-if-none(gutter.row, 0pt)
 
         let first_x = none
         let first_y = none
@@ -2779,16 +2609,13 @@ input_file: tests/fixtures/packages/tablex.typ
             let y = cell_box.cell.y
             first_x = default-if-none(first_x, x)
             first_y = default-if-none(first_y, y)
-            rightmost_x = default-if-none(
-              rightmost_x,
-              width-between(start: first_x, end: none),
-            )
+            rightmost_x = default-if-none(rightmost_x, width-between(
+              start: first_x,
+              end: none,
+            ))
 
             // where to place the cell (horizontally)
-            let dx = width-between(
-              start: first_x,
-              end: x,
-            )
+            let dx = width-between(start: first_x, end: x)
 
             // TODO: consider implementing RTL before the rendering
             // stage (perhaps by inverting 'x' positions on cells
@@ -2810,10 +2637,7 @@ input_file: tests/fixtures/packages/tablex.typ
             place(
               top + left,
               dx: dx,
-              dy: height-between(
-                start: first_y,
-                end: y,
-              )
+              dy: height-between(start: first_y, end: y)
                 + added_header_height,
               cell_box.box,
             )
@@ -3035,22 +2859,10 @@ input_file: tests/fixtures/packages/tablex.typ
     y_limit: row_len,
     grid: grid,
   )
-  let cell-width = cell-width.with(
-    columns: columns,
-    gutter: gutter,
-  )
-  let cell-height = cell-height.with(
-    rows: rows,
-    gutter: gutter,
-  )
-  let width-between = width-between.with(
-    columns: columns,
-    gutter: gutter,
-  )
-  let height-between = height-between.with(
-    rows: rows,
-    gutter: gutter,
-  )
+  let cell-width = cell-width.with(columns: columns, gutter: gutter)
+  let cell-height = cell-height.with(rows: rows, gutter: gutter)
+  let width-between = width-between.with(columns: columns, gutter: gutter)
+  let height-between = height-between.with(rows: rows, gutter: gutter)
 
   // each row group is an unbreakable unit of rows.
   // In general, they're just one row. However, they can be multiple rows
@@ -3075,19 +2887,13 @@ input_file: tests/fixtures/packages/tablex.typ
 
     for column in range(0, col_len) {
       let cell = grid-at(grid, column, row)
-      let lines_dict = v-and-hline-spans-for-cell(
-        cell,
-        hlines: hlines,
-      )
+      let lines_dict = v-and-hline-spans-for-cell(cell, hlines: hlines)
       let hlines = lines_dict.hlines
       let vlines = lines_dict.vlines
 
       if is-tablex-cell(cell) {
         // ensure row-spanned rows are in the same group
-        row_group_add_counter = calc.max(
-          row_group_add_counter,
-          cell.rowspan,
-        )
+        row_group_add_counter = calc.max(row_group_add_counter, cell.rowspan)
 
         let width = cell-width(cell.x, colspan: cell.colspan)
         let height = cell-height(cell.y, rowspan: cell.rowspan)
@@ -3211,11 +3017,7 @@ input_file: tests/fixtures/packages/tablex.typ
               )
             }
 
-            convert-length-to-pt(
-              e,
-              styles: styles,
-              page-size: page-size,
-            )
+            convert-length-to-pt(e, styles: styles, page-size: page-size)
           }
         })
     }
@@ -3239,14 +3041,8 @@ input_file: tests/fixtures/packages/tablex.typ
   col_len: none,
   row_len: none,
 ) = {
-  let auto-hlines = default-if-auto(
-    auto-hlines,
-    auto-lines,
-  )
-  let auto-vlines = default-if-auto(
-    auto-vlines,
-    auto-lines,
-  )
+  let auto-hlines = default-if-auto(auto-hlines, auto-lines)
+  let auto-vlines = default-if-auto(auto-vlines, auto-lines)
 
   let new_hlines = ()
   let new_vlines = ()
@@ -3412,21 +3208,14 @@ input_file: tests/fixtures/packages/tablex.typ
         }
 
         cell.content = [#cell.content]
-        grid.items.at(grid-index-at(
-          cell.x,
-          cell.y,
-          grid: grid,
-        )) = cell
+        grid.items.at(grid-index-at(cell.x, cell.y, grid: grid)) = cell
       }
     }
   }
 
   if should-map-cols {
     for column in range(col-len) {
-      let original-cells = grid-get-column(
-        grid,
-        column,
-      )
+      let original-cells = grid-get-column(grid, column)
 
       // occupied cells = none for the outer user
       let cells = map-cols(column, original-cells.map(c => {
@@ -3485,11 +3274,7 @@ input_file: tests/fixtures/packages/tablex.typ
         }
 
         cell.content = [#cell.content]
-        grid.items.at(grid-index-at(
-          cell.x,
-          cell.y,
-          grid: grid,
-        )) = cell
+        grid.items.at(grid-index-at(cell.x, cell.y, grid: grid)) = cell
       }
     }
   }
@@ -3540,10 +3325,7 @@ input_file: tests/fixtures/packages/tablex.typ
   header-hlines-have-priority,
 ) = {
   header-hlines-have-priority = default-if-auto(
-    default-if-none(
-      header-hlines-have-priority,
-      true,
-    ),
+    default-if-none(header-hlines-have-priority, true),
     true,
   )
 
@@ -3711,10 +3493,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let map-vlines = validate-map-func(map-vlines)
   let map-rows = validate-map-func(map-rows)
   let map-cols = validate-map-func(map-cols)
-  let fit-spans = validate-fit-spans(
-    fit-spans,
-    default: (x: false, y: false),
-  )
+  let fit-spans = validate-fit-spans(fit-spans, default: (x: false, y: false))
 
   layout(
     size => locate(
@@ -3733,10 +3512,7 @@ input_file: tests/fixtures/packages/tablex.typ
             page_dim_at.bottom_right,
             (x: t_pos.x + page_width, y: t_pos.y + page_height),
           )
-          let min_pos = default-if-none(
-            page_dim_at.top_left,
-            t_pos,
-          )
+          let min_pos = default-if-none(page_dim_at.top_left, t_pos)
 
           let items = items.pos().map(table-item-convert)
 

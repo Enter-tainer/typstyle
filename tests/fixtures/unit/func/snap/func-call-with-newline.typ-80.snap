@@ -3,12 +3,7 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/func-call-with-newline.typ
 ---
 #import "@preview/fletcher:0.5.0" as fletcher: diagram, node, edge
-#set page(
-  width: auto,
-  height: auto,
-  margin: 5mm,
-  fill: white,
-)
+#set page(width: auto, height: auto, margin: 5mm, fill: white)
 
 #diagram(
   node-defocus: 0,
@@ -50,25 +45,11 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
     quad((0, 2), (0, 3), "Id", red)
 
     quad((0, 0), (1, 1), "Div", yellow)
-    quad(
-      (-1, 1),
-      (0, 2),
-      "Div",
-      yellow,
-      label-pos: 0.3,
-      "crossing",
-    )
+    quad((-1, 1), (0, 2), "Div", yellow, label-pos: 0.3, "crossing")
 
     quad((-1, 2), (0, 3), "Inv", green)
     quad((0, 1), (+1, 2), "Inv", green, label-pos: 0.3)
 
-    quad(
-      (1, 1),
-      (0, 2),
-      "Assoc",
-      blue,
-      label-pos: 0.3,
-      "crossing",
-    )
+    quad((1, 1), (0, 2), "Assoc", blue, label-pos: 0.3, "crossing")
   },
 )

@@ -24,15 +24,7 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
   {
     let quad(a, b, label, paint, ..args) = {
       paint = paint.darken(25%)
-      edge(
-        a,
-        b,
-        text(paint, label),
-        "-|>",
-        stroke: paint,
-        label-side: center,
-        ..args,
-      )
+      edge(a, b, text(paint, label), "-|>", stroke: paint, label-side: center, ..args)
     }
 
     quad((0, 0), (-1, 1), "Assoc", blue)

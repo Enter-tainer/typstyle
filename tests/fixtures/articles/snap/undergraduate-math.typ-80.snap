@@ -3,10 +3,7 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/articles/undergraduate-math.typ
 ---
 // Meta data
-#set document(
-  title: "Typst Math for Undergrads",
-  author: "johanvx",
-)
+#set document(title: "Typst Math for Undergrads", author: "johanvx")
 
 // headcolor
 #let headcolor = rgb("004225")
@@ -46,22 +43,13 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 // Grid for code blocks
 #set grid(columns: (2em, auto))
 // Table for math-code listing
-#set table(
-  stroke: none,
-  align: horizon + left,
-  inset: 0pt,
-  row-gutter: 0.45em,
-)
+#set table(stroke: none, align: horizon + left, inset: 0pt, row-gutter: 0.45em)
 
 // LaTeX and TeX logos
 #let TeX = style(styles => {
   let e = measure(text(normalsize, "E"), styles)
   let T = "T"
-  let E = text(
-    normalsize,
-    baseline: e.height / 2,
-    "E",
-  )
+  let E = text(normalsize, baseline: e.height / 2, "E")
   let X = "X"
   box(T + kern(-0.1667em) + E + kern(-0.125em) + X)
 })
@@ -69,11 +57,7 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
   let l = measure(text(10pt, "L"), styles)
   let a = measure(text(7pt, "A"), styles)
   let L = "L"
-  let A = text(
-    7pt,
-    baseline: a.height - l.height,
-    "A",
-  )
+  let A = text(7pt, baseline: a.height - l.height, "A")
   box(L + kern(-0.36em) + A + kern(-0.15em) + TeX)
 })
 

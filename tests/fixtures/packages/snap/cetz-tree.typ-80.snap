@@ -96,10 +96,10 @@ input_file: tests/fixtures/packages/cetz-tree.typ
         draw.content((), [?], name: "content")
       }
       if draw-node == "rect" {
-        draw.rect(
-          (rel: (-.1, .1), to: "content.top-left"),
-          (rel: (.1, -.1), to: "content.bottom-right"),
-        )
+        draw.rect((rel: (-.1, .1), to: "content.top-left"), (
+          rel: (.1, -.1),
+          to: "content.bottom-right",
+        ))
       }
     }
   }
@@ -112,11 +112,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
       children = tree
         .slice(1)
         .enumerate()
-        .map(((n, c)) => build-node(
-          c,
-          depth: depth + 1,
-          sibling: n,
-        ))
+        .map(((n, c)) => build-node(c, depth: depth + 1, sibling: n))
       cnt = tree.at(0)
     } else {
       cnt = tree

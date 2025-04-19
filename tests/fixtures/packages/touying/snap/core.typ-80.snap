@@ -47,10 +47,7 @@ input_file: tests/fixtures/packages/touying/core.typ
 /// Example: `#show: appendix`
 ///
 /// - `body` (content): The content of the appendix.
-#let appendix(body) = touying-set-config(
-  (appendix: true),
-  body,
-)
+#let appendix(body) = touying-set-config((appendix: true), body)
 
 
 /// Recall a slide by its label
@@ -153,10 +150,7 @@ input_file: tests/fixtures/packages/touying/core.typ
   )
   let slide-level = self.slide-level
   let slide-fn = auto
-  let new-section-slide-fn = self.at(
-    "new-section-slide-fn",
-    default: none,
-  )
+  let new-section-slide-fn = self.at("new-section-slide-fn", default: none)
   let new-subsection-slide-fn = self.at(
     "new-subsection-slide-fn",
     default: none,
@@ -255,10 +249,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       current-slide = utils.trim(current-slide)
       if (
         current-slide != ()
-          or _get-slide-fn(
-            self + (headings: current-headings),
-            default: none,
-          )
+          or _get-slide-fn(self + (headings: current-headings), default: none)
             != none
       ) {
         (
@@ -347,10 +338,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
       if (
-        _get-slide-fn(
-          self + (headings: current-headings),
-          default: none,
-        )
+        _get-slide-fn(self + (headings: current-headings), default: none)
           != none
           or child.depth <= last-heading-depth
           or current-slide != ()
@@ -476,10 +464,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       let _ = fields.remove("body", default: none)
       fields.offset = 0
       let new-heading = if lbl != none {
-        utils.label-it(
-          heading(..fields, child.body),
-          child.label,
-        )
+        utils.label-it(heading(..fields, child.body), child.label)
       } else {
         heading(..fields, child.body)
       }
@@ -531,16 +516,13 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
         result.push(cont)
       }
-      result.push(utils.reconstruct-styled(
-        child,
-        split-content-into-slides(
-          self: self,
-          recaller-map: recaller-map,
-          new-start: true,
-          is-first-slide: is-first-slide,
-          child.child,
-        ),
-      ))
+      result.push(utils.reconstruct-styled(child, split-content-into-slides(
+        self: self,
+        recaller-map: recaller-map,
+        new-start: true,
+        is-first-slide: is-first-slide,
+        child.child,
+      )))
     } else {
       let child = if utils.is-styled(child) {
         // Split the content into slides recursively for styled content
@@ -553,10 +535,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         if start-part != none {
           utils.reconstruct-styled(child, start-part)
         }
-        _delayed-wrapper(utils.reconstruct-styled(
-          child,
-          cont,
-        ))
+        _delayed-wrapper(utils.reconstruct-styled(child, cont))
       } else {
         child
       }
@@ -897,10 +876,7 @@ input_file: tests/fixtures/packages/touying/core.typ
 
 
 /// Alert is a way to display a message to the audience. It can be used to draw attention to important information or to provide instructions.
-#let alert(body) = touying-fn-wrapper(
-  utils.alert,
-  body,
-)
+#let alert(body) = touying-fn-wrapper(utils.alert, body)
 
 
 /// Touying also provides a unique and highly useful feature—math equation animations, allowing you to conveniently use pause and meanwhile within math equations.
@@ -1073,10 +1049,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         cover-arr = ()
       }
       // then reset the repetitions
-      max-repetitions = calc.max(
-        max-repetitions,
-        repetitions,
-      )
+      max-repetitions = calc.max(max-repetitions, repetitions)
       repetitions = 1
     } else if child == "\\\n" or child == "&" {
       // clear the cover-arr when encounter linebreak or parbreak
@@ -1167,10 +1140,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         cover-arr = ()
       }
       // then reset the repetitions
-      max-repetitions = calc.max(
-        max-repetitions,
-        repetitions,
-      )
+      max-repetitions = calc.max(max-repetitions, repetitions)
       repetitions = 1
     } else if child == "\\\n" or child == "&" {
       // clear the cover-arr when encounter linebreak or parbreak
@@ -1236,10 +1206,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           cover-arr = ()
         }
         // then reset the repetitions
-        max-repetitions = calc.max(
-          max-repetitions,
-          repetitions,
-        )
+        max-repetitions = calc.max(max-repetitions, repetitions)
         repetitions = 1
       } else {
         if repetitions <= index {
@@ -1266,10 +1233,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     }
     cover-arr = ()
   }
-  result-arr.push((reducer.reduce)(
-    ..reducer.kwargs,
-    result,
-  ))
+  result-arr.push((reducer.reduce)(..reducer.kwargs, result))
   max-repetitions = calc.max(max-repetitions, repetitions)
   return (result-arr, max-repetitions)
 }
@@ -1315,10 +1279,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           continue
         } else if kind == "touying-meanwhile" {
           // reset the repetitions
-          max-repetitions = calc.max(
-            max-repetitions,
-            repetitions,
-          )
+          max-repetitions = calc.max(max-repetitions, repetitions)
           repetitions = 1
           continue
         }
@@ -1353,10 +1314,7 @@ input_file: tests/fixtures/packages/touying/core.typ
             cover-arr = ()
           }
           // then reset the repetitions
-          max-repetitions = calc.max(
-            max-repetitions,
-            repetitions,
-          )
+          max-repetitions = calc.max(max-repetitions, repetitions)
           repetitions = 1
         } else if kind == "touying-equation" {
           // handle touying-equation
@@ -1415,10 +1373,7 @@ input_file: tests/fixtures/packages/touying/core.typ
                 repetitions,
               )
             } else {
-              last-subslide = calc.max(
-                last-subslide,
-                child.value.last-subslide,
-              )
+              last-subslide = calc.max(last-subslide, child.value.last-subslide)
             }
           }
           if repetitions <= index or not need-cover {
@@ -1477,10 +1432,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           cover-arr.push(cont)
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if utils.is-styled(child) {
         // handle styled
         let (
@@ -1496,21 +1448,12 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(utils.typst-builtin-styled(
-            cont,
-            child.styles,
-          ))
+          result.push(utils.typst-builtin-styled(cont, child.styles))
         } else {
-          cover-arr.push(utils.typst-builtin-styled(
-            cont,
-            child.styles,
-          ))
+          cover-arr.push(utils.typst-builtin-styled(cont, child.styles))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if (
         type(child) == content
           and child.func() in (list.item, enum.item, align, link)
@@ -1542,10 +1485,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           ))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if (
         type(child) == content and child.func() in (table, grid, stack)
       ) {
@@ -1575,10 +1515,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           ))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if (
         type(child) == content
           and child.func()
@@ -1640,10 +1577,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           ))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if type(child) == content and child.func() == terms.item {
         // handle the terms item
         let (
@@ -1661,16 +1595,10 @@ input_file: tests/fixtures/packages/touying/core.typ
         if repetitions <= index or not need-cover {
           result.push(terms.item(child.term, cont))
         } else {
-          cover-arr.push(terms.item(
-            child.term,
-            cont,
-          ))
+          cover-arr.push(terms.item(child.term, cont))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if type(child) == content and child.func() == columns {
         // handle columns
         let (
@@ -1696,17 +1624,10 @@ input_file: tests/fixtures/packages/touying/core.typ
         if repetitions <= index or not need-cover {
           result.push(columns(count, ..args, cont))
         } else {
-          cover-arr.push(columns(
-            count,
-            ..args,
-            cont,
-          ))
+          cover-arr.push(columns(count, ..args, cont))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if type(child) == content and child.func() == place {
         // handle place
         let (
@@ -1730,23 +1651,12 @@ input_file: tests/fixtures/packages/touying/core.typ
           start
         }
         if repetitions <= index or not need-cover {
-          result.push(place(
-            alignment,
-            ..fields,
-            cont,
-          ))
+          result.push(place(alignment, ..fields, cont))
         } else {
-          cover-arr.push(place(
-            alignment,
-            ..fields,
-            cont,
-          ))
+          cover-arr.push(place(alignment, ..fields, cont))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else if type(child) == content and child.func() == rotate {
         // handle rotate
         let (
@@ -1772,17 +1682,10 @@ input_file: tests/fixtures/packages/touying/core.typ
         if repetitions <= index or not need-cover {
           result.push(rotate(angle, ..fields, cont))
         } else {
-          cover-arr.push(rotate(
-            angle,
-            ..fields,
-            cont,
-          ))
+          cover-arr.push(rotate(angle, ..fields, cont))
         }
         repetitions = nextrepetitions
-        last-subslide = calc.max(
-          last-subslide,
-          next-last-subslide,
-        )
+        last-subslide = calc.max(last-subslide, next-last-subslide)
       } else {
         if repetitions <= index or not need-cover {
           result.push(child)
@@ -1928,10 +1831,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     let negative-pad = _get-negative-pad(self)
     footer = negative-pad(footer)
   }
-  if (
-    self.at("show-notes-on-second-screen", default: none)
-      == bottom
-  ) {
+  if self.at("show-notes-on-second-screen", default: none) == bottom {
     let bottom-pad = _get-bottom-pad(self)
     footer = bottom-pad(footer)
   }
@@ -1967,11 +1867,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       0pt
     }
     if self.show-notes-on-second-screen == bottom {
-      footer += place(
-        left + bottom,
-        dx: -margin-left,
-        show-notes,
-      )
+      footer += place(left + bottom, dx: -margin-left, show-notes)
     } else if self.show-notes-on-second-screen == right {
       footer += place(
         left + bottom,
@@ -2045,10 +1941,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     if type(composer) == function {
       composer(..args)
     } else {
-      components.side-by-side(
-        columns: composer,
-        ..args,
-      )
+      components.side-by-side(columns: composer, ..args)
     }
   }
   let bodies = bodies.pos()
@@ -2056,21 +1949,12 @@ input_file: tests/fixtures/packages/touying/core.typ
   // preambles
   let slide-preamble(self) = {
     if self.at("is-first-slide", default: false) {
-      utils.call-or-display(self, self.at(
-        "preamble",
-        default: none,
-      ))
-      utils.call-or-display(self, self.at(
-        "default-preamble",
-        default: none,
-      ))
+      utils.call-or-display(self, self.at("preamble", default: none))
+      utils.call-or-display(self, self.at("default-preamble", default: none))
     }
     [#metadata((kind: "touying-new-slide")) <touying-metadata>]
     // add headings for the first subslide
-    if (
-      self.at("headings", default: ())
-        != ()
-    ) {
+    if self.at("headings", default: ()) != () {
       place(hide({
         set heading(offset: 0)
         let headings = self
@@ -2102,10 +1986,7 @@ input_file: tests/fixtures/packages/touying/core.typ
               if str(it.label) == "touying:unbookmarked" {
                 fields.bookmarked = false
               }
-              utils.label-it(
-                heading(..fields, it.body),
-                it.label,
-              )
+              utils.label-it(heading(..fields, it.body), it.label)
             } else {
               it
             }
@@ -2115,10 +1996,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         headings.sum(default: none)
       }))
     }
-    utils.call-or-display(self, self.at(
-      "slide-preamble",
-      default: none,
-    ))
+    utils.call-or-display(self, self.at("slide-preamble", default: none))
     utils.call-or-display(self, self.at(
       "default-slide-preamble",
       default: none,
@@ -2131,10 +2009,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     }
     [#metadata((kind: "touying-new-subslide")) <touying-metadata>]
     if (
-      self.at(
-        "enable-frozen-states-and-counters",
-        default: true,
-      )
+      self.at("enable-frozen-states-and-counters", default: true)
         and not self.handout
         and self.repeat > 1
     ) {
@@ -2178,10 +2053,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         }
       }
     }
-    utils.call-or-display(self, self.at(
-      "subslide-preamble",
-      default: none,
-    ))
+    utils.call-or-display(self, self.at("subslide-preamble", default: none))
     utils.call-or-display(self, self.at(
       "default-subslide-preamble",
       default: none,
@@ -2201,10 +2073,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         }
       }
     }
-    utils.call-or-display(self, self.at(
-      "page-preamble",
-      default: none,
-    ))
+    utils.call-or-display(self, self.at("page-preamble", default: none))
     utils.call-or-display(self, self.at(
       "default-page-preamble",
       default: none,

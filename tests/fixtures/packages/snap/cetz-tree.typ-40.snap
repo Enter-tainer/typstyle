@@ -193,10 +193,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
       let (left, right) = (none, none)
 
       let n-children = node.children.len()
-      for i in range(
-        0,
-        n-children,
-      ) {
+      for i in range(0, n-children) {
         let child = node.children.at(i)
         let (
           child-min-x,
@@ -289,14 +286,13 @@ input_file: tests/fixtures/packages/cetz-tree.typ
 
     let d = (:)
     d.insert(
-      parent-path + str(node.n),
+      parent-path
+        + str(node.n),
       node-position(node),
     )
     for child in node.children {
-      d += anchors(
-        child,
-        parent-path + str(node.n),
-      )
+      d += anchors(child, parent-path
+        + str(node.n))
     }
     return d
   }
@@ -314,14 +310,8 @@ input_file: tests/fixtures/packages/cetz-tree.typ
       name: name,
       {
         draw.move-to(node-position(node))
-        draw.anchor(
-          "center",
-          (),
-        )
-        draw-node(
-          node,
-          parent-name,
-        )
+        draw.anchor("center", ())
+        draw-node(node, parent-name)
       },
     )
 
@@ -334,10 +324,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
     }
 
     for child in node.children {
-      cmds += render(
-        child,
-        name,
-      )
+      cmds += render(child, name)
     }
 
     return cmds
@@ -381,10 +368,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
       },
       children: ctx => {
         let self = ctx.groups.last()
-        render(
-          self.tree-root,
-          none,
-        )
+        render(self.tree-root, none)
       },
     ),
   )

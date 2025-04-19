@@ -14,10 +14,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 #let split-once(string, delimiter) = {
   let pos = string.position(delimiter)
   if pos == none { return string }
-  (
-    string.slice(0, pos),
-    string.slice(pos + 1),
-  )
+  (string.slice(0, pos), string.slice(pos + 1))
 }
 
 #let parse-argument-list(text) = {
@@ -120,14 +117,8 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
   let types = none
   if description.contains("->") {
     let parts = description.split("->")
-    types = parts
-      .last()
-      .replace(",", "|")
-      .split("|")
-      .map(str.trim)
-    description = parts
-      .slice(0, -1)
-      .join("->")
+    types = parts.last().replace(",", "|").split("|").map(str.trim)
+    description = parts.slice(0, -1).join("->")
   }
 
   return (
@@ -147,9 +138,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 #let trim-trailing-comments(line) = {
   let pos = line.position("//")
   if pos == none { return line }
-  return line
-    .slice(0, pos)
-    .trim()
+  return line.slice(0, pos).trim()
 }
 
 #assert.eq(trim-trailing-comments("1+2+3+4 // 23"), "1+2+3+4")
@@ -166,10 +155,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 
   for param in parameters {
     let param-parts = param.name
-    let (description, types) = parse-description-and-types(
-      param.desc-lines,
-      label-prefix: "",
-    )
+    let (description, types) = parse-description-and-types(param.desc-lines, label-prefix: "")
     let param-info = (
       // name: param-parts.first(),
       description: description,
@@ -191,10 +177,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 // )
 
 #let process-definition(definition) = {
-  let (description, types) = parse-description-and-types(
-    definition.description,
-    label-prefix: "",
-  )
+  let (description, types) = parse-description-and-types(definition.description, label-prefix: "")
 
   if definition.args == none {
     definition.remove("args")

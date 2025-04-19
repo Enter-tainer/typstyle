@@ -95,11 +95,7 @@ input_file: tests/fixtures/packages/cuti.typ
   s,
 ) = {
   show regex(reg-exp): it => {
-    box(skew(
-      ax: ang,
-      reflow: false,
-      it,
-    ))
+    box(skew(ax: ang, reflow: false, it))
   }
   s
 }

@@ -253,22 +253,13 @@ input_file: tests/fixtures/packages/tablex.typ
 
 #let is-tablex-cell(
   x,
-) = is-tablex-dict-type(
-  x,
-  "cell",
-)
+) = is-tablex-dict-type(x, "cell")
 #let is-tablex-hline(
   x,
-) = is-tablex-dict-type(
-  x,
-  "hline",
-)
+) = is-tablex-dict-type(x, "hline")
 #let is-tablex-vline(
   x,
-) = is-tablex-dict-type(
-  x,
-  "vline",
-)
+) = is-tablex-dict-type(x, "vline")
 #let is-some-tablex-line(
   x,
 ) = is-tablex-dict-type(
@@ -278,10 +269,7 @@ input_file: tests/fixtures/packages/tablex.typ
 )
 #let is-tablex-occupied(
   x,
-) = is-tablex-dict-type(
-  x,
-  "occupied",
-)
+) = is-tablex-dict-type(x, "occupied")
 
 #let table-item-convert(
   item,
@@ -548,17 +536,11 @@ input_file: tests/fixtures/packages/tablex.typ
   let max_y = y + rowspan
 
   if x_limit != none {
-    max_x = calc.min(
-      x_limit,
-      max_x,
-    )
+    max_x = calc.min(x_limit, max_x)
   }
 
   if y_limit != none {
-    max_y = calc.min(
-      y_limit,
-      max_y,
-    )
+    max_y = calc.min(y_limit, max_y)
   }
 
   for x in range(x, max_x) {
@@ -739,10 +721,7 @@ input_file: tests/fixtures/packages/tablex.typ
     )
   }
 
-  return measure-pt(
-    len,
-    styles,
-  )
+  return measure-pt(len, styles)
 }
 
 // Convert a ratio type length to pt
@@ -1093,15 +1072,11 @@ input_file: tests/fixtures/packages/tablex.typ
   grid: none,
   width: none,
 ) = {
-  width = default-if-none(
-    grid,
-    (width: width),
-  ).width
+  width = default-if-none(grid, (
+    width: width,
+  )).width
   width = calc.floor(width)
-  (
-    (y * width)
-      + calc-mod(x, width)
-  )
+  (y * width) + calc-mod(x, width)
 }
 
 // Gets the cell at the given grid x, y position.
@@ -1179,11 +1154,7 @@ input_file: tests/fixtures/packages/tablex.typ
 // Fetches an entire column of cells (all positions with the given x).
 #let grid-get-column(grid, x) = {
   range(grid-count-rows(grid)).map(
-    y => grid-at(
-      grid,
-      x,
-      y,
-    ),
+    y => grid-at(grid, x, y),
   )
 }
 
@@ -1210,11 +1181,7 @@ input_file: tests/fixtures/packages/tablex.typ
     grid.items.len() - 1,
   )
   // now columns and/or last missing row
-  while not grid-has-pos(
-    grid,
-    x,
-    y,
-  ) {
+  while not grid-has-pos(grid, x, y) {
     grid.items.push(fill_with(grid))
   }
   let new = grid-index-to-pos(
@@ -1466,10 +1433,7 @@ input_file: tests/fixtures/packages/tablex.typ
     let content = if (
       type(content) == _function-type
     ) {
-      let res = content(
-        this_x,
-        this_y,
-      )
+      let res = content(this_x, this_y)
       if is-tablex-cell(res) {
         cell = res
         this_x = cell.x
@@ -1609,10 +1573,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
         // other secondary position (from colspan / rowspan)
       } else {
-        let index = grid-index-at(
-          px,
-          py,
-        )
+        let index = grid-index-at(px, py)
 
         grid.items.at(index) = occupied(
           x: px,
@@ -1697,10 +1658,7 @@ input_file: tests/fixtures/packages/tablex.typ
     type(align_default)
       == _function-type
   ) {
-    align_default(
-      cell.x,
-      cell.y,
-    ) // column, row
+    align_default(cell.x, cell.y) // column, row
   } else {
     align_default
   }
@@ -1709,10 +1667,7 @@ input_file: tests/fixtures/packages/tablex.typ
     type(fill_default)
       == _function-type
   ) {
-    fill_default(
-      cell.x,
-      cell.y,
-    ) // row, column
+    fill_default(cell.x, cell.y) // row, column
   } else {
     fill_default
   }
@@ -1787,10 +1742,7 @@ input_file: tests/fixtures/packages/tablex.typ
       // repeat if there are more columns than
       // align values.
       cell_align = cell_align.at(
-        calc-mod(
-          cell.x,
-          align_len,
-        ),
+        calc-mod(cell.x, align_len),
       )
     }
   }
@@ -1903,10 +1855,8 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   columns: none,
 ) = {
-  let cell-cols = range(
-    cell.x,
-    cell.x + cell.colspan,
-  )
+  let cell-cols = range(cell.x, cell.x
+    + cell.colspan)
   let last_auto_col = none
 
   for (i, col) in columns.enumerate() {
@@ -1927,10 +1877,8 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   rows: none,
 ) = {
-  let cell-rows = range(
-    cell.y,
-    cell.y + cell.rowspan,
-  )
+  let cell-rows = range(cell.y, cell.y
+    + cell.rowspan)
   let last_auto_row = none
 
   for (i, row) in rows.enumerate() {
@@ -1953,10 +1901,8 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   columns: none,
 ) = {
-  let cell-cols = range(
-    cell.x,
-    cell.x + cell.colspan,
-  )
+  let cell-cols = range(cell.x, cell.x
+    + cell.colspan)
   let size = 0pt
 
   for (i, col) in columns.enumerate() {
@@ -1978,10 +1924,8 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   rows: none,
 ) = {
-  let cell-rows = range(
-    cell.y,
-    cell.y + cell.rowspan,
-  )
+  let cell-rows = range(cell.y, cell.y
+    + cell.rowspan)
   let size = 0pt
 
   for (i, row) in rows.enumerate() {
@@ -2658,10 +2602,9 @@ input_file: tests/fixtures/packages/tablex.typ
   pre-gutter: false,
 ) = {
   let col-gutter = default-if-none(
-    default-if-none(
-      gutter,
-      (col: 0pt),
-    ).col,
+    default-if-none(gutter, (
+      col: 0pt,
+    )).col,
     0pt,
   )
   end = default-if-none(
@@ -2669,13 +2612,10 @@ input_file: tests/fixtures/packages/tablex.typ
     columns.len(),
   )
 
-  let col_range = range(
-    start,
-    calc.min(
-      columns.len() + 1,
-      end,
-    ),
-  )
+  let col_range = range(start, calc.min(
+    columns.len() + 1,
+    end,
+  ))
 
   let sum = 0pt
   for i in col_range {
@@ -2687,10 +2627,8 @@ input_file: tests/fixtures/packages/tablex.typ
   if (
     pre-gutter or end == columns.len()
   ) {
-    sum = calc.max(
-      0pt,
-      sum - col-gutter,
-    ) // remove extra gutter from last col
+    sum = calc.max(0pt, sum
+      - col-gutter) // remove extra gutter from last col
   }
 
   sum
@@ -2704,24 +2642,17 @@ input_file: tests/fixtures/packages/tablex.typ
   pre-gutter: false,
 ) = {
   let row-gutter = default-if-none(
-    default-if-none(
-      gutter,
-      (row: 0pt),
-    ).row,
+    default-if-none(gutter, (
+      row: 0pt,
+    )).row,
     0pt,
   )
-  end = default-if-none(
-    end,
-    rows.len(),
-  )
+  end = default-if-none(end, rows.len())
 
-  let row_range = range(
-    start,
-    calc.min(
-      rows.len() + 1,
-      end,
-    ),
-  )
+  let row_range = range(start, calc.min(
+    rows.len() + 1,
+    end,
+  ))
 
   let sum = 0pt
   for i in row_range {
@@ -2731,10 +2662,8 @@ input_file: tests/fixtures/packages/tablex.typ
   // if the end is after all rows, there is
   // no gutter at the end.
   if pre-gutter or end == rows.len() {
-    sum = calc.max(
-      0pt,
-      sum - row-gutter,
-    ) // remove extra gutter from last row
+    sum = calc.max(0pt, sum
+      - row-gutter) // remove extra gutter from last row
   }
 
   sum
@@ -2800,14 +2729,8 @@ input_file: tests/fixtures/packages/tablex.typ
     l_end = limit
   }
 
-  l_start = calc.max(
-    0,
-    l_start,
-  )
-  l_end = calc.min(
-    end,
-    limit,
-  )
+  l_start = calc.max(0, l_start)
+  l_end = calc.min(end, limit)
 
   // ---- ====     or ==== ----
   if l_end < start or l_start > end {
@@ -3128,10 +3051,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let stroke = parse-stroke(stroke)
 
   if (
-    default-if-auto-or-none(
-      start,
-      0,
-    )
+    default-if-auto-or-none(start, 0)
       == default-if-auto-or-none(
         end,
         columns.len(),
@@ -3184,10 +3104,7 @@ input_file: tests/fixtures/packages/tablex.typ
     )
     left-expand += (
       largest-stroke(
-        default-if-auto-or-none(
-          start,
-          0,
-        ),
+        default-if-auto-or-none(start, 0),
       )
         / 2
     ) // expand to the left to close stroke gap
@@ -3288,10 +3205,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let stroke = parse-stroke(stroke)
 
   if (
-    default-if-auto-or-none(
-      start,
-      0,
-    )
+    default-if-auto-or-none(start, 0)
       == default-if-auto-or-none(
         end,
         rows.len(),
@@ -3344,10 +3258,7 @@ input_file: tests/fixtures/packages/tablex.typ
     )
     top-expand += (
       largest-stroke(
-        default-if-auto-or-none(
-          start,
-          0,
-        ),
+        default-if-auto-or-none(start, 0),
       )
         / 2
     ) // close stroke gap to the top
@@ -3491,9 +3402,8 @@ input_file: tests/fixtures/packages/tablex.typ
       ),
     )
 
-    place(
-      bottom + right,
-      locate(loc => {
+    place(bottom + right, locate(
+      loc => {
         page_dim_state.update(s => {
           if s.bottom_right != none {
             s
@@ -3509,8 +3419,8 @@ input_file: tests/fixtures/packages/tablex.typ
             )
           }
         })
-      }),
-    )
+      },
+    ))
   },
 )
 
@@ -3648,10 +3558,8 @@ input_file: tests/fixtures/packages/tablex.typ
           let rightmost_x = none
 
           let row_heights = array-sum(
-            rows.slice(
-              start-y,
-              end-y + 1,
-            ),
+            rows.slice(start-y, end-y
+              + 1),
             zero: 0pt,
           )
 
@@ -4050,10 +3958,7 @@ input_file: tests/fixtures/packages/tablex.typ
     // maximum cell total rowspan in this row
     let max_rowspan = 0
 
-    for column in range(
-      0,
-      col_len,
-    ) {
+    for column in range(0, col_len) {
       let cell = grid-at(
         grid,
         column,
@@ -4242,10 +4147,7 @@ input_file: tests/fixtures/packages/tablex.typ
             if e == none {
               e
             } else {
-              e = default-if-auto(
-                e,
-                0pt,
-              )
+              e = default-if-auto(e, 0pt)
               if (
                 type(e)
                   not in (
@@ -4305,10 +4207,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let new_vlines = ()
 
   if auto-hlines {
-    new_hlines = range(
-      0,
-      row_len + 1,
-    )
+    new_hlines = range(0, row_len + 1)
       .filter(y => (
         hlines
           .filter(h => h.y == y)
@@ -4319,10 +4218,7 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   if auto-vlines {
-    new_vlines = range(
-      0,
-      col_len + 1,
-    )
+    new_vlines = range(0, col_len + 1)
       .filter(x => (
         vlines
           .filter(v => v.x == x)
@@ -4677,10 +4573,7 @@ input_file: tests/fixtures/packages/tablex.typ
   header-rows,
 ) = {
   header-rows = default-if-auto(
-    default-if-none(
-      header-rows,
-      0,
-    ),
+    default-if-none(header-rows, 0),
     1,
   )
 
@@ -4708,10 +4601,7 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   repeat-header = default-if-auto(
-    default-if-none(
-      repeat-header,
-      false,
-    ),
+    default-if-none(repeat-header, false),
     false,
   )
 
@@ -5124,8 +5014,5 @@ input_file: tests/fixtures/packages/tablex.typ
 
 // Same as table but defaults to lines off
 #let gridx(..options) = {
-  tablex(
-    auto-lines: false,
-    ..options,
-  )
+  tablex(auto-lines: false, ..options)
 }

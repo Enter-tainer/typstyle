@@ -75,12 +75,7 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 #set par(justify: true)
 
 // Run-in sections, like LaTeX \paragraph
-#show heading.where(level: 1): it => text(
-  size: normalsize,
-  weight: "bold",
-  fill: headcolor,
-  it.body + h(0.67em),
-)
+#show heading.where(level: 1): it => text(size: normalsize, weight: "bold", fill: headcolor, it.body + h(0.67em))
 
 // Black raw code
 #show raw.where(block: false): it => { it.text }

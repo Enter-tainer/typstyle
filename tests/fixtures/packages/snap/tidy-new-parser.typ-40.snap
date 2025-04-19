@@ -37,10 +37,9 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
     is-named,
   ) = {
     if is-named {
-      return split-once(
-        arg,
-        ":",
-      ).map(str.trim)
+      return split-once(arg, ":").map(
+        str.trim,
+      )
     } else {
       return (arg.trim(),)
     }
@@ -70,10 +69,9 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
           let (
             name,
             value,
-          ) = split-once(
-            arg,
-            ":",
-          ).map(str.trim)
+          ) = split-once(arg, ":").map(
+            str.trim,
+          )
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -95,10 +93,9 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
           let (
             name,
             value,
-          ) = split-once(
-            arg,
-            ":",
-          ).map(str.trim)
+          ) = split-once(arg, ":").map(
+            str.trim,
+          )
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -250,9 +247,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 #let trim-trailing-comments(line) = {
   let pos = line.position("//")
   if pos == none { return line }
-  return line
-    .slice(0, pos)
-    .trim()
+  return line.slice(0, pos).trim()
 }
 
 #assert.eq(
@@ -531,10 +526,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
       // look for something to attach the doc-comment to
       // (a parameter or a definition)
 
-      line = line.trim(
-        "#",
-        at: start,
-      )
+      line = line.trim("#", at: start)
       if (
         line.starts-with("let ")
           and name == none
@@ -598,21 +590,18 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
   )
   ```.text
 
-  assert.eq(
-    parse(src).functions,
+  assert.eq(parse(src).functions, (
     (
-      (
-        name: "func",
-        description: "Description",
-        args: (
-          pos: (description: ""),
-          named: (
-            description: "",
-            default: "2",
-          ),
+      name: "func",
+      description: "Description",
+      args: (
+        pos: (description: ""),
+        named: (
+          description: "",
+          default: "2",
         ),
-        return-types: none,
       ),
+      return-types: none,
     ),
-  )
+  ))
 }

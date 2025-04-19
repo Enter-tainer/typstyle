@@ -222,17 +222,11 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         nodes.push(node)
       } else if child.value.class == "edge" {
         let edge = child.value
-        edge.vertices.at(0) = map-auto(
-          edge.vertices.at(0),
-          (x, y),
-        )
+        edge.vertices.at(0) = map-auto(edge.vertices.at(0), (x, y))
         if edge.label != none {
           edge.label = $edge.label$
         } // why is this needed?
-        edge.vertices.at(-1) = map-auto(
-          edge.vertices.at(-1),
-          (rel: (1, 0)),
-        )
+        edge.vertices.at(-1) = map-auto(edge.vertices.at(-1), (rel: (1, 0)))
         edge.node-index = none
         edges.push(edge)
       }
@@ -267,10 +261,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
 
 #let interpret-diagram-args(args) = {
   if args.named().len() > 0 {
-    error(
-      "Unexpected named argument(s) #..0.",
-      args.named().keys(),
-    )
+    error("Unexpected named argument(s) #..0.", args.named().keys())
   }
 
   let positional-args = (
@@ -296,10 +287,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       nodes += result.nodes
       edges += result.edges
     } else {
-      panic(
-        "Unrecognised value passed to diagram:",
-        obj,
-      )
+      panic("Unrecognised value passed to diagram:", obj)
     }
   }
 
@@ -481,12 +469,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   crossing-fill: white,
   crossing-thickness: 5,
   render: (grid, nodes, edges, options) => {
-    cetz.canvas(draw-diagram(
-      grid,
-      nodes,
-      edges,
-      debug: options.debug,
-    ))
+    cetz.canvas(draw-diagram(grid, nodes, edges, debug: options.debug))
   },
 ) = {
   let spacing = as-pair(spacing).map(as-length)
@@ -530,10 +513,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         node = measure-node-size(node)
         node
       })
-      let edges = edges.map(edge => resolve-edge-options(
-        edge,
-        options,
-      ))
+      let edges = edges.map(edge => resolve-edge-options(edge, options))
 
 
       // try resolving node uv coordinates. this resolves to NaN coords if the coord depends on physical lengths
@@ -578,14 +558,14 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
 
 
       // now with grid determined, compute final (physical) coordinates for nodes and edges
-      let (ctx-with-xyz-anchors, nodes) = resolve-node-coordinates(
-        nodes,
-        ctx: (target-system: "xyz", grid: grid),
-      )
-      let (_, nodes) = resolve-node-coordinates(
-        nodes,
-        ctx: (target-system: "uv", grid: grid),
-      )
+      let (ctx-with-xyz-anchors, nodes) = resolve-node-coordinates(nodes, ctx: (
+        target-system: "xyz",
+        grid: grid,
+      ))
+      let (_, nodes) = resolve-node-coordinates(nodes, ctx: (
+        target-system: "uv",
+        grid: grid,
+      ))
 
 
       // resolve enclosing nodes

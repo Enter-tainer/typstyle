@@ -217,10 +217,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
 #let compute-cell-centers(grid) = {
   // (x: (c1x, c2x, ...), y: ...)
   let centers = array
-    .zip(
-      grid.cell-sizes,
-      grid.spacing,
-    )
+    .zip(grid.cell-sizes, grid.spacing)
     .map(((sizes, spacing)) => {
       array
         .zip(
@@ -341,10 +338,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   for (y, row) in matrix.enumerate() {
     for (x, item) in row.enumerate() {
       if not is-space(item) {
-        nodes.push(node(
-          (x, y),
-          $item$,
-        ).value)
+        nodes.push(
+          node((x, y), $item$).value,
+        )
       }
     }
   }
@@ -772,12 +768,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       )
 
 
-      render(
-        grid,
-        nodes,
-        edges,
-        options,
-      )
+      render(grid, nodes, edges, options)
     },
   )
 }
