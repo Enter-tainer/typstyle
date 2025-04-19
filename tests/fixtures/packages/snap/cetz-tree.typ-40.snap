@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cetz-tree.typ
-snapshot_kind: text
 ---
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
@@ -37,10 +36,8 @@ snapshot_kind: text
   name: none,
   ..style,
 ) = {
-  assert(
-    parent-position
-      in ("begin", "center"),
-  )
+  assert(parent-position
+    in ("begin", "center"))
   assert(grow > 0)
   assert(spread > 0)
 
@@ -196,7 +193,10 @@ snapshot_kind: text
       let (left, right) = (none, none)
 
       let n-children = node.children.len()
-      for i in range(0, n-children) {
+      for i in range(
+        0,
+        n-children,
+      ) {
         let child = node.children.at(i)
         let (
           child-min-x,
@@ -214,8 +214,14 @@ snapshot_kind: text
         )
         node.children.at(i) = child
 
-        left = util.min(child.x, left)
-        right = util.max(child.x, right)
+        left = util.min(
+          child.x,
+          left,
+        )
+        right = util.max(
+          child.x,
+          right,
+        )
 
         min-x = util.min(
           min-x,
@@ -307,11 +313,15 @@ snapshot_kind: text
     cmds += draw.group(
       name: name,
       {
-        draw.move-to(
-          node-position(node),
+        draw.move-to(node-position(node))
+        draw.anchor(
+          "center",
+          (),
         )
-        draw.anchor("center", ())
-        draw-node(node, parent-name)
+        draw-node(
+          node,
+          parent-name,
+        )
       },
     )
 
@@ -324,7 +334,10 @@ snapshot_kind: text
     }
 
     for child in node.children {
-      cmds += render(child, name)
+      cmds += render(
+        child,
+        name,
+      )
     }
 
     return cmds
@@ -340,7 +353,10 @@ snapshot_kind: text
         ctx.groups.push((
           ctx: ctx,
           anchors: (:),
-          tree-root: layout(root, ctx),
+          tree-root: layout(
+            root,
+            ctx,
+          ),
         ))
         return ctx
       },
@@ -365,7 +381,10 @@ snapshot_kind: text
       },
       children: ctx => {
         let self = ctx.groups.last()
-        render(self.tree-root, none)
+        render(
+          self.tree-root,
+          none,
+        )
       },
     ),
   )

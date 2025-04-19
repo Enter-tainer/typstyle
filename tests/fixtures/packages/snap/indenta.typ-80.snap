@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/indenta.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [indenta]
@@ -56,9 +55,17 @@ snapshot_kind: text
       } else if st == 1 {
         if e == parbreak() { st = 2 } else if e != [ ] { st = 0 }
       } else if (
-        st == 2 and not (_is_block(e, fn) or e == [ ] or e == parbreak())
+        st == 2
+          and not (
+            _is_block(e, fn)
+              or e == [ ]
+              or e == parbreak()
+          )
       ) {
-        if unsafe or _is_inline(e, fn) { context h(par.first-line-indent) }
+        if (
+          unsafe
+            or _is_inline(e, fn)
+        ) { context h(par.first-line-indent) }
         st = 0
       }
       e

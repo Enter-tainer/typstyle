@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tidy-new-parser.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [tidy]
@@ -15,7 +14,10 @@ snapshot_kind: text
 #let split-once(string, delimiter) = {
   let pos = string.position(delimiter)
   if pos == none { return string }
-  (string.slice(0, pos), string.slice(pos + 1))
+  (
+    string.slice(0, pos),
+    string.slice(pos + 1),
+  )
 }
 
 #let parse-argument-list(text) = {
@@ -85,22 +87,10 @@ snapshot_kind: text
   )
 }
 
-#assert.eq(
-  parse-argument-list("text)"),
-  (args: (("text",),), brace-level: -1, processed-chars: 5),
-)
-#assert.eq(
-  parse-argument-list("pos,"),
-  (args: (("pos",),), brace-level: 0, processed-chars: 4),
-)
-#assert.eq(
-  parse-argument-list("12, 13, a)"),
-  (args: (("12",), ("13",), ("a",)), brace-level: -1, processed-chars: 10),
-)
-#assert.eq(
-  parse-argument-list("a: 2, b: 3)"),
-  (args: (("a", "2"), ("b", "3")), brace-level: -1, processed-chars: 11),
-)
+#assert.eq(parse-argument-list("text)"), (args: (("text",),), brace-level: -1, processed-chars: 5))
+#assert.eq(parse-argument-list("pos,"), (args: (("pos",),), brace-level: 0, processed-chars: 4))
+#assert.eq(parse-argument-list("12, 13, a)"), (args: (("12",), ("13",), ("a",)), brace-level: -1, processed-chars: 10))
+#assert.eq(parse-argument-list("a: 2, b: 3)"), (args: (("a", "2"), ("b", "3")), brace-level: -1, processed-chars: 11))
 
 
 #let eval-doc-comment-test((line-number, line), label-prefix: "") = {
@@ -130,8 +120,14 @@ snapshot_kind: text
   let types = none
   if description.contains("->") {
     let parts = description.split("->")
-    types = parts.last().replace(",", "|").split("|").map(str.trim)
-    description = parts.slice(0, -1).join("->")
+    types = parts
+      .last()
+      .replace(",", "|")
+      .split("|")
+      .map(str.trim)
+    description = parts
+      .slice(0, -1)
+      .join("->")
   }
 
   return (
@@ -140,33 +136,20 @@ snapshot_kind: text
   )
 }
 
-#assert.eq(
-  parse-description-and-types(("asd",)),
-  (description: "asd", types: none),
-)
-#assert.eq(
-  parse-description-and-types(("->int",)),
-  (description: "", types: ("int",)),
-)
-#assert.eq(
-  parse-description-and-types((" -> int",)),
-  (description: "", types: ("int",)),
-)
-#assert.eq(
-  parse-description-and-types(("abcdefg -> int",)),
-  (description: "abcdefg", types: ("int",)),
-)
-#assert.eq(
-  parse-description-and-types(("abcdefg", "-> int")),
-  (description: "abcdefg", types: ("int",)),
-)
+#assert.eq(parse-description-and-types(("asd",)), (description: "asd", types: none))
+#assert.eq(parse-description-and-types(("->int",)), (description: "", types: ("int",)))
+#assert.eq(parse-description-and-types((" -> int",)), (description: "", types: ("int",)))
+#assert.eq(parse-description-and-types(("abcdefg -> int",)), (description: "abcdefg", types: ("int",)))
+#assert.eq(parse-description-and-types(("abcdefg", "-> int")), (description: "abcdefg", types: ("int",)))
 
 
 
 #let trim-trailing-comments(line) = {
   let pos = line.position("//")
   if pos == none { return line }
-  return line.slice(0, pos).trim()
+  return line
+    .slice(0, pos)
+    .trim()
 }
 
 #assert.eq(trim-trailing-comments("1+2+3+4 // 23"), "1+2+3+4")
@@ -183,7 +166,10 @@ snapshot_kind: text
 
   for param in parameters {
     let param-parts = param.name
-    let (description, types) = parse-description-and-types(param.desc-lines, label-prefix: "")
+    let (description, types) = parse-description-and-types(
+      param.desc-lines,
+      label-prefix: "",
+    )
     let param-info = (
       // name: param-parts.first(),
       description: description,
@@ -205,7 +191,10 @@ snapshot_kind: text
 // )
 
 #let process-definition(definition) = {
-  let (description, types) = parse-description-and-types(definition.description, label-prefix: "")
+  let (description, types) = parse-description-and-types(
+    definition.description,
+    label-prefix: "",
+  )
 
   if definition.args == none {
     definition.remove("args")
@@ -386,18 +375,15 @@ snapshot_kind: text
   )
   ```.text
 
-  assert.eq(
-    parse(src).functions,
+  assert.eq(parse(src).functions, (
     (
-      (
-        name: "func",
-        description: "Description",
-        args: (
-          pos: (description: ""),
-          named: (description: "", default: "2"),
-        ),
-        return-types: none,
+      name: "func",
+      description: "Description",
+      args: (
+        pos: (description: ""),
+        named: (description: "", default: "2"),
       ),
+      return-types: none,
     ),
-  )
+  ))
 }

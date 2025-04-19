@@ -26,11 +26,9 @@ input_file: tests/fixtures/packages/cetz-manual.typ
 
 #set terms(indent: 1em)
 #set par(justify: true)
-#set heading(
-  numbering: (..num) => if num.pos().len() < 4 {
-    numbering("1.1", ..num)
-  },
-)
+#set heading(numbering: (..num) => if num.pos().len() < 4 {
+  numbering("1.1", ..num)
+})
 #show link: set text(blue)
 
 // Outline
@@ -243,14 +241,23 @@ Marks are arrow tips that can be added to the end of path based elements that su
       for (name, item) in cetz.mark-shapes.marks {
         let name-to-mnemonic = (:)
         for (name, item) in cetz.mark-shapes.mnemonics {
-          let list = name-to-mnemonic.at(item.at(0), default: ())
+          let list = name-to-mnemonic.at(
+            item.at(0),
+            default: (),
+          )
           list += (raw(name) + if item.at(1) { " (reversed)" },)
           name-to-mnemonic.insert(item.at(0), list)
         }
         (
           raw(name),
-          name-to-mnemonic.at(name, default: ([],)).join([, ]),
-          cetz.canvas(cetz.draw.line((), (1, 0), mark: (end: name))),
+          name-to-mnemonic
+            .at(name, default: ([],))
+            .join([, ]),
+          cetz.canvas(cetz.draw.line(
+            (),
+            (1, 0),
+            mark: (end: name),
+          )),
         )
       }
     )
@@ -1112,41 +1119,38 @@ The palette library provides some predefined palettes.
 
 #let show-palette(p) = box({
   let p = p.with(stroke: true)
-  canvas(
-    length: 1em,
-    {
-      import cetz.draw: *
-      for i in range(0, p("len")) {
-        if calc.rem(i, 10) == 0 { move-to((rel: (0, -.5))) }
-        rect((), (rel: (1, .5)), name: "r", ..p(i))
-        move-to("r.south-east")
-      }
-    },
-  )
+  canvas(length: 1em, {
+    import cetz.draw: *
+    for i in range(0, p("len")) {
+      if (
+        calc.rem(i, 10)
+          == 0
+      ) { move-to((rel: (0, -.5))) }
+      rect((), (rel: (1, .5)), name: "r", ..p(i))
+      move-to("r.south-east")
+    }
+  })
 })
 
 === List of predefined palettes
-#columns(
-  2,
-  [
-    - `gray` #show-palette(palette.gray)
-    - `red` #show-palette(palette.red)
-    - `orange` #show-palette(palette.orange)
-    - `light-green` #show-palette(palette.light-green)
-    - `dark-green` #show-palette(palette.dark-green)
-    - `turquoise` #show-palette(palette.turquoise)
-    - `cyan` #show-palette(palette.cyan)
-    - `blue` #show-palette(palette.blue)
-    - `indigo` #show-palette(palette.indigo)
-    - `purple` #show-palette(palette.purple)
-    - `magenta` #show-palette(palette.magenta)
-    - `pink` #show-palette(palette.pink)
-    - `rainbow` #show-palette(palette.rainbow)
-    - `tango-light` #show-palette(palette.tango-light)
-    - `tango` #show-palette(palette.tango)
-    - `tango-dark` #show-palette(palette.tango-dark)
-  ],
-)
+#columns(2, [
+  - `gray` #show-palette(palette.gray)
+  - `red` #show-palette(palette.red)
+  - `orange` #show-palette(palette.orange)
+  - `light-green` #show-palette(palette.light-green)
+  - `dark-green` #show-palette(palette.dark-green)
+  - `turquoise` #show-palette(palette.turquoise)
+  - `cyan` #show-palette(palette.cyan)
+  - `blue` #show-palette(palette.blue)
+  - `indigo` #show-palette(palette.indigo)
+  - `purple` #show-palette(palette.purple)
+  - `magenta` #show-palette(palette.magenta)
+  - `pink` #show-palette(palette.pink)
+  - `rainbow` #show-palette(palette.rainbow)
+  - `tango-light` #show-palette(palette.tango-light)
+  - `tango` #show-palette(palette.tango)
+  - `tango-dark` #show-palette(palette.tango-dark)
+])
 
 == Angle <angle>
 

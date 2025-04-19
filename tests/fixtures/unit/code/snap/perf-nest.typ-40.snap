@@ -1,54 +1,9 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/perf-nest.typ
-snapshot_kind: text
 ---
 #let f(..arg) = arg
 
-#f(
-  f(
-    f(
-      f(
-        f(
-          f(
-            f(
-              f(
-                f(
-                  f(
-                    f(
-                      f(
-                        f(
-                          f(
-                            f(
-                              f(
-                                f(
-                                  f(
-                                    f(
-                                      f(
-                                        f(
-                                          f(
-                                            1,
-                                            2,
-                                            3,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  ),
-)
+#f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(
+  f(f(f(1, 2, 3))),
+)))))))))))))))))))

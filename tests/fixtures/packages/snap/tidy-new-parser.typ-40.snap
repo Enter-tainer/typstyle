@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tidy-new-parser.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [tidy]
@@ -38,9 +37,10 @@ snapshot_kind: text
     is-named,
   ) = {
     if is-named {
-      return split-once(arg, ":").map(
-        str.trim,
-      )
+      return split-once(
+        arg,
+        ":",
+      ).map(str.trim)
     } else {
       return (arg.trim(),)
     }
@@ -70,9 +70,10 @@ snapshot_kind: text
           let (
             name,
             value,
-          ) = split-once(arg, ":").map(
-            str.trim,
-          )
+          ) = split-once(
+            arg,
+            ":",
+          ).map(str.trim)
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -94,9 +95,10 @@ snapshot_kind: text
           let (
             name,
             value,
-          ) = split-once(arg, ":").map(
-            str.trim,
-          )
+          ) = split-once(
+            arg,
+            ":",
+          ).map(str.trim)
           args.push((name, value))
         } else {
           arg = arg.trim()
@@ -179,11 +181,9 @@ snapshot_kind: text
 ) = {
   let description = lines
     .enumerate(start: first-line-number)
-    .map(
-      eval-doc-comment-test.with(
-        label-prefix: label-prefix,
-      ),
-    )
+    .map(eval-doc-comment-test.with(
+      label-prefix: label-prefix,
+    ))
     .join("\n")
 
   if description == none {
@@ -250,7 +250,9 @@ snapshot_kind: text
 #let trim-trailing-comments(line) = {
   let pos = line.position("//")
   if pos == none { return line }
-  return line.slice(0, pos).trim()
+  return line
+    .slice(0, pos)
+    .trim()
 }
 
 #assert.eq(
@@ -258,7 +260,9 @@ snapshot_kind: text
   "1+2+3+4",
 )
 #assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23 // 3"),
+  trim-trailing-comments(
+    "1+2+3+4 // 23 // 3",
+  ),
   "1+2+3+4",
 )
 
@@ -329,7 +333,9 @@ snapshot_kind: text
   definition
 }
 
-#let curry-matcher = regex(" *= *([.\w\d\-_]+)\.with\(")
+#let curry-matcher = regex(
+  " *= *([.\w\d\-_]+)\.with\(",
+)
 
 #let parameter-parser(state, line) = {
   if line.starts-with("///") {
@@ -337,7 +343,9 @@ snapshot_kind: text
       .unmatched-description
       .push(line.slice(3))
   } else {
-    state.unfinished-param += trim-trailing-comments(line)
+    state.unfinished-param += trim-trailing-comments(
+      line,
+    )
 
     let (
       args,
@@ -358,10 +366,8 @@ snapshot_kind: text
           name: curry.captures.first(),
           rest: state
             .unfinished-param
-            .slice(
-              processed-chars
-                + curry.end,
-            ),
+            .slice(processed-chars
+              + curry.end),
         )
       }
     }
@@ -374,10 +380,12 @@ snapshot_kind: text
             or state.state == "finished"
         )
     ) {
-      state.params.push((
-        name: args.first(),
-        desc-lines: state.unmatched-description,
-      ))
+      state.params.push(
+        (
+          name: args.first(),
+          desc-lines: state.unmatched-description,
+        ),
+      )
       state.unmatched-description = ()
       state.params += args
         .slice(1)
@@ -523,13 +531,18 @@ snapshot_kind: text
       // look for something to attach the doc-comment to
       // (a parameter or a definition)
 
-      line = line.trim("#", at: start)
+      line = line.trim(
+        "#",
+        at: start,
+      )
       if (
         line.starts-with("let ")
           and name == none
       ) {
         found-code = true
-        let match = line.match(definition-name-regex)
+        let match = line.match(
+          definition-name-regex,
+        )
         if match != none {
           name = match.captures.first()
           if (
@@ -551,7 +564,9 @@ snapshot_kind: text
         // neither /// nor (#)let
         if not found-code {
           found-code = true
-          module-description = desc-lines.join("\n")
+          module-description = desc-lines.join(
+            "\n",
+          )
         }
         if name == none {
           desc-lines = ()
@@ -560,7 +575,9 @@ snapshot_kind: text
     }
   }
 
-  definitions = definitions.map(process-definition)
+  definitions = definitions.map(
+    process-definition,
+  )
   (
     description: module-description,
     functions: definitions.filter(x => (

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/chain/call-last-indent.typ
-snapshot_kind: text
 ---
 #{
   let tree = (1, 2, 3)
@@ -13,6 +12,10 @@ snapshot_kind: text
   children = tree
     .slice(1)
     .enumerate()
-    .map(((n, c)) => build-node(c, depth: depth + 1, sibling: n))
+    .map(((n, c)) => build-node(
+      c,
+      depth: depth + 1,
+      sibling: n,
+    ))
   children
 }

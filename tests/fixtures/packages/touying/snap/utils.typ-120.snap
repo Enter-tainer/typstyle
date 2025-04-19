@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/utils.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -74,9 +73,15 @@ snapshot_kind: text
 // -------------------------------------
 
 #let saved-frozen-states = state("touying-saved-frozen-states", ())
-#let saved-default-frozen-states = state("touying-saved-default-frozen-states", ())
+#let saved-default-frozen-states = state(
+  "touying-saved-default-frozen-states",
+  (),
+)
 #let saved-frozen-counters = state("touying-saved-frozen-counters", ())
-#let saved-default-frozen-counters = state("touying-saved-default-frozen-counters", ())
+#let saved-default-frozen-counters = state(
+  "touying-saved-default-frozen-counters",
+  (),
+)
 
 
 /// Remove leading and trailing empty elements from an array of content
@@ -152,7 +157,13 @@ snapshot_kind: text
 ///
 /// - `new-children` is the new children you want to replace the old children with
 #let reconstruct-table-like(named: true, labeled: true, it, new-children) = {
-  reconstruct(body-name: "children", named: named, labeled: labeled, it, ..new-children)
+  reconstruct(
+    body-name: "children",
+    named: named,
+    labeled: labeled,
+    it,
+    ..new-children,
+  )
 }
 
 
@@ -196,7 +207,12 @@ snapshot_kind: text
 
 /// Determine if a content is a metadata with a specific kind
 #let is-kind(it, kind) = {
-  is-metadata(it) and type(it.value) == dictionary and it.value.at("kind", default: none) == kind
+  (
+    is-metadata(it)
+      and type(it.value) == dictionary
+      and it.value.at("kind", default: none)
+        == kind
+  )
 }
 
 
@@ -276,7 +292,10 @@ snapshot_kind: text
   ) {
     self.methods.convert-label-to-short-heading
   } else {
-    (self: none, lbl) => titlecase(lbl.replace(regex("^[^:]*:"), "").replace("_", " ").replace("-", " "))
+    (self: none, lbl) => titlecase(lbl
+      .replace(regex("^[^:]*:"), "")
+      .replace("_", " ")
+      .replace("-", " "))
   }
   convert-label-to-short-heading = convert-label-to-short-heading.with(self: self)
   assert(type(it) == content and it.func() == heading, message: "it must be a heading")
@@ -344,10 +363,7 @@ snapshot_kind: text
   style: (setting: body => body, numbered: true, current-heading) => setting({
     if numbered and current-heading.numbering != none {
       (
-        _typst-builtin-numbering(
-          current-heading.numbering,
-          ..counter(heading).at(current-heading.location()),
-        )
+        _typst-builtin-numbering(current-heading.numbering, ..counter(heading).at(current-heading.location()))
           + h(.3em)
       )
     }
@@ -356,7 +372,11 @@ snapshot_kind: text
   ..setting-args,
 ) = (
   context {
-    let current-heading = current-heading(level: level, hierachical: hierachical, depth: depth)
+    let current-heading = current-heading(
+      level: level,
+      hierachical: hierachical,
+      depth: depth,
+    )
     if current-heading != none {
       if style == none {
         current-heading
@@ -379,7 +399,11 @@ snapshot_kind: text
 /// - `depth` is the maximum depth of the heading to search. Usually, it should be set as slide-level.
 #let display-current-heading-number(level: auto, numbering: auto, hierachical: true, depth: 9999) = (
   context {
-    let current-heading = current-heading(level: level, hierachical: hierachical, depth: depth)
+    let current-heading = current-heading(
+      level: level,
+      hierachical: hierachical,
+      depth: depth,
+    )
     if current-heading != none and numbering == auto and current-heading.numbering != none {
       _typst-builtin-numbering(current-heading.numbering, ..counter(heading).at(current-heading.location()))
     } else if current-heading != none and numbering != auto {
@@ -414,7 +438,11 @@ snapshot_kind: text
         short-heading(self: self, current-heading)
       }
     }
-    let current-heading = current-heading(level: level, hierachical: hierachical, depth: depth)
+    let current-heading = current-heading(
+      level: level,
+      hierachical: hierachical,
+      depth: depth,
+    )
     if current-heading != none {
       setting(sty(current-heading))
     }
@@ -627,7 +655,10 @@ snapshot_kind: text
       }
       let h-ratio = available-height / size.height
       let w-ratio = mutable-width / size.width
-      let ratio = calc.min(h-ratio, w-ratio) * 100%
+      let ratio = (
+        calc.min(h-ratio, w-ratio)
+          * 100%
+      )
 
       if ((shrink and (ratio < 100%)) or (grow and (ratio > 100%))) {
         let new-width = size.width * ratio
@@ -636,11 +667,12 @@ snapshot_kind: text
         // fit. This is because scale doesn't update the layout information.
         // Boxing in a container without clipping will inform typst that content
         // will indeed fit in the remaining space
-        box(
-          width: new-width,
-          height: available-height,
-          scale(x: ratio, y: ratio, origin: top + left, boxed-content),
-        )
+        box(width: new-width, height: available-height, scale(
+          x: ratio,
+          y: ratio,
+          origin: top + left,
+          boxed-content,
+        ))
       } else {
         body
       }
@@ -697,9 +729,8 @@ snapshot_kind: text
 /// - `body` is the content to cover.
 #let cover-with-rect(..cover-args, fill: auto, inline: true, body) = {
   if fill == auto {
-    panic(
-      "`auto` fill value is not supported until typst provides utilities to" + " retrieve the current page background",
-    )
+    panic("`auto` fill value is not supported until typst provides utilities to"
+      + " retrieve the current page background")
   }
   if type(fill) == str {
     fill = rgb(fill)
@@ -727,11 +758,11 @@ snapshot_kind: text
         // of a color change.
         named.insert("outset", (top: 0.15em, bottom: 0.25em))
       }
-      stack(
-        spacing: -wrapped-body-size.height,
-        body,
-        rect(fill: fill, ..named, ..cover-args.pos()),
-      )
+      stack(spacing: -wrapped-body-size.height, body, rect(
+        fill: fill,
+        ..named,
+        ..cover-args.pos(),
+      ))
     }
   })
   if inline {
@@ -750,7 +781,12 @@ snapshot_kind: text
 /// - `color` is the color to update.
 ///
 /// - `alpha` is the new alpha value.
-#let update-alpha(constructor: rgb, color, alpha) = constructor(..color.components(alpha: true).slice(0, -1), alpha)
+#let update-alpha(constructor: rgb, color, alpha) = constructor(
+  ..color
+    .components(alpha: true)
+    .slice(0, -1),
+  alpha,
+)
 
 
 /// Cover content with a transparent rectangle.
@@ -758,11 +794,7 @@ snapshot_kind: text
 /// Example: `config-methods(cover: utils.semi-transparent-cover)`
 #let semi-transparent-cover(self: none, constructor: rgb, alpha: 85%, body) = {
   cover-with-rect(
-    fill: update-alpha(
-      constructor: constructor,
-      self.page.fill,
-      alpha,
-    ),
+    fill: update-alpha(constructor: constructor, self.page.fill, alpha),
     body,
   )
 }
@@ -771,7 +803,10 @@ snapshot_kind: text
 /// Alert content with a primary color.
 ///
 /// Example: `config-methods(alert: utils.alert-with-primary-color)`
-#let alert-with-primary-color(self: none, body) = text(fill: self.colors.primary, body)
+#let alert-with-primary-color(self: none, body) = text(
+  fill: self.colors.primary,
+  body,
+)
 
 
 /// Alert content.
@@ -966,15 +1001,11 @@ snapshot_kind: text
       let max-width = calc.max(..sizes.map(sz => sz.width))
       let max-height = calc.max(..sizes.map(sz => sz.height))
       for (subslides, content) in subslides-contents {
-        only(
-          self: self,
-          subslides,
-          box(
-            width: max-width,
-            height: max-height,
-            align(position, content),
-          ),
-        )
+        only(self: self, subslides, box(
+          width: max-width,
+          height: max-height,
+          align(position, content),
+        ))
       }
     }
   } else {
@@ -1098,7 +1129,10 @@ snapshot_kind: text
     }
     pdfpc.speaker-note(raw-text)
   }
-  let show-notes-on-second-screen = self.at("show-notes-on-second-screen", default: none)
+  let show-notes-on-second-screen = self.at(
+    "show-notes-on-second-screen",
+    default: none,
+  )
   assert(
     show-notes-on-second-screen in (none, bottom, right),
     message: "`show-notes-on-second-screen` should be `none`, `bottom` or `right`",

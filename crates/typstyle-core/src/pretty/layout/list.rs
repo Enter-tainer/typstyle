@@ -3,7 +3,11 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Context, Mode, PrettyPrinter},
+    pretty::{
+        doc_ext::{DocBuilderFlatten, DocExt},
+        style::FoldStyle,
+        ArenaDoc, Context, Mode, PrettyPrinter,
+    },
 };
 
 pub struct ListStylist<'a> {
@@ -386,7 +390,77 @@ impl<'a> ListStylist<'a> {
                     inner.enclose(delim.0, delim.1)
                 }
             }
-            FoldStyle::Fit => {
+            FoldStyle::Compact if !self.has_comment => {
+                let mut docs = vec![];
+                for item in self.items {
+                    match item {
+                        Item::Comment(_) => {}
+                        Item::Commented { body, .. } => {
+                            docs.push(body);
+                        }
+                        Item::Linebreak(_) => {}
+                    }
+                }
+                let last = docs.pop().unwrap();
+                let inner = if docs.is_empty() {
+                    // only one item
+                    let last = if sty.add_trailing_sep_single {
+                        last + sep.clone()
+                    } else {
+                        last
+                    };
+                    let compact = last.clone();
+                    let sparse = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
+                    compact.union(sparse)
+                } else {
+                    let compact = (arena.intersperse(
+                        docs.iter().map(|doc| doc.clone().flatten()),
+                        sep.clone() + arena.space(),
+                    )) + sep.clone()
+                        + arena.space()
+                        + arena.column(|c| {
+                            if c < self.printer.config.chain_width() {
+                                arena.nil().into_doc()
+                            } else {
+                                arena.fail().into_doc()
+                            }
+                        })
+                        + last.clone();
+                    let loose = (arena.hardline()
+                        + (arena.intersperse(docs.clone(), sep.clone() + arena.hardline()))
+                        + sep.clone()
+                        + arena.hardline()
+                        + last
+                        + sep.clone())
+                    .nest(2)
+                        + arena.hardline();
+                    compact.union(loose)
+                };
+                if is_single && sty.omit_delim_single {
+                    inner.group()
+                } else if sty.omit_delim_flat {
+                    inner
+                        .enclose(
+                            arena.text(delim.0).flat_alt(arena.nil()),
+                            arena.text(delim.1).flat_alt(arena.nil()),
+                        )
+                        .group()
+                } else if sty.add_delim_space {
+                    inner
+                        .enclose(
+                            arena
+                                .text(delim.0)
+                                .flat_alt(arena.text(delim.0) + arena.space()),
+                            arena
+                                .text(delim.1)
+                                .flat_alt(arena.space() + arena.text(delim.1)),
+                        )
+                        .group()
+                } else {
+                    inner.group().enclose(delim.0, delim.1)
+                }
+            }
+            FoldStyle::Fit | FoldStyle::Compact => {
                 let mut inner = if sty.tight_delim {
                     arena.nil()
                 } else {

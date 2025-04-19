@@ -1,14 +1,17 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/off/code-block.typ
-snapshot_kind: text
 ---
 #let alert(
   body,
   fill: red,
 ) = {
-  set text(white)
-  set align(center)
+  set text(
+    white,
+  )
+  set align(
+    center,
+  )
   // @typstyle off
   rect(
     fill: fill,

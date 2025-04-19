@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/if-chain.typ
-snapshot_kind: text
 ---
 #if (
   a
@@ -213,7 +212,9 @@ snapshot_kind: text
     3
       > 2
   ) {
-    for i in range(10) {
+    for i in range(
+      10,
+    ) {
       i
     }
   }

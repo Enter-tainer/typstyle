@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/func-call-with-newline.typ
-snapshot_kind: text
 ---
 #import "@preview/fletcher:0.5.0" as fletcher: (
   diagram,
@@ -24,17 +23,13 @@ snapshot_kind: text
   node-fill: luma(97%),
   node-outset: 3pt,
   node((0, 0), "magma"),
-
   node((-1, 1), "semigroup"),
   node((0, 1), "unital magma"),
   node((+1, 1), "quasigroup"),
-
   node((-1, 2), "monoid"),
   node((0, 2), "inverse semigroup"),
   node((+1, 2), "loop"),
-
   node((0, 3), "group"),
-
   {
     let quad(
       a,
@@ -55,7 +50,12 @@ snapshot_kind: text
       )
     }
 
-    quad((0, 0), (-1, 1), "Assoc", blue)
+    quad(
+      (0, 0),
+      (-1, 1),
+      "Assoc",
+      blue,
+    )
     quad(
       (0, 1),
       (-1, 2),
@@ -63,9 +63,19 @@ snapshot_kind: text
       blue,
       label-pos: 0.3,
     )
-    quad((1, 2), (0, 3), "Assoc", blue)
+    quad(
+      (1, 2),
+      (0, 3),
+      "Assoc",
+      blue,
+    )
 
-    quad((0, 0), (0, 1), "Id", red)
+    quad(
+      (0, 0),
+      (0, 1),
+      "Id",
+      red,
+    )
     quad(
       (-1, 1),
       (-1, 2),
@@ -80,9 +90,19 @@ snapshot_kind: text
       red,
       label-pos: 0.3,
     )
-    quad((0, 2), (0, 3), "Id", red)
+    quad(
+      (0, 2),
+      (0, 3),
+      "Id",
+      red,
+    )
 
-    quad((0, 0), (1, 1), "Div", yellow)
+    quad(
+      (0, 0),
+      (1, 1),
+      "Div",
+      yellow,
+    )
     quad(
       (-1, 1),
       (0, 2),
@@ -92,7 +112,12 @@ snapshot_kind: text
       "crossing",
     )
 
-    quad((-1, 2), (0, 3), "Inv", green)
+    quad(
+      (-1, 2),
+      (0, 3),
+      "Inv",
+      green,
+    )
     quad(
       (0, 1),
       (+1, 2),

@@ -1,16 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/grid/colspan.typ
-snapshot_kind: text
 ---
 #let ofi = [Office]
 #let rem = [_Remote_]
 #let lea = [*On leave*]
 
-#show table.cell.where(y: 0): set text(
-  fill: white,
-  weight: "bold",
-)
+#show table.cell.where(y: 0): set text(fill: white, weight: "bold")
 
 #table(
   columns: 6 * (1fr,),

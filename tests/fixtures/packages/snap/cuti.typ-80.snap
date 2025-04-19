@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cuti.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [cuti]
@@ -35,7 +34,12 @@ snapshot_kind: text
 
 #let show-fakebold(reg-exp: ".+", base-weight: auto, s, ..params) = {
   show text.where(weight: "bold").or(strong): it => {
-    regex-fakebold(reg-exp: reg-exp, base-weight: base-weight, it, ..params)
+    regex-fakebold(
+      reg-exp: reg-exp,
+      base-weight: base-weight,
+      it,
+      ..params,
+    )
   }
   s
 }
@@ -75,7 +79,11 @@ snapshot_kind: text
 
 #let fakesc(s, scaling: 0.75) = {
   show regex("\p{Ll}+"): it => {
-    context text(scaling * 1em, stroke: 0.01em + text.fill, upper(it))
+    context text(
+      scaling * 1em,
+      stroke: 0.01em + text.fill,
+      upper(it),
+    )
   }
   text(s)
 }

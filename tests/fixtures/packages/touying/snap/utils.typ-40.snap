@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/utils.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -29,13 +28,10 @@ snapshot_kind: text
         and type(dict-b.at(key))
           == dictionary
     ) {
-      res.insert(
-        key,
-        add-dicts(
-          res.at(key),
-          dict-b.at(key),
-        ),
-      )
+      res.insert(key, add-dicts(
+        res.at(key),
+        dict-b.at(key),
+      ))
     } else {
       res.insert(key, dict-b.at(key))
     }
@@ -54,7 +50,10 @@ snapshot_kind: text
   )
   let res = init-dict
   for dict in dicts.pos() {
-    res = add-dicts(res, dict)
+    res = add-dicts(
+      res,
+      dict,
+    )
   }
   return res
 }
@@ -62,8 +61,12 @@ snapshot_kind: text
 // -------------------------------------
 // Slide counter
 // -------------------------------------
-#let slide-counter = counter("touying-slide-counter")
-#let last-slide-counter = counter("touying-last-slide-counter")
+#let slide-counter = counter(
+  "touying-slide-counter",
+)
+#let last-slide-counter = counter(
+  "touying-last-slide-counter",
+)
 #let last-slide-number = context (
   last-slide-counter.final().first()
 )
@@ -379,9 +382,7 @@ snapshot_kind: text
     ) {
       methods.insert(
         key,
-        (
-          ..args,
-        ) => self.methods.at(key)(
+        (..args) => self.methods.at(key)(
           self: self,
           ..args,
         ),
@@ -423,7 +424,10 @@ snapshot_kind: text
   if s.len() == 0 {
     return s
   }
-  s.split(" ").map(capitalize).join(" ")
+  s
+    .split(" ")
+    .map(capitalize)
+    .join(" ")
 }
 
 
@@ -444,12 +448,13 @@ snapshot_kind: text
       .methods
       .convert-label-to-short-heading
   } else {
-    (self: none, lbl) => titlecase(
-      lbl
-        .replace(regex("^[^:]*:"), "")
-        .replace("_", " ")
-        .replace("-", " "),
-    )
+    (self: none, lbl) => titlecase(lbl
+      .replace(
+        regex("^[^:]*:"),
+        "",
+      )
+      .replace("_", " ")
+      .replace("-", " "))
   }
   convert-label-to-short-heading = convert-label-to-short-heading.with(
     self: self,
@@ -463,7 +468,9 @@ snapshot_kind: text
     return it.body
   }
   let lbl = str(it.label)
-  return convert-label-to-short-heading(lbl)
+  return convert-label-to-short-heading(
+    lbl,
+  )
 }
 
 
@@ -481,21 +488,26 @@ snapshot_kind: text
 ) = {
   let current-page = here().page()
   if not hierachical and level != auto {
-    let headings = query(heading).filter(h => (
-      h.location().page()
-        <= current-page
-        and h.level <= depth
-        and h.level == level
-    ))
+    let headings = query(heading).filter(
+      h => (
+        h.location().page()
+          <= current-page
+          and h.level <= depth
+          and h.level == level
+      ),
+    )
     return headings.at(
       -1,
       default: none,
     )
   }
-  let headings = query(heading).filter(h => (
-    h.location().page() <= current-page
-      and h.level <= depth
-  ))
+  let headings = query(heading).filter(
+    h => (
+      h.location().page()
+        <= current-page
+        and h.level <= depth
+    ),
+  )
   if headings == () {
     return
   }
@@ -679,12 +691,10 @@ snapshot_kind: text
     message: "self must have an info field",
   )
   if type(self.info.date) == datetime {
-    self.info.date.display(
-      self.at(
-        "datetime-format",
-        default: auto,
-      ),
-    )
+    self.info.date.display(self.at(
+      "datetime-format",
+      default: auto,
+    ))
   } else {
     self.info.date
   }
@@ -779,13 +789,25 @@ snapshot_kind: text
             + "**"
         )
       } else {
-        "*" + markup-text(it.body) + "*"
+        (
+          "*"
+            + markup-text(it.body)
+            + "*"
+        )
       }
     } else if it.func() == emph {
       if mode == "md" {
-        "*" + markup-text(it.body) + "*"
+        (
+          "*"
+            + markup-text(it.body)
+            + "*"
+        )
       } else {
-        "_" + markup-text(it.body) + "_"
+        (
+          "_"
+            + markup-text(it.body)
+            + "_"
+        )
       }
     } else if (
       it.func() == link
@@ -885,7 +907,10 @@ snapshot_kind: text
       container-size.width,
     )
   }
-  box(width: mutable-width, body)
+  box(
+    width: mutable-width,
+    body,
+  )
 }
 
 
@@ -918,8 +943,12 @@ snapshot_kind: text
   // like `1fr` as well.
   // The label must be attached to content, so we use a show rule that doesn't
   // display anything as the anchor.
-  let before-label = label("touying-fit-height-before")
-  let after-label = label("touying-fit-height-after")
+  let before-label = label(
+    "touying-fit-height-before",
+  )
+  let after-label = label(
+    "touying-fit-height-after",
+  )
   [
     #show before-label: none
     #show after-label: none
@@ -930,20 +959,16 @@ snapshot_kind: text
   ]
 
   context {
-    let before = query(
-      selector(before-label).before(
-        here(),
-      ),
-    )
+    let before = query(selector(
+      before-label,
+    ).before(here()))
     let before-pos = before
       .last()
       .location()
       .position()
-    let after = query(
-      selector(after-label).before(
-        here(),
-      ),
-    )
+    let after = query(selector(
+      after-label,
+    ).before(here()))
     let after-pos = after
       .last()
       .location()
@@ -953,80 +978,88 @@ snapshot_kind: text
       after-pos.y - before-pos.y
     )
 
-    layout(container-size => {
-      // Helper function to more easily grab absolute units
-      let get-pts(body, w-or-h) = {
-        let dim = if w-or-h == "w" {
-          container-size.width
-        } else {
-          container-size.height
+    layout(
+      container-size => {
+        // Helper function to more easily grab absolute units
+        let get-pts(body, w-or-h) = {
+          let dim = if w-or-h == "w" {
+            container-size.width
+          } else {
+            container-size.height
+          }
+          _size-to-pt(
+            body,
+            dim,
+          )
         }
-        _size-to-pt(body, dim)
-      }
 
-      // Provide a sensible initial width, which will define initial scale parameters.
-      // Note this is different from the post-scale width, which is a limiting factor
-      // on the allowable scaling ratio
-      let boxed-content = _limit-content-width(
-        width: prescale-width,
-        body,
-        container-size,
-      )
-
-      // post-scaling width
-      let mutable-width = width
-      if width == none {
-        mutable-width = container-size.width
-      }
-      mutable-width = get-pts(
-        mutable-width,
-        "w",
-      )
-
-      let size = measure(boxed-content)
-      if (
-        size.height == 0pt
-          or size.width == 0pt
-      ) {
-        return body
-      }
-      let h-ratio = (
-        available-height / size.height
-      )
-      let w-ratio = (
-        mutable-width / size.width
-      )
-      let ratio = (
-        calc.min(h-ratio, w-ratio)
-          * 100%
-      )
-
-      if (
-        (shrink and (ratio < 100%))
-          or (grow and (ratio > 100%))
-      ) {
-        let new-width = (
-          size.width * ratio
+        // Provide a sensible initial width, which will define initial scale parameters.
+        // Note this is different from the post-scale width, which is a limiting factor
+        // on the allowable scaling ratio
+        let boxed-content = _limit-content-width(
+          width: prescale-width,
+          body,
+          container-size,
         )
-        v(-available-height)
-        // If not boxed, the content can overflow to the next page even though it will
-        // fit. This is because scale doesn't update the layout information.
-        // Boxing in a container without clipping will inform typst that content
-        // will indeed fit in the remaining space
-        box(
-          width: new-width,
-          height: available-height,
-          scale(
-            x: ratio,
-            y: ratio,
-            origin: top + left,
-            boxed-content,
-          ),
+
+        // post-scaling width
+        let mutable-width = width
+        if width == none {
+          mutable-width = container-size.width
+        }
+        mutable-width = get-pts(
+          mutable-width,
+          "w",
         )
-      } else {
-        body
-      }
-    })
+
+        let size = measure(boxed-content)
+        if (
+          size.height == 0pt
+            or size.width == 0pt
+        ) {
+          return body
+        }
+        let h-ratio = (
+          available-height / size.height
+        )
+        let w-ratio = (
+          mutable-width / size.width
+        )
+        let ratio = (
+          calc.min(
+            h-ratio,
+            w-ratio,
+          )
+            * 100%
+        )
+
+        if (
+          (shrink and (ratio < 100%))
+            or (grow and (ratio > 100%))
+        ) {
+          let new-width = (
+            size.width * ratio
+          )
+          v(-available-height)
+          // If not boxed, the content can overflow to the next page even though it will
+          // fit. This is because scale doesn't update the layout information.
+          // Boxing in a container without clipping will inform typst that content
+          // will indeed fit in the remaining space
+          box(
+            width: new-width,
+            height: available-height,
+            scale(
+              x: ratio,
+              y: ratio,
+              origin: top + left,
+              boxed-content,
+            ),
+          )
+        } else {
+          body
+        }
+      },
+    )
   }
 }
 
@@ -1048,55 +1081,58 @@ snapshot_kind: text
   width,
   content,
 ) = {
-  layout(layout-size => {
-    let content-size = measure(content)
-    let content-width = content-size.width
-    let width = _size-to-pt(
-      width,
-      layout-size.width,
-    )
-    if (
-      content-width != 0pt
-        and (
-          (
-            shrink
-              and (
-                width < content-width
-              )
-          )
-            or (
-              grow
+  layout(
+    layout-size => {
+      let content-size = measure(content)
+      let content-width = content-size.width
+      let width = _size-to-pt(
+        width,
+        layout-size.width,
+      )
+      if (
+        content-width != 0pt
+          and (
+            (
+              shrink
                 and (
-                  width > content-width
+                  width < content-width
                 )
             )
+              or (
+                grow
+                  and (
+                    width
+                      > content-width
+                  )
+              )
+          )
+      ) {
+        let ratio = (
+          width / content-width * 100%
         )
-    ) {
-      let ratio = (
-        width / content-width * 100%
-      )
-      // The first box keeps content from prematurely wrapping
-      let scaled = scale(
+        // The first box keeps content from prematurely wrapping
+        let scaled = scale(
+          box(
+            content,
+            width: content-width,
+          ),
+          origin: top + left,
+          x: ratio,
+          y: ratio,
+        )
+        // The second box lets typst know the post-scaled dimensions, since `scale`
+        // doesn't update layout information
         box(
-          content,
-          width: content-width,
-        ),
-        origin: top + left,
-        x: ratio,
-        y: ratio,
-      )
-      // The second box lets typst know the post-scaled dimensions, since `scale`
-      // doesn't update layout information
-      box(
-        scaled,
-        width: width,
-        height: content-size.height
-          * ratio,
-      )
-    } else {
-      content
-    }
-  })
+          scaled,
+          width: width,
+          height: content-size.height
+            * ratio,
+        )
+      } else {
+        content
+      }
+    },
+  )
 }
 
 
@@ -1127,56 +1163,61 @@ snapshot_kind: text
     fill = rgb(fill)
   }
 
-  let to-display = layout(layout-size => {
-    context {
-      let body-size = measure(body)
-      let bounding-width = calc.min(
-        body-size.width,
-        layout-size.width,
-      )
-      let wrapped-body-size = measure(
-        box(
+  let to-display = layout(
+    layout-size => {
+      context {
+        let body-size = measure(body)
+        let bounding-width = calc.min(
+          body-size.width,
+          layout-size.width,
+        )
+        let wrapped-body-size = measure(
+          box(
+            body,
+            width: bounding-width,
+          ),
+        )
+        let named = cover-args.named()
+        if "width" not in named {
+          named.insert(
+            "width",
+            wrapped-body-size.width,
+          )
+        }
+        if "height" not in named {
+          named.insert(
+            "height",
+            wrapped-body-size.height,
+          )
+        }
+        if "outset" not in named {
+          // This outset covers the tops of tall letters and the bottoms of letters with
+          // descenders. Alternatively, we could use
+          // `set text(top-edge: "bounds", bottom-edge: "bounds")` to get the same effect,
+          // but this changes text alignment and also misaligns bullets in enums/lists.
+          // In contrast, `outset` preserves spacing and alignment at the cost of adding
+          // a slight, visible border when the covered object is right next to the edge
+          // of a color change.
+          named.insert(
+            "outset",
+            (
+              top: 0.15em,
+              bottom: 0.25em,
+            ),
+          )
+        }
+        stack(
+          spacing: -wrapped-body-size.height,
           body,
-          width: bounding-width,
-        ),
-      )
-      let named = cover-args.named()
-      if "width" not in named {
-        named.insert(
-          "width",
-          wrapped-body-size.width,
+          rect(
+            fill: fill,
+            ..named,
+            ..cover-args.pos(),
+          ),
         )
       }
-      if "height" not in named {
-        named.insert(
-          "height",
-          wrapped-body-size.height,
-        )
-      }
-      if "outset" not in named {
-        // This outset covers the tops of tall letters and the bottoms of letters with
-        // descenders. Alternatively, we could use
-        // `set text(top-edge: "bounds", bottom-edge: "bounds")` to get the same effect,
-        // but this changes text alignment and also misaligns bullets in enums/lists.
-        // In contrast, `outset` preserves spacing and alignment at the cost of adding
-        // a slight, visible border when the covered object is right next to the edge
-        // of a color change.
-        named.insert(
-          "outset",
-          (top: 0.15em, bottom: 0.25em),
-        )
-      }
-      stack(
-        spacing: -wrapped-body-size.height,
-        body,
-        rect(
-          fill: fill,
-          ..named,
-          ..cover-args.pos(),
-        ),
-      )
-    }
-  })
+    },
+  )
   if inline {
     box(to-display)
   } else {
@@ -1252,39 +1293,37 @@ snapshot_kind: text
     .split(",")
     .map(p => p.trim())
   let parse-part(part) = {
-    let match-until = part.match(
-      regex("^-([[:digit:]]+)$"),
-    )
+    let match-until = part.match(regex(
+      "^-([[:digit:]]+)$",
+    ))
     let match-beginning = part.match(
       regex("^([[:digit:]]+)-$"),
     )
-    let match-range = part.match(
-      regex("^([[:digit:]]+)-([[:digit:]]+)$"),
-    )
-    let match-single = part.match(
-      regex("^([[:digit:]]+)$"),
-    )
+    let match-range = part.match(regex(
+      "^([[:digit:]]+)-([[:digit:]]+)$",
+    ))
+    let match-single = part.match(regex(
+      "^([[:digit:]]+)$",
+    ))
     if match-until != none {
-      let parsed = int(
-        match-until.captures.first(),
-      )
+      let parsed = int(match-until
+        .captures
+        .first())
       // assert(parsed > 0, "parsed idx is non-positive")
       (until: parsed)
     } else if match-beginning != none {
-      let parsed = int(
-        match-beginning
-          .captures
-          .first(),
-      )
+      let parsed = int(match-beginning
+        .captures
+        .first())
       // assert(parsed > 0, "parsed idx is non-positive")
       (beginning: parsed)
     } else if match-range != none {
-      let parsed-first = int(
-        match-range.captures.first(),
-      )
-      let parsed-last = int(
-        match-range.captures.last(),
-      )
+      let parsed-first = int(match-range
+        .captures
+        .first())
+      let parsed-last = int(match-range
+        .captures
+        .last())
       // assert(parsed-first > 0, "parsed idx is non-positive")
       // assert(parsed-last > 0, "parsed idx is non-positive")
       (
@@ -1292,9 +1331,9 @@ snapshot_kind: text
         until: parsed-last,
       )
     } else if match-single != none {
-      let parsed = int(
-        match-single.captures.first(),
-      )
+      let parsed = int(match-single
+        .captures
+        .first())
       // assert(parsed > 0, "parsed idx is non-positive")
       parsed
     } else {
@@ -1334,14 +1373,18 @@ snapshot_kind: text
   } else if (
     type(visible-subslides) == array
   ) {
-    visible-subslides.any(s => check-visible(
-      idx,
-      s,
-    ))
+    visible-subslides.any(
+      s => check-visible(
+        idx,
+        s,
+      ),
+    )
   } else if (
     type(visible-subslides) == str
   ) {
-    let parts = _parse-subslide-indices(visible-subslides)
+    let parts = _parse-subslide-indices(
+      visible-subslides,
+    )
     check-visible(idx, parts)
   } else if (
     type(visible-subslides) == content
@@ -1373,7 +1416,9 @@ snapshot_kind: text
 
     lower-okay and upper-okay
   } else {
-    panic("you may only provide a single integer, an array of integers, or a string")
+    panic(
+      "you may only provide a single integer, an array of integers, or a string",
+    )
   }
 }
 
@@ -1386,13 +1431,15 @@ snapshot_kind: text
   } else if (
     type(visible-subslides) == array
   ) {
-    calc.max(
-      ..visible-subslides.map(s => last-required-subslide(s)),
-    )
+    calc.max(..visible-subslides.map(
+      s => last-required-subslide(s),
+    ))
   } else if (
     type(visible-subslides) == str
   ) {
-    let parts = _parse-subslide-indices(visible-subslides)
+    let parts = _parse-subslide-indices(
+      visible-subslides,
+    )
     last-required-subslide(parts)
   } else if (
     type(visible-subslides)
@@ -1415,7 +1462,9 @@ snapshot_kind: text
     }
     last
   } else {
-    panic("you may only provide a single integer, an array of integers, or a string")
+    panic(
+      "you may only provide a single integer, an array of integers, or a string",
+    )
   }
 }
 
@@ -1516,11 +1565,17 @@ snapshot_kind: text
     subslides-contents
   }
 
-  let subslides = subslides-contents.map(it => it.first())
-  let contents = subslides-contents.map(it => it.last())
+  let subslides = subslides-contents.map(
+    it => it.first(),
+  )
+  let contents = subslides-contents.map(
+    it => it.last(),
+  )
   if stretch {
     context {
-      let sizes = contents.map(c => measure(c))
+      let sizes = contents.map(
+        c => measure(c),
+      )
       let max-width = calc.max(
         ..sizes.map(sz => sz.width),
       )
@@ -1536,7 +1591,10 @@ snapshot_kind: text
           box(
             width: max-width,
             height: max-height,
-            align(position, content),
+            align(
+              position,
+              content,
+            ),
           ),
         )
       }
@@ -1618,7 +1676,9 @@ snapshot_kind: text
 ) = {
   let end = if end == none {
     if count == none {
-      panic("You must specify either end or count.")
+      panic(
+        "You must specify either end or count.",
+      )
     } else {
       start + count
     }
@@ -1626,7 +1686,10 @@ snapshot_kind: text
     end
   }
 
-  let subslides = range(start, end)
+  let subslides = range(
+    start,
+    end,
+  )
   let contents = subslides.map(fn)
   alternatives-match(
     self: self,

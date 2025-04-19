@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/codly.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [codly]
@@ -18,10 +17,22 @@ snapshot_kind: text
   if type(inset) == dictionary {
     let other = inset.at("rest", default: 0.32em)
     (
-      top: inset.at("top", default: inset.at("y", default: other)),
-      right: inset.at("right", default: inset.at("x", default: other)),
-      bottom: inset.at("bottom", default: inset.at("y", default: other)),
-      left: inset.at("left", default: inset.at("x", default: other)),
+      top: inset.at("top", default: inset.at(
+        "y",
+        default: other,
+      )),
+      right: inset.at("right", default: inset.at(
+        "x",
+        default: other,
+      )),
+      bottom: inset.at("bottom", default: inset.at(
+        "y",
+        default: other,
+      )),
+      left: inset.at("left", default: inset.at(
+        "x",
+        default: other,
+      )),
     )
   } else {
     (top: inset, right: inset, bottom: inset, left: inset)
@@ -373,7 +384,10 @@ snapshot_kind: text
         let indent = match.end - match.start
 
         // Then measure the necessary indent.
-        let indent = first.text.slice(match.start, match.end)
+        let indent = first.text.slice(
+          match.start,
+          match.end,
+        )
         width = measure([#indent]).width
       }
     }
@@ -389,7 +403,12 @@ snapshot_kind: text
       }
     }
 
-    let l = raw.line(it.number, it.count, it.text, highlighted)
+    let l = raw.line(
+      it.number,
+      it.count,
+      it.text,
+      highlighted,
+    )
 
     // Build a label if the code block has one.
     if block-label != none {
@@ -532,12 +551,10 @@ snapshot_kind: text
           )
           hl.tag
         }
-        place(
-          hide[#figure(
-              kind: "codly-referencer",
-              supplement: none,
-            )[#box(referenced)#box(str(block-label))]#hl.label],
-        )
+        place(hide[#figure(
+            kind: "codly-referencer",
+            supplement: none,
+          )[#box(referenced)#box(str(block-label))]#hl.label])
       } else {
         none
       }
@@ -559,10 +576,7 @@ snapshot_kind: text
           let height-col = measure(col).height
           let height-tag = measure(tag).height
           let max-height = (
-            calc.max(
-              height-col,
-              height-tag,
-            )
+            calc.max(height-col, height-tag)
               + 2 * highlight-inset
           )
           let hl-box = box(
@@ -594,10 +608,7 @@ snapshot_kind: text
             tag + label,
           )
 
-          children.push([#hl-box#h(
-              0pt,
-              weak: true,
-            )#tag-box<codly-highlight>])
+          children.push([#hl-box#h(0pt, weak: true)#tag-box<codly-highlight>])
         }
         collection = none
       }
@@ -616,7 +627,12 @@ snapshot_kind: text
     }
   }
 
-  let l = raw.line(it.number, it.count, it.text, highlighted)
+  let l = raw.line(
+    it.number,
+    it.count,
+    it.text,
+    highlighted,
+  )
 
   // Build a label if the code block has one.
   if block-label != none {
@@ -794,13 +810,12 @@ snapshot_kind: text
     state("codly-number-align", __codly-args.number-align.default).get()
   })
 
-  let padding = __codly-inset(
-    (__codly-args.inset.type_check)(if "inset" in extra {
-      extrainset
-    } else {
-      state("codly-inset", __codly-args.inset.default).get()
-    }),
-  )
+  let padding = __codly-inset((__codly-args.inset.type_check)(if "inset"
+    in extra {
+    extrainset
+  } else {
+    state("codly-inset", __codly-args.inset.default).get()
+  }))
 
   let breakable = (
     __codly-args.breakable.type_check
@@ -870,10 +885,9 @@ snapshot_kind: text
   )(if "reference-number-format" in extra {
     extra.reference-number-format
   } else {
-    state(
-      "codly-reference-number-format",
-      __codly-args.reference-number-format.default,
-    ).get()
+    state("codly-reference-number-format", __codly-args
+      .reference-number-format
+      .default).get()
   })
 
   let annotation-format = {
@@ -882,10 +896,9 @@ snapshot_kind: text
     )(if "annotation-format" in extra {
       extra.annotation-format
     } else {
-      state(
-        "codly-annotation-format",
-        __codly-args.annotation-format.default,
-      ).get()
+      state("codly-annotation-format", __codly-args
+        .annotation-format
+        .default).get()
     })
     if fn == none {
       _ => none
@@ -918,11 +931,9 @@ snapshot_kind: text
 
           if "label" in x {
             if block-label == none {
-              panic(
-                "codly: label "
-                  + str(x.label)
-                  + " is only allowed in a figure block",
-              )
+              panic("codly: label "
+                + str(x.label)
+                + " is only allowed in a figure block")
             }
           }
 
@@ -956,16 +967,17 @@ snapshot_kind: text
     .map(x => x.width)
   let num = annotation-format(annotations.len())
   let lr-width = if annotations.len() > 0 {
-    measure(math.lr("}", size: 5em) + num).width
+    measure(math.lr("}", size: 5em)
+      + num).width
   } else {
     0pt
   }
 
   let annot-width = (
-    annot-bodies-width.fold(
-      0pt,
-      (a, b) => calc.max(a, b),
-    )
+    annot-bodies-width.fold(0pt, (a, b) => calc.max(
+      a,
+      b,
+    ))
       + padding.left
       + padding.right
       + lr-width
@@ -1036,13 +1048,13 @@ snapshot_kind: text
       } else {
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
       })
-      let padding = __codly-inset(
-        (__codly-args.lang-inset.type_check)(if "lang-inset" in extra {
+      let padding = __codly-inset((__codly-args.lang-inset.type_check)(
+        if "lang-inset" in extra {
           extra.lang-inset
         } else {
           state("codly-lang-inset", __codly-args.lang-inset.default).get()
-        }),
-      )
+        },
+      ))
 
       let lang-stroke = (
         __codly-args.lang-stroke.type_check
@@ -1100,13 +1112,13 @@ snapshot_kind: text
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
       })
 
-      let padding = __codly-inset(
-        (__codly-args.lang-inset.type_check)(if "lang-inset" in extra {
+      let padding = __codly-inset((__codly-args.lang-inset.type_check)(
+        if "lang-inset" in extra {
           extra.lang-inset
         } else {
           state("codly-lang-inset", __codly-args.lang-inset.default).get()
-        }),
-      )
+        },
+      ))
 
       let lang-stroke = (
         __codly-args.lang-stroke.type_check
@@ -1172,30 +1184,25 @@ snapshot_kind: text
     )(if "header-cell-args" in extra {
       extra.header-cell-args
     } else {
-      state(
-        "codly-header-cell-args",
-        __codly-args.header-cell-args.default,
-      ).get()
+      state("codly-header-cell-args", __codly-args
+        .header-cell-args
+        .default).get()
     })
     let transform = (
       __codly-args.header-transform.type_check
     )(if "header-transform" in extra {
       extra.header-transform
     } else {
-      state(
-        "codly-header-transform",
-        __codly-args.header-transform.default,
-      ).get()
+      state("codly-header-transform", __codly-args
+        .header-transform
+        .default).get()
     })
     (
-      grid.header(
-        repeat: header-repeat,
-        grid.cell(
-          transform(header) + language-block-final,
-          colspan: 2,
-          ..header-args,
-        ),
-      ),
+      grid.header(repeat: header-repeat, grid.cell(
+        transform(header) + language-block-final,
+        colspan: 2,
+        ..header-args,
+      )),
     )
   } else {
     none
@@ -1228,12 +1235,10 @@ snapshot_kind: text
         } else {
           num
         }
-        place(
-          hide[#figure(
-              kind: "codly-referencer",
-              supplement: none,
-            )[#box(referenced)#box(str(block-label))]#current-annot.label],
-        )
+        place(hide[#figure(
+            kind: "codly-referencer",
+            supplement: none,
+          )[#box(referenced)#box(str(block-label))]#current-annot.label])
       } else {
         none
       }
@@ -1286,7 +1291,8 @@ snapshot_kind: text
           line.number + offset,
           line.count,
           line.text,
-          box(height: height, width: 0pt) + line.body,
+          box(height: height, width: 0pt)
+            + line.body,
         )<codly-highlighted>]
     }
 
@@ -1313,12 +1319,10 @@ snapshot_kind: text
       if header != none {
         items.push(l)
       } else {
-        items.push(
-          grid(
-            columns: (1fr, lb.width + padding.left + padding.right),
-            l, language-block-final,
-          ),
-        )
+        items.push(grid(
+          columns: (1fr, lb.width + padding.left + padding.right),
+          l, language-block-final,
+        ))
       }
     }
   }
@@ -1342,26 +1346,25 @@ snapshot_kind: text
     )(if "footer-cell-args" in extra {
       extra.footer-cell-args
     } else {
-      state(
-        "codly-footer-cell-args",
-        __codly-args.footer-cell-args.default,
-      ).get()
+      state("codly-footer-cell-args", __codly-args
+        .footer-cell-args
+        .default).get()
     })
     let transform = (
       __codly-args.footer-transform.type_check
     )(if "footer-transform" in extra {
       extra.footer-transform
     } else {
-      state(
-        "codly-footer-transform",
-        __codly-args.footer-transform.default,
-      ).get()
+      state("codly-footer-transform", __codly-args
+        .footer-transform
+        .default).get()
     })
     (
-      grid.footer(
-        repeat: footer-repeat,
-        grid.cell(transform(footer), colspan: 2, ..footer-args),
-      ),
+      grid.footer(repeat: footer-repeat, grid.cell(
+        transform(footer),
+        colspan: 2,
+        ..footer-args,
+      )),
     )
   } else {
     ()
@@ -1384,25 +1387,25 @@ snapshot_kind: text
     {
       if is-complex-fill {
         // We use place to draw the fill on a separate layer.
-        place(
-          grid(
-            columns: if has-annotations {
-              (1fr, annot-width)
-            } else {
-              (1fr,)
-            },
-            stroke: none,
-            inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
-            fill: (x, y) => if zebra-color != none and calc.rem(y, 2) == 0 {
-              zebra-color
-            } else {
-              fill
-            },
-            ..header,
-            ..it.lines.map(line => hide(line)),
-            ..footer,
-          ),
-        )
+        place(grid(
+          columns: if has-annotations {
+            (1fr, annot-width)
+          } else {
+            (1fr,)
+          },
+          stroke: none,
+          inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
+          fill: (x, y) => if zebra-color != none
+            and calc.rem(y, 2)
+              == 0 {
+            zebra-color
+          } else {
+            fill
+          },
+          ..header,
+          ..it.lines.map(line => hide(line)),
+          ..footer,
+        ))
       }
       if numbers-format != none {
         grid(
@@ -1417,7 +1420,11 @@ snapshot_kind: text
           fill: if is-complex-fill {
             none
           } else {
-            (x, y) => if zebra-color != none and calc.rem(y, 2) == 0 {
+            (x, y) => if (
+              zebra-color != none
+                and calc.rem(y, 2)
+                  == 0
+            ) {
               zebra-color
             } else {
               fill
@@ -1437,7 +1444,9 @@ snapshot_kind: text
           inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
           stroke: none,
           align: (numbers-alignment, left + horizon),
-          fill: (x, y) => if zebra-color != none and calc.rem(y, 2) == 0 {
+          fill: (x, y) => if zebra-color != none
+            and calc.rem(y, 2)
+              == 0 {
             zebra-color
           } else {
             fill
@@ -1504,14 +1513,11 @@ snapshot_kind: text
       state("codly-reference-sep", __codly-args.reference-sep.default).get()
     })
     let (tag, label) = __codly-get-parts(it.element)
-    link(
-      it.target,
-      (
-        ref(label),
-        sep,
-        tag,
-      ).join(),
-    )
+    link(it.target, (
+      ref(label),
+      sep,
+      tag,
+    ).join())
   } else if (
     it.element != none
       and it.element.func() == figure
@@ -1525,14 +1531,11 @@ snapshot_kind: text
       state("codly-reference-sep", __codly-args.reference-sep.default).get()
     })
     let (num, label) = __codly-get-parts(it.element)
-    link(
-      it.target,
-      (
-        ref(label),
-        sep,
-        num,
-      ).join(),
-    )
+    link(it.target, (
+      ref(label),
+      sep,
+      num,
+    ).join())
   } else if (
     it.element != none
       and it.element.func() == raw.line
@@ -1540,7 +1543,9 @@ snapshot_kind: text
   ) {
     let segments = str(it.target).split(":")
     assert(segments.len() > 1, message: "codly: invalid label")
-    let lab = label(segments.slice(0, -1).join(":"))
+    let lab = label(segments
+      .slice(0, -1)
+      .join(":"))
 
     let sep = (
       __codly-args.reference-sep.type_check
@@ -1555,20 +1560,16 @@ snapshot_kind: text
     )(if "reference-number-format" in extra {
       extra.reference-number-format
     } else {
-      state(
-        "codly-reference-number-format",
-        __codly-args.reference-number-format.default,
-      ).get()
+      state("codly-reference-number-format", __codly-args
+        .reference-number-format
+        .default).get()
     })
 
-    link(
-      it.target,
-      (
-        ref(lab),
-        sep,
-        reference-number-format(it.element.number),
-      ).join(),
-    )
+    link(it.target, (
+      ref(lab),
+      sep,
+      reference-number-format(it.element.number),
+    ).join())
   } else {
     it
   }
@@ -1584,7 +1585,10 @@ snapshot_kind: text
 ) = {
   show figure.where(kind: raw): fig => {
     if "label" in fig.fields() {
-      show raw.where(block: true): it => __codly-raw(it, block-label: fig.label)
+      show raw.where(block: true): it => __codly-raw(
+        it,
+        block-label: fig.label,
+      )
       fig
     } else {
       fig
@@ -1630,7 +1634,10 @@ snapshot_kind: text
 
       let args = current + extra
       show ref: it => __codly-ref(it, extra: args)
-      show raw.where(block: true): it => __codly-raw(it, extra: args)
+      show raw.where(block: true): it => __codly-raw(
+        it,
+        extra: args,
+      )
       show figure.where(kind: raw): fig => {
         if "label" in fig.fields() {
           show raw.where(block: true, extra: args): it => __codly-raw(
@@ -1650,7 +1657,10 @@ snapshot_kind: text
     let extra = args.named()
     state("codly-extra-args").update(extra)
     show ref: it => __codly-ref(it, extra: args)
-    show raw.where(block: true): it => __codly-raw(it, extra: extra)
+    show raw.where(block: true): it => __codly-raw(
+      it,
+      extra: extra,
+    )
     show figure.where(kind: raw): fig => {
       if "label" in fig.fields() {
         show raw.where(block: true, extra: args): it => __codly-raw(

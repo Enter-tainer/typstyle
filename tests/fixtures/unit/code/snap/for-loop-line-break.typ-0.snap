@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/for-loop-line-break.typ
-snapshot_kind: text
 ---
 #import "@preview/cetz:0.2.2"
 
@@ -62,7 +61,9 @@ snapshot_kind: text
           0,
           0,
           neg(
-            p.at(2),
+            p.at(
+              2,
+            ),
           ),
         ),
       ),
@@ -75,7 +76,9 @@ snapshot_kind: text
         (
           0,
           neg(
-            p.at(1),
+            p.at(
+              1,
+            ),
           ),
           0,
         ),
@@ -88,7 +91,9 @@ snapshot_kind: text
         p,
         (
           neg(
-            p.at(0),
+            p.at(
+              0,
+            ),
           ),
           0,
           0,

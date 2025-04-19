@@ -1,9 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/destruction.typ
-snapshot_kind: text
 ---
-#let (n, ..) = layout-node(node, 0, ctx)
+#let (n, ..) = layout-node(
+  node,
+  0,
+  ctx,
+)
 
 #grid(
   columns: (1fr,)
@@ -11,7 +14,10 @@ snapshot_kind: text
   gutter: 1em,
   ..authors.map(author => align(
     center,
-    text(font: author-font, author),
+    text(
+      font: author-font,
+      author,
+    ),
   )),
 )
 

@@ -9,7 +9,7 @@ use super::{
     },
     style::FoldStyle,
     table,
-    util::{get_parenthesized_args_untyped, has_parenthesized_args, is_only_one_and},
+    util::{get_parenthesized_args_untyped, has_parenthesized_args},
     ArenaDoc, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
@@ -78,36 +78,16 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let ctx = ctx.with_mode(Mode::CodeCont);
 
-        let mut fold_style = self.get_fold_style(ctx, args);
+        let fold_style = match self.get_fold_style(ctx, args) {
+            FoldStyle::Always => FoldStyle::Always,
+            _ => FoldStyle::Compact,
+        };
 
         let children = || {
             args.to_untyped()
                 .children()
                 .take_while(|it| it.kind() != SyntaxKind::RightParen)
         };
-        let arg_count = children().filter(|it| it.is::<Arg>()).count();
-
-        if !ctx.break_suppressed {
-            is_only_one_and(args.items().take(arg_count), |arg| {
-                let inner = match arg {
-                    Arg::Pos(p) => *p,
-                    Arg::Named(_) => {
-                        fold_style = FoldStyle::Fit;
-                        return false;
-                    }
-                    Arg::Spread(s) => s.expr(),
-                };
-                fold_style = if matches!(
-                    inner,
-                    Expr::FuncCall(_) | Expr::FieldAccess(_) | Expr::Unary(_) | Expr::Binary(_)
-                ) {
-                    FoldStyle::Fit
-                } else {
-                    FoldStyle::Always
-                };
-                true
-            });
-        }
 
         ListStylist::new(self)
             .keep_linebreak(self.config.blank_lines_upper_bound)

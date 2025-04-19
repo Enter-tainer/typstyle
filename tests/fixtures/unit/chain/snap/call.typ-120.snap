@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/chain/call.typ
-snapshot_kind: text
 ---
 #{ a.b(1)(2).c.d(3) }
 
@@ -27,7 +26,9 @@ snapshot_kind: text
 #a.b()[c][d].eeeeeeeeeeeeeee().fffffffff()
 
 #{
-  (1,).rev().map(((n, c)) => f(n, c, 1))
+  (1,)
+    .rev()
+    .map(((n, c)) => f(n, c, 1))
 }
 
 #{
@@ -46,7 +47,10 @@ snapshot_kind: text
 }
 
 #{
-  aaaaaaaa(bbbbbbb, ccccccc).ddddddddd()().eeeeeeeee[].ffffffffff
+  aaaaaaaa(bbbbbbb, ccccccc)
+    .ddddddddd()()
+    .eeeeeeeee[]
+    .ffffffffff
 
 
   let points = (

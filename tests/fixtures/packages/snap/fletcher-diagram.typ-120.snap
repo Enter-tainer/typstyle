@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-diagram.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -39,7 +38,10 @@ snapshot_kind: text
   } else if dirs == ("vertical", "horizontal") {
     flip = true
   } else {
-    error("Axes #0 cannot both be in the same direction. Try `axes: (ltr, ttb)`.", axes)
+    error(
+      "Axes #0 cannot both be in the same direction. Try `axes: (ltr, ttb)`.",
+      axes,
+    )
   }
 
   (
@@ -159,10 +161,14 @@ snapshot_kind: text
   let centers = array
     .zip(grid.cell-sizes, grid.spacing)
     .map(((sizes, spacing)) => {
-      array.zip(cumsum(sizes), sizes, range(sizes.len())).map(((end, size, i)) => end - size / 2 + spacing * i)
+      array
+        .zip(cumsum(sizes), sizes, range(sizes.len()))
+        .map(((end, size, i)) => end - size / 2 + spacing * i)
     })
 
-  let bounding-size = array.zip(centers, grid.cell-sizes).map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
+  let bounding-size = array
+    .zip(centers, grid.cell-sizes)
+    .map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
 
   (
     centers: centers,
@@ -447,12 +453,7 @@ snapshot_kind: text
   node-defocus: 0.2,
   label-sep: 0.4em,
   label-size: 1em,
-  label-wrapper: edge => box(
-    [#edge.label],
-    inset: .2em,
-    radius: .2em,
-    fill: edge.label-fill,
-  ),
+  label-wrapper: edge => box([#edge.label], inset: .2em, radius: .2em, fill: edge.label-fill),
   mark-scale: 100%,
   crossing-fill: white,
   crossing-thickness: 5,
@@ -519,7 +520,11 @@ snapshot_kind: text
     let vertices-affecting-grid = (
       edges
         .map(edge => {
-          resolve-edge-vertices(edge, ctx: ctx-with-uv-anchors + (target-system: "uv"), nodes)
+          resolve-edge-vertices(
+            edge,
+            ctx: ctx-with-uv-anchors + (target-system: "uv"),
+            nodes,
+          )
         })
         .join()
         + ()
@@ -528,11 +533,18 @@ snapshot_kind: text
 
 
     // determine diagram's elastic grid layout
-    let grid = compute-grid(rects-affecting-grid, vertices-affecting-grid, options)
+    let grid = compute-grid(
+      rects-affecting-grid,
+      vertices-affecting-grid,
+      options,
+    )
 
 
     // now with grid determined, compute final (physical) coordinates for nodes and edges
-    let (ctx-with-xyz-anchors, nodes) = resolve-node-coordinates(nodes, ctx: (target-system: "xyz", grid: grid))
+    let (ctx-with-xyz-anchors, nodes) = resolve-node-coordinates(
+      nodes,
+      ctx: (target-system: "xyz", grid: grid),
+    )
     let (_, nodes) = resolve-node-coordinates(nodes, ctx: (target-system: "uv", grid: grid))
 
 

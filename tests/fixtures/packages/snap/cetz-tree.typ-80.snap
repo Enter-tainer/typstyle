@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cetz-tree.typ
-snapshot_kind: text
 ---
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
@@ -85,12 +84,10 @@ snapshot_kind: text
       } else if type(content) == dictionary and "content" in content {
         content = content.content
       } else if type(content) != typst-content {
-        panic(
-          "Unsupported content type "
-            + type(content)
-            + "! "
-            + "Provide your own `draw-node` implementation.",
-        )
+        panic("Unsupported content type "
+          + type(content)
+          + "! "
+          + "Provide your own `draw-node` implementation.")
       }
 
       if content != none {
@@ -115,7 +112,11 @@ snapshot_kind: text
       children = tree
         .slice(1)
         .enumerate()
-        .map(((n, c)) => build-node(c, depth: depth + 1, sibling: n))
+        .map(((n, c)) => build-node(
+          c,
+          depth: depth + 1,
+          sibling: n,
+        ))
       cnt = tree.at(0)
     } else {
       cnt = tree
@@ -220,14 +221,11 @@ snapshot_kind: text
     let name = "node-" + str(node.depth) + "-" + str(node.n)
 
     let cmds = ()
-    cmds += draw.group(
-      name: name,
-      {
-        draw.move-to(node-position(node))
-        draw.anchor("center", ())
-        draw-node(node, parent-name)
-      },
-    )
+    cmds += draw.group(name: name, {
+      draw.move-to(node-position(node))
+      draw.anchor("center", ())
+      draw-node(node, parent-name)
+    })
 
     if parent-name != none {
       cmds += draw-edge(parent-name, name, node)

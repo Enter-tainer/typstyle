@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/grid/colspan.typ
-snapshot_kind: text
 ---
 #let ofi = [Office]
 #let rem = [_Remote_]
@@ -35,14 +34,26 @@ snapshot_kind: text
     [Friday],
   ),
   [Evelyn Archer],
-  table.cell(colspan: 2, ofi),
-  table.cell(colspan: 2, rem),
+  table.cell(
+    colspan: 2,
+    ofi,
+  ),
+  table.cell(
+    colspan: 2,
+    rem,
+  ),
   ofi,
   [Lila Montgomery],
-  table.cell(colspan: 5, lea),
+  table.cell(
+    colspan: 5,
+    lea,
+  ),
   [Nolan Pearce],
   rem,
-  table.cell(colspan: 2, ofi),
+  table.cell(
+    colspan: 2,
+    ofi,
+  ),
   rem,
   ofi,
 )
@@ -52,9 +63,7 @@ snapshot_kind: text
 
   [a], [b], [c], [d],
   fill: (_, y) => if y == 0 { black },
-  table.cell(
-    rowspan: 2,
-  )[aa], table.cell(
+  table.cell(rowspan: 2)[aa], table.cell(
     colspan: 2,
   )[bc], [d],
   [b], table.cell(colspan: 2)[cd],

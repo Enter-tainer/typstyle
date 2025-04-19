@@ -1,15 +1,10 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/grid/cell-ugly.typ
-snapshot_kind: text
 ---
 #table(
   columns: 3,
-  table.header(
-    [Substance],
-    [Subcritical °C],
-    [Supercritical °C],
-  ),
+  table.header([Substance], [Subcritical °C], [Supercritical °C]),
   [Hydrochloric Acid],
   [12.0], [92.1],
   [Sodium Myreth Sulfate],
@@ -24,20 +19,10 @@ snapshot_kind: text
 #table(
   columns: 2,
   align: center,
-  header(
-    [*Trip progress*],
-    [*Itinerary*],
-  ),
-  cell(
-    align: right,
-    fill: fuchsia.lighten(80%),
-    [🚗],
-  ),
+  header([*Trip progress*], [*Itinerary*]),
+  cell(align: right, fill: fuchsia.lighten(80%), [🚗]),
 
   [Get in, folks!], [🚗],
   [Eat curbside hotdog], cell(align: left)[🌴🚗],
-  cell(
-    inset: 0.06em,
-    text(1.62em)[🛖🌅🌊],
-  ),
+  cell(inset: 0.06em, text(1.62em)[🛖🌅🌊]),
 )

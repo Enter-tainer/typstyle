@@ -1,11 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/equation-dot-chain.typ
-snapshot_kind: text
 ---
 #let a = (
   $a^b$
     .body
-    .has("t")
+    .has(
+      "t",
+    )
 )
 #a

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/simple-paper.typ
-snapshot_kind: text
 ---
 #let project(
   title: "",
@@ -33,7 +32,9 @@ snapshot_kind: text
   set page(
     numbering: "1",
     number-align: center,
-    header: align(left)[
+    header: align(
+      left,
+    )[
       #set text(
         font: header-font,
       )
@@ -55,7 +56,9 @@ snapshot_kind: text
   show heading: it => box(
     width: 100%,
   )[
-    #v(0.50em)
+    #v(
+      0.50em,
+    )
     #set text(
       font: heading-font,
     )
@@ -63,9 +66,13 @@ snapshot_kind: text
       it.numbering
         != none
     ) {
-      counter(heading).display()
+      counter(
+        heading,
+      ).display()
     }
-    #h(0.75em)
+    #h(
+      0.75em,
+    )
     #it.body
   ]
 
@@ -74,17 +81,25 @@ snapshot_kind: text
   ): it => box(
     width: 100%,
   )[
-    #v(0.5em)
-    #set align(center)
+    #v(
+      0.5em,
+    )
+    #set align(
+      center,
+    )
     #set heading(
       numbering: "一",
     )
     #it
-    #v(0.75em)
+    #v(
+      0.75em,
+    )
   ]
 
   // Title
-  align(center)[
+  align(
+    center,
+  )[
     #block(
       text(
         font: title-font,
@@ -93,7 +108,9 @@ snapshot_kind: text
         title,
       ),
     )
-    #v(0.5em)
+    #v(
+      0.5em,
+    )
   ]
 
   // Author information.
@@ -110,13 +127,15 @@ snapshot_kind: text
           authors.len(),
         ),
       gutter: 1em,
-      ..authors.map(author => align(
-        center,
-        text(
-          font: author-font,
-          author,
+      ..authors.map(
+        author => align(
+          center,
+          text(
+            font: author-font,
+            author,
+          ),
         ),
-      )),
+      ),
     ),
   )
 
@@ -132,22 +151,30 @@ snapshot_kind: text
   )
 
   show figure: it => [
-    #v(12pt)
+    #v(
+      12pt,
+    )
     #set text(
       font: caption-font,
     )
     #it
     #par()[#text(
         size: 0.0em,
-      )[#h(0.0em)]]
-    #v(12pt)
+      )[#h(
+          0.0em,
+        )]]
+    #v(
+      12pt,
+    )
   ]
 
   show image: it => [
     #it
     #par()[#text(
         size: 0.0em,
-      )[#h(0.0em)]]
+      )[#h(
+          0.0em,
+        )]]
   ]
 
   show table: it => [
@@ -162,12 +189,16 @@ snapshot_kind: text
   show emph: set text(
     font: emph-font,
   )
-  show ref: set text(red)
+  show ref: set text(
+    red,
+  )
   show raw.where(
     block: true,
   ): block.with(
     width: 100%,
-    fill: luma(240),
+    fill: luma(
+      240,
+    ),
     inset: 10pt,
   )
 
@@ -179,13 +210,17 @@ snapshot_kind: text
     size: 10pt,
   )
   show link: underline
-  show link: set text(blue)
+  show link: set text(
+    blue,
+  )
 
   if (
     abstract
       != none
   ) [
-    #v(2pt)
+    #v(
+      2pt,
+    )
     #h(2em) *摘要：* #abstract
 
     #if (
@@ -194,12 +229,16 @@ snapshot_kind: text
     ) [
       *关键字：* #keywords.join("；")
     ]
-    #v(2pt)
+    #v(
+      2pt,
+    )
   ]
 
   body
 }
-#let problem-counter = counter("problem")
+#let problem-counter = counter(
+  "problem",
+)
 #problem-counter.step()
 
 #let problem(

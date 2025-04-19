@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/simple-paper.typ
-snapshot_kind: text
 ---
 #let project(
   title: "",
@@ -57,21 +56,25 @@ snapshot_kind: text
 
   // Title
   align(center)[
-    #block(text(font: title-font, weight: 700, 1.75em, title))
+    #block(text(
+      font: title-font,
+      weight: 700,
+      1.75em,
+      title,
+    ))
     #v(0.5em)
   ]
 
   // Author information.
-  pad(
-    top: 0.5em,
-    bottom: 0.5em,
-    x: 2em,
-    grid(
-      columns: (1fr,) * calc.min(3, authors.len()),
-      gutter: 1em,
-      ..authors.map(author => align(center, text(font: author-font, author))),
-    ),
-  )
+  pad(top: 0.5em, bottom: 0.5em, x: 2em, grid(
+    columns: (1fr,)
+      * calc.min(3, authors.len()),
+    gutter: 1em,
+    ..authors.map(author => align(center, text(
+      font: author-font,
+      author,
+    ))),
+  ))
 
   // Main body
   set par(first-line-indent: 2em)
@@ -136,8 +139,5 @@ snapshot_kind: text
 
 #let solution(body) = {
   set enum(numbering: "(1)")
-  block(
-    inset: 8pt,
-    width: 100%,
-  )[*解答.* #h(0.75em) #body]
+  block(inset: 8pt, width: 100%)[*解答.* #h(0.75em) #body]
 }

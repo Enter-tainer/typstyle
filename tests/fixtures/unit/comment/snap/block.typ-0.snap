@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/block.typ
-snapshot_kind: text
 ---
 Our study design is as follows:
 /* Somebody write this up:
@@ -26,7 +25,9 @@ Our study design is as follows:
         + direction,
       target-name
         + "."
-        + opposite-dir.at(direction),
+        + opposite-dir.at(
+          direction,
+        ),
     )
     /* see this */
     draw.line(

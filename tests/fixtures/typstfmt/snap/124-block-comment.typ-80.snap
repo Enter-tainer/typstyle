@@ -1,16 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/124-block-comment.typ
-snapshot_kind: text
 ---
 #let test(..args) = (
   // do something
 )
 
-#test(
-  a: "test test test test test",
-  b: "test test test test test",
-)[
+#test(a: "test test test test test", b: "test test test test test")[
   /* test */
   test test test test test test test test test test test test test test test test test test test test test test test test
 ][

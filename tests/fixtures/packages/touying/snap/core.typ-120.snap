@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/core.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -48,10 +47,7 @@ snapshot_kind: text
 /// Example: `#show: appendix`
 ///
 /// - `body` (content): The content of the appendix.
-#let appendix(body) = touying-set-config(
-  (appendix: true),
-  body,
-)
+#let appendix(body) = touying-set-config((appendix: true), body)
 
 
 /// Recall a slide by its label
@@ -140,9 +136,18 @@ snapshot_kind: text
   let slide-fn = auto
   let new-section-slide-fn = self.at("new-section-slide-fn", default: none)
   let new-subsection-slide-fn = self.at("new-subsection-slide-fn", default: none)
-  let new-subsubsection-slide-fn = self.at("new-subsubsection-slide-fn", default: none)
-  let new-subsubsubsection-slide-fn = self.at("new-subsubsubsection-slide-fn", default: none)
-  let horizontal-line-to-pagebreak = self.at("horizontal-line-to-pagebreak", default: true)
+  let new-subsubsection-slide-fn = self.at(
+    "new-subsubsection-slide-fn",
+    default: none,
+  )
+  let new-subsubsubsection-slide-fn = self.at(
+    "new-subsubsubsection-slide-fn",
+    default: none,
+  )
+  let horizontal-line-to-pagebreak = self.at(
+    "horizontal-line-to-pagebreak",
+    default: true,
+  )
   let children = if utils.is-sequence(body) {
     body.children
   } else {
@@ -206,7 +211,11 @@ snapshot_kind: text
     // Main logic
     if utils.is-kind(child, "touying-slide-wrapper") {
       current-slide = utils.trim(current-slide)
-      if current-slide != () or _get-slide-fn(self + (headings: current-headings), default: none) != none {
+      if (
+        current-slide != ()
+          or _get-slide-fn(self + (headings: current-headings), default: none)
+            != none
+      ) {
         (cont, recaller-map, current-headings, current-slide, new-start, is-first-slide) = call-slide-fn-and-reset(
           self + (headings: current-headings, is-first-slide: is-first-slide),
           slide-fn,
@@ -260,10 +269,7 @@ snapshot_kind: text
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
       if (
-        _get-slide-fn(
-          self + (headings: current-headings),
-          default: none,
-        )
+        _get-slide-fn(self + (headings: current-headings), default: none)
           != none
           or child.depth <= last-heading-depth
           or current-slide != ()
@@ -336,7 +342,10 @@ snapshot_kind: text
           result.push(cont)
         }
       }
-    } else if self.at("auto-offset-for-heading", default: true) and utils.is-heading(child) {
+    } else if (
+      self.at("auto-offset-for-heading", default: true)
+        and utils.is-heading(child)
+    ) {
       let fields = child.fields()
       let lbl = fields.remove("label", default: none)
       let _ = fields.remove("body", default: none)
@@ -363,14 +372,12 @@ snapshot_kind: text
         result.push(cont)
       }
       // Appendix content
-      result.push(
-        split-content-into-slides(
-          self: utils.merge-dicts(self, child.value.config),
-          recaller-map: recaller-map,
-          new-start: true,
-          child.value.body,
-        ),
-      )
+      result.push(split-content-into-slides(
+        self: utils.merge-dicts(self, child.value.config),
+        recaller-map: recaller-map,
+        new-start: true,
+        child.value.body,
+      ))
     } else if is-first-slide and utils.is-styled(child) {
       current-slide = utils.trim(current-slide)
       if current-slide != () or current-headings != () {
@@ -382,18 +389,13 @@ snapshot_kind: text
         )
         result.push(cont)
       }
-      result.push(
-        utils.reconstruct-styled(
-          child,
-          split-content-into-slides(
-            self: self,
-            recaller-map: recaller-map,
-            new-start: true,
-            is-first-slide: is-first-slide,
-            child.child,
-          ),
-        ),
-      )
+      result.push(utils.reconstruct-styled(child, split-content-into-slides(
+        self: self,
+        recaller-map: recaller-map,
+        new-start: true,
+        is-first-slide: is-first-slide,
+        child.child,
+      )))
     } else {
       let child = if utils.is-styled(child) {
         // Split the content into slides recursively for styled content
@@ -888,18 +890,15 @@ snapshot_kind: text
     block: eqt.block,
     numbering: eqt.numbering,
     supplement: eqt.supplement,
-    eval(
-      "$" + result.sum(default: "") + "$",
-      scope: eqt.scope
-        + (
-          cover: (..args) => {
-            let cover = eqt.scope.at("cover", default: cover)
-            if args.pos().len() != 0 {
-              cover(args.pos().first())
-            }
-          },
-        ),
-    ),
+    eval("$" + result.sum(default: "") + "$", scope: eqt.scope
+      + (
+        cover: (..args) => {
+          let cover = eqt.scope.at("cover", default: cover)
+          if args.pos().len() != 0 {
+            cover(args.pos().first())
+          }
+        },
+      )),
   )
   if eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark> {
     equation = utils.label-it(equation, eqt-metadata.label)
@@ -1031,12 +1030,7 @@ snapshot_kind: text
     }
     cover-arr = ()
   }
-  result-arr.push(
-    (reducer.reduce)(
-      ..reducer.kwargs,
-      result,
-    ),
-  )
+  result-arr.push((reducer.reduce)(..reducer.kwargs, result))
   max-repetitions = calc.max(max-repetitions, repetitions)
   return (result-arr, max-repetitions)
 }
@@ -1170,9 +1164,17 @@ snapshot_kind: text
             }
           }
           if repetitions <= index or not need-cover {
-            result.push((child.value.fn)(self: self, ..child.value.args, ..extra-args))
+            result.push((child.value.fn)(
+              self: self,
+              ..child.value.args,
+              ..extra-args,
+            ))
           } else {
-            cover-arr.push((child.value.fn)(self: self, ..child.value.args, ..extra-args))
+            cover-arr.push((child.value.fn)(
+              self: self,
+              ..child.value.args,
+              ..extra-args,
+            ))
           }
           repetitions = nextrepetitions
         } else if kind == "touying-delayed-wrapper" {
@@ -1242,9 +1244,17 @@ snapshot_kind: text
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(utils.reconstruct(child, labeled: labeled(child.func()), cont))
+          result.push(utils.reconstruct(
+            child,
+            labeled: labeled(child.func()),
+            cont,
+          ))
         } else {
-          cover-arr.push(utils.reconstruct(child, labeled: labeled(child.func()), cont))
+          cover-arr.push(utils.reconstruct(
+            child,
+            labeled: labeled(child.func()),
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1258,9 +1268,17 @@ snapshot_kind: text
           ..child.children,
         )
         if repetitions <= index or not need-cover {
-          result.push(utils.reconstruct-table-like(child, labeled: labeled(child.func()), conts))
+          result.push(utils.reconstruct-table-like(
+            child,
+            labeled: labeled(child.func()),
+            conts,
+          ))
         } else {
-          cover-arr.push(utils.reconstruct-table-like(child, labeled: labeled(child.func()), conts))
+          cover-arr.push(utils.reconstruct-table-like(
+            child,
+            labeled: labeled(child.func()),
+            conts,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1310,9 +1328,19 @@ snapshot_kind: text
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(utils.reconstruct(named: true, labeled: labeled(child.func()), child, cont))
+          result.push(utils.reconstruct(
+            named: true,
+            labeled: labeled(child.func()),
+            child,
+            cont,
+          ))
         } else {
-          cover-arr.push(utils.reconstruct(named: true, labeled: labeled(child.func()), child, cont))
+          cover-arr.push(utils.reconstruct(
+            named: true,
+            labeled: labeled(child.func()),
+            child,
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1433,7 +1461,13 @@ snapshot_kind: text
   if type(margin) != dictionary and type(margin) != length and type(margin) != relative {
     return it => it
   }
-  let cell = block.with(width: 100%, height: 100%, above: 0pt, below: 0pt, breakable: false)
+  let cell = block.with(
+    width: 100%,
+    height: 100%,
+    above: 0pt,
+    below: 0pt,
+    breakable: false,
+  )
   if type(margin) == length or type(margin) == relative {
     return it => pad(x: -margin, cell(it))
   }
@@ -1459,7 +1493,13 @@ snapshot_kind: text
     self.page.paper == "presentation-16-9" or self.page.paper == "presentation-4-3",
     message: "The paper of page should be presentation-16-9 or presentation-4-3",
   )
-  let cell = block.with(width: 100%, height: 100%, above: 0pt, below: 0pt, breakable: false)
+  let cell = block.with(
+    width: 100%,
+    height: 100%,
+    above: 0pt,
+    below: 0pt,
+    breakable: false,
+  )
   let page-height = if self.page.paper == "presentation-16-9" {
     473.56pt
   } else {
@@ -1525,7 +1565,10 @@ snapshot_kind: text
     let negative-pad = _get-negative-pad(self)
     footer = negative-pad(footer)
   }
-  if self.at("show-notes-on-second-screen", default: none) == bottom {
+  if (
+    self.at("show-notes-on-second-screen", default: none)
+      == bottom
+  ) {
     let bottom-pad = _get-bottom-pad(self)
     footer = bottom-pad(footer)
   }
@@ -1545,7 +1588,11 @@ snapshot_kind: text
     } else {
       595.28pt
     }
-    let show-notes = (self.methods.show-notes)(self: self, width: page-width, height: page-height)
+    let show-notes = (self.methods.show-notes)(
+      self: self,
+      width: page-width,
+      height: page-height,
+    )
     let margin-left = if type(self.page.margin) != dictionary {
       self.page.margin
     } else if "left" in self.page.margin {
@@ -1556,17 +1603,9 @@ snapshot_kind: text
       0pt
     }
     if self.show-notes-on-second-screen == bottom {
-      footer += place(
-        left + bottom,
-        dx: -margin-left,
-        show-notes,
-      )
+      footer += place(left + bottom, dx: -margin-left, show-notes)
     } else if self.show-notes-on-second-screen == right {
-      footer += place(
-        left + bottom,
-        dx: page-width - margin-left,
-        show-notes,
-      )
+      footer += place(left + bottom, dx: page-width - margin-left, show-notes)
     }
   }
   (header, footer)
@@ -1623,7 +1662,10 @@ snapshot_kind: text
   }
   assert(bodies.named().len() == 0, message: "unexpected named arguments:" + repr(bodies.named().keys()))
   let setting-with-auto-offset-for-heading(body) = {
-    set heading(offset: self.at("slide-level", default: 0)) if self.at("auto-offset-for-heading", default: true)
+    set heading(offset: self.at("slide-level", default: 0)) if self.at(
+      "auto-offset-for-heading",
+      default: true,
+    )
     setting(body)
   }
   let composer-with-side-by-side(..args) = {
@@ -1643,43 +1685,44 @@ snapshot_kind: text
     }
     [#metadata((kind: "touying-new-slide")) <touying-metadata>]
     // add headings for the first subslide
-    if self.at("headings", default: ()) != () {
-      place(
-        hide({
-          set heading(offset: 0)
-          let headings = self
-            .at("headings", default: ())
-            .map(it => if it.has("label") {
-              if (
-                str(it.label) in ("touying:hidden", "touying:unnumbered", "touying:unoutlined", "touying:unbookmarked")
-              ) {
-                let fields = it.fields()
-                let _ = fields.remove("label", default: none)
-                let _ = fields.remove("body", default: none)
-                if str(it.label) == "touying:hidden" {
-                  fields.numbering = none
-                  fields.outlined = false
-                  fields.bookmarked = false
-                }
-                if str(it.label) == "touying:unnumbered" {
-                  fields.numbering = none
-                }
-                if str(it.label) == "touying:unoutlined" {
-                  fields.outlined = false
-                }
-                if str(it.label) == "touying:unbookmarked" {
-                  fields.bookmarked = false
-                }
-                utils.label-it(heading(..fields, it.body), it.label)
-              } else {
-                it
+    if (
+      self.at("headings", default: ())
+        != ()
+    ) {
+      place(hide({
+        set heading(offset: 0)
+        let headings = self
+          .at("headings", default: ())
+          .map(it => if it.has("label") {
+            if (
+              str(it.label) in ("touying:hidden", "touying:unnumbered", "touying:unoutlined", "touying:unbookmarked")
+            ) {
+              let fields = it.fields()
+              let _ = fields.remove("label", default: none)
+              let _ = fields.remove("body", default: none)
+              if str(it.label) == "touying:hidden" {
+                fields.numbering = none
+                fields.outlined = false
+                fields.bookmarked = false
               }
+              if str(it.label) == "touying:unnumbered" {
+                fields.numbering = none
+              }
+              if str(it.label) == "touying:unoutlined" {
+                fields.outlined = false
+              }
+              if str(it.label) == "touying:unbookmarked" {
+                fields.bookmarked = false
+              }
+              utils.label-it(heading(..fields, it.body), it.label)
             } else {
               it
-            })
-          headings.sum(default: none)
-        }),
-      )
+            }
+          } else {
+            it
+          })
+        headings.sum(default: none)
+      }))
     }
     utils.call-or-display(self, self.at("slide-preamble", default: none))
     utils.call-or-display(self, self.at("default-slide-preamble", default: none))
@@ -1690,7 +1733,11 @@ snapshot_kind: text
       slide-preamble(self)
     }
     [#metadata((kind: "touying-new-subslide")) <touying-metadata>]
-    if self.at("enable-frozen-states-and-counters", default: true) and not self.handout and self.repeat > 1 {
+    if (
+      self.at("enable-frozen-states-and-counters", default: true)
+        and not self.handout
+        and self.repeat > 1
+    ) {
       if self.subslide == 1 {
         // save the states and counters
         context {
@@ -1785,7 +1832,12 @@ snapshot_kind: text
       let delayed-args = if i == repeat {
         (show-delayed-wrapper: true)
       }
-      let (conts, _, _) = _parse-content-into-results-and-repetitions(self: self, index: i, ..delayed-args, ..bodies)
+      let (conts, _, _) = _parse-content-into-results-and-repetitions(
+        self: self,
+        index: i,
+        ..delayed-args,
+        ..bodies,
+      )
       let new-header = page-preamble(self) + header
       // update the counter in the first subslide only
       result.push({
@@ -1829,7 +1881,14 @@ snapshot_kind: text
   composer: auto,
   ..bodies,
 ) = touying-slide-wrapper(self => {
-  touying-slide(self: self, config: config, repeat: repeat, setting: setting, composer: composer, ..bodies)
+  touying-slide(
+    self: self,
+    config: config,
+    repeat: repeat,
+    setting: setting,
+    composer: composer,
+    ..bodies,
+  )
 })
 
 
@@ -1863,5 +1922,12 @@ snapshot_kind: text
   composer: auto,
   ..bodies,
 ) = touying-slide-wrapper(self => {
-  touying-slide(self: self, config: config, repeat: repeat, setting: setting, composer: composer, ..bodies)
+  touying-slide(
+    self: self,
+    config: config,
+    repeat: repeat,
+    setting: setting,
+    composer: composer,
+    ..bodies,
+  )
 })
