@@ -50,12 +50,7 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
       )
     }
 
-    quad(
-      (0, 0),
-      (-1, 1),
-      "Assoc",
-      blue,
-    )
+    quad((0, 0), (-1, 1), "Assoc", blue)
     quad(
       (0, 1),
       (-1, 2),
@@ -63,12 +58,7 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
       blue,
       label-pos: 0.3,
     )
-    quad(
-      (1, 2),
-      (0, 3),
-      "Assoc",
-      blue,
-    )
+    quad((1, 2), (0, 3), "Assoc", blue)
 
     quad((0, 0), (0, 1), "Id", red)
     quad(
@@ -97,12 +87,7 @@ input_file: tests/fixtures/unit/func/func-call-with-newline.typ
       "crossing",
     )
 
-    quad(
-      (-1, 2),
-      (0, 3),
-      "Inv",
-      green,
-    )
+    quad((-1, 2), (0, 3), "Inv", green)
     quad(
       (0, 1),
       (+1, 2),

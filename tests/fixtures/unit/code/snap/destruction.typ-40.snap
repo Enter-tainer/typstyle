@@ -2,11 +2,7 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/destruction.typ
 ---
-#let (n, ..) = layout-node(
-  node,
-  0,
-  ctx,
-)
+#let (n, ..) = layout-node(node, 0, ctx)
 
 #grid(
   columns: (1fr,)

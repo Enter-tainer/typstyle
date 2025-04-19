@@ -610,11 +610,7 @@ input_file: tests/fixtures/packages/codly.typ
   block-label: none,
   extra: (:),
 ) = context {
-  show raw.line.where(label: <codly-highlighted>): it => codly-line(
-    it,
-    block-label: block-label,
-    extra: (:),
-  )
+  show raw.line.where(label: <codly-highlighted>): it => codly-line(it, block-label: block-label, extra: (:))
 
   if type(it) != content or it.func() != raw {
     panic("codly-raw: body must be a raw content")
@@ -1109,11 +1105,7 @@ input_file: tests/fixtures/packages/codly.typ
       state("codly-header-transform", __codly-args.header-transform.default).get()
     })
     (
-      grid.header(repeat: header-repeat, grid.cell(
-        transform(header) + language-block-final,
-        colspan: 2,
-        ..header-args,
-      )),
+      grid.header(repeat: header-repeat, grid.cell(transform(header) + language-block-final, colspan: 2, ..header-args)),
     )
   } else {
     none

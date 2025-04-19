@@ -85,10 +85,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
   "touying-saved-default-frozen-states",
   (),
 )
-#let saved-frozen-counters = state(
-  "touying-saved-frozen-counters",
-  (),
-)
+#let saved-frozen-counters = state("touying-saved-frozen-counters", ())
 #let saved-default-frozen-counters = state(
   "touying-saved-default-frozen-counters",
   (),
@@ -158,10 +155,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
     }
   } else {
     if label != none and labeled {
-      return label-it(
-        (it.func())(..fields.values(), ..new-body),
-        label,
-      )
+      return label-it((it.func())(..fields.values(), ..new-body), label)
     } else {
       return (it.func())(..fields.values(), ..new-body)
     }
@@ -269,10 +263,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
   let methods = (:)
   for key in self.methods.keys() {
     if type(self.methods.at(key)) == function {
-      methods.insert(key, (..args) => self.methods.at(key)(
-        self: self,
-        ..args,
-      ))
+      methods.insert(key, (..args) => self.methods.at(key)(self: self, ..args))
     }
   }
   return methods
@@ -864,11 +855,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
 /// Example: `config-methods(cover: utils.semi-transparent-cover)`
 #let semi-transparent-cover(self: none, constructor: rgb, alpha: 85%, body) = {
   cover-with-rect(
-    fill: update-alpha(
-      constructor: constructor,
-      self.page.fill,
-      alpha,
-    ),
+    fill: update-alpha(constructor: constructor, self.page.fill, alpha),
     body,
   )
 }

@@ -275,10 +275,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
   ) {
     self.methods.convert-label-to-short-heading
   } else {
-    (self: none, lbl) => titlecase(lbl
-      .replace(regex("^[^:]*:"), "")
-      .replace("_", " ")
-      .replace("-", " "))
+    (self: none, lbl) => titlecase(lbl.replace(regex("^[^:]*:"), "").replace("_", " ").replace("-", " "))
   }
   convert-label-to-short-heading = convert-label-to-short-heading.with(self: self)
   assert(type(it) == content and it.func() == heading, message: "it must be a heading")
@@ -631,12 +628,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
         // fit. This is because scale doesn't update the layout information.
         // Boxing in a container without clipping will inform typst that content
         // will indeed fit in the remaining space
-        box(width: new-width, height: available-height, scale(
-          x: ratio,
-          y: ratio,
-          origin: top + left,
-          boxed-content,
-        ))
+        box(width: new-width, height: available-height, scale(x: ratio, y: ratio, origin: top + left, boxed-content))
       } else {
         body
       }
@@ -736,10 +728,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
 /// - `color` is the color to update.
 ///
 /// - `alpha` is the new alpha value.
-#let update-alpha(constructor: rgb, color, alpha) = constructor(
-  ..color.components(alpha: true).slice(0, -1),
-  alpha,
-)
+#let update-alpha(constructor: rgb, color, alpha) = constructor(..color.components(alpha: true).slice(0, -1), alpha)
 
 
 /// Cover content with a transparent rectangle.

@@ -869,11 +869,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     result.push("cover(" + cover-arr.sum() + ")")
     cover-arr = ()
   }
-  let equation = math.equation(
-    block: eqt.block,
-    numbering: eqt.numbering,
-    supplement: eqt.supplement,
-    eval("$" + result.sum(default: "") + "$", scope: eqt.scope
+  let equation = math.equation(block: eqt.block, numbering: eqt.numbering, supplement: eqt.supplement, eval(
+    "$" + result.sum(default: "") + "$",
+    scope: eqt.scope
       + (
         cover: (..args) => {
           let cover = eqt.scope.at("cover", default: cover)
@@ -881,8 +879,8 @@ input_file: tests/fixtures/packages/touying/core.typ
             cover(args.pos().first())
           }
         },
-      )),
-  )
+      ),
+  ))
   if eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark> {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
@@ -949,12 +947,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     result.push("\\phantom{" + cover-arr.sum() + "}")
     cover-arr = ()
   }
-  let equation = (eqt.mitex)(
-    block: eqt.block,
-    numbering: eqt.numbering,
-    supplement: eqt.supplement,
-    result.sum(default: ""),
-  )
+  let equation = (eqt.mitex)(block: eqt.block, numbering: eqt.numbering, supplement: eqt.supplement, result.sum(
+    default: "",
+  ))
   if eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark> {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
@@ -1122,12 +1117,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           repetitions = nextrepetitions
         } else if kind == "touying-reducer" {
           // handle touying-reducer
-          let (conts, nextrepetitions) = _parse-touying-reducer(
-            self: self,
-            base: repetitions,
-            index: index,
-            child.value,
-          )
+          let (conts, nextrepetitions) = _parse-touying-reducer(self: self, base: repetitions, index: index, child.value)
           let cont = conts.first()
           if repetitions <= index or not need-cover {
             result.push(cont)
@@ -1592,10 +1582,7 @@ input_file: tests/fixtures/packages/touying/core.typ
   }
   assert(bodies.named().len() == 0, message: "unexpected named arguments:" + repr(bodies.named().keys()))
   let setting-with-auto-offset-for-heading(body) = {
-    set heading(offset: self.at("slide-level", default: 0)) if self.at(
-      "auto-offset-for-heading",
-      default: true,
-    )
+    set heading(offset: self.at("slide-level", default: 0)) if self.at("auto-offset-for-heading", default: true)
     setting(body)
   }
   let composer-with-side-by-side(..args) = {
@@ -1755,12 +1742,7 @@ input_file: tests/fixtures/packages/touying/core.typ
       let delayed-args = if i == repeat {
         (show-delayed-wrapper: true)
       }
-      let (conts, _, _) = _parse-content-into-results-and-repetitions(
-        self: self,
-        index: i,
-        ..delayed-args,
-        ..bodies,
-      )
+      let (conts, _, _) = _parse-content-into-results-and-repetitions(self: self, index: i, ..delayed-args, ..bodies)
       let new-header = page-preamble(self) + header
       // update the counter in the first subslide only
       result.push({
@@ -1804,14 +1786,7 @@ input_file: tests/fixtures/packages/touying/core.typ
   composer: auto,
   ..bodies,
 ) = touying-slide-wrapper(self => {
-  touying-slide(
-    self: self,
-    config: config,
-    repeat: repeat,
-    setting: setting,
-    composer: composer,
-    ..bodies,
-  )
+  touying-slide(self: self, config: config, repeat: repeat, setting: setting, composer: composer, ..bodies)
 })
 
 
@@ -1845,12 +1820,5 @@ input_file: tests/fixtures/packages/touying/core.typ
   composer: auto,
   ..bodies,
 ) = touying-slide-wrapper(self => {
-  touying-slide(
-    self: self,
-    config: config,
-    repeat: repeat,
-    setting: setting,
-    composer: composer,
-    ..bodies,
-  )
+  touying-slide(self: self, config: config, repeat: repeat, setting: setting, composer: composer, ..bodies)
 })

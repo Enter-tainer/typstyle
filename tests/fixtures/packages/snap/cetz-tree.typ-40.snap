@@ -211,14 +211,8 @@ input_file: tests/fixtures/packages/cetz-tree.typ
         )
         node.children.at(i) = child
 
-        left = util.min(
-          child.x,
-          left,
-        )
-        right = util.max(
-          child.x,
-          right,
-        )
+        left = util.min(child.x, left)
+        right = util.max(child.x, right)
 
         min-x = util.min(
           min-x,
@@ -286,8 +280,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
 
     let d = (:)
     d.insert(
-      parent-path
-        + str(node.n),
+      parent-path + str(node.n),
       node-position(node),
     )
     for child in node.children {
@@ -306,14 +299,11 @@ input_file: tests/fixtures/packages/cetz-tree.typ
     )
 
     let cmds = ()
-    cmds += draw.group(
-      name: name,
-      {
-        draw.move-to(node-position(node))
-        draw.anchor("center", ())
-        draw-node(node, parent-name)
-      },
-    )
+    cmds += draw.group(name: name, {
+      draw.move-to(node-position(node))
+      draw.anchor("center", ())
+      draw-node(node, parent-name)
+    })
 
     if parent-name != none {
       cmds += draw-edge(
@@ -340,10 +330,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
         ctx.groups.push((
           ctx: ctx,
           anchors: (:),
-          tree-root: layout(
-            root,
-            ctx,
-          ),
+          tree-root: layout(root, ctx),
         ))
         return ctx
       },

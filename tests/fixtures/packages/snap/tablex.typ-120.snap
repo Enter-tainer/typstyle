@@ -557,9 +557,7 @@ input_file: tests/fixtures/packages/tablex.typ
   if typst-fields-supported or eval(repr(0.00005em)) != 0.00005em {
     // em repr changed in 0.11.0 => need to use fields here
     // or use fields if they're supported anyway
-    return (
-      convert-ratio-type-to-pt(len.ratio, page-size) + convert-length-type-to-pt(len.length, styles: styles)
-    )
+    return convert-ratio-type-to-pt(len.ratio, page-size) + convert-length-type-to-pt(len.length, styles: styles)
   }
 
   // We will need to draw a line for measurement later,
@@ -2032,11 +2030,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let right-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
   if default-if-auto(hline.stroke-expand, true) == true {
-    let largest-stroke = _largest-stroke-among-vlines-at-x.with(
-      vlines: vlines,
-      stroke-auto: stroke-auto,
-      styles: styles,
-    )
+    let largest-stroke = _largest-stroke-among-vlines-at-x.with(vlines: vlines, stroke-auto: stroke-auto, styles: styles)
     left-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2 // expand to the left to close stroke gap
     right-expand += largest-stroke(default-if-auto-or-none(end, columns.len())) / 2 // close stroke gap to the right
   }
@@ -2115,11 +2109,7 @@ input_file: tests/fixtures/packages/tablex.typ
   let bottom-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
   if default-if-auto(vline.stroke-expand, true) == true {
-    let largest-stroke = _largest-stroke-among-hlines-at-y.with(
-      hlines: hlines,
-      stroke-auto: stroke-auto,
-      styles: styles,
-    )
+    let largest-stroke = _largest-stroke-among-hlines-at-y.with(hlines: hlines, stroke-auto: stroke-auto, styles: styles)
     top-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2 // close stroke gap to the top
     bottom-expand += largest-stroke(default-if-auto-or-none(end, rows.len())) / 2 // close stroke gap to the bottom
   }
@@ -2333,12 +2323,7 @@ input_file: tests/fixtures/packages/tablex.typ
           }
 
           // place the cell!
-          place(
-            top + left,
-            dx: dx,
-            dy: height-between(start: first_y, end: y) + added_header_height,
-            cell_box.box,
-          )
+          place(top + left, dx: dx, dy: height-between(start: first_y, end: y) + added_header_height, cell_box.box)
 
           // let box_h = measure(cell_box.box, styles).height
           // tallest_box_h = calc.max(tallest_box_h, box_h)
@@ -2357,18 +2342,8 @@ input_file: tests/fixtures/packages/tablex.typ
 
       hide(rect(width: total-width, height: row_group_height))
 
-      let draw-hline = draw-hline.with(
-        initial_x: first_x,
-        initial_y: first_y,
-        rightmost_x: rightmost_x,
-        rtl: rtl,
-      )
-      let draw-vline = draw-vline.with(
-        initial_x: first_x,
-        initial_y: first_y,
-        rightmost_x: rightmost_x,
-        rtl: rtl,
-      )
+      let draw-hline = draw-hline.with(initial_x: first_x, initial_y: first_y, rightmost_x: rightmost_x, rtl: rtl)
+      let draw-vline = draw-vline.with(initial_x: first_x, initial_y: first_y, rightmost_x: rightmost_x, rtl: rtl)
 
       // ensure the lines are drawn absolutely, after the header
       let draw-hline = (..args) => place(top + left, dy: added_header_height, draw-hline(..args))
@@ -2905,10 +2880,7 @@ input_file: tests/fixtures/packages/tablex.typ
 #let validate-header-hlines-priority(
   header-hlines-have-priority,
 ) = {
-  header-hlines-have-priority = default-if-auto(
-    default-if-none(header-hlines-have-priority, true),
-    true,
-  )
+  header-hlines-have-priority = default-if-auto(default-if-none(header-hlines-have-priority, true), true)
 
   if type(header-hlines-have-priority) != _bool-type {
     panic("Tablex error: 'header-hlines-have-priority' option must be a boolean.")
@@ -3103,13 +3075,7 @@ input_file: tests/fixtures/packages/tablex.typ
     let row_len = rows.len()
 
     // generate cell matrix and other things
-    let grid_info = generate-grid(
-      items,
-      x_limit: col_len,
-      y_limit: row_len,
-      map-cells: map-cells,
-      fit-spans: fit-spans,
-    )
+    let grid_info = generate-grid(items, x_limit: col_len, y_limit: row_len, map-cells: map-cells, fit-spans: fit-spans)
 
     let table_grid = grid_info.grid
     let hlines = grid_info.hlines

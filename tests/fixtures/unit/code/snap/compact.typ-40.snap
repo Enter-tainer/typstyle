@@ -13,11 +13,7 @@ input_file: tests/fixtures/unit/code/compact.typ
     let x = 3
     let y = 4
   })
-  f(
-    1111,
-    if true { let x = 3 },
-    22222,
-  )
+  f(1111, if true { let x = 3 }, 22222)
   f(
     1111,
     if true {

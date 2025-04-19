@@ -1242,24 +1242,18 @@ input_file: tests/fixtures/packages/codly.typ
     }
 
     // Always push the formatted line number
-    let l = [#raw.line(
-        line.number + offset,
-        line.count,
-        line.text,
-        line.body,
-      )<codly-highlighted>]
+    let l = [#raw.line(line.number + offset, line.count, line.text, line.body)<codly-highlighted>]
 
     // Must be done before the smart indentation code.
     // Otherwise it results in two paragraphs.
     if numbers-format != none {
       items.push(numbers-format(line.number + offset))
     } else {
-      l = [#raw.line(
-          line.number + offset,
-          line.count,
-          line.text,
-          box(height: height, width: 0pt) + line.body,
-        )<codly-highlighted>]
+      l = [#raw.line(line.number + offset, line.count, line.text, box(
+          height: height,
+          width: 0pt,
+        )
+          + line.body)<codly-highlighted>]
     }
 
     if (
@@ -1361,8 +1355,7 @@ input_file: tests/fixtures/packages/codly.typ
           },
           stroke: none,
           inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
-          fill: (x, y) => if zebra-color != none
-            and calc.rem(y, 2) == 0 {
+          fill: (x, y) => if zebra-color != none and calc.rem(y, 2) == 0 {
             zebra-color
           } else {
             fill
@@ -1405,8 +1398,7 @@ input_file: tests/fixtures/packages/codly.typ
           inset: padding.pairs().map(((k, x)) => (k, x * 1.5)).to-dict(),
           stroke: none,
           align: (numbers-alignment, left + horizon),
-          fill: (x, y) => if zebra-color != none
-            and calc.rem(y, 2) == 0 {
+          fill: (x, y) => if zebra-color != none and calc.rem(y, 2) == 0 {
             zebra-color
           } else {
             fill

@@ -91,8 +91,7 @@ input_file: tests/fixtures/packages/indenta.typ
           )
       ) {
         if (
-          unsafe
-            or _is_inline(e, fn)
+          unsafe or _is_inline(e, fn)
         ) {
           context h(
             par.first-line-indent,

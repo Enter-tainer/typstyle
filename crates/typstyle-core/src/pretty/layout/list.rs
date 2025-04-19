@@ -413,30 +413,27 @@ impl<'a> ListStylist<'a> {
                     let loose = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
                     compact.union(loose)
                 } else {
-                    let width_limiter = arena.column(|c| {
-                        if c < self.printer.config.args_width() {
-                            arena.nil().into_doc()
-                        } else {
-                            arena.fail().into_doc()
-                        }
-                    });
+                    // let padding = self.printer.config.max_width - self.printer.config.args_width();
+                    // let pad = arena.nil().flat_alt(
+                    //     Doc::RenderLen(padding, arena.alloc_cow(Doc::BorrowedText("").into()))
+                    //         .pretty(arena),
+                    // );
+                    // NOTE: we can't pad here, since this can appear in inline chains.
                     let compact = (arena.intersperse(
                         docs.iter().map(|doc| doc.clone().flatten()),
                         sep.clone() + arena.space(),
                     )) + sep.clone()
-                        + width_limiter.clone()
                         + arena.space()
                         + last.clone();
                     let loose = (arena.line_()
                         + (arena.intersperse(docs.clone(), sep.clone() + arena.line()))
                         + sep.clone()
-                        + width_limiter
                         + arena.line()
                         + last
                         + sep.clone())
                     .nest(2)
                         + arena.line_();
-                    compact.union(loose.group())
+                    compact.union(loose)
                 };
                 if is_single && sty.omit_delim_single {
                     inner.group()
