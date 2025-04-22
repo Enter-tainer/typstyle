@@ -1,7 +1,7 @@
 [[testcase]]
 name = "tutorial"
 git = "https://github.com/typst-doc-cn/tutorial"
-rev = "74e201b47dddb53cbff86c6604b3f177c9ab2a51" # Jan 30, 2025
+rev = "83e8adf7abaec1a39240058d217a24b1683b8018" # Apr 7, 2025
 entrypoint = "src/ebook.typ"
 
 [[testcase]]
@@ -27,6 +27,7 @@ name = "typst-talk"
 git = "https://github.com/OrangeX4/typst-talk"
 rev = "65ed571ce81274fff1b1c915749c38305f5ca1c8" # Sep 4, 2024
 entrypoint = "main.typ"
+blacklist = ["chicv.typ"]
 
 [[testcase]]
 name = "touying-example"
@@ -45,6 +46,7 @@ name = "fletcher-manual"
 git = "https://github.com/Jollywatt/typst-fletcher"
 rev = "7623d19feba35075906775543061f1d3364f1b2e" # Apr 19, 2025
 entrypoint = "docs/manual.typ"
+blacklist = ["main.typ", "marks.typ"]
 
 [[testcase]]
 name = "nju-thesis-typst"
@@ -60,8 +62,8 @@ entrypoint = "physica-manual.typ"
 
 [[testcase]]
 name = "lovelace"
-git = "https://github.com/andreasKroepelin/lovelace" # Jun 24, 2024
-rev = "54c7fe2a28bff22ca7567147225079a00261bba2"
+git = "https://github.com/andreasKroepelin/lovelace"
+rev = "7e75614f9906b357effebf73f506cb829324b526" # Jun 23, 2024; can't be newer, since doc has been removed
 entrypoint = "examples/doc.typ"
 
 [[testcase]]

@@ -50,19 +50,26 @@ pub fn make_universe_formatted(
     let mut world = make_world()?;
     let mut formatted_world = make_world()?;
 
+    fn is_blacklisted(path: &Path, source_dir: &Path, blacklist: &HashSet<String>) -> bool {
+        // Get the relative path starting at source_dir.
+        if let Ok(rel_path) = path.strip_prefix(source_dir) {
+            // Return true if any component's name is in the blacklist.
+            return rel_path
+                .components()
+                .filter_map(|comp| {
+                    if let std::path::Component::Normal(os_str) = comp {
+                        os_str.to_str()
+                    } else {
+                        None
+                    }
+                })
+                .any(|name| blacklist.contains(name));
+        }
+        false
+    }
+
     // map all files within the testcase_dir
-    let walker = walkdir::WalkDir::new(source_dir)
-        .into_iter()
-        .filter_entry(|entry| {
-            if entry.file_type().is_dir() {
-                if let Some(name) = entry.file_name().to_str() {
-                    // Skip the directory if its name is in the blacklist.
-                    return !blacklist.contains(name);
-                }
-            }
-            true
-        });
-    for entry in walker {
+    for entry in walkdir::WalkDir::new(source_dir) {
         let entry = entry?;
         if !entry.file_type().is_file() {
             continue;
@@ -74,7 +81,7 @@ pub fn make_universe_formatted(
         formatted_world.map_shadow(
             &root.join(rel_path),
             if path.extension() == Some("typ".as_ref())
-                && !blacklist.contains(path.file_name().unwrap().to_str().unwrap())
+                && !is_blacklisted(path, source_dir, blacklist)
             {
                 Bytes::new(formatter(content.as_str().unwrap().to_string(), rel_path))
             } else {
