@@ -28,7 +28,7 @@ pub fn make_universe_formatted(
     source_dir: &Path,
     entrypoint: &Path,
     blacklist: &HashSet<String>,
-    formatter: fn(String, &Path) -> String,
+    formatter: fn(&str, &Path) -> String,
 ) -> anyhow::Result<(TypstSystemUniverse, TypstSystemUniverse)> {
     let root = os_root();
     let entry_file = root.join(
@@ -76,18 +76,20 @@ pub fn make_universe_formatted(
         }
         let path = entry.path();
         let rel_path = path.strip_prefix(source_dir)?;
+        let full_path = root.join(rel_path);
         let content = Bytes::new(fs::read(path)?);
-        world.map_shadow(&root.join(rel_path), content.clone())?;
-        formatted_world.map_shadow(
-            &root.join(rel_path),
-            if path.extension() == Some("typ".as_ref())
-                && !is_blacklisted(path, source_dir, blacklist)
-            {
-                Bytes::new(formatter(content.as_str().unwrap().to_string(), rel_path))
-            } else {
-                content
-            },
-        )?;
+        if path.extension() == Some("typ".as_ref()) && !is_blacklisted(path, source_dir, blacklist)
+        {
+            let content = Bytes::new(strip_trailing_whitespace(content.as_str()?));
+            world.map_shadow(&full_path, content.clone())?;
+            formatted_world.map_shadow(
+                &full_path,
+                Bytes::new(formatter(content.as_str()?, rel_path)),
+            )?;
+        } else {
+            world.map_shadow(&full_path, content.clone())?;
+            formatted_world.map_shadow(&full_path, content)?;
+        }
     }
     Ok((world, formatted_world))
 }
@@ -98,4 +100,16 @@ fn os_root() -> PathBuf {
     } else {
         PathBuf::from("/")
     }
+}
+
+fn strip_trailing_whitespace(s: &str) -> String {
+    if s.is_empty() {
+        return "\n".to_string();
+    }
+    let mut res = String::with_capacity(s.len());
+    for line in s.lines() {
+        res.push_str(line.trim_end());
+        res.push('\n');
+    }
+    res
 }
