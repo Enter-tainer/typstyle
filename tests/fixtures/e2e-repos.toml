@@ -1,26 +1,10 @@
+## Books
+
 # [[testcase]]
 # name = "tutorial"
 # git = "https://github.com/typst-doc-cn/tutorial"
 # rev = "83e8adf7abaec1a39240058d217a24b1683b8018" # Apr 7, 2025
 # entrypoint = "src/ebook.typ"
-
-[[testcase]]
-name = "uniquecv"
-git = "https://github.com/gaoachao/uniquecv-typst"
-rev = "17927a9f7f671c4436e024389bb50847d14553b1" # Feb 28, 2025
-entrypoint = "main.typ"
-
-# [[testcase]] # FIXME
-# name = "cetz-manual"
-# git = "https://github.com/cetz-package/cetz"
-# rev = "8ec63845f87941d8d6b90b5d0dd52ed4e74c3694"
-# entrypoint = "manual.typ"
-
-# [[testcase]] # not maintained
-# name = "HomotopyHistory"
-# git = "https://github.com/trebor-Huang/HomotopyHistory/"
-# rev = "5ee6ff5f9b3e1dccae3b84cfb093cf5d649bc12c"
-# entrypoint = "paper.typ"
 
 [[testcase]]
 name = "typst-talk"
@@ -29,30 +13,81 @@ rev = "65ed571ce81274fff1b1c915749c38305f5ca1c8" # Sep 4, 2024
 entrypoint = "main.typ"
 blacklist = ["chicv.typ"]
 
-[[testcase]]
-name = "touying-example"
-git = "https://github.com/touying-typ/touying"
-rev = "d1963776f4d401cadd2b58193ef3a377cf4ac546" # Apr 6, 2025
-entrypoint = "examples/example.typ"
+## Packages
 
 [[testcase]]
-name = "tablex-test"
-git = "https://github.com/PgBiel/typst-tablex"
-rev = "4aeedea0b1c2357a035847dde289b99739903aa7" # Oct 25, 2024
-entrypoint = "tablex-test.typ"
+name = "alchemist"
+git = "https://github.com/Typsium/alchemist"
+rev = "dedf319ea58e3b42c6eac1a9fc3b83e576f0f0a1" # Apr 22, 2025
+entrypoint = "doc/manual.typ"
 
 [[testcase]]
-name = "fletcher-manual"
+name = "cetz"
+git = "https://github.com/cetz-package/cetz"
+rev = "8ec63845f87941d8d6b90b5d0dd52ed4e74c3694"
+examples = "tests"
+
+[[testcase]]
+name = "codly"
+git = "https://github.com/Dherse/codly"
+rev = "d62be51c268ab4764d3f309c7d1594b43da71b80" # Apr 10, 2025
+entrypoint = "docs/docs.typ"
+
+[[testcase]]
+name = "curryst"
+git = "https://github.com/pauladam94/curryst"
+rev = "acacb67eef5fc0a5d2e804f4182f939dbd244f30" # Apr 19, 2025
+examples = "examples"
+
+[[testcase]]
+name = "derive-it"
+git = "https://github.com/0rphee/derive-it"
+rev = "f90d6a0c65fa023ef7dcb30d4a4752d8df8e278a" # Apr 1, 2025
+examples = "examples"
+
+[[testcase]]
+name = "equate"
+git = "https://github.com/EpicEricEE/typst-equate"
+rev = "d3f54c73b49ecf352f426f30fddea5a122898269" # Apr 12, 2025
+examples = "assets"
+
+[[testcase]]
+name = "fletcher"
 git = "https://github.com/Jollywatt/typst-fletcher"
 rev = "7623d19feba35075906775543061f1d3364f1b2e" # Apr 19, 2025
 entrypoint = "docs/manual.typ"
 blacklist = ["main.typ", "marks.typ"]
 
 [[testcase]]
-name = "nju-thesis-typst"
-git = "https://github.com/nju-lug/nju-thesis-typst"
-rev = "4a975c8481c946ac644833cf34f1330e9f350429" # Mar 31, 2025
-entrypoint = "template/thesis.typ"
+name = "frame-it"
+git = "https://github.com/marc-thieme/frame-it"
+rev = "e4648f681c00ad5366317c872ce8fa210d1bd21c" # Mar 31, 2025
+entrypoint = "README.typ"
+
+[[testcase]]
+name = "hydra"
+git = "https://github.com/tingerrr/hydra"
+rev = "f1090d049c70630b14250ef5115c6144db510814" # Mar 31, 2025
+entrypoint = "docs/manual/manual.typ"
+
+[[testcase]]
+name = "glossarium"
+git = "https://github.com/typst-community/glossarium"
+rev = "486ab2a21bf63d57dd5b475cbbe8728db0354134" # Apr 17, 2025
+entrypoint = "advanced-docs/main.typ"
+examples = "examples"
+
+[[testcase]]
+name = "lilaq"
+git = "https://github.com/lilaq-project/lilaq"
+rev = "54de1642b0dcd7fbab2488190522856a173a4046" # Apr 21, 2025
+examples = "tests"
+
+# [[testcase]]
+# name = "lovelace"
+# git = "https://github.com/andreasKroepelin/lovelace"
+# rev = "7e75614f9906b357effebf73f506cb829324b526" # Jun 23, 2024; can't be newer, since doc has been removed
+# entrypoint = "examples/doc.typ"
 
 [[testcase]]
 name = "physica"
@@ -60,11 +95,17 @@ git = "https://github.com/Leedehai/typst-physics"
 rev = "9bf0ee5b43dc213932d3f564b843b3857939901b" # Mar 6, 2025
 entrypoint = "physica-manual.typ"
 
-# [[testcase]]
-# name = "lovelace"
-# git = "https://github.com/andreasKroepelin/lovelace"
-# rev = "7e75614f9906b357effebf73f506cb829324b526" # Jun 23, 2024; can't be newer, since doc has been removed
-# entrypoint = "examples/doc.typ"
+[[testcase]]
+name = "pinit"
+git = "https://github.com/OrangeX4/typst-pinit"
+rev = "774460259373940a09fad863490975bf1021fda2" # Oct 17, 2024
+examples = "examples"
+
+[[testcase]]
+name = "quick-maths"
+git = "https://github.com/EpicEricEE/typst-quick-maths"
+rev = "c326693a9286d411ade815c48924c042560f987c" # Mar 1, 2025
+examples = "assets"
 
 [[testcase]]
 name = "quill"
@@ -74,13 +115,78 @@ entrypoint = "docs/guide/quill-guide.typ"
 blacklist = ["examples"]
 
 [[testcase]]
-name = "curryst"
-git = "https://github.com/pauladam94/curryst"
-rev = "acacb67eef5fc0a5d2e804f4182f939dbd244f30" # Apr 19, 2025
-entrypoint = "examples/natural-deduction.typ"
+name = "showybox"
+git = "https://github.com/Pablo-Gonzalez-Calderon/showybox-package"
+rev = "3fb86ffc9ac46180f63a10394bc83e3d01872f4b" # Feb 17, 2025
+entrypoint = "manual/manual.typ"
+examples = "examples"
 
 [[testcase]]
-name = "derive-it"
-git = "https://github.com/0rphee/derive-it"
-rev = "f90d6a0c65fa023ef7dcb30d4a4752d8df8e278a" # Apr 1, 2025
-entrypoint = "examples/example.typ"
+name = "suiji"
+git = "https://github.com/liuguangxi/suiji"
+rev = "2c8216555252b76cf2e8e0baad8787de30d67299" # Apr 18, 2025
+entrypoint = "doc/manual.typ"
+examples = "examples"
+
+[[testcase]]
+name = "tablex"
+git = "https://github.com/PgBiel/typst-tablex"
+rev = "4aeedea0b1c2357a035847dde289b99739903aa7" # Oct 25, 2024
+entrypoint = "tablex-test.typ"
+
+[[testcase]]
+name = "tidy"
+git = "https://github.com/Mc-Zen/tidy"
+rev = "f9e96162e112dac133edc5cdefe6fba42fb4d337" # Apr 9, 2025
+entrypoint = "docs/tidy-guide.typ"
+examples = "examples"
+
+[[testcase]]
+name = "tiptoe"
+git = "https://github.com/Mc-Zen/tiptoe"
+rev = "c0c42414a4051f53409b7f9523117ca0c35f8bfe" # Mar 10, 2025
+examples = "docs/figures"
+
+[[testcase]]
+name = "touying"
+git = "https://github.com/touying-typ/touying"
+rev = "d1963776f4d401cadd2b58193ef3a377cf4ac546" # Apr 6, 2025
+examples = "examples"
+
+[[testcase]]
+name = "unify"
+git = "https://github.com/ChHecker/unify"
+rev = "b9f6d556a0514880d3b10e3dbf95b0eed6a7adad" # Feb 23, 2025
+examples = "examples"
+
+[[testcase]]
+name = "wrap-it"
+git = "https://github.com/ntjess/wrap-it"
+rev = "fb225204a6dde4f607965c041829c56ec0ec6e39" # Feb 21, 2025
+entrypoint = "docs/readme.typ"
+
+[[testcase]]
+name = "zero"
+git = "https://github.com/Mc-Zen/zero"
+rev = "7ffa0020f9d51c68beae41875643e00606e1fb41" # Apr 2, 2025
+entrypoint = "docs/zero-docs.typ"
+
+[[testcase]]
+name = "zebraw"
+git = "https://github.com/hongjr03/typst-zebraw"
+rev = "655210e9e28c929c16157283d5ec007d7a9bf50a" # Apr 10, 2025
+entrypoint = "README.typ"
+
+## Templates
+
+[[testcase]]
+name = "uniquecv"
+git = "https://github.com/gaoachao/uniquecv-typst"
+rev = "17927a9f7f671c4436e024389bb50847d14553b1" # Feb 28, 2025
+entrypoint = "main.typ"
+
+[[testcase]]
+name = "nju-thesis-typst"
+git = "https://github.com/nju-lug/nju-thesis-typst"
+rev = "4a975c8481c946ac644833cf34f1330e9f350429" # Mar 31, 2025
+entrypoint = "template/thesis.typ"

@@ -9,13 +9,18 @@ use typstyle_core::Typstyle;
 
 use crate::common::{fixtures_dir, test_dir};
 
+#[allow(unused)]
 #[derive(Debug, Clone, Deserialize)]
 struct Testcase {
     name: String,
     git: String,
-    rev: String,
-    entrypoint: String,
+    #[serde(default)]
+    rev: Option<String>,
     // these files are included as-is and should not be formatted
+    #[serde(default)]
+    entrypoint: Option<String>,
+    #[serde(default)]
+    examples: Option<String>,
     #[serde(default)]
     blacklist: HashSet<String>,
 }
@@ -59,27 +64,31 @@ fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Resu
     // do git clone with submodule
     std::process::Command::new("git")
         .arg("clone")
-        .arg(&*testcase.git)
+        .arg(&testcase.git)
         .arg(testcase_dir)
         .arg("--recurse-submodules")
         .output()
         .context("failed to clone repo")?;
-    // do git checkout testcase.revision
-    std::process::Command::new("git")
-        .arg("checkout")
-        .arg(&*testcase.rev)
-        .current_dir(testcase_dir)
-        .output()
-        .context("failed to checkout revision")?;
+    if let Some(rev) = testcase.rev.as_ref() {
+        // do git checkout testcase.revision
+        std::process::Command::new("git")
+            .arg("checkout")
+            .arg(rev)
+            .current_dir(testcase_dir)
+            .output()
+            .context("failed to checkout revision")?;
+    }
     Ok(())
 }
 
 fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
-    let entrypoint = testcase_dir.join(&*testcase.entrypoint);
+    let Some(entrypoint) = testcase.entrypoint.as_ref() else {
+        return Ok(());
+    };
 
     let (doc, formatted_doc) = make_universe_formatted(
         testcase_dir,
-        &entrypoint,
+        &testcase_dir.join(entrypoint),
         &testcase.blacklist,
         |content, rel_path| {
             let source = Source::detached(content);
