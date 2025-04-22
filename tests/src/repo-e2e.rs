@@ -195,7 +195,11 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         |content, rel_path| {
             let source = Source::detached(content);
             if source.root().erroneous() {
-                return source.text().to_string();
+                panic!(
+                    "The file {} has syntax errors: {:?}",
+                    rel_path.display(),
+                    source.root().errors()
+                );
             }
             let doc = Typstyle::default().format_source(&source).unwrap();
             let second_format = Typstyle::default().format_content(&doc).unwrap();
@@ -209,5 +213,5 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         },
     )?;
 
-    compare_docs(&testcase.name, doc, formatted_doc, true)
+    compare_docs(&testcase.name, doc, formatted_doc, true, true)
 }

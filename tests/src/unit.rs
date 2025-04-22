@@ -157,6 +157,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
         make_universe(source.text())?,
         make_universe(&formatted_src)?,
         false,
+        false,
     )?;
 
     Ok(())

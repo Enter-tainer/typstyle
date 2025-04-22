@@ -12,6 +12,7 @@ pub fn compare_docs(
     name: &str,
     before: TypstSystemUniverse,
     after: TypstSystemUniverse,
+    require_compile: bool,
     output_pdf: bool,
 ) -> anyhow::Result<()> {
     let compile_universe =
@@ -32,6 +33,9 @@ pub fn compare_docs(
             check_png(&doc_bf, &doc_af, name)?;
         }
         (Err(e1), Err(e2)) => {
+            if require_compile {
+                bail!("Both docs failed to compile: {:#?}", e1);
+            }
             pretty_assertions::assert_eq!(
                 e1.len(),
                 e2.len(),
