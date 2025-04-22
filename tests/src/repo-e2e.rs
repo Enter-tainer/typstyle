@@ -21,11 +21,16 @@ struct Testcase {
 }
 
 pub(super) fn collect_tests() -> Vec<Trial> {
-    let testcases = toml::from_str::<Vec<Testcase>>(
+    #[derive(Deserialize)]
+    struct Config {
+        testcase: Vec<Testcase>,
+    }
+    let config = toml::from_str::<Config>(
         &fs::read_to_string(fixtures_dir().join("e2e-repos.toml")).unwrap(),
     )
     .unwrap();
-    testcases
+    config
+        .testcase
         .into_iter()
         .map(|case| {
             Trial::test(format!("{} - e2e", case.name.clone()), move || {
