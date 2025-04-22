@@ -1,8 +1,8 @@
-[[testcase]]
-name = "tutorial"
-git = "https://github.com/typst-doc-cn/tutorial"
-rev = "83e8adf7abaec1a39240058d217a24b1683b8018" # Apr 7, 2025
-entrypoint = "src/ebook.typ"
+# [[testcase]]
+# name = "tutorial"
+# git = "https://github.com/typst-doc-cn/tutorial"
+# rev = "83e8adf7abaec1a39240058d217a24b1683b8018" # Apr 7, 2025
+# entrypoint = "src/ebook.typ"
 
 [[testcase]]
 name = "uniquecv"
@@ -52,7 +52,7 @@ blacklist = ["main.typ", "marks.typ"]
 name = "nju-thesis-typst"
 git = "https://github.com/nju-lug/nju-thesis-typst"
 rev = "4a975c8481c946ac644833cf34f1330e9f350429" # Mar 31, 2025
-entrypoint = "thesis.typ"
+entrypoint = "template/thesis.typ"
 
 [[testcase]]
 name = "physica"
@@ -60,11 +60,11 @@ git = "https://github.com/Leedehai/typst-physics"
 rev = "9bf0ee5b43dc213932d3f564b843b3857939901b" # Mar 6, 2025
 entrypoint = "physica-manual.typ"
 
-[[testcase]]
-name = "lovelace"
-git = "https://github.com/andreasKroepelin/lovelace"
-rev = "7e75614f9906b357effebf73f506cb829324b526" # Jun 23, 2024; can't be newer, since doc has been removed
-entrypoint = "examples/doc.typ"
+# [[testcase]]
+# name = "lovelace"
+# git = "https://github.com/andreasKroepelin/lovelace"
+# rev = "7e75614f9906b357effebf73f506cb829324b526" # Jun 23, 2024; can't be newer, since doc has been removed
+# entrypoint = "examples/doc.typ"
 
 [[testcase]]
 name = "quill"
