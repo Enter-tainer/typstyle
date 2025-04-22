@@ -3781,6 +3781,8 @@ dependencies = [
  "insta",
  "libtest-mimic",
  "pretty_assertions",
+ "serde",
+ "toml",
  "typst-syntax",
  "typstyle-consistency",
  "typstyle-core",

@@ -45,6 +45,7 @@ insta-cmd = "0.6"
 libtest-mimic = "0.8.1"
 pretty_assertions = "1.4.1"
 tempfile = "3"
+toml = "0.8"
 
 tinymist-world = { version = "0.13.2", default-features = false, features = [
   "system",
