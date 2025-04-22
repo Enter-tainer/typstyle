@@ -49,8 +49,20 @@ pub fn make_universe_formatted(
 
     let mut world = make_world()?;
     let mut formatted_world = make_world()?;
+
     // map all files within the testcase_dir
-    for entry in walkdir::WalkDir::new(source_dir) {
+    let walker = walkdir::WalkDir::new(source_dir)
+        .into_iter()
+        .filter_entry(|entry| {
+            if entry.file_type().is_dir() {
+                if let Some(name) = entry.file_name().to_str() {
+                    // Skip the directory if its name is in the blacklist.
+                    return !blacklist.contains(name);
+                }
+            }
+            true
+        });
+    for entry in walker {
         let entry = entry?;
         if !entry.file_type().is_file() {
             continue;

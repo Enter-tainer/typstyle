@@ -1,96 +1,84 @@
 [[testcase]]
 name = "tutorial"
 git = "https://github.com/typst-doc-cn/tutorial"
-rev = "3e1dcc83ca7abb314f84e985e84c15299790aaa8"
+rev = "74e201b47dddb53cbff86c6604b3f177c9ab2a51" # Jan 30, 2025
 entrypoint = "src/ebook.typ"
 
 [[testcase]]
 name = "uniquecv"
 git = "https://github.com/gaoachao/uniquecv-typst"
-rev = "38fd15c5156e683f989fcf5a04b119b8a1d22f2e"
+rev = "17927a9f7f671c4436e024389bb50847d14553b1" # Feb 28, 2025
 entrypoint = "main.typ"
 
-[[testcase]]
-name = "cetz-manual"
-git = "https://github.com/cetz-package/cetz"
-rev = "8ec63845f87941d8d6b90b5d0dd52ed4e74c3694"
-entrypoint = "manual.typ"
+# [[testcase]] # FIXME
+# name = "cetz-manual"
+# git = "https://github.com/cetz-package/cetz"
+# rev = "8ec63845f87941d8d6b90b5d0dd52ed4e74c3694"
+# entrypoint = "manual.typ"
 
-[[testcase]]
-name = "HomotopyHistory"
-git = "https://github.com/trebor-Huang/HomotopyHistory/"
-rev = "5ee6ff5f9b3e1dccae3b84cfb093cf5d649bc12c"
-entrypoint = "paper.typ"
+# [[testcase]] # not maintained
+# name = "HomotopyHistory"
+# git = "https://github.com/trebor-Huang/HomotopyHistory/"
+# rev = "5ee6ff5f9b3e1dccae3b84cfb093cf5d649bc12c"
+# entrypoint = "paper.typ"
 
 [[testcase]]
 name = "typst-talk"
 git = "https://github.com/OrangeX4/typst-talk"
-rev = "742a0c614c0163dee557b101fb8e4e4063d51fd3"
+rev = "65ed571ce81274fff1b1c915749c38305f5ca1c8" # Sep 4, 2024
 entrypoint = "main.typ"
-blacklist = ["chicv.typ"]
 
 [[testcase]]
 name = "touying-example"
 git = "https://github.com/touying-typ/touying"
-rev = "e2e20b7243733e14cfb303f3d22988e862655041"
+rev = "d1963776f4d401cadd2b58193ef3a377cf4ac546" # Apr 6, 2025
 entrypoint = "examples/example.typ"
 
 [[testcase]]
 name = "tablex-test"
 git = "https://github.com/PgBiel/typst-tablex"
-rev = "940d13c570f241a8a9de7512c453deaee29952e5"
+rev = "4aeedea0b1c2357a035847dde289b99739903aa7" # Oct 25, 2024
 entrypoint = "tablex-test.typ"
 
 [[testcase]]
 name = "fletcher-manual"
 git = "https://github.com/Jollywatt/typst-fletcher"
-rev = "a011539846850ad466f16fde715ab6f83a6512f4"
+rev = "7623d19feba35075906775543061f1d3364f1b2e" # Apr 19, 2025
 entrypoint = "docs/manual.typ"
-blacklist = ["main.typ", "marks.typ"]
 
 [[testcase]]
 name = "nju-thesis-typst"
 git = "https://github.com/nju-lug/nju-thesis-typst"
-rev = "8b481bddd3bfa683a5af2e22922e222d8d5d0f81"
+rev = "4a975c8481c946ac644833cf34f1330e9f350429" # Mar 31, 2025
 entrypoint = "thesis.typ"
 
 [[testcase]]
 name = "physica"
 git = "https://github.com/Leedehai/typst-physics"
-rev = "443c963013b5cfea64818fa71990fefde9c93131"
+rev = "9bf0ee5b43dc213932d3f564b843b3857939901b" # Mar 6, 2025
 entrypoint = "physica-manual.typ"
 
 [[testcase]]
 name = "lovelace"
-git = "https://github.com/andreasKroepelin/lovelace"
-rev = "a83b64662b1a6f78593b8e028e9a8162f1793d4c"
+git = "https://github.com/andreasKroepelin/lovelace" # Jun 24, 2024
+rev = "54c7fe2a28bff22ca7567147225079a00261bba2"
 entrypoint = "examples/doc.typ"
 
 [[testcase]]
 name = "quill"
 git = "https://github.com/Mc-Zen/quill"
-rev = "3cd5f656c3c6845e267621d1d118d6c8f7731f37"
+rev = "39781d65927a6d40e0d27f7c093c59bb8f9c1b83" # Apr 6, 2025
 entrypoint = "docs/guide/quill-guide.typ"
-blacklist = [
-  "shor-nine-qubit-code.typ",
-  "teleportation.typ",
-  "phase-estimation.typ",
-  "qft.typ",
-  "fault-tolerant-measurement.typ",
-  "fault-tolerant-pi8.typ",
-  "fault-tolerant-toffoli1.typ",
-  "fault-tolerant-toffoli2.typ",
-  "quill-guide.typ",
-]
+blacklist = ["examples"]
 
 [[testcase]]
 name = "curryst"
 git = "https://github.com/pauladam94/curryst"
-rev = "1ffd5f41a22cf3a2ea1d48f65c959c1883fe08b3"
+rev = "acacb67eef5fc0a5d2e804f4182f939dbd244f30" # Apr 19, 2025
 entrypoint = "examples/natural-deduction.typ"
 
 [[testcase]]
 name = "derive-it"
 git = "https://github.com/0rphee/derive-it"
-rev = "e56a25def12082b8c9c6d54026c426434a5610e8"
+rev = "f90d6a0c65fa023ef7dcb30d4a4752d8df8e278a" # Apr 1, 2025
 entrypoint = "examples/example.typ"
