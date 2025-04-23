@@ -59,6 +59,10 @@ fn run_testcase(testcase: Testcase) -> anyhow::Result<()> {
 }
 
 fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
+    if fs::exists(testcase_dir)? {
+        return Ok(()); // for quick debugging
+    }
+
     // clean the testcase_dir
     let _ = fs::remove_dir_all(testcase_dir);
     // do git clone with submodule
@@ -90,14 +94,10 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
     }
 
     let name = testcase.name.clone();
-    let mut univ = TypstyleUniverse::new(name, |content, rel_path| {
+    let mut univ = TypstyleUniverse::new(name, testcase_dir.to_path_buf(), |content| {
         let source = Source::detached(content);
         if source.root().erroneous() {
-            bail!(
-                "The file `{}` has syntax errors: {:?}",
-                rel_path.display(),
-                source.root().errors()
-            );
+            bail!("the file has syntax errors: {:?}", source.root().errors());
         }
         let config = Config {
             reorder_import_items: true,
@@ -108,10 +108,7 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
             .unwrap();
         let second_pass = Typstyle::new(config).format_content(&first_pass).unwrap();
         if first_pass != second_pass {
-            bail!(
-                "The file `{}` is not converging after formatting",
-                rel_path.display()
-            )
+            bail!("the formatting does not converge")
         }
         Ok(first_pass)
     })
@@ -126,9 +123,8 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
             .with_context(|| format!("failed to compare outputs with entry: {entrypoint}"))?;
     }
     if let Some(examples) = testcase.examples.as_ref() {
-        let entry_vpath = Path::new("__examples__");
-        univ.add_all_files_in_one(entry_vpath, Path::new(&examples))
-            .with_context(|| format!("failed to add example files: {examples}"))?;
+        let entry_vpath = Path::new("__examples__.typ");
+        univ.add_all_files_in_one(entry_vpath, &testcase_dir.join(examples))?;
         let compiled = univ.compile_with_entry(entry_vpath);
         compiled
             .compare(true, univ.sink_mut())

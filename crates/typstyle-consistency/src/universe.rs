@@ -15,10 +15,11 @@ use walkdir::WalkDir;
 
 use crate::cmp::{CompiledPair, DiffSink};
 
-type Formatter<'a> = Box<dyn Fn(&str, &Path) -> Result<String> + 'a>;
+type Formatter<'a> = Box<dyn Fn(&str) -> Result<String> + 'a>;
 
 pub struct TypstyleUniverse<'a> {
     name: String,
+    project_root: PathBuf,
     formatter: Formatter<'a>,
     orig_univ: TypstSystemUniverse,
     fmt_univ: TypstSystemUniverse,
@@ -28,11 +29,12 @@ pub struct TypstyleUniverse<'a> {
 impl<'a> TypstyleUniverse<'a> {
     pub fn new(
         name: String,
-        formatter: impl Fn(&str, &Path) -> Result<String> + 'a,
+        project_root: PathBuf,
+        formatter: impl Fn(&str) -> Result<String> + 'a,
     ) -> Result<Self> {
         fn make_univ() -> Result<TypstSystemUniverse> {
             Ok(TypstSystemUniverse::new(CompileOpts {
-                entry: EntryOpts::new_workspace(os_root()),
+                entry: EntryOpts::new_workspace(PathBuf::from(".")),
                 with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
                 ..Default::default()
             })?)
@@ -40,6 +42,7 @@ impl<'a> TypstyleUniverse<'a> {
 
         Ok(Self {
             name,
+            project_root,
             formatter: Box::new(formatter),
             orig_univ: make_univ()?,
             fmt_univ: make_univ()?,
@@ -52,7 +55,6 @@ impl<'a> TypstyleUniverse<'a> {
         source_dir: &Path,
         blacklist: &HashSet<String>,
     ) -> Result<&mut Self> {
-        let root = os_root();
         // map all files within the testcase_dir
         let walk = WalkDir::new(source_dir)
             .into_iter()
@@ -64,24 +66,15 @@ impl<'a> TypstyleUniverse<'a> {
             }
 
             let path = entry.path();
-            let rel_path = path.strip_prefix(source_dir)?;
-            let full_path = root.join(rel_path);
+            let vpath = path.strip_prefix(&self.project_root)?;
 
             let content = Bytes::new(fs::read(path)?);
-            // let orig_content = if path.extension() == Some("typ".as_ref())
-            //     && !is_blacklisted(path, source_dir, blacklist)
-            // {
-            //     Bytes::from_string(strip_trailing_whitespace(content.as_str()?))
-            // } else {
-            //     content
-            // };
-            // self.orig_univ.map_shadow(&full_path, orig_content)?;
             if path.extension() == Some("typ".as_ref())
                 && !is_blacklisted(path, source_dir, blacklist)
             {
-                self.add_fmt_file(&full_path, rel_path, content)?;
+                self.add_fmt_file(vpath, content)?;
             } else {
-                self.add_raw_file(&full_path, content)?;
+                self.add_raw_file(vpath, content)?;
             }
         }
 
@@ -97,15 +90,13 @@ impl<'a> TypstyleUniverse<'a> {
         // map all files within the testcase_dir
         for entry in WalkDir::new(source_dir) {
             let entry = entry?;
-            if !entry.file_type().is_file() {
+            if !(entry.file_type().is_file() && entry.path().extension() == Some("typ".as_ref())) {
                 continue;
             }
 
-            let path = entry.path();
-            let rel_path = path.strip_prefix(source_dir)?;
-
-            let inc_path = rel_path.to_str().unwrap().replace('\\', "/");
-            entry_content.push_str(&format!("#include \"{}\"", inc_path));
+            let vpath = entry.path().strip_prefix(&self.project_root)?;
+            let include_path = vpath.to_str().unwrap().replace('\\', "/");
+            entry_content.push_str(&format!("#include \"{}\"\n", include_path));
         }
         self.add_source_file(one_path, entry_content)
             .with_context(|| format!("failed to add all-in-one file at {}", one_path.display()))?;
@@ -114,60 +105,65 @@ impl<'a> TypstyleUniverse<'a> {
     }
 
     pub fn add_source_file(&mut self, path: &Path, content: String) -> Result<&mut Self> {
-        let root = os_root();
-        let full_path = root.join(path);
-
-        self.add_fmt_file(&full_path, path, Bytes::from_string(content))?;
+        self.add_fmt_file(path, Bytes::from_string(content))?;
 
         Ok(self)
     }
 
-    fn add_fmt_file(&mut self, full_path: &Path, rel_path: &Path, content: Bytes) -> Result<()> {
+    fn add_fmt_file(&mut self, vpath: &Path, content: Bytes) -> Result<()> {
+        let vpath = &vroot().join(vpath);
+
         let content_str = strip_trailing_whitespace(content.as_str()?);
-        let formatted = (self.formatter)(&content_str, rel_path);
+        let formatted = (self.formatter)(&content_str);
         let fmt_content = Bytes::from_string(match formatted {
             Ok(res) => res,
             Err(err) => {
-                self.sink.push(err.to_string());
+                self.sink.push(format!(
+                    "failed to format file at `{}`: {}",
+                    vpath.display(),
+                    err
+                ));
                 content_str.clone()
             }
         });
         let orig_content = Bytes::from_string(content_str);
 
         self.orig_univ
-            .map_shadow(full_path, orig_content)
+            .map_shadow(vpath, orig_content)
             .with_context(|| {
                 format!(
                     "failed to map file in the original world: {}",
-                    full_path.display()
+                    vpath.display()
                 )
             })?;
         self.fmt_univ
-            .map_shadow(full_path, fmt_content)
+            .map_shadow(vpath, fmt_content)
             .with_context(|| {
                 format!(
                     "failed to map file in the format world: {}",
-                    full_path.display()
+                    vpath.display()
                 )
             })?;
 
         Ok(())
     }
 
-    fn add_raw_file(&mut self, full_path: &Path, content: Bytes) -> Result<()> {
-        self.orig_univ.map_shadow(full_path, content.clone())?;
-        self.fmt_univ.map_shadow(full_path, content)?;
+    fn add_raw_file(&mut self, vpath: &Path, content: Bytes) -> Result<()> {
+        let vpath = &vroot().join(vpath);
+        self.orig_univ.map_shadow(vpath, content.clone())?;
+        self.fmt_univ.map_shadow(vpath, content)?;
 
         Ok(())
     }
 
     pub fn compile_with_entry(&self, entry: &Path) -> CompiledPair {
+        let entry = &vroot().join(entry);
+
         fn compile_impl(univ: &TypstSystemUniverse, entry: &Path, name: String) -> Compiled {
-            let mutant = Some(TaskInputs {
+            let world = univ.snapshot_with(Some(TaskInputs {
                 entry: Some(univ.entry_state().select_in_workspace(entry)),
                 ..Default::default()
-            });
-            let world = univ.snapshot_with(mutant);
+            }));
             let result = typst::compile(&world).output;
             Compiled {
                 name,
@@ -215,12 +211,8 @@ pub struct Compiled {
     pub result: Result<PagedDocument, EcoVec<SourceDiagnostic>>,
 }
 
-fn os_root() -> PathBuf {
-    if cfg!(windows) {
-        PathBuf::from("C:\\")
-    } else {
-        PathBuf::from("/")
-    }
+fn vroot() -> &'static Path {
+    Path::new(".")
 }
 
 fn strip_trailing_whitespace(s: &str) -> String {

@@ -1,6 +1,7 @@
 use std::env;
 
 use anyhow::{anyhow, Result};
+use tinymist_world::print_diagnostics;
 use typst::{
     foundations::Smart,
     layout::{Page, PagedDocument},
@@ -82,7 +83,12 @@ impl CompiledPair {
             }
             (Err(e1), Err(e2)) => {
                 if require_compile {
-                    sink.push(format!("Both docs failed to compile: \n{:#?}", e1));
+                    sink.push("Both docs failed to compile:".to_string());
+                    print_diagnostics(
+                        &self.0.world,
+                        e1.iter(),
+                        tinymist_world::DiagnosticFormat::Human,
+                    )?;
                     return Ok(());
                 }
 

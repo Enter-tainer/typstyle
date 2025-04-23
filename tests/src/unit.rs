@@ -142,6 +142,8 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
 
 #[cfg(feature = "consistency")]
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
+    use std::path::PathBuf;
+
     use typstyle_consistency::TypstyleUniverse;
 
     let (source, mut cfg) = read_source_with_config(path)?;
@@ -151,7 +153,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
 
     cfg.max_width = width;
 
-    let mut univ = TypstyleUniverse::new("".to_string(), |content, _| {
+    let mut univ = TypstyleUniverse::new("".to_string(), PathBuf::new(), |content| {
         Ok(Typstyle::new(cfg.clone()).format_content(content).unwrap())
     })?;
     let main_vpath = Path::new("__main__");

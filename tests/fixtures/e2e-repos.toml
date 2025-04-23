@@ -1,10 +1,10 @@
 ## Books
 
-[[testcase]]
-name = "project-iii"
-git = "https://github.com/samuelireson/project-iii-typst"
-rev = "66b4469dcbbefa49fea60a406331d43ae5945e65" # Feb 11, 2025
-entrypoint = "main.typ"
+# [[testcase]]
+# name = "project-iii"
+# git = "https://github.com/samuelireson/project-iii-typst" # not compatible with typst 0.13
+# rev = "66b4469dcbbefa49fea60a406331d43ae5945e65" # Feb 11, 2025
+# entrypoint = "main.typ"
 
 # [[testcase]]
 # name = "tutorial"
@@ -202,6 +202,12 @@ rev = "655210e9e28c929c16157283d5ec007d7a9bf50a" # Apr 10, 2025
 entrypoint = "README.typ"
 
 ## Templates
+
+[[testcase]]
+name = "ilm"
+git = "https://github.com/talal/ilm"
+rev = "601c1848258ead083eab627edfc055b242f19480" # Mar 3, 2025
+entrypoint = "template/main.typ"
 
 [[testcase]]
 name = "uniquecv"
