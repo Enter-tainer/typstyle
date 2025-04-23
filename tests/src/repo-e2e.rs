@@ -5,7 +5,7 @@ use libtest_mimic::{Failed, Trial};
 use serde::Deserialize;
 use typst_syntax::Source;
 use typstyle_consistency::TypstyleUniverse;
-use typstyle_core::Typstyle;
+use typstyle_core::{Config, Typstyle};
 
 use crate::common::{fixtures_dir, test_dir};
 
@@ -82,9 +82,9 @@ fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Resu
 }
 
 fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
-    if testcase.entrypoint.is_none() || testcase.examples.is_none() {
+    if testcase.entrypoint.is_none() && testcase.examples.is_none() {
         return Err(anyhow!(
-            "The testcase {} does not have entrypoint or examples",
+            "The testcase `{}` does not have entrypoint or examples",
             testcase.name
         ));
     }
@@ -94,20 +94,26 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         let source = Source::detached(content);
         if source.root().erroneous() {
             bail!(
-                "The file {} has syntax errors: {:?}",
+                "The file `{}` has syntax errors: {:?}",
                 rel_path.display(),
                 source.root().errors()
             );
         }
-        let doc = Typstyle::default().format_source(&source).unwrap();
-        let second_format = Typstyle::default().format_content(&doc).unwrap();
-        if doc != second_format {
+        let config = Config {
+            reorder_import_items: true,
+            ..Default::default()
+        };
+        let first_pass = Typstyle::new(config.clone())
+            .format_source(&source)
+            .unwrap();
+        let second_pass = Typstyle::new(config).format_content(&first_pass).unwrap();
+        if first_pass != second_pass {
             bail!(
-                "The file {} is not converging after formatting",
+                "The file `{}` is not converging after formatting",
                 rel_path.display()
             )
         }
-        Ok(doc)
+        Ok(first_pass)
     })
     .with_context(|| format!("failed to create universe: {}", testcase.name))?;
     univ.add_all_files(testcase_dir, &testcase.blacklist)
