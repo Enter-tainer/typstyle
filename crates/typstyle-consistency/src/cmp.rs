@@ -1,118 +1,72 @@
 use std::env;
 
-use anyhow::{anyhow, Result};
-use tinymist_world::print_diagnostics;
+use anyhow::Result;
+use tinymist_world::SourceWorld;
 use typst::{
+    diag::SourceDiagnostic,
+    ecow::EcoVec,
     foundations::Smart,
     layout::{Page, PagedDocument},
 };
 
-use crate::universe::Compiled;
+use crate::ErrorSink;
 
-pub struct DiffSink(Vec<String>);
+pub struct Compiled<'a> {
+    pub name: String,
+    pub world: &'a dyn SourceWorld,
+    pub result: Result<PagedDocument, EcoVec<SourceDiagnostic>>,
+}
 
-impl DiffSink {
-    pub fn new() -> Self {
-        Self(Default::default())
-    }
+pub fn compile_world(name: String, world: &dyn SourceWorld) -> Result<Compiled<'_>> {
+    let result = typst::compile(world).output;
 
-    pub fn push(&mut self, err: impl Into<String>) {
-        self.0.push(err.into());
-    }
+    Ok(Compiled {
+        name,
+        world,
+        result,
+    })
+}
 
-    pub fn check(&mut self, condition: bool, message: impl FnOnce() -> String) {
-        if !condition {
-            self.push(message());
+pub fn compare_docs(
+    before: &Compiled,
+    after: &Compiled,
+    require_compile: bool,
+    sink: &mut ErrorSink,
+) -> Result<()> {
+    match (&before.result, &after.result) {
+        (Ok(doc_bf), Ok(doc_af)) => {
+            check_doc_meta(doc_bf, doc_af, sink);
+            check_png(doc_bf, doc_af, &before.name, &after.name, sink)?;
         }
-    }
-
-    pub fn is_ok(&self) -> bool {
-        self.0.is_empty()
-    }
-}
-
-impl Default for DiffSink {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl From<DiffSink> for Result<()> {
-    fn from(value: DiffSink) -> Self {
-        if value.is_ok() {
-            Ok(())
-        } else {
-            Err(anyhow!("{value}"))
-        }
-    }
-}
-
-impl From<&DiffSink> for Result<()> {
-    fn from(value: &DiffSink) -> Self {
-        if value.0.is_empty() {
-            Ok(())
-        } else {
-            Err(anyhow!("{value}"))
-        }
-    }
-}
-
-impl std::fmt::Display for DiffSink {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "{} errors occurred:", self.0.len())?;
-        for (i, e) in self.0.iter().enumerate() {
-            let err_str = e.replace('\n', "\n    ");
-            writeln!(f, "{i:4}: {err_str}")?;
-        }
-        Ok(())
-    }
-}
-
-pub struct CompiledPair(Compiled, Compiled);
-
-impl CompiledPair {
-    pub fn new(before: Compiled, after: Compiled) -> Self {
-        Self(before, after)
-    }
-
-    pub fn compare(&self, require_compile: bool, sink: &mut DiffSink) -> Result<()> {
-        match (&self.0.result, &self.1.result) {
-            (Ok(doc_bf), Ok(doc_af)) => {
-                check_doc_meta(doc_bf, doc_af, sink);
-                check_png(doc_bf, doc_af, &self.0.name, &self.1.name, sink)?;
+        (Err(e1), Err(e2)) => {
+            if require_compile {
+                sink.push("Both docs failed to compile.".to_string());
+                print_diagnostics(before.world, e1.iter())?;
+                return Ok(());
             }
-            (Err(e1), Err(e2)) => {
-                if require_compile {
-                    sink.push("Both docs failed to compile:".to_string());
-                    print_diagnostics(
-                        &self.0.world,
-                        e1.iter(),
-                        tinymist_world::DiagnosticFormat::Human,
-                    )?;
-                    return Ok(());
-                }
 
-                sink.check(e1.len() == e2.len(), || {
-                    "The error counts are not consistent".to_string()
+            sink.check(e1.len() == e2.len(), || {
+                "The error counts are not consistent".to_string()
+            });
+            for (e1, e2) in e1.iter().zip(e2.iter()) {
+                sink.check(e1.message == e2.message, || {
+                    "The error messages are not consistent after formatting".to_string()
                 });
-                for (e1, e2) in e1.iter().zip(e2.iter()) {
-                    sink.check(e1.message == e2.message, || {
-                        "The error messages are not consistent after formatting".to_string()
-                    });
-                }
-            }
-            (Err(res1), _) => {
-                sink.push(format!("Original doc failed to compile: {:#?}", res1));
-            }
-            (_, Err(res2)) => {
-                sink.push(format!("Formatted doc failed to compile: {:#?}", res2));
             }
         }
-        Ok(())
+        (Err(e1), _) => {
+            sink.push("Original doc failed to compile.".to_string());
+            print_diagnostics(before.world, e1.iter())?;
+        }
+        (_, Err(e2)) => {
+            sink.push("Formatted doc failed to compile.".to_string());
+            print_diagnostics(after.world, e2.iter())?;
+        }
     }
+    Ok(())
 }
 
-fn check_doc_meta(left: &PagedDocument, right: &PagedDocument, sink: &mut DiffSink) {
+fn check_doc_meta(left: &PagedDocument, right: &PagedDocument, sink: &mut ErrorSink) {
     sink.check(left.pages.len() == right.pages.len(), || {
         "The page counts are not consistent.".to_string()
     });
@@ -132,7 +86,7 @@ fn check_png(
     after: &PagedDocument,
     before_name: &str,
     after_name: &str,
-    sink: &mut DiffSink,
+    sink: &mut ErrorSink,
 ) -> anyhow::Result<()> {
     let render_png = |page: &Page, number: usize| {
         typst_render::render(
@@ -166,4 +120,15 @@ fn check_png(
     }
 
     Ok(())
+}
+
+fn print_diagnostics<'d, 'files>(
+    world: &'files dyn SourceWorld,
+    errors: impl Iterator<Item = &'d SourceDiagnostic>,
+) -> Result<()> {
+    Ok(tinymist_world::print_diagnostics(
+        world,
+        errors,
+        tinymist_world::DiagnosticFormat::Human,
+    )?)
 }

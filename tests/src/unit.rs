@@ -144,7 +144,7 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     use std::path::PathBuf;
 
-    use typstyle_consistency::TypstyleUniverse;
+    use typstyle_consistency::{FormattedSources, FormatterHarness};
 
     let (source, mut cfg) = read_source_with_config(path)?;
     if source.root().erroneous() {
@@ -153,16 +153,21 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
 
     cfg.max_width = width;
 
-    let mut univ = TypstyleUniverse::new("".to_string(), PathBuf::new(), |content| {
-        Ok(Typstyle::new(cfg.clone()).format_content(content).unwrap())
-    })?;
+    let mut harness = FormatterHarness::new("".to_string(), PathBuf::new())?;
     let main_vpath = Path::new("__main__");
-    univ.add_source_file(main_vpath, source.text().to_string())?;
+    harness.add_source_file(main_vpath, source.text().to_string())?;
 
-    let compiled = univ.compile_with_entry(main_vpath);
-    compiled.compare(false, univ.sink_mut())?;
+    let base_world = harness.snapshot();
+    let fmt_sources = FormattedSources {
+        name: "formatted".to_string(),
+        sources: harness.format(&base_world, |source| {
+            Ok(Typstyle::new(cfg.clone()).format_source(&source).unwrap())
+        })?,
+    };
 
-    let sink = univ.sink();
+    harness.compile_and_compare([fmt_sources].iter(), main_vpath, false)?;
+
+    let sink = harness.err_sink();
     if sink.is_ok() {
         Ok(())
     } else {

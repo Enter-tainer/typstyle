@@ -4,7 +4,7 @@ use anyhow::{anyhow, bail, Context};
 use libtest_mimic::{Failed, Trial};
 use serde::Deserialize;
 use typst_syntax::Source;
-use typstyle_consistency::TypstyleUniverse;
+use typstyle_consistency::{FormattedSources, FormatterHarness};
 use typstyle_core::{Config, Typstyle};
 
 use crate::common::{fixtures_dir, test_dir};
@@ -23,6 +23,11 @@ struct Testcase {
     examples: Option<String>,
     #[serde(default)]
     blacklist: HashSet<String>,
+}
+
+struct NamedConfig {
+    name: &'static str,
+    config: Config,
 }
 
 pub(super) fn collect_tests() -> Vec<Trial> {
@@ -52,7 +57,15 @@ fn run_testcase(testcase: Testcase) -> anyhow::Result<()> {
     let testcase_dir = e2e_dir.join(&*testcase.name);
 
     clone_testcase_repo(&testcase, &testcase_dir)?;
-    check_testcase(&testcase, &testcase_dir)?;
+
+    let fmt_configs = &[NamedConfig {
+        name: "default",
+        config: Config {
+            reorder_import_items: true,
+            ..Default::default()
+        },
+    }];
+    check_testcase(&testcase, &testcase_dir, fmt_configs)?;
 
     let _ = fs::remove_dir_all(testcase_dir);
     Ok(())
@@ -85,7 +98,11 @@ fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Resu
     Ok(())
 }
 
-fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
+fn check_testcase(
+    testcase: &Testcase,
+    testcase_dir: &Path,
+    named_configs: &[NamedConfig],
+) -> anyhow::Result<()> {
     if testcase.entrypoint.is_none() && testcase.examples.is_none() {
         return Err(anyhow!(
             "The testcase `{}` does not have entrypoint or examples",
@@ -93,43 +110,47 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
         ));
     }
 
-    let name = testcase.name.clone();
-    let mut univ = TypstyleUniverse::new(name, testcase_dir.to_path_buf(), |content| {
-        let source = Source::detached(content);
+    let mut harness = FormatterHarness::new(testcase.name.clone(), testcase_dir.to_path_buf())?;
+    harness.add_all_files(testcase_dir, &testcase.blacklist)?;
+    if let Some(examples) = testcase.examples.as_ref() {
+        let entry_vpath = Path::new("__examples__.typ");
+        harness.add_all_files_in_one(entry_vpath, &testcase_dir.join(examples))?;
+    };
+
+    let base_world = harness.snapshot();
+    let mut fmt_sources = vec![];
+    for config in named_configs {
+        fmt_sources.push(FormattedSources {
+            name: config.name.to_string(),
+            sources: harness.format(&base_world, make_formatter(config.config.clone()))?,
+        });
+    }
+
+    if let Some(entrypoint) = testcase.entrypoint.as_ref() {
+        harness.compile_and_compare(fmt_sources.iter(), Path::new(&entrypoint), true)?;
+    }
+    if testcase.examples.is_some() {
+        let entry_vpath = Path::new("__examples__.typ");
+        harness.compile_and_compare(fmt_sources.iter(), entry_vpath, true)?;
+    };
+
+    harness.err_sink().into()
+}
+
+fn make_formatter(config: Config) -> impl Fn(Source) -> anyhow::Result<String> {
+    move |source| {
         if source.root().erroneous() {
             bail!("the file has syntax errors: {:?}", source.root().errors());
         }
-        let config = Config {
-            reorder_import_items: true,
-            ..Default::default()
-        };
         let first_pass = Typstyle::new(config.clone())
             .format_source(&source)
             .unwrap();
-        let second_pass = Typstyle::new(config).format_content(&first_pass).unwrap();
+        let second_pass = Typstyle::new(config.clone())
+            .format_content(&first_pass)
+            .unwrap();
         if first_pass != second_pass {
             bail!("the formatting does not converge")
         }
         Ok(first_pass)
-    })
-    .with_context(|| format!("failed to create universe: {}", testcase.name))?;
-    univ.add_all_files(testcase_dir, &testcase.blacklist)
-        .with_context(|| format!("failed to add all files in {}", testcase_dir.display()))?;
-
-    if let Some(entrypoint) = testcase.entrypoint.as_ref() {
-        let compiled = univ.compile_with_entry(Path::new(&entrypoint));
-        compiled
-            .compare(true, univ.sink_mut())
-            .with_context(|| format!("failed to compare outputs with entry: {entrypoint}"))?;
     }
-    if let Some(examples) = testcase.examples.as_ref() {
-        let entry_vpath = Path::new("__examples__.typ");
-        univ.add_all_files_in_one(entry_vpath, &testcase_dir.join(examples))?;
-        let compiled = univ.compile_with_entry(entry_vpath);
-        compiled
-            .compare(true, univ.sink_mut())
-            .with_context(|| format!("failed to compare outputs with examples: {examples}"))?;
-    };
-
-    univ.sink().into()
 }

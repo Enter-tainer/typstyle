@@ -1,0 +1,69 @@
+use std::collections::HashMap;
+
+use anyhow::Result;
+use tinymist_world::{vfs::PathResolution, CompilerFeat, CompilerWorld, SourceWorld};
+use typst::{
+    diag::{FileError, FileResult},
+    foundations::{Bytes, Datetime},
+    syntax::{FileId, Source},
+    text::{Font, FontBook},
+    utils::LazyHash,
+    Library, World,
+};
+
+pub type SourceMap = HashMap<FileId, Source>;
+
+pub struct FormatterWorld<'a, F: CompilerFeat> {
+    pub(crate) base: &'a CompilerWorld<F>,
+    pub(crate) formatted: SourceMap,
+}
+
+impl<'a, F: CompilerFeat> FormatterWorld<'a, F> {
+    pub fn base(&self) -> &'a CompilerWorld<F> {
+        self.base
+    }
+}
+
+impl<F: CompilerFeat> World for FormatterWorld<'_, F> {
+    fn library(&self) -> &LazyHash<Library> {
+        self.base.library()
+    }
+
+    fn book(&self) -> &LazyHash<FontBook> {
+        self.base.book()
+    }
+
+    fn main(&self) -> FileId {
+        self.base.main()
+    }
+
+    fn source(&self, id: FileId) -> FileResult<Source> {
+        let formatted = &self.formatted;
+        formatted
+            .get(&id)
+            .map(|source| Ok(source.clone()))
+            .unwrap_or_else(|| self.base.source(id))
+    }
+
+    fn file(&self, id: FileId) -> FileResult<Bytes> {
+        self.base.file(id)
+    }
+
+    fn font(&self, index: usize) -> Option<Font> {
+        self.base.font(index)
+    }
+
+    fn today(&self, offset: Option<i64>) -> Option<Datetime> {
+        self.base.today(offset)
+    }
+}
+
+impl<F: CompilerFeat> SourceWorld for FormatterWorld<'_, F> {
+    fn as_world(&self) -> &dyn World {
+        self
+    }
+
+    fn path_for_id(&self, id: FileId) -> Result<PathResolution, FileError> {
+        self.base.path_for_id(id)
+    }
+}
