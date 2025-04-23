@@ -1,10 +1,10 @@
 use std::{collections::HashSet, fs, path::Path};
 
-use anyhow::Context;
+use anyhow::{bail, Context};
 use libtest_mimic::{Failed, Trial};
 use serde::Deserialize;
 use typst_syntax::Source;
-use typstyle_consistency::{cmp::compare_docs, universe::make_universe_formatted};
+use typstyle_consistency::TypstyleUniverse;
 use typstyle_core::Typstyle;
 
 use crate::common::{fixtures_dir, test_dir};
@@ -82,34 +82,42 @@ fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Resu
 }
 
 fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
-    let Some(entrypoint) = testcase.entrypoint.as_ref() else {
+    if testcase.entrypoint.is_none() || testcase.examples.is_none() {
         return Ok(());
-    };
+    }
 
-    let (doc, formatted_doc) = make_universe_formatted(
-        testcase_dir,
-        &testcase_dir.join(entrypoint),
-        &testcase.blacklist,
-        |content, rel_path| {
-            let source = Source::detached(content);
-            if source.root().erroneous() {
-                panic!(
-                    "The file {} has syntax errors: {:?}",
-                    rel_path.display(),
-                    source.root().errors()
-                );
-            }
-            let doc = Typstyle::default().format_source(&source).unwrap();
-            let second_format = Typstyle::default().format_content(&doc).unwrap();
-            pretty_assertions::assert_eq!(
-                doc,
-                second_format,
+    let name = testcase.name.clone();
+    let mut univ = TypstyleUniverse::new(name, |content, rel_path| {
+        let source = Source::detached(content);
+        if source.root().erroneous() {
+            bail!(
+                "The file {} has syntax errors: {:?}",
+                rel_path.display(),
+                source.root().errors()
+            );
+        }
+        let doc = Typstyle::default().format_source(&source).unwrap();
+        let second_format = Typstyle::default().format_content(&doc).unwrap();
+        if doc != second_format {
+            bail!(
                 "The file {} is not converging after formatting",
                 rel_path.display()
-            );
-            doc
-        },
-    )?;
+            )
+        }
+        Ok(doc)
+    })?;
+    univ.add_all_files(testcase_dir, &testcase.blacklist)?;
 
-    compare_docs(&testcase.name, doc, formatted_doc, true, true)
+    if let Some(entrypoint) = testcase.entrypoint.as_ref() {
+        let compiled = univ.compile_with_entry(Path::new(&entrypoint));
+        compiled.compare(true, univ.sink_mut())?;
+    }
+    if let Some(examples) = testcase.examples.as_ref() {
+        let entry_vpath = Path::new("__examples__");
+        univ.add_all_files_in_one(entry_vpath, Path::new(&examples))?;
+        let compiled = univ.compile_with_entry(entry_vpath);
+        compiled.compare(true, univ.sink_mut())?;
+    };
+
+    univ.sink().into()
 }

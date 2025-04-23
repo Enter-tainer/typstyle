@@ -16,6 +16,7 @@ doc = false
 anyhow.workspace = true
 walkdir.workspace = true
 pretty_assertions.workspace = true
+similar.workspace = true
 
 tinymist-world.workspace = true
 typst-assets.workspace = true

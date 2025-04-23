@@ -1,2 +1,4 @@
 pub mod cmp;
-pub mod universe;
+mod universe;
+
+pub use universe::{Compiled, TypstyleUniverse};

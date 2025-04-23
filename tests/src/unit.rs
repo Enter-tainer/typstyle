@@ -142,7 +142,7 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
 
 #[cfg(feature = "consistency")]
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
-    use typstyle_consistency::{cmp::compare_docs, universe::make_universe};
+    use typstyle_consistency::TypstyleUniverse;
 
     let (source, mut cfg) = read_source_with_config(path)?;
     if source.root().erroneous() {
@@ -150,15 +150,20 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     }
 
     cfg.max_width = width;
-    let formatted_src = Typstyle::new(cfg).format_source(&source)?;
 
-    compare_docs(
-        "",
-        make_universe(source.text())?,
-        make_universe(&formatted_src)?,
-        false,
-        false,
-    )?;
+    let mut univ = TypstyleUniverse::new("".to_string(), |content, _| {
+        Ok(Typstyle::new(cfg.clone()).format_content(content).unwrap())
+    })?;
+    let main_vpath = Path::new("__main__");
+    univ.add_source_file(main_vpath, source.text().to_string())?;
 
-    Ok(())
+    let compiled = univ.compile_with_entry(main_vpath);
+    compiled.compare(false, univ.sink_mut())?;
+
+    let sink = univ.sink();
+    if sink.is_ok() {
+        Ok(())
+    } else {
+        Err(sink.into())
+    }
 }

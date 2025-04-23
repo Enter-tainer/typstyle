@@ -1,5 +1,11 @@
 ## Books
 
+[[testcase]]
+name = "project-iii"
+git = "https://github.com/samuelireson/project-iii-typst"
+rev = "66b4469dcbbefa49fea60a406331d43ae5945e65" # Feb 11, 2025
+entrypoint = "main.typ"
+
 # [[testcase]]
 # name = "tutorial"
 # git = "https://github.com/typst-doc-cn/tutorial"
@@ -15,11 +21,11 @@ blacklist = ["chicv.typ"]
 
 ## Packages
 
-[[testcase]]
-name = "alchemist"
-git = "https://github.com/Typsium/alchemist"
-rev = "dedf319ea58e3b42c6eac1a9fc3b83e576f0f0a1" # Apr 22, 2025
-entrypoint = "doc/manual.typ"
+# [[testcase]]
+# name = "alchemist"
+# git = "https://github.com/Typsium/alchemist" # wait for packages to merge
+# rev = "dedf319ea58e3b42c6eac1a9fc3b83e576f0f0a1" # Apr 22, 2025
+# entrypoint = "doc/manual.typ"
 
 [[testcase]]
 name = "cetz"
@@ -64,18 +70,18 @@ git = "https://github.com/marc-thieme/frame-it"
 rev = "e4648f681c00ad5366317c872ce8fa210d1bd21c" # Mar 31, 2025
 entrypoint = "README.typ"
 
-[[testcase]]
-name = "hydra"
-git = "https://github.com/tingerrr/hydra"
-rev = "f1090d049c70630b14250ef5115c6144db510814" # Mar 31, 2025
-entrypoint = "docs/manual/manual.typ"
+# [[testcase]]
+# name = "hydra"
+# git = "https://github.com/tingerrr/hydra" # unknown problems
+# rev = "f1090d049c70630b14250ef5115c6144db510814" # Mar 31, 2025
+# entrypoint = "docs/manual/manual.typ"
 
-[[testcase]]
-name = "glossarium"
-git = "https://github.com/typst-community/glossarium"
-rev = "486ab2a21bf63d57dd5b475cbbe8728db0354134" # Apr 17, 2025
-entrypoint = "advanced-docs/main.typ"
-examples = "examples"
+# [[testcase]]
+# name = "glossarium"
+# git = "https://github.com/typst-community/glossarium" # failed to compile
+# rev = "486ab2a21bf63d57dd5b475cbbe8728db0354134" # Apr 17, 2025
+# entrypoint = "advanced-docs/main.typ"
+# examples = "examples"
 
 [[testcase]]
 name = "lilaq"
@@ -114,12 +120,12 @@ rev = "39781d65927a6d40e0d27f7c093c59bb8f9c1b83" # Apr 6, 2025
 entrypoint = "docs/guide/quill-guide.typ"
 blacklist = ["examples"]
 
-[[testcase]]
-name = "showybox"
-git = "https://github.com/Pablo-Gonzalez-Calderon/showybox-package"
-rev = "3fb86ffc9ac46180f63a10394bc83e3d01872f4b" # Feb 17, 2025
-entrypoint = "manual/manual.typ"
-examples = "examples"
+# [[testcase]]
+# name = "showybox"
+# git = "https://github.com/Pablo-Gonzalez-Calderon/showybox-package" # compilation error
+# rev = "3fb86ffc9ac46180f63a10394bc83e3d01872f4b" # Feb 17, 2025
+# entrypoint = "manual/manual.typ"
+# examples = "examples"
 
 [[testcase]]
 name = "suiji"
@@ -135,11 +141,23 @@ rev = "4aeedea0b1c2357a035847dde289b99739903aa7" # Oct 25, 2024
 entrypoint = "tablex-test.typ"
 
 [[testcase]]
-name = "tidy"
-git = "https://github.com/Mc-Zen/tidy"
-rev = "f9e96162e112dac133edc5cdefe6fba42fb4d337" # Apr 9, 2025
-entrypoint = "docs/tidy-guide.typ"
+name = "tablem"
+git = "https://github.com/OrangeX4/typst-tablem"
+rev = "003a788c10ce081457bca402eeb8a79edade9982" # Feb 20, 2025
 examples = "examples"
+
+[[testcase]]
+name = "theorion"
+git = "https://github.com/OrangeX4/typst-theorion"
+rev = "b13c56177144720ce83b69193f16544c27b1a648" # Apr 8, 2025
+examples = "examples"
+
+# [[testcase]]
+# name = "tidy"
+# git = "https://github.com/Mc-Zen/tidy" # defer
+# rev = "f9e96162e112dac133edc5cdefe6fba42fb4d337" # Apr 9, 2025
+# entrypoint = "docs/tidy-guide.typ"
+# examples = "examples"
 
 [[testcase]]
 name = "tiptoe"
@@ -154,6 +172,12 @@ rev = "d1963776f4d401cadd2b58193ef3a377cf4ac546" # Apr 6, 2025
 examples = "examples"
 
 [[testcase]]
+name = "typsium"
+git = "https://github.com/Typsium/typsium"
+rev = "b1120aa833de0ecb9d1e6c7d6a558f2ee038f8ab" # Mar 31, 2025; a newer rev uses typstyle
+examples = "tests"
+
+[[testcase]]
 name = "unify"
 git = "https://github.com/ChHecker/unify"
 rev = "b9f6d556a0514880d3b10e3dbf95b0eed6a7adad" # Feb 23, 2025
@@ -165,11 +189,11 @@ git = "https://github.com/ntjess/wrap-it"
 rev = "fb225204a6dde4f607965c041829c56ec0ec6e39" # Feb 21, 2025
 entrypoint = "docs/readme.typ"
 
-[[testcase]]
-name = "zero"
-git = "https://github.com/Mc-Zen/zero"
-rev = "7ffa0020f9d51c68beae41875643e00606e1fb41" # Apr 2, 2025
-entrypoint = "docs/zero-docs.typ"
+# [[testcase]]
+# name = "zero"
+# git = "https://github.com/Mc-Zen/zero" # compilation error
+# rev = "7ffa0020f9d51c68beae41875643e00606e1fb41" # Apr 2, 2025
+# entrypoint = "docs/zero-docs.typ"
 
 [[testcase]]
 name = "zebraw"

@@ -44,10 +44,11 @@ insta = "1.42"
 insta-cmd = "0.6"
 libtest-mimic = "0.8.1"
 pretty_assertions = "1.4.1"
+similar = "2.7"
 tempfile = "3"
 toml = "0.8"
 
-tinymist-world = { version = "0.13.2", default-features = false, features = [
+tinymist-world = { version = "0.13.12-rc4", default-features = false, features = [
   "system",
 ] }
 
@@ -73,3 +74,6 @@ opt-level = 3
 [profile.ci]
 inherits = "release"
 debug = true
+
+[patch.crates-io]
+tinymist-world = { git = "https://github.com/Myriad-Dreamin/tinymist" }
