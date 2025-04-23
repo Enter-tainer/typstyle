@@ -1,6 +1,6 @@
 use std::{collections::HashSet, fs, path::Path};
 
-use anyhow::{bail, Context};
+use anyhow::{anyhow, bail, Context};
 use libtest_mimic::{Failed, Trial};
 use serde::Deserialize;
 use typst_syntax::Source;
@@ -83,7 +83,10 @@ fn clone_testcase_repo(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Resu
 
 fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()> {
     if testcase.entrypoint.is_none() || testcase.examples.is_none() {
-        return Ok(());
+        return Err(anyhow!(
+            "The testcase {} does not have entrypoint or examples",
+            testcase.name
+        ));
     }
 
     let name = testcase.name.clone();
@@ -105,18 +108,25 @@ fn check_testcase(testcase: &Testcase, testcase_dir: &Path) -> anyhow::Result<()
             )
         }
         Ok(doc)
-    })?;
-    univ.add_all_files(testcase_dir, &testcase.blacklist)?;
+    })
+    .with_context(|| format!("failed to create universe: {}", testcase.name))?;
+    univ.add_all_files(testcase_dir, &testcase.blacklist)
+        .with_context(|| format!("failed to add all files in {}", testcase_dir.display()))?;
 
     if let Some(entrypoint) = testcase.entrypoint.as_ref() {
         let compiled = univ.compile_with_entry(Path::new(&entrypoint));
-        compiled.compare(true, univ.sink_mut())?;
+        compiled
+            .compare(true, univ.sink_mut())
+            .with_context(|| format!("failed to compare outputs with entry: {entrypoint}"))?;
     }
     if let Some(examples) = testcase.examples.as_ref() {
         let entry_vpath = Path::new("__examples__");
-        univ.add_all_files_in_one(entry_vpath, Path::new(&examples))?;
+        univ.add_all_files_in_one(entry_vpath, Path::new(&examples))
+            .with_context(|| format!("failed to add example files: {examples}"))?;
         let compiled = univ.compile_with_entry(entry_vpath);
-        compiled.compare(true, univ.sink_mut())?;
+        compiled
+            .compare(true, univ.sink_mut())
+            .with_context(|| format!("failed to compare outputs with examples: {examples}"))?;
     };
 
     univ.sink().into()

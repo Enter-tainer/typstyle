@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use tinymist_world::{
     config::CompileOpts, EntryOpts, EntryReader, ShadowApi, TaskInputs, TypstSystemUniverse,
     TypstSystemWorld,
@@ -107,7 +107,8 @@ impl<'a> TypstyleUniverse<'a> {
             let inc_path = rel_path.to_str().unwrap().replace('\\', "/");
             entry_content.push_str(&format!("#include \"{}\"", inc_path));
         }
-        self.add_source_file(one_path, entry_content)?;
+        self.add_source_file(one_path, entry_content)
+            .with_context(|| format!("failed to add all-in-one file at {}", one_path.display()))?;
 
         Ok(self)
     }
@@ -133,8 +134,22 @@ impl<'a> TypstyleUniverse<'a> {
         });
         let orig_content = Bytes::from_string(content_str);
 
-        self.orig_univ.map_shadow(full_path, orig_content)?;
-        self.fmt_univ.map_shadow(full_path, fmt_content)?;
+        self.orig_univ
+            .map_shadow(full_path, orig_content)
+            .with_context(|| {
+                format!(
+                    "failed to map file in the original world: {}",
+                    full_path.display()
+                )
+            })?;
+        self.fmt_univ
+            .map_shadow(full_path, fmt_content)
+            .with_context(|| {
+                format!(
+                    "failed to map file in the format world: {}",
+                    full_path.display()
+                )
+            })?;
 
         Ok(())
     }
