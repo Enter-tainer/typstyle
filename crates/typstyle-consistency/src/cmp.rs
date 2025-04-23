@@ -18,7 +18,7 @@ pub struct Compiled<'a> {
 }
 
 pub fn compile_world(name: String, world: &dyn SourceWorld) -> Result<Compiled<'_>> {
-    let result = typst::compile(world).output;
+    let result = typst::compile(world.as_world()).output;
 
     Ok(Compiled {
         name,
