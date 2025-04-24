@@ -127,12 +127,12 @@ blacklist = ["examples"]
 # entrypoint = "manual/manual.typ"
 # examples = "examples"
 
-[[testcase]]
-name = "suiji"
-git = "https://github.com/liuguangxi/suiji"
-rev = "2c8216555252b76cf2e8e0baad8787de30d67299" # Apr 18, 2025
-entrypoint = "doc/manual.typ"
-examples = "examples"
+# [[testcase]]
+# name = "suiji"
+# git = "https://github.com/liuguangxi/suiji" # too costly
+# rev = "2c8216555252b76cf2e8e0baad8787de30d67299" # Apr 18, 2025
+# entrypoint = "doc/manual.typ"
+# examples = "examples"
 
 [[testcase]]
 name = "tablex"

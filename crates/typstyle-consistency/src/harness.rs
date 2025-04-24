@@ -1,11 +1,12 @@
 use std::{
     borrow::Cow,
-    collections::{HashMap, HashSet},
+    collections::HashSet,
     fs,
     path::{Path, PathBuf},
 };
 
-use anyhow::{Context, Result};
+use anyhow::Result;
+use rustc_hash::{FxHashMap, FxHashSet};
 use tinymist_world::{
     config::CompileOpts, EntryOpts, EntryReader, ShadowApi, TaskInputs, TypstSystemUniverse,
     TypstSystemWorld,
@@ -27,7 +28,7 @@ pub struct FormattedSources {
 pub struct FormatterHarness {
     name: String,
     project_root: PathBuf,
-    formattable: HashSet<FileId>,
+    formattable: FxHashSet<FileId>,
     verse: TypstSystemUniverse,
 
     err_sink: ErrorSink,
@@ -42,7 +43,7 @@ impl FormatterHarness {
         Ok(Self {
             name,
             project_root,
-            formattable: HashSet::new(),
+            formattable: Default::default(),
             verse: TypstSystemUniverse::new(CompileOpts {
                 entry: EntryOpts::new_workspace(Self::vroot().to_path_buf()),
                 with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
@@ -52,6 +53,7 @@ impl FormatterHarness {
         })
     }
 
+    /// Add all files in the given directory to the workspace.
     pub fn add_all_files(
         &mut self,
         source_dir: &Path,
@@ -72,12 +74,14 @@ impl FormatterHarness {
             let path = entry.path();
             let rel_path = path.strip_prefix(&self.project_root)?;
 
-            let content = Bytes::new(fs::read(path)?);
             if path.extension() == Some("typ".as_ref())
                 && !is_blacklisted(path, source_dir, blacklist)
             {
+                let content =
+                    Bytes::from_string(strip_trailing_whitespace(&fs::read_to_string(path)?));
                 self.add_fmt_file(rel_path, content)?;
             } else {
+                let content = Bytes::new(fs::read(path)?);
                 self.add_raw_file(rel_path, content)?;
             }
         }
@@ -85,6 +89,7 @@ impl FormatterHarness {
         Ok(self)
     }
 
+    /// Add a source file to the workspace, which `#include`s all source files in the given directory.
     pub fn add_all_files_in_one(
         &mut self,
         one_path: &Path,
@@ -102,18 +107,19 @@ impl FormatterHarness {
             let include_path = rel_path.to_str().unwrap().replace('\\', "/");
             entry_content.push_str(&format!("#include \"{}\"\n", include_path));
         }
-        self.add_source_file(one_path, entry_content)
-            .with_context(|| format!("failed to add all-in-one file at {}", one_path.display()))?;
+        self.add_raw_file(one_path, Bytes::from_string(entry_content))?;
 
         Ok(self)
     }
 
-    pub fn add_source_file(&mut self, path: &Path, content: String) -> Result<&mut Self> {
-        self.add_fmt_file(path, Bytes::from_string(content))?;
+    /// Add a single source file to the workspace.
+    pub fn add_source_file(&mut self, path: &Path, content: &str) -> Result<&mut Self> {
+        self.add_fmt_file(path, Bytes::from_string(strip_trailing_whitespace(content)))?;
 
         Ok(self)
     }
 
+    /// Add a formattable file to the workspace.
     fn add_fmt_file(&mut self, path: &Path, content: Bytes) -> Result<()> {
         let vpath = &Self::vroot().join(path);
         self.verse.map_shadow(vpath, content)?;
@@ -123,6 +129,7 @@ impl FormatterHarness {
         Ok(())
     }
 
+    /// Add a raw file to the workspace, which should keep unchanged.
     fn add_raw_file(&mut self, path: &Path, content: Bytes) -> Result<()> {
         let vpath = &Self::vroot().join(path);
         self.verse.map_shadow(vpath, content)?;
@@ -139,7 +146,7 @@ impl FormatterHarness {
         world: &'a TypstSystemWorld,
         formatter: impl Fn(Source) -> Result<String>,
     ) -> Result<SourceMap> {
-        let mut formatted = HashMap::new();
+        let mut formatted = FxHashMap::default();
 
         for &fid in &self.formattable {
             let source = world.source(fid)?;
@@ -226,9 +233,9 @@ fn is_blacklisted(path: &Path, source_dir: &Path, blacklist: &HashSet<String>) -
     false
 }
 
-fn _strip_trailing_whitespace(s: &str) -> String {
+fn strip_trailing_whitespace(s: &str) -> String {
     if s.is_empty() {
-        return "\n".to_string();
+        return "".to_string();
     }
     let mut res = String::with_capacity(s.len());
     for line in s.lines() {

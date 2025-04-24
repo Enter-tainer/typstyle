@@ -155,7 +155,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
 
     let mut harness = FormatterHarness::new("".to_string(), PathBuf::new())?;
     let main_vpath = Path::new("__main__");
-    harness.add_source_file(main_vpath, source.text().to_string())?;
+    harness.add_source_file(main_vpath, source.text())?;
 
     let base_world = harness.snapshot();
     let fmt_sources = FormattedSources {

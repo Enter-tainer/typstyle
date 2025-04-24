@@ -44,7 +44,6 @@ insta = "1.42"
 insta-cmd = "0.6"
 libtest-mimic = "0.8.1"
 pretty_assertions = "1.4.1"
-similar = "2.7"
 tempfile = "3"
 toml = "0.8"
 
@@ -54,7 +53,6 @@ tinymist-world = { version = "0.13.12-rc4", default-features = false, features =
 
 typst-assets = { version = "0.13.1", features = ["fonts"] }
 typst-render = "0.13.1"
-typst-pdf = "0.13.1"
 typst = "0.13.1"
 
 # Used in benchmark
@@ -69,7 +67,7 @@ insta.opt-level = 3
 similar.opt-level = 3
 
 [profile.test]
-opt-level = 3
+opt-level = 1
 
 [profile.ci]
 inherits = "release"

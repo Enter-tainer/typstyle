@@ -1,5 +1,3 @@
-use std::env;
-
 use anyhow::Result;
 use tinymist_world::SourceWorld;
 use typst::{
@@ -36,7 +34,7 @@ pub fn compare_docs(
     match (&before.result, &after.result) {
         (Ok(doc_bf), Ok(doc_af)) => {
             check_doc_meta(doc_bf, doc_af, sink);
-            check_png(doc_bf, doc_af, &before.name, &after.name, sink)?;
+            check_png(doc_bf, doc_af, sink)?;
         }
         (Err(e1), Err(e2)) => {
             if require_compile {
@@ -84,8 +82,6 @@ fn check_doc_meta(left: &PagedDocument, right: &PagedDocument, sink: &mut ErrorS
 fn check_png(
     before: &PagedDocument,
     after: &PagedDocument,
-    before_name: &str,
-    after_name: &str,
     sink: &mut ErrorSink,
 ) -> anyhow::Result<()> {
     let render_png = |page: &Page, number: usize| {
@@ -102,24 +98,32 @@ fn check_png(
     };
 
     for (i, (page_bf, page_af)) in before.pages.iter().zip(after.pages.iter()).enumerate() {
+        check_page(i, page_bf, page_af, sink);
+
         let png_bf = render_png(page_bf, i);
         let png_af = render_png(page_af, i);
         if png_bf == png_af {
             continue;
         }
-        // save both to tmp path and report error
-        let tmp_dir = env::temp_dir();
-        let png_path_bf = tmp_dir.join(format!("{before_name}-{}.png", i));
-        let png_path_af = tmp_dir.join(format!("{after_name}-{}.png", i));
-        png_bf.save_png(&png_path_bf).unwrap();
-        png_af.save_png(&png_path_af).unwrap();
-        sink.push(format!(
-            "The output are not consistent for page {}, original png path: \"{}\", formatted png path: \"{}\"",
-            i, png_path_bf.display(), png_path_af.display()
-        ));
+        sink.push(format!("The output are not consistent for page {}.", i));
     }
 
     Ok(())
+}
+
+fn check_page(index: usize, before: &Page, after: &Page, sink: &mut ErrorSink) {
+    sink.check(before.fill == after.fill, || {
+        format!("The fills of page {index} are not consistent.")
+    });
+    sink.check(before.numbering == after.numbering, || {
+        format!("The numberings of page {index} are not consistent.")
+    });
+    sink.check(before.supplement == after.supplement, || {
+        format!("The supplements of page {index} are not consistent.")
+    });
+    sink.check(before.number == after.number, || {
+        format!("The numbers of page {index} are not consistent.")
+    });
 }
 
 fn print_diagnostics<'d, 'files>(

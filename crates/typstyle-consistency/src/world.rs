@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use anyhow::Result;
+use rustc_hash::FxHashMap;
 use tinymist_world::{vfs::PathResolution, CompilerFeat, CompilerWorld, SourceWorld};
 use typst::{
     diag::{FileError, FileResult},
@@ -11,7 +10,7 @@ use typst::{
     Library, World,
 };
 
-pub type SourceMap = HashMap<FileId, Source>;
+pub type SourceMap = FxHashMap<FileId, Source>;
 
 pub struct FormatterWorld<'a, F: CompilerFeat> {
     pub(crate) base: &'a CompilerWorld<F>,

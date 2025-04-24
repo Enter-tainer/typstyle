@@ -9,7 +9,6 @@ use typstyle_core::{Config, Typstyle};
 
 use crate::common::{fixtures_dir, test_dir};
 
-#[allow(unused)]
 #[derive(Debug, Clone, Deserialize)]
 struct Testcase {
     name: String,
