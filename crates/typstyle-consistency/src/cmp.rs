@@ -7,7 +7,7 @@ use typst::{
     layout::{Page, PagedDocument},
 };
 
-use crate::ErrorSink;
+use crate::{sink_assert_eq, ErrorSink};
 
 pub struct Compiled<'a> {
     pub name: String,
@@ -43,13 +43,19 @@ pub fn compare_docs(
                 return Ok(());
             }
 
-            sink.check(e1.len() == e2.len(), || {
-                "The error counts are not consistent".to_string()
-            });
+            sink_assert_eq!(
+                sink,
+                e1.len(),
+                e2.len(),
+                "The error counts are not consistent"
+            );
             for (e1, e2) in e1.iter().zip(e2.iter()) {
-                sink.check(e1.message == e2.message, || {
-                    "The error messages are not consistent after formatting".to_string()
-                });
+                sink_assert_eq!(
+                    sink,
+                    e1.message,
+                    e2.message,
+                    "The error messages are not consistent after formatting"
+                );
             }
         }
         (Err(e1), _) => {
@@ -65,18 +71,36 @@ pub fn compare_docs(
 }
 
 fn check_doc_meta(left: &PagedDocument, right: &PagedDocument, sink: &mut ErrorSink) {
-    sink.check(left.pages.len() == right.pages.len(), || {
-        "The page counts are not consistent.".to_string()
-    });
-    sink.check(left.info.title == right.info.title, || {
-        "The titles are not consistent.".to_string()
-    });
-    sink.check(left.info.author == right.info.author, || {
-        "The authors are not consistent.".to_string()
-    });
-    sink.check(left.info.keywords == right.info.keywords, || {
-        "The keywords are not consistent.".to_string()
-    });
+    sink_assert_eq!(
+        sink,
+        left.pages.len(),
+        right.pages.len(),
+        "The page counts are not consistent"
+    );
+    sink_assert_eq!(
+        sink,
+        left.info.title,
+        right.info.title,
+        "The titles are not consistent"
+    );
+    sink_assert_eq!(
+        sink,
+        left.info.author,
+        right.info.author,
+        "The authors are not consistent"
+    );
+    sink_assert_eq!(
+        sink,
+        left.info.description,
+        right.info.description,
+        "The descriptions are not consistent"
+    );
+    sink_assert_eq!(
+        sink,
+        left.info.keywords,
+        right.info.keywords,
+        "The keywords are not consistent"
+    );
 }
 
 fn check_png(
@@ -112,18 +136,42 @@ fn check_png(
 }
 
 fn check_page(index: usize, before: &Page, after: &Page, sink: &mut ErrorSink) {
-    sink.check(before.fill == after.fill, || {
-        format!("The fills of page {index} are not consistent.")
-    });
-    sink.check(before.numbering == after.numbering, || {
-        format!("The numberings of page {index} are not consistent.")
-    });
-    sink.check(before.supplement == after.supplement, || {
-        format!("The supplements of page {index} are not consistent.")
-    });
-    sink.check(before.number == after.number, || {
-        format!("The numbers of page {index} are not consistent.")
-    });
+    sink_assert_eq!(
+        sink,
+        before.fill,
+        after.fill,
+        "The fills of page {index} are not consistent."
+    );
+    sink_assert_eq!(
+        sink,
+        before.numbering,
+        after.numbering,
+        "The numberings of page {index} are not consistent."
+    );
+    sink_assert_eq!(
+        sink,
+        before.supplement,
+        after.supplement,
+        "The supplements of page {index} are not consistent."
+    );
+    sink_assert_eq!(
+        sink,
+        before.number,
+        after.number,
+        "The numbers of page {index} are not consistent."
+    );
+    sink_assert_eq!(
+        sink,
+        before.frame.size(),
+        after.frame.size(),
+        "The frame sizes of page {index} are not consistent."
+    );
+    sink_assert_eq!(
+        sink,
+        before.frame.items().count(),
+        after.frame.items().count(),
+        "The frame item counts of page {index} are not consistent."
+    );
 }
 
 fn print_diagnostics<'d, 'files>(

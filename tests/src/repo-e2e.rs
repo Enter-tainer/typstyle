@@ -133,7 +133,13 @@ fn check_testcase(
         harness.compile_and_compare(fmt_sources.iter(), entry_vpath, true)?;
     };
 
-    harness.err_sink().into()
+    if harness.err_sink().is_ok() {
+        Ok(())
+    } else {
+        // ensure output is colored
+        eprintln!("{}", harness.err_sink());
+        Err(anyhow!(""))
+    }
 }
 
 fn make_formatter(config: Config) -> impl Fn(Source) -> anyhow::Result<String> {
@@ -148,7 +154,10 @@ fn make_formatter(config: Config) -> impl Fn(Source) -> anyhow::Result<String> {
             .format_content(&first_pass)
             .unwrap();
         if first_pass != second_pass {
-            bail!("the formatting does not converge")
+            bail!(
+                "the formatting does not converge:\n{}",
+                pretty_assertions::StrComparison::new(&first_pass, &second_pass)
+            )
         }
         Ok(first_pass)
     }

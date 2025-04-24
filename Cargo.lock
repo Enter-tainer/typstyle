@@ -3731,6 +3731,7 @@ name = "typstyle-consistency"
 version = "0.13.3"
 dependencies = [
  "anyhow",
+ "pretty_assertions",
  "rustc-hash",
  "tinymist-world",
  "typst",

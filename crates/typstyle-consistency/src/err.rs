@@ -11,12 +11,6 @@ impl ErrorSink {
         self.0.push(err.into());
     }
 
-    pub fn check(&mut self, condition: bool, message: impl FnOnce() -> String) {
-        if !condition {
-            self.push(message());
-        }
-    }
-
     pub fn is_ok(&self) -> bool {
         self.0.is_empty()
     }
@@ -57,4 +51,74 @@ impl std::fmt::Display for ErrorSink {
         }
         Ok(())
     }
+}
+
+#[macro_export]
+macro_rules! sink_assert_eq {
+    ($sink: ident, $left: expr, $right: expr $(,)?) => {
+        match (&$left, &$right) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    $sink.push(::std::format!(
+                        "assertion failed: `(left == right)`\
+                        \n\
+                        \n{}\
+                        \n",
+                        pretty_assertions::Comparison::new(left_val, right_val),
+                    ))
+                }
+            }
+        }
+    };
+    ($sink: ident, $left: expr, $right: expr, $($arg:tt)+) => {
+        match (&$left, &$right) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    $sink.push(::std::format!(
+                        "assertion failed: `(left == right)`: {}\
+                        \n\
+                        \n{}\
+                        \n",
+                        ::std::format_args!($($arg)*),
+                        pretty_assertions::Comparison::new(left_val, right_val),
+                    ))
+                }
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! sink_assert_str_eq {
+    ($sink: ident, $left: expr, $right: expr $(,)?) => {
+        match (&$left, &$right) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    $sink.push(::std::format!(
+                        "assertion failed: `(left == right)`\
+                        \n\
+                        \n{}\
+                        \n",
+                        pretty_assertions::StrComparison::new(left_val, right_val),
+                    ))
+                }
+            }
+        }
+    };
+    ($sink: ident, $left: expr, $right: expr, $($arg:tt)+) => {
+        match (&$left, &$right) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    $sink.push(::std::format!(
+                        "assertion failed: `(left == right)`: {}\
+                        \n\
+                        \n{}\
+                        \n",
+                        ::std::format_args!($($arg)*),
+                        pretty_assertions::StrComparison::new(left_val, right_val),
+                    ))
+                }
+            }
+        }
+    };
 }
