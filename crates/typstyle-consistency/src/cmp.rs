@@ -29,29 +29,41 @@ pub fn compare_docs(
     before: &Compiled,
     after: &Compiled,
     require_compile: bool,
-    sink: &mut ErrorSink,
+    err_sink: &mut ErrorSink,
+) -> Result<()> {
+    let mut sub_sink = ErrorSink::new(format!("comparing with `{}`", after.name));
+    compare_docs_impl(before, after, require_compile, &mut sub_sink)?;
+    sub_sink.sink_to(err_sink);
+    Ok(())
+}
+
+fn compare_docs_impl(
+    before: &Compiled,
+    after: &Compiled,
+    require_compile: bool,
+    sub_sink: &mut ErrorSink,
 ) -> Result<()> {
     match (&before.result, &after.result) {
         (Ok(doc_bf), Ok(doc_af)) => {
-            check_doc_meta(doc_bf, doc_af, sink);
-            check_png(doc_bf, doc_af, sink)?;
+            check_doc_meta(doc_bf, doc_af, sub_sink);
+            check_png(doc_bf, doc_af, sub_sink)?;
         }
         (Err(e1), Err(e2)) => {
             if require_compile {
-                sink.push("Both docs failed to compile.".to_string());
+                sub_sink.push("Both docs failed to compile.".to_string());
                 print_diagnostics(before.world, e1.iter())?;
                 return Ok(());
             }
 
             sink_assert_eq!(
-                sink,
+                sub_sink,
                 e1.len(),
                 e2.len(),
                 "The error counts are not consistent"
             );
             for (e1, e2) in e1.iter().zip(e2.iter()) {
                 sink_assert_eq!(
-                    sink,
+                    sub_sink,
                     e1.message,
                     e2.message,
                     "The error messages are not consistent after formatting"
@@ -59,14 +71,15 @@ pub fn compare_docs(
             }
         }
         (Err(e1), _) => {
-            sink.push("Original doc failed to compile.".to_string());
+            sub_sink.push("Original doc failed to compile.".to_string());
             print_diagnostics(before.world, e1.iter())?;
         }
         (_, Err(e2)) => {
-            sink.push("Formatted doc failed to compile.".to_string());
+            sub_sink.push("Formatted doc failed to compile.".to_string());
             print_diagnostics(after.world, e2.iter())?;
         }
     }
+
     Ok(())
 }
 

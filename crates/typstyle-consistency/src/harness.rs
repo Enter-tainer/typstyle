@@ -30,8 +30,6 @@ pub struct FormatterHarness {
     project_root: PathBuf,
     formattable: FxHashSet<FileId>,
     verse: TypstSystemUniverse,
-
-    err_sink: ErrorSink,
 }
 
 impl FormatterHarness {
@@ -49,7 +47,6 @@ impl FormatterHarness {
                 with_embedded_fonts: typst_assets::fonts().map(Cow::Borrowed).collect(),
                 ..Default::default()
             })?,
-            err_sink: ErrorSink::new(),
         })
     }
 
@@ -145,6 +142,7 @@ impl FormatterHarness {
         &'a mut self,
         world: &'a TypstSystemWorld,
         formatter: impl Fn(Source) -> Result<String>,
+        err_sink: &mut ErrorSink,
     ) -> Result<SourceMap> {
         let mut formatted = FxHashMap::default();
 
@@ -156,7 +154,7 @@ impl FormatterHarness {
                     formatted.insert(fid, Source::new(fid, res));
                 }
                 Err(err) => {
-                    self.err_sink.push(format!(
+                    err_sink.push(format!(
                         "failed to format file at `{}`: {}",
                         self.verse.path_for_id(fid)?.as_path().display(),
                         err
@@ -168,12 +166,16 @@ impl FormatterHarness {
         Ok(formatted)
     }
 
-    pub fn compile_and_compare<'b>(
+    pub fn compile_and_compare<'a>(
         &mut self,
-        formatted: impl Iterator<Item = &'b FormattedSources>,
+        formatted: impl Iterator<Item = &'a FormattedSources>,
         entry_path: &Path,
         require_compile: bool,
+        err_sink: &mut ErrorSink,
     ) -> Result<()> {
+        let mut sub_sink =
+            ErrorSink::new(format!("compiling entry point `{}`", entry_path.display()));
+
         let base_world = self.verse.snapshot_with(Some(TaskInputs {
             entry: Some(self.verse.entry_state().select_in_workspace(entry_path)),
             ..Default::default()
@@ -189,29 +191,19 @@ impl FormatterHarness {
                 base: &base_world,
                 formatted: sources.sources.clone(),
             };
-            let fmt_result = compile_world(
-                format!(
-                    "{} - {} - {}",
-                    self.name,
-                    entry_path.display(),
-                    sources.name
-                ),
-                &world,
-            )?;
+            let name = format!(
+                "{} - {} - {}",
+                self.name,
+                entry_path.display(),
+                sources.name
+            );
+            let fmt_result = compile_world(name.clone(), &world)?;
 
-            compare_docs(
-                &base_result,
-                &fmt_result,
-                require_compile,
-                &mut self.err_sink,
-            )?;
+            compare_docs(&base_result, &fmt_result, require_compile, &mut sub_sink)?;
         }
 
+        sub_sink.sink_to(err_sink);
         Ok(())
-    }
-
-    pub fn err_sink(&self) -> &ErrorSink {
-        &self.err_sink
     }
 }
 

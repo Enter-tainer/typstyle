@@ -4,7 +4,7 @@ use anyhow::{anyhow, bail, Context};
 use libtest_mimic::{Failed, Trial};
 use serde::Deserialize;
 use typst_syntax::Source;
-use typstyle_consistency::{FormattedSources, FormatterHarness};
+use typstyle_consistency::{ErrorSink, FormattedSources, FormatterHarness};
 use typstyle_core::{Config, Typstyle};
 
 use crate::common::{fixtures_dir, test_dir};
@@ -109,6 +109,8 @@ fn check_testcase(
         ));
     }
 
+    let mut err_sink = ErrorSink::new(format!("e2e test `{}`", testcase.name));
+
     let mut harness = FormatterHarness::new(testcase.name.clone(), testcase_dir.to_path_buf())?;
     harness.add_all_files(testcase_dir, &testcase.blacklist)?;
     if let Some(examples) = testcase.examples.as_ref() {
@@ -119,25 +121,36 @@ fn check_testcase(
     let base_world = harness.snapshot();
     let mut fmt_sources = vec![];
     for config in named_configs {
+        let mut sub_sink = ErrorSink::new(format!("formatting with {}", config.name));
         fmt_sources.push(FormattedSources {
             name: config.name.to_string(),
-            sources: harness.format(&base_world, make_formatter(config.config.clone()))?,
+            sources: harness.format(
+                &base_world,
+                make_formatter(config.config.clone()),
+                &mut sub_sink,
+            )?,
         });
+        sub_sink.sink_to(&mut err_sink);
     }
 
     if let Some(entrypoint) = testcase.entrypoint.as_ref() {
-        harness.compile_and_compare(fmt_sources.iter(), Path::new(&entrypoint), true)?;
+        harness.compile_and_compare(
+            fmt_sources.iter(),
+            Path::new(&entrypoint),
+            true,
+            &mut err_sink,
+        )?;
     }
     if testcase.examples.is_some() {
         let entry_vpath = Path::new("__examples__.typ");
-        harness.compile_and_compare(fmt_sources.iter(), entry_vpath, true)?;
+        harness.compile_and_compare(fmt_sources.iter(), entry_vpath, true, &mut err_sink)?;
     };
 
-    if harness.err_sink().is_ok() {
+    if err_sink.is_ok() {
         Ok(())
     } else {
         // ensure output is colored
-        eprintln!("{}", harness.err_sink());
+        eprintln!("{}", err_sink);
         Err(anyhow!(""))
     }
 }
