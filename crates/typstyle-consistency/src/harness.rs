@@ -18,17 +18,23 @@ use typst::{
 };
 use walkdir::WalkDir;
 
-use crate::{compare_docs, compile_world, ErrorSink, FormatterWorld, SourceMap};
+use crate::{compare_docs, compile_world, ErrorSink, FormattedWorld, SourceMap};
 
 pub struct FormattedSources {
+    /// The name of the formatter configuration, used for debugging.
     pub name: String,
+    /// Map of file IDs to their formatted sources.
     pub sources: SourceMap,
 }
 
 pub struct FormatterHarness {
+    /// The name of the test case, used for debugging.
     name: String,
+    /// The root directory of the project in the physical filesystem.
     project_root: PathBuf,
+    /// The set of file IDs that refer to formattable sources.
     formattable: FxHashSet<FileId>,
+    /// The universe used for compiling.
     verse: TypstSystemUniverse,
 }
 
@@ -187,7 +193,7 @@ impl FormatterHarness {
         )?;
 
         for sources in formatted {
-            let world = FormatterWorld {
+            let world = FormattedWorld {
                 base: &base_world,
                 formatted: sources.sources.clone(),
             };

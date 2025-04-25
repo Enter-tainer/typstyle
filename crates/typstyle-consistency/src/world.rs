@@ -12,18 +12,19 @@ use typst::{
 
 pub type SourceMap = FxHashMap<FileId, Source>;
 
-pub struct FormatterWorld<'a, F: CompilerFeat> {
+/// A world that contains the formatted sources.
+pub struct FormattedWorld<'a, F: CompilerFeat> {
     pub(crate) base: &'a CompilerWorld<F>,
     pub(crate) formatted: SourceMap,
 }
 
-impl<'a, F: CompilerFeat> FormatterWorld<'a, F> {
+impl<'a, F: CompilerFeat> FormattedWorld<'a, F> {
     pub fn base(&self) -> &'a CompilerWorld<F> {
         self.base
     }
 }
 
-impl<F: CompilerFeat> World for FormatterWorld<'_, F> {
+impl<F: CompilerFeat> World for FormattedWorld<'_, F> {
     fn library(&self) -> &LazyHash<Library> {
         self.base.library()
     }
@@ -57,7 +58,7 @@ impl<F: CompilerFeat> World for FormatterWorld<'_, F> {
     }
 }
 
-impl<F: CompilerFeat> SourceWorld for FormatterWorld<'_, F> {
+impl<F: CompilerFeat> SourceWorld for FormattedWorld<'_, F> {
     fn as_world(&self) -> &dyn World {
         self
     }

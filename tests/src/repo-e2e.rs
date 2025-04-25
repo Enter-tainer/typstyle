@@ -11,15 +11,28 @@ use crate::common::{fixtures_dir, test_dir};
 
 #[derive(Debug, Clone, Deserialize)]
 struct Testcase {
+    /// The name of this test case. Does not require to be unique.
     name: String,
+
+    /// The Git repository URL of this test case, used for `git clone`.
     git: String,
+
+    /// An optional revision to check out.
+    /// Will use the latest commit if not specified.
     #[serde(default)]
     rev: Option<String>,
-    // these files are included as-is and should not be formatted
+
+    /// An optional entrypoint file for compilation, such as a manual.
     #[serde(default)]
     entrypoint: Option<String>,
+
+    /// An optional directory containing example files to compile as a whole.
     #[serde(default)]
     examples: Option<String>,
+
+    /// A set of file or directory names to skip formatting.
+    /// You should include typst sources that are read and directly displayed,
+    /// which will fail the tests if formatted.
     #[serde(default)]
     blacklist: HashSet<String>,
 }
