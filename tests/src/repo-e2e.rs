@@ -162,10 +162,10 @@ fn make_formatter(config: Config) -> impl Fn(Source) -> anyhow::Result<String> {
         }
         let first_pass = Typstyle::new(config.clone())
             .format_source(&source)
-            .unwrap();
+            .context("first pass")?;
         let second_pass = Typstyle::new(config.clone())
             .format_content(&first_pass)
-            .unwrap();
+            .context("second pass")?;
         if first_pass != second_pass {
             bail!(
                 "the formatting does not converge:\n{}",

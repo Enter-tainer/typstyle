@@ -155,7 +155,7 @@ impl FormatterHarness {
                 }
                 Err(err) => {
                     err_sink.push(format!(
-                        "failed to format file at `{}`: {}",
+                        "failed to format file at `{}`: {:#}",
                         self.verse.path_for_id(fid)?.as_path().display(),
                         err
                     ));

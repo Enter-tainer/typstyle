@@ -27,6 +27,7 @@ pretty = "0.12.4"
 rustc-hash = "2.0"
 serde = "1.0"
 smallvec = "1"
+thiserror = "2"
 wasm-bindgen = { version = "0.2" }
 
 # Use in CLI
