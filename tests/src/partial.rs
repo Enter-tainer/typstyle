@@ -42,9 +42,10 @@ pub fn collect_tests() -> Vec<Trial> {
             case.ranges.into_iter().map(move |rng| {
                 let path = path.clone();
                 Trial::test(
-                    format!("{} - partial - {}..{}", case.path, rng.start, rng.end),
+                    format!("{} - {}..{}", case.path, rng.start, rng.end),
                     move || check_snapshot(&path, rng),
                 )
+                .with_kind("partial")
             })
         })
         .collect()

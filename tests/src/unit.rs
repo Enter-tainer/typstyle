@@ -14,23 +14,24 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
         Trial::test(format!("{name} - {width}char"), move || {
             check_snapshot(&path, width)
         })
-        .with_kind("typst")
+        .with_kind("snapshot")
     }
 
     fn make_convergence_test(path: &Path, name: &str, width: usize) -> Trial {
         let path = path.to_path_buf();
-        Trial::test(format!("{name} - convergence - {width}char"), move || {
+        Trial::test(format!("{name} - {width}char"), move || {
             check_convergence(&path, width)
         })
+        .with_kind("convergence")
     }
 
     #[cfg(feature = "consistency")]
     fn make_consistency_test(path: &Path, name: &str, width: usize) -> Trial {
         let path = path.to_path_buf();
-        Trial::test(
-            format!("{name} - output consistency - {width}char"),
-            move || check_output_consistency(&path, width),
-        )
+        Trial::test(format!("{name} - {width}char"), move || {
+            check_output_consistency(&path, width)
+        })
+        .with_kind("consistency")
     }
 
     fn visit_dir(path: &Path, tests: &mut Vec<Trial>) -> Result<(), Box<dyn Error>> {

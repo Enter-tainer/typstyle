@@ -80,9 +80,9 @@ jobs:
 
       - name: Run Unit tests
         continue-on-error: true
-        run: cargo nextest run --workspace -E 'not test(~e2e)' --no-fail-fast
+        run: cargo nextest run --workspace -E '!test([e2e])' --no-fail-fast
       - name: Run E2E tests
-        run: cargo nextest run --workspace -E 'test(~e2e)' --no-fail-fast
+        run: cargo nextest run --workspace -E 'test([e2e])' --no-fail-fast
 
   build:
     needs: [pre_build]
