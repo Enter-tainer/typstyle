@@ -27,6 +27,7 @@ pretty = "0.12.4"
 rustc-hash = "2.0"
 serde = "1.0"
 smallvec = "1"
+thiserror = "2"
 wasm-bindgen = { version = "0.2" }
 
 # Use in CLI
@@ -45,14 +46,14 @@ insta-cmd = "0.6"
 libtest-mimic = "0.8.1"
 pretty_assertions = "1.4.1"
 tempfile = "3"
+toml = "0.8"
 
-tinymist-world = { version = "0.13.2", default-features = false, features = [
+tinymist-world = { version = "0.13.12-rc4", default-features = false, features = [
   "system",
 ] }
 
 typst-assets = { version = "0.13.1", features = ["fonts"] }
 typst-render = "0.13.1"
-typst-pdf = "0.13.1"
 typst = "0.13.1"
 
 # Used in benchmark
@@ -67,8 +68,11 @@ insta.opt-level = 3
 similar.opt-level = 3
 
 [profile.test]
-opt-level = 3
+opt-level = 1
 
 [profile.ci]
 inherits = "release"
 debug = true
+
+[patch.crates-io]
+tinymist-world = { git = "https://github.com/Myriad-Dreamin/tinymist" }
