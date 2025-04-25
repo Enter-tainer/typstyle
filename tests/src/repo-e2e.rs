@@ -55,9 +55,10 @@ pub(super) fn collect_tests() -> Vec<Trial> {
         .testcase
         .into_iter()
         .map(|case| {
-            Trial::test(format!("{} - e2e", case.name.clone()), move || {
+            Trial::test(case.name.clone().to_string(), move || {
                 run_testcase(case.clone()).map_err(|e| Failed::from(e.to_string()))
             })
+            .with_kind("e2e")
         })
         .collect()
 }

@@ -20,6 +20,7 @@ nav:
     - Explanation:
       - Architecture: architecture.md
       - Limitations: limitations.md
+    - Development Guide: dev-guide.md
     - Changelog: changelog.md
 # Theme
 theme:
