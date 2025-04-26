@@ -78,15 +78,22 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let ctx = ctx.with_mode(Mode::CodeCont);
 
-        let fold_style = match self.get_fold_style(ctx, args) {
-            FoldStyle::Always => FoldStyle::Always,
-            _ => FoldStyle::Compact,
-        };
-
         let children = || {
             args.to_untyped()
                 .children()
                 .take_while(|it| it.kind() != SyntaxKind::RightParen)
+        };
+
+        let fold_style = match self.get_fold_style(ctx, args) {
+            FoldStyle::Always => FoldStyle::Always,
+            _ if args.items().last()
+                .is_some_and(|arg|
+                     matches!(arg, Arg::Pos(Expr::Binary(_)))
+                     ||  matches!(arg, Arg::Named(named) if named.expr().to_untyped().kind() == SyntaxKind::Binary)) =>
+            {
+                FoldStyle::Fit
+            }
+            _ => FoldStyle::Compact,
         };
 
         ListStylist::new(self)

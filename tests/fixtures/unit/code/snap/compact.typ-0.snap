@@ -59,6 +59,32 @@ input_file: tests/fixtures/unit/code/compact.typ
         ),
     message: "`base-weight` should be `auto`, `none`, `int` or `str` type.",
   )
+
+  f(
+    111111
+      + 2222222,
+  )
+  f(
+    000,
+    111111
+      + 2222222,
+  )
+  f(
+    { },
+  )
+  f(
+    { },
+  )
+  f(
+    context {
+      1
+    },
+  )
+  f(
+    context {
+      1
+    },
+  )
 }
 
 

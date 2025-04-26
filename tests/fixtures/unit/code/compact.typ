@@ -15,6 +15,24 @@
 
   let base-weight = none
   assert(base-weight in (auto, none) or type(base-weight) in (str, int), message: "`base-weight` should be `auto`, `none`, `int` or `str` type.")
+
+  f(111111 + 2222222)
+  f(000, 111111 + 2222222)
+  f({})
+  f(
+    {
+
+    }
+  )
+  f(
+    context {
+      1
+    }
+  )
+  f(  context {
+      1
+    }
+  )
 }
 
 

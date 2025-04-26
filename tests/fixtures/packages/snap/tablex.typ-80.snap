@@ -89,12 +89,18 @@ input_file: tests/fixtures/packages/tablex.typ
     fit-spans = (x: fit-spans, y: fit-spans)
   }
   if type(fit-spans) == _dict-type {
-    assert(fit-spans.len() > 0, message: "Tablex error:"
-      + error-prefix
-      + " 'fit-spans', if a dictionary, must not be empty.")
-    assert(fit-spans.keys().all(k => k in ("x", "y")), message: "Tablex error:"
-      + error-prefix
-      + " 'fit-spans', if a dictionary, must only have the keys x and y.")
+    assert(
+      fit-spans.len() > 0,
+      message: "Tablex error:"
+        + error-prefix
+        + " 'fit-spans', if a dictionary, must not be empty.",
+    )
+    assert(
+      fit-spans.keys().all(k => k in ("x", "y")),
+      message: "Tablex error:"
+        + error-prefix
+        + " 'fit-spans', if a dictionary, must only have the keys x and y.",
+    )
     assert(
       fit-spans.values().all(v => type(v) == _bool-type),
       message: "Tablex error:"
@@ -107,11 +113,13 @@ input_file: tests/fixtures/packages/tablex.typ
       }
     }
   } else {
-    panic("Tablex error:"
-      + error-prefix
-      + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
-      + str(type(fit-spans))
-      + "'")
+    panic(
+      "Tablex error:"
+        + error-prefix
+        + " Expected 'fit-spans' to be either a boolean or dictionary, found '"
+        + str(type(fit-spans))
+        + "'",
+    )
   }
   fit-spans
 }
@@ -1047,8 +1055,10 @@ input_file: tests/fixtures/packages/tablex.typ
     }
 
     if type(this_x) != _int-type or type(this_y) != _int-type {
-      panic("Error: Cell coordinates must be integers. Invalid pair: "
-        + repr((this_x, this_y)))
+      panic(
+        "Error: Cell coordinates must be integers. Invalid pair: "
+          + repr((this_x, this_y)),
+      )
     }
 
     cell.content = content
@@ -1069,17 +1079,21 @@ input_file: tests/fixtures/packages/tablex.typ
     let max_y = this_y + cell.rowspan - 1
 
     if this_x >= x_limit {
-      panic("Error: Cell at "
-        + repr((this_x, this_y))
-        + " is placed at an inexistent column.")
+      panic(
+        "Error: Cell at "
+          + repr((this_x, this_y))
+          + " is placed at an inexistent column.",
+      )
     }
 
     if max_x >= x_limit {
-      panic("Error: Cell at "
-        + repr((this_x, this_y))
-        + " has a colspan of "
-        + repr(cell.colspan)
-        + ", which would exceed the available columns.")
+      panic(
+        "Error: Cell at "
+          + repr((this_x, this_y))
+          + " has a colspan of "
+          + repr(cell.colspan)
+          + ", which would exceed the available columns.",
+      )
     }
 
     let cell_positions = positions-spanned-by(
@@ -1097,12 +1111,14 @@ input_file: tests/fixtures/packages/tablex.typ
       if currently_there != none {
         let parent_cell = get-parent-cell(currently_there, grid: grid)
 
-        panic("Error: Multiple cells attempted to occupy the cell position at "
-          + repr((px, py))
-          + ": one starting at "
-          + repr((this_x, this_y))
-          + ", and one starting at "
-          + repr((parent_cell.x, parent_cell.y)))
+        panic(
+          "Error: Multiple cells attempted to occupy the cell position at "
+            + repr((px, py))
+            + ": one starting at "
+            + repr((this_x, this_y))
+            + ", and one starting at "
+            + repr((parent_cell.x, parent_cell.y)),
+        )
       }
 
       // initial position => assign it to the cell's x/y
@@ -2893,10 +2909,14 @@ input_file: tests/fixtures/packages/tablex.typ
     }
 
     current_row += 1
-    row_group_add_counter = calc.max(0, row_group_add_counter
-      - 1) // one row added
-    header_rows_count = calc.max(0, header_rows_count
-      - 1) // ensure at least the amount of requested header rows was added
+    row_group_add_counter = calc.max(
+      0,
+      row_group_add_counter - 1,
+    ) // one row added
+    header_rows_count = calc.max(
+      0,
+      header_rows_count - 1,
+    ) // ensure at least the amount of requested header rows was added
 
     // added all pertaining rows to the group
     // now we can draw it
@@ -3131,11 +3151,13 @@ input_file: tests/fixtures/packages/tablex.typ
       }
 
       if cells.len() != original-cells.len() {
-        panic("Tablex error: 'map-rows' returned "
-          + str(cells.len())
-          + " cells, when it should have returned exactly "
-          + str(original-cells.len())
-          + ".")
+        panic(
+          "Tablex error: 'map-rows' returned "
+            + str(cells.len())
+            + " cells, when it should have returned exactly "
+            + str(original-cells.len())
+            + ".",
+        )
       }
 
       for (i, cell) in cells.enumerate() {
@@ -3199,11 +3221,13 @@ input_file: tests/fixtures/packages/tablex.typ
       }
 
       if cells.len() != original-cells.len() {
-        panic("Tablex error: 'map-cols' returned "
-          + str(cells.len())
-          + " cells, when it should have returned exactly "
-          + str(original-cells.len())
-          + ".")
+        panic(
+          "Tablex error: 'map-cols' returned "
+            + str(cells.len())
+            + " cells, when it should have returned exactly "
+            + str(original-cells.len())
+            + ".",
+        )
       }
 
       for (i, cell) in cells.enumerate() {

@@ -60,8 +60,9 @@ input_file: tests/fixtures/packages/tablex.typ
 } else {
   (a, b) => (
     calc.floor(a)
-      - calc.floor(b
-        * calc.floor(a / b))
+      - calc.floor(
+        b * calc.floor(a / b),
+      )
   )
 }
 
@@ -369,8 +370,9 @@ input_file: tests/fixtures/packages/tablex.typ
     }
   }
 
-  let rows(len) = calc.ceil(len
-    / col_len)
+  let rows(len) = calc.ceil(
+    len / col_len,
+  )
 
   while rows(len) < max_explicit_y {
     len += col_len
@@ -475,8 +477,9 @@ input_file: tests/fixtures/packages/tablex.typ
     col_len: col_len,
   )
 
-  let expected_rows = calc.ceil(grid_len
-    / col_len)
+  let expected_rows = calc.ceil(
+    grid_len / col_len,
+  )
 
   // more cells than expected => add rows
   if rows.len() < expected_rows {
@@ -667,8 +670,9 @@ input_file: tests/fixtures/packages/tablex.typ
     let measured-em = (
       calc-sign(em)
         * measure(
-          box(width: calc.abs(em)
-            * 1em),
+          box(
+            width: calc.abs(em) * 1em,
+          ),
           styles,
         ).width
     )
@@ -929,9 +933,11 @@ input_file: tests/fixtures/packages/tablex.typ
       page-size: page-size,
     )
   } else {
-    panic("Cannot convert '"
-      + type(len)
-      + "' to length.")
+    panic(
+      "Cannot convert '"
+        + type(len)
+        + "' to length.",
+    )
   }
 }
 
@@ -991,9 +997,11 @@ input_file: tests/fixtures/packages/tablex.typ
       // for more complex strokes, built through dictionaries
       // => "thickness: 5pt" field
       // note: on typst v0.7.0 or later, can just use 's.thickness'
-      let r = regex("thickness: ("
-        + len-regex
-        + ")")
+      let r = regex(
+        "thickness: ("
+          + len-regex
+          + ")",
+      )
       s = repr(stroke).match(r)
       if s != none {
         s = s.captures.first() // get the first match (the thickness)
@@ -1056,8 +1064,9 @@ input_file: tests/fixtures/packages/tablex.typ
   initial_height,
 ) = (
   tablex-dict-type: "grid",
-  items: init-array(width
-    * initial_height),
+  items: init-array(
+    width * initial_height,
+  ),
   width: width,
 )
 
@@ -1105,8 +1114,9 @@ input_file: tests/fixtures/packages/tablex.typ
 
 // How many rows are in this grid? (Given its width)
 #let grid-count-rows(grid) = (
-  calc.floor(grid.items.len()
-    / grid.width)
+  calc.floor(
+    grid.items.len() / grid.width,
+  )
 )
 
 // Converts a grid array index to (x, y)
@@ -1855,8 +1865,10 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   columns: none,
 ) = {
-  let cell-cols = range(cell.x, cell.x
-    + cell.colspan)
+  let cell-cols = range(
+    cell.x,
+    cell.x + cell.colspan,
+  )
   let last_auto_col = none
 
   for (i, col) in columns.enumerate() {
@@ -1877,8 +1889,10 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   rows: none,
 ) = {
-  let cell-rows = range(cell.y, cell.y
-    + cell.rowspan)
+  let cell-rows = range(
+    cell.y,
+    cell.y + cell.rowspan,
+  )
   let last_auto_row = none
 
   for (i, row) in rows.enumerate() {
@@ -1901,8 +1915,10 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   columns: none,
 ) = {
-  let cell-cols = range(cell.x, cell.x
-    + cell.colspan)
+  let cell-cols = range(
+    cell.x,
+    cell.x + cell.colspan,
+  )
   let size = 0pt
 
   for (i, col) in columns.enumerate() {
@@ -1924,8 +1940,10 @@ input_file: tests/fixtures/packages/tablex.typ
   cell,
   rows: none,
 ) = {
-  let cell-rows = range(cell.y, cell.y
-    + cell.rowspan)
+  let cell-rows = range(
+    cell.y,
+    cell.y + cell.rowspan,
+  )
   let size = 0pt
 
   for (i, row) in rows.enumerate() {
@@ -2627,8 +2645,10 @@ input_file: tests/fixtures/packages/tablex.typ
   if (
     pre-gutter or end == columns.len()
   ) {
-    sum = calc.max(0pt, sum
-      - col-gutter) // remove extra gutter from last col
+    sum = calc.max(
+      0pt,
+      sum - col-gutter,
+    ) // remove extra gutter from last col
   }
 
   sum
@@ -2662,8 +2682,10 @@ input_file: tests/fixtures/packages/tablex.typ
   // if the end is after all rows, there is
   // no gutter at the end.
   if pre-gutter or end == rows.len() {
-    sum = calc.max(0pt, sum
-      - row-gutter) // remove extra gutter from last row
+    sum = calc.max(
+      0pt,
+      sum - row-gutter,
+    ) // remove extra gutter from last row
   }
 
   sum
@@ -2955,9 +2977,11 @@ input_file: tests/fixtures/packages/tablex.typ
   ) {
     stroke
   } else {
-    panic("Invalid stroke '"
-      + repr(stroke)
-      + "'.")
+    panic(
+      "Invalid stroke '"
+        + repr(stroke)
+        + "'.",
+    )
   }
 }
 
@@ -3558,8 +3582,10 @@ input_file: tests/fixtures/packages/tablex.typ
           let rightmost_x = none
 
           let row_heights = array-sum(
-            rows.slice(start-y, end-y
-              + 1),
+            rows.slice(
+              start-y,
+              end-y + 1,
+            ),
             zero: 0pt,
           )
 

@@ -68,8 +68,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   if debug >= 2 and node.radius != 0pt {
     // node bounding rectangle
-    cetz.draw.rect(..rect-at(node.pos.xyz, node.size), stroke: DEBUG_COLOR
-      + .1pt)
+    cetz.draw.rect(
+      ..rect-at(node.pos.xyz, node.size),
+      stroke: DEBUG_COLOR + .1pt,
+    )
 
     // node anchoring outline (what edges snap to)
     cetz.draw.group({

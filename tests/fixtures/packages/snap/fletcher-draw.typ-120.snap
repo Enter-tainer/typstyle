@@ -164,8 +164,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
-  decor = decor.with(start: if has-mark-at(0) { 0.1 } else { ε } * 100%, stop: if has-mark-at(1) { 0.9 } else { 1 - ε }
-    * 100%)
+  decor = decor.with(
+    start: if has-mark-at(0) { 0.1 } else { ε } * 100%,
+    stop: if has-mark-at(1) { 0.9 } else { 1 - ε } * 100%,
+  )
 
   decor(path)
 }

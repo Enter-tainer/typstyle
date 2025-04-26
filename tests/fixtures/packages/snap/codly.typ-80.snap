@@ -903,9 +903,11 @@ input_file: tests/fixtures/packages/codly.typ
 
           if "label" in x {
             if block-label == none {
-              panic("codly: label "
-                + str(x.label)
-                + " is only allowed in a figure block")
+              panic(
+                "codly: label "
+                  + str(x.label)
+                  + " is only allowed in a figure block",
+              )
             }
           }
 
@@ -1249,11 +1251,12 @@ input_file: tests/fixtures/packages/codly.typ
     if numbers-format != none {
       items.push(numbers-format(line.number + offset))
     } else {
-      l = [#raw.line(line.number + offset, line.count, line.text, box(
-          height: height,
-          width: 0pt,
-        )
-          + line.body)<codly-highlighted>]
+      l = [#raw.line(
+          line.number + offset,
+          line.count,
+          line.text,
+          box(height: height, width: 0pt) + line.body,
+        )<codly-highlighted>]
     }
 
     if (

@@ -30,8 +30,9 @@ input_file: tests/fixtures/packages/cuti.typ
   )
   set text(..params) if params != ()
   context {
-    set text(stroke: 0.02857em
-      + text.fill)
+    set text(
+      stroke: 0.02857em + text.fill,
+    )
     s
   }
 }

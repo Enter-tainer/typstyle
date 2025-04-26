@@ -4,8 +4,10 @@ input_file: tests/fixtures/unit/chain/binary-0.typ
 ---
 #{
   let f(x) = x
-  f("Unsupported content type "
-    + type(content)
-    + "! "
-    + "Provide your own `draw-node` implementation.")
+  f(
+    "Unsupported content type "
+      + type(content)
+      + "! "
+      + "Provide your own `draw-node` implementation.",
+  )
 }

@@ -1596,8 +1596,10 @@ input_file: tests/fixtures/packages/touying/utils.typ
 ) = {
   let contents = args.pos()
   let kwargs = args.named()
-  let subslides = range(start, start
-    + contents.len())
+  let subslides = range(
+    start,
+    start + contents.len(),
+  )
   if repeat-last {
     subslides.last() = (
       beginning: subslides.last(),

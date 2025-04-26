@@ -469,8 +469,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   // round corners
   let calculate-rounded-corner(i) = {
     let pt = verts.at(i)
-    let Δθ = wrap-angle-180(θs.at(i)
-      - θs.at(i - 1))
+    let Δθ = wrap-angle-180(
+      θs.at(i) - θs.at(i - 1),
+    )
     let dir = if Δθ > 0deg { +1 } else {
       -1
     } // +1 if ccw, -1 if cw
@@ -518,8 +519,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         start: θs.at(i - 1) - 90deg,
         delta: wrap-angle-180(Δθ),
         line-shift: radius
-          * calc.tan(Δθ
-            / 2), // distance from vertex to beginning of arc
+          * calc.tan(
+            Δθ / 2,
+          ), // distance from vertex to beginning of arc
       )
     }
   }
@@ -851,13 +853,19 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     node.defocus,
   )
   (
-    calc.max(0pt, node.size.at(0)
-      / 2
-      * (1 - 1 / μ))
+    calc.max(
+      0pt,
+      node.size.at(0)
+        / 2
+        * (1 - 1 / μ),
+    )
       * calc.cos(θ),
-    calc.max(0pt, node.size.at(1)
-      / 2
-      * (1 - μ / 1))
+    calc.max(
+      0pt,
+      node.size.at(1)
+        / 2
+        * (1 - μ / 1),
+    )
       * calc.sin(θ),
   )
 }
@@ -1138,10 +1146,14 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if grid.flip.xy {
     (u-len, v-len) = (v-len, u-len)
   }
-  let v-range = range(v-min, v-min
-    + v-len)
-  let u-range = range(u-min, u-min
-    + u-len)
+  let v-range = range(
+    v-min,
+    v-min + v-len,
+  )
+  let u-range = range(
+    u-min,
+    u-min + u-len,
+  )
 
   if grid.flip.x {
     u-range = u-range.rev()
@@ -1413,8 +1425,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   if debug >= 1 {
-    draw-debug-axes(grid, debug: debug
-      >= 2)
+    draw-debug-axes(
+      grid,
+      debug: debug >= 2,
+    )
   }
 }
 

@@ -1067,15 +1067,18 @@ input_file: tests/fixtures/packages/touying/core.typ
     block: eqt.block,
     numbering: eqt.numbering,
     supplement: eqt.supplement,
-    eval("$" + result.sum(default: "") + "$", scope: eqt.scope
-      + (
-        cover: (..args) => {
-          let cover = eqt.scope.at("cover", default: cover)
-          if args.pos().len() != 0 {
-            cover(args.pos().first())
-          }
-        },
-      )),
+    eval(
+      "$" + result.sum(default: "") + "$",
+      scope: eqt.scope
+        + (
+          cover: (..args) => {
+            let cover = eqt.scope.at("cover", default: cover)
+            if args.pos().len() != 0 {
+              cover(args.pos().first())
+            }
+          },
+        ),
+    ),
   )
   if (
     eqt-metadata.has("label")
@@ -1910,8 +1913,10 @@ input_file: tests/fixtures/packages/touying/core.typ
   if config != (:) {
     self = utils.merge-dicts(self, config)
   }
-  assert(bodies.named().len() == 0, message: "unexpected named arguments:"
-    + repr(bodies.named().keys()))
+  assert(
+    bodies.named().len() == 0,
+    message: "unexpected named arguments:" + repr(bodies.named().keys()),
+  )
   let setting-with-auto-offset-for-heading(body) = {
     set heading(offset: self.at("slide-level", default: 0)) if self.at(
       "auto-offset-for-heading",
@@ -2088,8 +2093,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     )
     header = page-preamble(self) + header
     set page(..(self.page + page-extra-args + (header: header, footer: footer)))
-    setting-with-auto-offset-for-heading(subslide-preamble(self)
-      + composer-with-side-by-side(..conts))
+    setting-with-auto-offset-for-heading(
+      subslide-preamble(self) + composer-with-side-by-side(..conts),
+    )
   } else {
     // render all the subslides
     let result = ()
@@ -2112,8 +2118,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         set page(..(
           self.page + page-extra-args + (header: new-header, footer: footer)
         ))
-        setting-with-auto-offset-for-heading(subslide-preamble(self)
-          + composer-with-side-by-side(..conts))
+        setting-with-auto-offset-for-heading(
+          subslide-preamble(self) + composer-with-side-by-side(..conts),
+        )
       })
     }
     // return the result

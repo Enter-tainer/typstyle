@@ -361,8 +361,10 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
           name: curry.captures.first(),
           rest: state
             .unfinished-param
-            .slice(processed-chars
-              + curry.end),
+            .slice(
+              processed-chars
+                + curry.end,
+            ),
         )
       }
     }

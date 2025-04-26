@@ -275,8 +275,10 @@ input_file: tests/fixtures/packages/codly.typ
   }
 
   if pos.len() > 0 {
-    panic("codly: unknown arguments: "
-      + pos.keys().join(", "))
+    panic(
+      "codly: unknown arguments: "
+        + pos.keys().join(", "),
+    )
   }
 }
 
@@ -518,9 +520,11 @@ input_file: tests/fixtures/packages/codly.typ
 
     // Build a label if the code block has one.
     if block-label != none {
-      let lab = label(str(block-label)
-        + ":"
-        + str(it.number))
+      let lab = label(
+        str(block-label)
+          + ":"
+          + str(it.number),
+      )
 
       return [#l#lab]
     } else {
@@ -817,9 +821,11 @@ input_file: tests/fixtures/packages/codly.typ
 
   // Build a label if the code block has one.
   if block-label != none {
-    let lab = label(str(block-label)
-      + ":"
-      + str(it.number))
+    let lab = label(
+      str(block-label)
+        + ":"
+        + str(it.number),
+    )
 
     return [#l#lab]
   } else {
@@ -1298,8 +1304,9 @@ input_file: tests/fixtures/packages/codly.typ
   let lr-width = if (
     annotations.len() > 0
   ) {
-    measure(math.lr("}", size: 5em)
-      + num).width
+    measure(
+      math.lr("}", size: 5em) + num,
+    ).width
   } else {
     0pt
   }
