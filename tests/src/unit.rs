@@ -14,23 +14,24 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
         Trial::test(format!("{name} - {width}char"), move || {
             check_snapshot(&path, width)
         })
-        .with_kind("typst")
+        .with_kind("snapshot")
     }
 
     fn make_convergence_test(path: &Path, name: &str, width: usize) -> Trial {
         let path = path.to_path_buf();
-        Trial::test(format!("{name} - convergence - {width}char"), move || {
+        Trial::test(format!("{name} - {width}char"), move || {
             check_convergence(&path, width)
         })
+        .with_kind("convergence")
     }
 
     #[cfg(feature = "consistency")]
     fn make_consistency_test(path: &Path, name: &str, width: usize) -> Trial {
         let path = path.to_path_buf();
-        Trial::test(
-            format!("{name} - output consistency - {width}char"),
-            move || check_output_consistency(&path, width),
-        )
+        Trial::test(format!("{name} - {width}char"), move || {
+            check_output_consistency(&path, width)
+        })
+        .with_kind("consistency")
     }
 
     fn visit_dir(path: &Path, tests: &mut Vec<Trial>) -> Result<(), Box<dyn Error>> {
@@ -142,7 +143,9 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
 
 #[cfg(feature = "consistency")]
 fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
-    use typstyle_consistency::{cmp::compare_docs, universe::make_universe};
+    use std::path::PathBuf;
+
+    use typstyle_consistency::{ErrorSink, FormattedSources, FormatterHarness};
 
     let (source, mut cfg) = read_source_with_config(path)?;
     if source.root().erroneous() {
@@ -150,14 +153,28 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     }
 
     cfg.max_width = width;
-    let formatted_src = Typstyle::new(cfg).format_source(&source)?;
 
-    compare_docs(
-        "",
-        make_universe(source.text())?,
-        make_universe(&formatted_src)?,
-        false,
-    )?;
+    let mut err_sink = ErrorSink::new(format!("consistency {}", path.display()));
 
-    Ok(())
+    let mut harness = FormatterHarness::new("".to_string(), PathBuf::new())?;
+    let main_vpath = Path::new("__main__");
+    harness.add_source_file(main_vpath, source.text())?;
+
+    let base_world = harness.snapshot();
+    let fmt_sources = FormattedSources {
+        name: "formatted".to_string(),
+        sources: harness.format(
+            &base_world,
+            |source| Ok(Typstyle::new(cfg.clone()).format_source(&source).unwrap()),
+            &mut err_sink,
+        )?,
+    };
+
+    harness.compile_and_compare([fmt_sources].iter(), main_vpath, false, &mut err_sink)?;
+
+    if err_sink.is_ok() {
+        Ok(())
+    } else {
+        Err(err_sink.into())
+    }
 }

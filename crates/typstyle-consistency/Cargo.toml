@@ -1,5 +1,6 @@
 [package]
 name = "typstyle-consistency"
+description = "A framework for testing typst formatters that ensures consistent output."
 version.workspace = true
 rust-version.workspace = true
 authors.workspace = true
@@ -16,9 +17,9 @@ doc = false
 anyhow.workspace = true
 walkdir.workspace = true
 pretty_assertions.workspace = true
+rustc-hash.workspace = true
 
 tinymist-world.workspace = true
 typst-assets.workspace = true
 typst-render.workspace = true
-typst-pdf.workspace = true
 typst.workspace = true
