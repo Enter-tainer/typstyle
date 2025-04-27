@@ -23,13 +23,13 @@ pub struct CliArguments {
     #[arg(long, default_value_t = false, global = true)]
     pub check: bool,
 
-    #[command(flatten)]
+    #[command(flatten, next_help_heading = "Format Configuration")]
     pub style: StyleArgs,
 
-    #[command(flatten)]
+    #[command(flatten, next_help_heading = "Debug Options")]
     pub debug: DebugArgs,
 
-    #[command(flatten)]
+    #[command(flatten, next_help_heading = "Log Levels")]
     pub log_level: LogLevelArgs,
 }
 
@@ -66,65 +66,40 @@ pub enum Command {
 #[derive(Args)]
 pub struct StyleArgs {
     /// The column width of the output
-    #[arg(
-        short,
-        long,
-        default_value_t = 80,
-        global = true,
-        help_heading = "Format Configuration"
-    )]
+    #[arg(short, long, default_value_t = 80, global = true)]
     pub column: usize,
 
     /// Spaces per level of indentation in the output
-    #[arg(
-        short,
-        long,
-        default_value_t = 2,
-        global = true,
-        help_heading = "Format Configuration"
-    )]
+    #[arg(short, long, default_value_t = 2, global = true)]
     pub tab_width: usize,
 
     /// Whether to reorder import items.
-    #[arg(
-        long,
-        default_value_t = false,
-        global = true,
-        help_heading = "Format Configuration"
-    )]
+    #[arg(long, default_value_t = false, global = true)]
     pub reorder_import_items: bool,
+
+    /// Whether to wrap texts in the markup.
+    #[arg(long, default_value_t = false, global = true)]
+    pub wrap_text: bool,
 }
 
 #[derive(Args)]
 pub struct DebugArgs {
     /// Print the AST of the input file
-    #[arg(short, long, default_value_t = false, help_heading = "Debug Options")]
+    #[arg(short, long, default_value_t = false)]
     pub ast: bool,
 
     /// Print the pretty document
-    #[arg(short, long, default_value_t = false, help_heading = "Debug Options")]
+    #[arg(short, long, default_value_t = false)]
     pub pretty_doc: bool,
 }
 
 #[derive(Args)]
 pub struct LogLevelArgs {
     /// Enable verbose logging.
-    #[arg(
-        short,
-        long,
-        global = true,
-        group = "verbosity",
-        help_heading = "Log Levels"
-    )]
+    #[arg(short, long, global = true, group = "verbosity")]
     pub verbose: bool,
     /// Print diagnostics, but nothing else.
-    #[arg(
-        short,
-        long,
-        global = true,
-        group = "verbosity",
-        help_heading = "Log Levels"
-    )]
+    #[arg(short, long, global = true, group = "verbosity")]
     pub quiet: bool,
 }
 

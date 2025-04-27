@@ -2,9 +2,10 @@ use std::{env, error::Error, fs, path::Path};
 
 use insta::internals::Content;
 use libtest_mimic::{Failed, Trial};
+use typst_syntax::Source;
 use typstyle_core::Typstyle;
 
-use crate::common::{fixtures_dir, read_source_with_config};
+use crate::common::{fixtures_dir, read_source_with_options};
 
 /// Creates one test for each `.typ` file in the current directory or
 /// sub-directories of the current directory.
@@ -94,7 +95,8 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
 }
 
 fn check_snapshot(path: &Path, width: usize) -> Result<(), Failed> {
-    let (source, mut cfg) = read_source_with_config(path)?;
+    let (source, opt) = read_source_with_options(path)?;
+    let mut cfg = opt.config;
 
     let mut settings = insta::Settings::clone_current();
     settings.set_prepend_module_to_snapshot(false);
@@ -125,19 +127,38 @@ fn check_snapshot(path: &Path, width: usize) -> Result<(), Failed> {
 }
 
 fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
-    let (source, mut cfg) = read_source_with_config(path)?;
+    let (source, opt) = read_source_with_options(path)?;
+    let mut cfg = opt.config;
     if source.root().erroneous() {
         return Ok(());
     }
 
     cfg.max_width = width;
-    let first_pass = Typstyle::new(cfg.clone()).format_source(&source)?;
-    let second_pass = Typstyle::new(cfg).format_content(&first_pass)?;
-    pretty_assertions::assert_str_eq!(
-        first_pass,
-        second_pass,
-        "first pass and second pass are not the same!"
-    );
+    let mut first_pass = Typstyle::new(cfg.clone()).format_source(&source)?;
+    for i in 0..=opt.relax_convergence {
+        let new_source = Source::detached(&first_pass);
+        if new_source.root().erroneous() {
+            panic!(
+                "the source becomes erroneous after {} iterations:\n{:#?}",
+                i + 1,
+                new_source.root().errors()
+            )
+        }
+        let second_pass = Typstyle::new(cfg.clone()).format_source(&new_source)?;
+        if first_pass == second_pass {
+            return Ok(());
+        }
+        if i == opt.relax_convergence {
+            pretty_assertions::assert_str_eq!(
+                first_pass,
+                second_pass,
+                "formatting does not converge in {} iterations!",
+                opt.relax_convergence
+            );
+        }
+        first_pass = second_pass;
+    }
+
     Ok(())
 }
 
@@ -147,7 +168,8 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
 
     use typstyle_consistency::{ErrorSink, FormattedSources, FormatterHarness};
 
-    let (source, mut cfg) = read_source_with_config(path)?;
+    let (source, opt) = read_source_with_options(path)?;
+    let mut cfg = opt.config;
     if source.root().erroneous() {
         return Ok(());
     }

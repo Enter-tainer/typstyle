@@ -1,0 +1,186 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/reflow.typ
+---
+/// typstyle: wrap_text
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vel justo a massa consequat fermentum et nec tellus.
+
+Vestibulum pulvinar neque a pharetra tincidunt. Aenean commodo neque non ipsum accumsan, vitae vehicula sapien mattis.
+
+
+Proin ornare arcu a ligula vulputate, in interdum leo tincidunt. Sed nec massa rhoncus nibh luctus congue. Ut in velit
+non enim viverra feugiat in et risus. Morbi pharetra eros ac justo porta imperdiet. Mauris venenatis ipsum et luctus
+vehicula.
+
+---
+
+Here is some normal text followed by an equation: $x^2 + y^2 = z^2$ and more text.
+
+This line contains *strong text* mixed with `raw code` and regular words.
+
+Let's add a complex equation:
+$ integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2 $
+surrounded by text.
+
+Testing _multiple_ `inline` $"elements"$ in a single line with various _spacing_ patterns.
+
+Some text with equations $E = m c^2$ and $F = m a$ inline with _emphasized words_ and `code snippets`.
+
+Here's a paragraph with line breaks and multiple spaces to test reflow behavior with $"complex" = (a + b)^2$ equations.
+
+Technical terms like ```ts Array<T>``` mixed with *important notes* and $sum_(i=1)^n x_i$.
+
+// Testing comments and special characters Let's include #hashtags and @mentions with $theta$ and `const`.
+
+- Simple list item with *bold text* and $alpha$ equation
+- Multi-line list item with `code` and continuation with extra spaces
+- List with equation: $f(x) = sin(x)$ and _emphasis_
+
+/ Term: Definition with *strong* and $beta$ mixed
+/ Complex Term:
+  Multi-line definition with `code block` and $integral$ equation
+/ Technical: Uses ```ts Array<T>``` with *important* notes about $theta$
+
++ First enumerated item with `inline code` and $x^2$ equation
++ Second item with *bold* and multiple spaces
++ Mixed content: _emphasis_, $pi$, and `const`
+
+- Nested items Just nested items:
+  - Sub-item with $alpha$ and *bold*
+  - Another with `code` and line breaks
+  - Mixed _formatting_ and $beta$ here
+
+- List item with #strong[bold text inside function] and regular text
+- Item with nested functions #emph[emphasized with #strike[strikethrough]] and continuation
+
+/ Term with functions: Using #text(blue)[colored text] with $alpha$ formula
+/ Complex function:
+  #table(
+    columns: (auto, auto),
+    [*Header 1*], [*Header 2*],
+    [Content], [More #emph[styled] content],
+  )
+  Text after function call.
+
++ Enumerated with #link("https://example.com")[link text] and `code`
++ Item using #text(size: 1.2em)[larger text] with spacing
++ Mixed #strong[formatted] and #emph[emphasized] content with $E = m c^2$
+
+- #block[
+    Multi-line block content with nested #strong[formatting] and extra spaces
+  ]
+
+/ Functions with parameters: Definition using #text(
+    weight: "bold",
+    size: 12pt,
+  )[Formatted text with spaces] and $"equations"$
+
+= Heading with *mixed* `formatting` and $"math"$ elements
+Text between headings.
+== Sub-heading with #text(blue)[colored] and #text(style: "italic")[styled] text
+
+=== Another heading
+Multi-paragraph list item:
+- This is a list item with multiple paragraphs.
+
+  Second paragraph in the same list item with irregular spacing.
+
+  Third paragraph with *strong*, _emphasized_, and `code` elements.
+
+- List item with a footnote#footnote[This is a footnote with *formatting* and $"equations"$ that should correctly
+    reflow] and continuation.
+
+/ Term with long content:
+  This is a very long description that will likely need to wrap when formatted properly. It contains *strong text*,
+  `inline code`, and $"math" = "elements"$ with various spacing patterns to test how reflow handles complex term
+  definitions that extend beyond the normal line length.
+
+#figure(
+  ```python
+  def example():
+      # This is a code block with syntax highlighting
+      return "test" + " " + "string"
+  ```,
+  caption: [Figure with *formatted* caption and $"math"$ elements],
+)
+
+Multi-paragraph markup with complex elements:
+- List item with #text(fill: rgb(10%, 20%, 30%))[
+    Multi-line content inside a function with nested #strong[formatting] and equations $sum_(i=1)^n x_i^2$
+  ]
+
+- Item with #grid(
+    columns: (1fr, 1fr),
+    [Cell with *formatting*], [Another cell with $"math"$ and `code`],
+  )
+
+/ Term with display math:
+  $ sum_(i=0)^n i = frac(n(n+1), 2) $
+  And explanation with more text following
+Text with special Unicode: "Em—dash" and "en–dash" with *formatting* mixed in áéíóú äëïöü characters.
+
+This paragraph contains special sequences that shouldn't be interpreted as markup: A mathematical expression like 3 +
+4 = 7 should remain intact. Symbol sequences like a / b or x - y should not be treated as list markers.
+
+This is a paragraph with // an inline comment that shouldn't break
+the flow of text or create a new line. The formatter should handle
+// multiple comments spread across
+several lines while maintaining proper *formatting* and `code elements`.
+
+Here's text with /* block-style comments */ mixed with *strong text* and $"math" "equations"$ to ensure /* multi-line
+                                                                                                        block comments */
+don't interfere with text flow or // inline elements.
+
+Testing comments near special characters: a + b // comment after plus
+x - y /* comment after minus */ term / definition // comment after slash
+heading = title // comment after equals
+
+A complex case mixing everything: *bold text* // comment after strong
+`code block` /* block comment */ with $"math"$ // final comment
+and #text(red)[colored text] // with formatting
+
+---
+
+URLs in definitions:
+/ Docs: Find them at https://docs.typst.app/
+/ Resources: https://typst.app/ and forums at https://community.typst.app/
+
+---
+
+#{
+  // Title row.
+  align(center)[
+    #block(text(weight: 700, 1.75em)[])
+    #v(4em, weak: true)
+    v#version #h(1.2cm) #datetime.today()
+    #block(link("link"))
+    #v(1.5em, weak: true)
+  ]
+}
+
+---
+
+This might be yet a bit cleaner.
+#highlight[Actually, it's muuuuuch worse in performance. Moreover the first version can be optimized to compute many
+  marks at once.
+]
+
+---
+
+// Mixed language paragraphs with URLs and formatting
+这是一个中文段落，包含链接 https://typst.app/ 和*强调文本*。 続いて`コード要素`と https://docs.typst.app/
+を含む日本語の段落です。
+
+Mixed CJK and Latin: Visit 访问 https://example.com/文档 for documentation. 한글과 URL: https://한글.kr/ contains Korean
+text mixed with $alpha + beta$.
+
+Multiple scripts: أهلاً بك في *타이프스트* เอกสาร with `inline code`.
+
+RTL with URLs: متن فارسی با #link("https://example.com/페이지")[لینک] و עברית טקסט.
+
+Thai text flowing: นี่คือข้อความภาษาไทยที่มี https://example.th/ อยู่ด้วย และ *การจัดรูปแบบ* ผสมกัน.
+
+// Complex mixed-script paragraph
+这是一个混合了 English, русский, และ ไทย 的段落，包含 https://site.com/页面 链接和 *formatted text* `code` $e = m c^2$
+等多种元素。テスト。
