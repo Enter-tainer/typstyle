@@ -178,3 +178,22 @@ This might be yet a bit cleaner.
 #highlight[Actually, it's muuuuuch worse in
 performance. Moreover the first version can be optimized to compute many marks
 at once. ]
+
+---
+
+// Mixed language paragraphs with URLs and formatting
+这是一个中文段落，包含链接 https://typst.app/ 和*强调文本*。
+続いて`コード要素`と https://docs.typst.app/ を含む日本語の段落です。
+
+Mixed CJK and Latin: Visit 访问 https://example.com/文档 for documentation.
+한글과 URL: https://한글.kr/ contains Korean text mixed with $alpha + beta$.
+
+Multiple scripts: أهلاً بك في *타이프스트* เอกสาร with `inline code`.
+
+RTL with URLs: متن فارسی با #link("https://example.com/페이지")[لینک] و עברית טקסט.
+
+Thai text flowing: นี่คือข้อความภาษาไทยที่มี https://example.th/ อยู่ด้วย และ *การจัดรูปแบบ* ผสมกัน.
+
+// Complex mixed-script paragraph
+这是一个混合了 English, русский, และ ไทย 的段落，包含 https://site.com/页面 链接和
+*formatted text* `code` $e = m c^2$ 等多种元素。テスト。
