@@ -9,19 +9,13 @@ mod utils;
 pub use attr::AttrStore;
 pub use config::Config;
 use pretty::{ArenaDoc, PrettyPrinter};
+use thiserror::Error;
 use typst_syntax::Source;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
+    #[error("The document has syntax errors")]
     SyntaxError,
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::SyntaxError => write!(f, "The document has syntax errors"),
-        }
-    }
 }
 
 /// Entry point for pretty printing a typst document.

@@ -366,10 +366,8 @@ checksum = "7e36cc9d416881d2e24f9a963be5fb1cd90966419ac844274161d10488b3e825"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
- "js-sys",
  "num-traits",
  "serde",
- "wasm-bindgen",
  "windows-targets",
 ]
 
@@ -736,9 +734,9 @@ checksum = "5c297a1c74b71ae29df00c3e22dd9534821d60eb9af5a0192823fa2acea70c2a"
 
 [[package]]
 name = "deranged"
-version = "0.3.11"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b42b6fa04a440b495c8b04d0e71b707c585f83cb9cb28cf8cd0d976c315e31b4"
+checksum = "9c9e6a11ca8224451684bc0d7d5a7adbf8f2fd6887261a1cfc3c0432f9d4068e"
 dependencies = [
  "powerfmt",
  "serde",
@@ -1091,8 +1089,20 @@ dependencies = [
  "cfg-if",
  "js-sys",
  "libc",
- "wasi",
+ "wasi 0.11.0+wasi-snapshot-preview1",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "getrandom"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73fea8450eea4bac3940448fb7ae50d91f034f941199fcd9d909a5a07aa455f0"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "r-efi",
+ "wasi 0.14.2+wasi-0.2.4",
 ]
 
 [[package]]
@@ -1715,6 +1725,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
 
 [[package]]
+name = "linux-raw-sys"
+version = "0.9.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cd945864f07fe9f5371a27ad7b52a172b4b499999f1d97574c9fa68373937e12"
+
+[[package]]
 name = "lipsum"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1810,7 +1826,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2886843bf800fba2e3377cff24abf6379b4c4d5c6681eaf9ea5b0d15090450bd"
 dependencies = [
  "libc",
- "wasi",
+ "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.52.0",
 ]
 
@@ -1968,16 +1984,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "17359afc20d7ab31fdb42bb844c8b3bb1dabd7dcf7e68428492da7f16966fcef"
 
 [[package]]
-name = "pdf-writer"
-version = "0.12.1"
+name = "pathdiff"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5df03c7d216de06f93f398ef06f1385a60f2c597bb96f8195c8d98e08a26b1d5"
-dependencies = [
- "bitflags 2.8.0",
- "itoa",
- "memchr",
- "ryu",
-]
+checksum = "df94ce210e5bc13cb6651479fa48d14f601d9858cfe0467f43ae157023b938d3"
 
 [[package]]
 name = "percent-encoding"
@@ -2256,7 +2266,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2fe5ef3495d7d2e377ff17b1a8ce2ee2ec2a18cde8b6ad6619d65d0701c135d"
 dependencies = [
  "bytes",
- "getrandom",
+ "getrandom 0.2.15",
  "rand",
  "ring",
  "rustc-hash",
@@ -2293,6 +2303,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "r-efi"
+version = "5.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
+
+[[package]]
 name = "radium"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2325,7 +2341,7 @@ version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
- "getrandom",
+ "getrandom 0.2.15",
 ]
 
 [[package]]
@@ -2363,7 +2379,7 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd6f9d3d47bdd2ad6945c5015a226ec6155d0bcdfd8f7cd29f86b71f8de99d2b"
 dependencies = [
- "getrandom",
+ "getrandom 0.2.15",
  "libredox",
  "thiserror 2.0.11",
 ]
@@ -2476,7 +2492,7 @@ checksum = "da5349ae27d3887ca812fb375b45a4fbb36d8d12d2df394968cd86e35683fe73"
 dependencies = [
  "cc",
  "cfg-if",
- "getrandom",
+ "getrandom 0.2.15",
  "libc",
  "untrusted",
  "windows-sys 0.52.0",
@@ -2537,7 +2553,20 @@ dependencies = [
  "bitflags 2.8.0",
  "errno",
  "libc",
- "linux-raw-sys",
+ "linux-raw-sys 0.4.15",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "rustix"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d97817398dd4bb2e6da002002db259209759911da105da92bec29ccb12cf58bf"
+dependencies = [
+ "bitflags 2.8.0",
+ "errno",
+ "libc",
+ "linux-raw-sys 0.9.4",
  "windows-sys 0.59.0",
 ]
 
@@ -2896,36 +2925,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "subsetter"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74f98178f34057d4d4de93d68104007c6dea4dfac930204a69ab4622daefa648"
-
-[[package]]
 name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
-
-[[package]]
-name = "svg2pdf"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5014c9dadcf318fb7ef8c16438e95abcc9de1ae24d60d5bccc64c55100c50364"
-dependencies = [
- "fontdb",
- "image",
- "log",
- "miniz_oxide",
- "once_cell",
- "pdf-writer",
- "resvg",
- "siphasher",
- "subsetter",
- "tiny-skia",
- "ttf-parser",
- "usvg",
-]
 
 [[package]]
 name = "svgtypes"
@@ -3009,15 +3012,14 @@ dependencies = [
 
 [[package]]
 name = "tempfile"
-version = "3.15.0"
+version = "3.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9a8a559c81686f576e8cd0290cd2a24a2a9ad80c98b3478856500fcbd7acd704"
+checksum = "7437ac7763b9b123ccf33c338a5cc1bac6f69b45a136c19bdd8a65e3916435bf"
 dependencies = [
- "cfg-if",
  "fastrand",
- "getrandom",
+ "getrandom 0.3.2",
  "once_cell",
- "rustix",
+ "rustix 1.0.5",
  "windows-sys 0.59.0",
 ]
 
@@ -3078,9 +3080,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.37"
+version = "0.3.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35e7868883861bd0e56d9ac6efcaaca0d6d5d82a2a7ec8209ff492c07cf37b21"
+checksum = "8a7619e19bc266e0f9c5e6686659d394bc57973859340060a69221e57dbc0c40"
 dependencies = [
  "deranged",
  "itoa",
@@ -3095,15 +3097,15 @@ dependencies = [
 
 [[package]]
 name = "time-core"
-version = "0.1.2"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef927ca75afb808a4d64dd374f00a2adf8d0fcff8e7b184af886c3c87ec4a3f3"
+checksum = "c9e9a38711f559d9e3ce1cdb06dd7c5b8ea546bc90052da6d06bb76da74bb07c"
 
 [[package]]
 name = "time-macros"
-version = "0.2.19"
+version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2834e6017e3e5e4b9834939793b282bc03b37a3336245fa820e35e233e2a85de"
+checksum = "3526739392ec93fd8b359c8e98514cb3e8e021beb4e5f597b00a0221f8ed8a49"
 dependencies = [
  "num-conv",
  "time-core",
@@ -3136,24 +3138,32 @@ dependencies = [
 ]
 
 [[package]]
-name = "tinymist-analysis"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5511468e3608fcf33a3025e49b4831b9a2d77199a25369c240752c107a6b39e9"
+name = "tinymist-package"
+version = "0.13.12-rc4"
+source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
 dependencies = [
+ "base64",
+ "comemo",
+ "dirs",
  "ecow",
- "lsp-types",
+ "flate2",
+ "log",
+ "parking_lot",
+ "rayon",
+ "reqwest",
  "serde",
- "strum",
+ "serde_json",
+ "tar",
+ "tinymist-std",
  "toml",
  "typst",
+ "walkdir",
 ]
 
 [[package]]
 name = "tinymist-std"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "332622538133c0a0c8af113dc6bd075edaea2e01f4ab3630c4b681ff8ff7ae0c"
+version = "0.13.12-rc4"
+source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
 dependencies = [
  "anyhow",
  "base64",
@@ -3168,6 +3178,7 @@ dependencies = [
  "lsp-types",
  "parking_lot",
  "path-clean",
+ "pathdiff",
  "rustc-hash",
  "same-file",
  "serde",
@@ -3176,18 +3187,16 @@ dependencies = [
  "serde_with",
  "siphasher",
  "tempfile",
- "tinymist-analysis",
+ "time",
  "typst",
  "typst-shim",
- "web-time",
  "windows-sys 0.59.0",
 ]
 
 [[package]]
 name = "tinymist-vfs"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2748bb8152e5d871f445947aa2d1e9206137bd97b0ee692cd5304951e8e9e4ca"
+version = "0.13.12-rc4"
+source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
 dependencies = [
  "comemo",
  "ecow",
@@ -3202,9 +3211,8 @@ dependencies = [
 
 [[package]]
 name = "tinymist-world"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d4e1498ca946aa335499bc1e8a60ee5f0fd9e26a79c35707d2a2fbc4024f1a6"
+version = "0.13.12-rc4"
+source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
 dependencies = [
  "anyhow",
  "chrono",
@@ -3217,7 +3225,9 @@ dependencies = [
  "fontdb",
  "hex",
  "log",
+ "lsp-types",
  "parking_lot",
+ "rayon",
  "reqwest",
  "rpds",
  "serde",
@@ -3226,8 +3236,10 @@ dependencies = [
  "sha2",
  "strum",
  "tar",
+ "tinymist-package",
  "tinymist-std",
  "tinymist-vfs",
+ "ttf-parser",
  "typst",
  "typst-assets",
 ]
@@ -3584,34 +3596,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "typst-pdf"
-version = "0.13.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a78718a94c28b5ed5e9ee9826fa995004a81abbcc1c9d0e88a7e87656cbec5a4"
-dependencies = [
- "arrayvec 0.7.6",
- "base64",
- "bytemuck",
- "comemo",
- "ecow",
- "image",
- "indexmap 2.7.1",
- "miniz_oxide",
- "pdf-writer",
- "serde",
- "subsetter",
- "svg2pdf",
- "ttf-parser",
- "typst-assets",
- "typst-library",
- "typst-macros",
- "typst-syntax",
- "typst-timing",
- "typst-utils",
- "xmp-writer",
-]
-
-[[package]]
 name = "typst-realize"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3649,9 +3633,8 @@ dependencies = [
 
 [[package]]
 name = "typst-shim"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5013a49a1abdb5f6261554a95913631de643ac3417c7334bfe38809d8c211da"
+version = "0.13.12-rc4"
+source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
 dependencies = [
  "cfg-if",
  "comemo",
@@ -3749,10 +3732,10 @@ version = "0.13.3"
 dependencies = [
  "anyhow",
  "pretty_assertions",
+ "rustc-hash",
  "tinymist-world",
  "typst",
  "typst-assets",
- "typst-pdf",
  "typst-render",
  "walkdir",
 ]
@@ -3769,6 +3752,7 @@ dependencies = [
  "rustc-hash",
  "serde",
  "smallvec",
+ "thiserror 2.0.11",
  "typst-syntax",
  "wasm-bindgen",
 ]
@@ -3781,6 +3765,8 @@ dependencies = [
  "insta",
  "libtest-mimic",
  "pretty_assertions",
+ "serde",
+ "toml",
  "typst-syntax",
  "typstyle-consistency",
  "typstyle-core",
@@ -4032,6 +4018,15 @@ name = "wasi"
 version = "0.11.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
+
+[[package]]
+name = "wasi"
+version = "0.14.2+wasi-0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9683f9a5a998d873c0d21fcbe3c083009670149a8fab228644b8bd36b2c48cb3"
+dependencies = [
+ "wit-bindgen-rt",
+]
 
 [[package]]
 name = "wasm-bindgen"
@@ -4333,6 +4328,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "wit-bindgen-rt"
+version = "0.39.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f42320e61fe2cfd34354ecb597f86f413484a798ba44a8ca1165c58d42da6c1"
+dependencies = [
+ "bitflags 2.8.0",
+]
+
+[[package]]
 name = "write16"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4360,8 +4364,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e105d177a3871454f754b33bb0ee637ecaaac997446375fd3e5d43a2ed00c909"
 dependencies = [
  "libc",
- "linux-raw-sys",
- "rustix",
+ "linux-raw-sys 0.4.15",
+ "rustix 0.38.44",
 ]
 
 [[package]]
@@ -4375,12 +4379,6 @@ name = "xmlwriter"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec7a2a501ed189703dba8b08142f057e887dfc4b2cc4db2d343ac6376ba3e0b9"
-
-[[package]]
-name = "xmp-writer"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7eb5954c9ca6dcc869e98d3e42760ed9dab08f3e70212b31d7ab8ae7f3b7a487"
 
 [[package]]
 name = "yaml-rust"
