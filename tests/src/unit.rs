@@ -179,12 +179,12 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     let mut err_sink = ErrorSink::new(format!("consistency {}", path.display()));
 
     let mut harness = FormatterHarness::new("".to_string(), PathBuf::new())?;
-    let main_vpath = Path::new("__main__");
+    let main_vpath = path.strip_prefix(fixtures_dir())?;
     harness.add_source_file(main_vpath, source.text())?;
 
     let base_world = harness.snapshot();
     let fmt_sources = FormattedSources {
-        name: "formatted".to_string(),
+        name: format!("{}char", width),
         sources: harness.format(
             &base_world,
             |source| Ok(Typstyle::new(cfg.clone()).format_source(&source).unwrap()),
@@ -197,6 +197,8 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     if err_sink.is_ok() {
         Ok(())
     } else {
-        Err(err_sink.into())
+        // ensure output is colored
+        eprintln!("{}", err_sink);
+        Err(Failed::without_message())
     }
 }
