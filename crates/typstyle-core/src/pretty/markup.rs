@@ -316,10 +316,14 @@ impl<'a> PrettyPrinter<'a> {
             }
             if breaks == 1
                 && !nodes.last().is_some_and(|last| {
-                    last.kind() == SyntaxKind::LineComment
-                        || is_block_elem(last)
-                        || is_block_equation(last)
+                    last.kind() == SyntaxKind::LineComment || is_block_elem(last)
                 })
+                && !{
+                    let len = nodes.len();
+                    len > 0 && is_block_elem(nodes[0])
+                        || len == 2 && nodes[0].kind() == SyntaxKind::Hash
+                        || len == 1 && nodes[0].kind() != SyntaxKind::Text
+                }
                 && !repr.lines.get(i + 1).is_some_and(|next_line| {
                     let next_nodes = &next_line.nodes;
                     let len = next_nodes.len();

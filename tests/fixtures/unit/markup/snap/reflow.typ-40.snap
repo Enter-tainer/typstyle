@@ -99,6 +99,7 @@ $sum_(i=1)^n x_i$.
     [Content],
     [More #emph[styled] content],
   )
+  Text after function call.
 
 + Enumerated with
   #link("https://example.com")[link
@@ -222,3 +223,15 @@ text* // comment after strong
 $"math"$ // final comment
 and #text(red)[colored text]
 // with formatting
+
+#{
+  // Title row.
+  align(center)[
+    #block(text(weight: 700, 1.75em)[])
+    #v(4em, weak: true)
+    v#version #h(1.2cm)
+    #datetime.today()
+    #block(link("link"))
+    #v(1.5em, weak: true)
+  ]
+}

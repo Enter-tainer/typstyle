@@ -70,6 +70,7 @@ $sum_(i=1)^n x_i$.
     [*Header 1*], [*Header 2*],
     [Content], [More #emph[styled] content],
   )
+  Text after function call.
 
 + Enumerated with #link("https://example.com")[link text] and `code`
 + Item using #text(size: 1.2em)[larger text] with spacing
@@ -152,3 +153,14 @@ heading = title // comment after equals
 A complex case mixing everything: *bold text* // comment after strong
 `code block` /* block comment */ with $"math"$ // final comment
 and #text(red)[colored text] // with formatting
+
+#{
+  // Title row.
+  align(center)[
+    #block(text(weight: 700, 1.75em)[])
+    #v(4em, weak: true)
+    v#version #h(1.2cm) #datetime.today()
+    #block(link("link"))
+    #v(1.5em, weak: true)
+  ]
+}
