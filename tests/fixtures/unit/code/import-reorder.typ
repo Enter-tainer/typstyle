@@ -1,4 +1,4 @@
-/// typstyle: reorder-import-items
+/// typstyle: reorder_import_items
 
 // Single import with mixed styles in random order
 #import "module.typ": xyz, func as renamed, h.i.j, a.b.c, widget as tool, m.n, z.y.x, beta, p.q as custom, alpha, x.y as short, gamma, j.k.l as util

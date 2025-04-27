@@ -187,22 +187,19 @@ impl FormatterHarness {
             ..Default::default()
         }));
 
-        let base_result = compile_world(
-            format!("{} - {} - original", self.name, entry_path.display()),
-            &base_world,
-        )?;
+        let name = if self.name.is_empty() {
+            entry_path.display().to_string()
+        } else {
+            format!("{} - {}", self.name, entry_path.display())
+        };
+        let base_result = compile_world(format!("{} - original", name), &base_world)?;
 
         for sources in formatted {
             let world = FormattedWorld {
                 base: &base_world,
                 formatted: sources.sources.clone(),
             };
-            let name = format!(
-                "{} - {} - {}",
-                self.name,
-                entry_path.display(),
-                sources.name
-            );
+            let name = format!("{} - {}", name, sources.name);
             let fmt_result = compile_world(name.clone(), &world)?;
 
             compare_docs(&base_result, &fmt_result, require_compile, &mut sub_sink)?;

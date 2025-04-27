@@ -18,8 +18,16 @@ enum MarkupScope {
     ContentBlock,
     /// Strong or Emph.
     Strong,
-    /// ListItem, EnumItem, TermItem, Heading. Spaces without linebreaks can be stripped.
+    /// ListItem, EnumItem, desc of TermItem. Spaces without linebreaks can be stripped.
     Item,
+    /// Heading, term of TermItem. Like `Item`, but linebreaks are not allowed.
+    InlineItem,
+}
+
+impl MarkupScope {
+    fn can_trim(&self) -> bool {
+        matches!(self, Self::Item | Self::InlineItem)
+    }
 }
 
 impl<'a> PrettyPrinter<'a> {
@@ -86,7 +94,7 @@ impl<'a> PrettyPrinter<'a> {
             if child.kind() == SyntaxKind::HeadingMarker {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             } else if let Some(markup) = child.cast() {
-                FlowItem::spaced(self.convert_markup_impl(ctx, markup, MarkupScope::Item))
+                FlowItem::spaced(self.convert_markup_impl(ctx, markup, MarkupScope::InlineItem))
             } else {
                 FlowItem::none()
             }
@@ -114,7 +122,40 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         term_item: TermItem<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_list_item_like(ctx, term_item.to_untyped())
+        let node = term_item.to_untyped();
+        let mut seen_term = false;
+        self.convert_flow_like(ctx, node, |ctx, child| match child.kind() {
+            SyntaxKind::TermMarker => FlowItem::spaced(self.arena.text(child.text().as_str())),
+            SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(child.text().as_str())),
+            SyntaxKind::Space if child.text().has_linebreak() => {
+                FlowItem::tight(self.arena.hardline())
+            }
+            SyntaxKind::Parbreak => FlowItem::tight(
+                self.arena
+                    .hardline()
+                    .repeat_n(child.text().count_linebreaks()),
+            ),
+            SyntaxKind::Markup => {
+                let res = if child.children().next().is_some() {
+                    // empty markup is ignored here
+                    FlowItem::spaced(self.convert_markup_impl(
+                        ctx,
+                        child.cast().expect("markup"),
+                        if !seen_term {
+                            MarkupScope::InlineItem
+                        } else {
+                            MarkupScope::Item
+                        },
+                    ))
+                } else {
+                    FlowItem::none()
+                };
+                seen_term = true;
+                res
+            }
+            _ => FlowItem::none(),
+        })
+        .nest(self.config.tab_spaces as isize)
     }
 
     fn convert_list_item_like(&'a self, ctx: Context, item: &'a SyntaxNode) -> ArenaDoc<'a> {
@@ -122,7 +163,6 @@ impl<'a> PrettyPrinter<'a> {
             SyntaxKind::ListMarker | SyntaxKind::EnumMarker | SyntaxKind::TermMarker => {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             }
-            SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(child.text().as_str())),
             SyntaxKind::Space if child.text().has_linebreak() => {
                 FlowItem::tight(self.arena.hardline())
             }
@@ -159,15 +199,60 @@ impl<'a> PrettyPrinter<'a> {
         }
 
         let repr = collect_markup_repr(markup);
+        let doc = if self.config.wrap_text && scope != MarkupScope::InlineItem {
+            self.convert_markup_body_reflow(ctx, &repr)
+        } else {
+            self.convert_markup_body(ctx, &repr)
+        };
 
+        // Add line or space (if any) to both sides.
+        // Only turn space into, not the other way around.
+        let prefer_tight =
+            !self.config.wrap_text && !self.attr_store.is_multiline(markup.to_untyped());
+        let is_symmetric = repr.start_bound != Boundary::Nil && repr.end_bound != Boundary::Nil;
+        let get_delim = |bound: Boundary| {
+            if scope == MarkupScope::Document || scope.can_trim() {
+                // should not add extra lines to the document
+                return if bound == Boundary::Break {
+                    self.arena.hardline()
+                } else {
+                    self.arena.nil()
+                };
+            }
+            match bound {
+                Boundary::Nil => self.arena.nil(),
+                Boundary::NilOrBreak => {
+                    if scope.can_trim() || !is_symmetric && prefer_tight || ctx.break_suppressed {
+                        self.arena.nil()
+                    } else {
+                        self.arena.line_()
+                    }
+                }
+                Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
+                    if is_symmetric && !ctx.break_suppressed || !prefer_tight {
+                        self.arena.line()
+                    } else if scope.can_trim() {
+                        // the space can be safely eaten
+                        self.arena.nil()
+                    } else {
+                        self.arena.space()
+                    }
+                }
+                Boundary::Break | Boundary::WeakBreak => self.arena.hardline(),
+            }
+        };
+        doc.enclose(get_delim(repr.start_bound), get_delim(repr.end_bound))
+    }
+
+    fn convert_markup_body(&'a self, ctx: Context, repr: &MarkupRepr<'a>) -> ArenaDoc<'a> {
         let mut doc = self.arena.nil();
-        for MarkupLine {
-            nodes,
+        for &MarkupLine {
+            ref nodes,
             breaks,
             mixed_text,
-        } in repr.lines
+        } in repr.lines.iter()
         {
-            for node in nodes {
+            for node in nodes.iter() {
                 doc += if node.kind() == SyntaxKind::Space {
                     self.arena.space()
                 } else if let Some(text) = node.cast::<Text>() {
@@ -190,46 +275,65 @@ impl<'a> PrettyPrinter<'a> {
                 doc += self.arena.hardline().repeat_n(breaks);
             }
         }
+        doc
+    }
 
-        // Add line or space (if any) to both sides.
-        // Only turn space into, not the other way around.
-        let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
-        let is_symmetric = repr.start_bound != Boundary::Nil && repr.end_bound != Boundary::Nil;
-        let get_delim = |bound: Boundary| {
-            if scope == MarkupScope::Document || scope == MarkupScope::Item {
-                // should not add extra lines to the document
-                return if bound == Boundary::Break {
-                    self.arena.hardline()
-                } else {
-                    self.arena.nil()
-                };
-            }
-            match bound {
-                Boundary::Nil => self.arena.nil(),
-                Boundary::NilOrBreak => {
-                    if scope == MarkupScope::Item
-                        || !is_symmetric && !has_line_break
-                        || ctx.break_suppressed
+    fn convert_markup_body_reflow(&'a self, ctx: Context, repr: &MarkupRepr<'a>) -> ArenaDoc<'a> {
+        fn can_turn_exclusive(node: &&SyntaxNode) -> bool {
+            is_block_equation(node)
+        }
+
+        fn is_line_exclusive(line: &MarkupLine) -> bool {
+            let nodes = &line.nodes;
+            let len = nodes.len();
+            len > 0 && is_block_elem(nodes[0])
+                || len == 2 && nodes[0].kind() == SyntaxKind::Hash
+                || len == 1 && nodes[0].kind() != SyntaxKind::Text
+        }
+
+        let mut doc = self.arena.nil();
+        for (i, line) in repr.lines.iter().enumerate() {
+            let &MarkupLine {
+                ref nodes, breaks, ..
+            } = line;
+            for (j, node) in nodes.iter().enumerate() {
+                doc += if node.kind() == SyntaxKind::Space {
+                    if nodes.get(j + 1).is_some_and(can_turn_exclusive)
+                        || j > 0 && nodes.get(j - 1).is_some_and(can_turn_exclusive)
                     {
-                        self.arena.nil()
-                    } else {
-                        self.arena.line_()
-                    }
-                }
-                Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
-                    if is_symmetric && !ctx.break_suppressed || has_line_break {
-                        self.arena.line()
-                    } else if scope == MarkupScope::Item {
-                        // the space can be safely eaten
-                        self.arena.nil()
+                        self.arena.hardline()
+                    } else if !nodes
+                        .get(j + 1)
+                        .is_some_and(|peek| matches!(peek.text().as_str(), "=" | "+" | "-" | "/"))
+                    {
+                        self.arena.softline()
                     } else {
                         self.arena.space()
                     }
-                }
-                Boundary::Break | Boundary::WeakBreak => self.arena.hardline(),
+                } else if let Some(text) = node.cast::<Text>() {
+                    self.convert_text_wrapped(text)
+                } else if let Some(expr) = node.cast::<Expr>() {
+                    self.convert_expr(ctx, expr)
+                } else if is_comment_node(node) {
+                    self.convert_comment(ctx, node)
+                } else {
+                    // can be Hash, Semicolon, Shebang
+                    self.convert_trivia_untyped(node)
+                };
             }
-        };
-        doc.enclose(get_delim(repr.start_bound), get_delim(repr.end_bound))
+            if breaks == 1
+                && !nodes.last().is_some_and(|last| {
+                    last.kind() == SyntaxKind::LineComment || is_block_elem(last)
+                })
+                && !is_line_exclusive(line)
+                && !repr.lines.get(i + 1).is_some_and(is_line_exclusive)
+            {
+                doc += self.arena.softline();
+            } else if breaks > 0 {
+                doc += self.arena.hardline().repeat_n(breaks);
+            }
+        }
+        doc
     }
 }
 
@@ -379,9 +483,14 @@ fn collect_markup_repr(markup: Markup<'_>) -> MarkupRepr {
     repr
 }
 
-fn is_block_elem(it: &'_ SyntaxNode) -> bool {
+fn is_block_elem(it: &SyntaxNode) -> bool {
     matches!(
         it.kind(),
-        SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
+        SyntaxKind::Heading | SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
     )
+}
+
+fn is_block_equation(it: &SyntaxNode) -> bool {
+    it.cast::<Equation>()
+        .is_some_and(|equation| equation.block())
 }

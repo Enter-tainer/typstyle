@@ -9,6 +9,11 @@ use typstyle_core::{Config, Typstyle};
 
 use crate::common::{fixtures_dir, test_dir};
 
+#[derive(Deserialize)]
+struct TestConfig {
+    testcase: Vec<Testcase>,
+}
+
 #[derive(Debug, Clone, Deserialize)]
 struct Testcase {
     /// The name of this test case. Does not require to be unique.
@@ -43,20 +48,17 @@ struct NamedConfig {
 }
 
 pub(super) fn collect_tests() -> Vec<Trial> {
-    #[derive(Deserialize)]
-    struct Config {
-        testcase: Vec<Testcase>,
-    }
-    let config = toml::from_str::<Config>(
+    let config = toml::from_str::<TestConfig>(
         &fs::read_to_string(fixtures_dir().join("e2e-repos.toml")).unwrap(),
     )
     .unwrap();
+
     config
         .testcase
         .into_iter()
         .map(|case| {
             Trial::test(case.name.clone().to_string(), move || {
-                run_testcase(case.clone()).map_err(|e| Failed::from(e.to_string()))
+                run_testcase(case).map_err(|e| Failed::from(e.to_string()))
             })
             .with_kind("e2e")
         })
@@ -71,13 +73,23 @@ fn run_testcase(testcase: Testcase) -> anyhow::Result<()> {
 
     clone_testcase_repo(&testcase, &testcase_dir)?;
 
-    let fmt_configs = &[NamedConfig {
-        name: "default",
-        config: Config {
-            reorder_import_items: true,
-            ..Default::default()
+    let fmt_configs = &[
+        NamedConfig {
+            name: "default",
+            config: Config {
+                reorder_import_items: true,
+                ..Default::default()
+            },
         },
-    }];
+        NamedConfig {
+            name: "reflow",
+            config: Config {
+                reorder_import_items: true,
+                wrap_text: true,
+                ..Default::default()
+            },
+        },
+    ];
     check_testcase(&testcase, &testcase_dir, fmt_configs)?;
 
     let _ = fs::remove_dir_all(testcase_dir);

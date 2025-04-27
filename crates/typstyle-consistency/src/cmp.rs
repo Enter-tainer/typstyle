@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use anyhow::Result;
 use tinymist_world::SourceWorld;
 use typst::{
@@ -46,7 +48,7 @@ fn compare_docs_impl(
     match (&before.result, &after.result) {
         (Ok(doc_bf), Ok(doc_af)) => {
             check_doc_meta(doc_bf, doc_af, sub_sink);
-            check_png(doc_bf, doc_af, sub_sink)?;
+            check_png(doc_bf, doc_af, &before.name, &after.name, sub_sink)?;
         }
         (Err(e1), Err(e2)) => {
             if require_compile {
@@ -119,6 +121,8 @@ fn check_doc_meta(left: &PagedDocument, right: &PagedDocument, sink: &mut ErrorS
 fn check_png(
     before: &PagedDocument,
     after: &PagedDocument,
+    before_name: &str,
+    after_name: &str,
     sink: &mut ErrorSink,
 ) -> anyhow::Result<()> {
     let render_png = |page: &Page, number: usize| {
@@ -134,6 +138,11 @@ fn check_png(
         )
     };
 
+    let save_diff = std::env::var("TYPSTYLE_SAVE_DIFF").ok().map(PathBuf::from);
+    fn fix_name(name: &str) -> String {
+        name.replace(['/', '\\'], "__")
+    }
+
     for (i, (page_bf, page_af)) in before.pages.iter().zip(after.pages.iter()).enumerate() {
         check_page(i, page_bf, page_af, sink);
 
@@ -142,7 +151,18 @@ fn check_png(
         if png_bf == png_af {
             continue;
         }
-        sink.push(format!("The output are not consistent for page {}.", i));
+
+        // If the environment variable "TYPSTYLE_SAVE_DIFF" is set, save the differing PNGs.
+        if let Some(save_path) = save_diff.as_ref() {
+            png_bf.save_png(save_path.join(format!("{}_{}.png", fix_name(before_name), i)))?;
+            png_af.save_png(save_path.join(format!("{}_{}.png", fix_name(after_name), i)))?;
+            sink.push(format!(
+                "The output are not consistent for page {}.\nSaved diff PNGs: `{}` and `{}`",
+                i, before_name, after_name
+            ));
+        } else {
+            sink.push(format!("The output are not consistent for page {}.", i));
+        }
     }
 
     Ok(())

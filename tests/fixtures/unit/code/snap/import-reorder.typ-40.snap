@@ -2,7 +2,7 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/import-reorder.typ
 ---
-/// typstyle: reorder-import-items
+/// typstyle: reorder_import_items
 
 // Single import with mixed styles in random order
 #import "module.typ": (
