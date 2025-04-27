@@ -675,6 +675,23 @@ and
   text]
 // with formatting
 
+---
+
+URLs
+in
+definitions:
+/ Docs: Find
+  them
+  at
+  https://docs.typst.app/
+/ Resources: https://typst.app/
+  and
+  forums
+  at
+  https://community.typst.app/
+
+---
+
 #{
   // Title row.
   align(center)[
@@ -700,3 +717,33 @@ and
     )
   ]
 }
+
+---
+
+This
+might
+be
+yet
+a
+bit
+cleaner.
+#highlight[Actually,
+  it's
+  muuuuuch
+  worse
+  in
+  performance.
+  Moreover
+  the
+  first
+  version
+  can
+  be
+  optimized
+  to
+  compute
+  many
+  marks
+  at
+  once.
+]

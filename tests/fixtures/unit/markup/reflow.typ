@@ -152,6 +152,15 @@ A complex case mixing everything:
 `code block` /* block comment */ with $"math"$ // final comment
 and #text(red)[colored text] // with formatting
 
+---
+
+URLs in definitions:
+/ Docs: Find them at https://docs.typst.app/
+/ Resources: https://typst.app/ and
+  forums at https://community.typst.app/
+
+---
+
 #{
   // Title row.
   align(center)[
@@ -162,3 +171,10 @@ and #text(red)[colored text] // with formatting
     #v(1.5em, weak: true)
   ]
 }
+
+---
+
+This might be yet a bit cleaner.
+#highlight[Actually, it's muuuuuch worse in
+performance. Moreover the first version can be optimized to compute many marks
+at once. ]

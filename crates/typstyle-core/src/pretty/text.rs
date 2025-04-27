@@ -30,5 +30,11 @@ impl<'a> PrettyPrinter<'a> {
 }
 
 fn wrap_text<'a>(arena: &'a Arena<'a>, text: &'a str) -> ArenaDoc<'a> {
-    arena.intersperse(text.split_whitespace(), arena.softline())
+    arena.intersperse(text.split_ascii_whitespace(), arena.softline())
+        + if text.ends_with(' ') {
+            // special case when a link follows the text
+            arena.softline()
+        } else {
+            arena.nil()
+        }
 }

@@ -207,7 +207,8 @@ impl<'a> PrettyPrinter<'a> {
 
         // Add line or space (if any) to both sides.
         // Only turn space into, not the other way around.
-        let has_line_break = self.attr_store.is_multiline(markup.to_untyped());
+        let prefer_tight =
+            !self.config.wrap_text && !self.attr_store.is_multiline(markup.to_untyped());
         let is_symmetric = repr.start_bound != Boundary::Nil && repr.end_bound != Boundary::Nil;
         let get_delim = |bound: Boundary| {
             if scope == MarkupScope::Document || scope.can_trim() {
@@ -221,15 +222,14 @@ impl<'a> PrettyPrinter<'a> {
             match bound {
                 Boundary::Nil => self.arena.nil(),
                 Boundary::NilOrBreak => {
-                    if scope.can_trim() || !is_symmetric && !has_line_break || ctx.break_suppressed
-                    {
+                    if scope.can_trim() || !is_symmetric && prefer_tight || ctx.break_suppressed {
                         self.arena.nil()
                     } else {
                         self.arena.line_()
                     }
                 }
                 Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
-                    if is_symmetric && !ctx.break_suppressed || has_line_break {
+                    if is_symmetric && !ctx.break_suppressed || !prefer_tight {
                         self.arena.line()
                     } else if scope.can_trim() {
                         // the space can be safely eaten
