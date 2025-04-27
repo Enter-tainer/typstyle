@@ -199,68 +199,11 @@ impl<'a> PrettyPrinter<'a> {
         }
 
         let repr = collect_markup_repr(markup);
-        let can_wrap_text = self.config.wrap_text && scope != MarkupScope::InlineItem;
-
-        let mut doc = self.arena.nil();
-        for (
-            i,
-            &MarkupLine {
-                ref nodes,
-                breaks,
-                mixed_text,
-            },
-        ) in repr.lines.iter().enumerate()
-        {
-            for (j, node) in nodes.iter().enumerate() {
-                doc += if node.kind() == SyntaxKind::Space {
-                    if can_wrap_text
-                        && !nodes.get(j + 1).is_some_and(|peek| {
-                            matches!(peek.text().as_str(), "=" | "+" | "-" | "/")
-                        })
-                    {
-                        self.arena.softline()
-                    } else {
-                        self.arena.space()
-                    }
-                } else if let Some(text) = node.cast::<Text>() {
-                    if can_wrap_text {
-                        self.convert_text_wrapped(text)
-                    } else {
-                        self.convert_text(text)
-                    }
-                } else if let Some(expr) = node.cast::<Expr>() {
-                    let ctx = if mixed_text && !can_wrap_text {
-                        ctx.suppress_breaks()
-                    } else {
-                        ctx
-                    };
-                    self.convert_expr(ctx, expr)
-                } else if is_comment_node(node) {
-                    self.convert_comment(ctx, node)
-                } else {
-                    // can be Hash, Semicolon, Shebang
-                    self.convert_trivia_untyped(node)
-                };
-            }
-            if breaks == 1
-                && can_wrap_text
-                && !nodes.last().is_some_and(|last| {
-                    last.kind() == SyntaxKind::LineComment || is_block_elem(last)
-                })
-                && !repr.lines.get(i + 1).is_some_and(|next_line| {
-                    let next_nodes = &next_line.nodes;
-                    next_nodes
-                        .first()
-                        .is_some_and(|next_first| is_block_elem(next_first))
-                        || next_nodes.len() == 2 && next_line.nodes[0].kind() == SyntaxKind::Hash
-                        || next_nodes.len() == 1 && next_nodes[0].kind() != SyntaxKind::Text
-                })
-            {
-                doc += self.arena.softline();
-            } else if breaks > 0 {
-                doc += self.arena.hardline().repeat_n(breaks);
-            }
-        }
+        let doc = if self.config.wrap_text && scope != MarkupScope::InlineItem {
+            self.convert_markup_body_reflow(ctx, &repr)
+        } else {
+            self.convert_markup_body(ctx, &repr)
+        };
 
         // Add line or space (if any) to both sides.
         // Only turn space into, not the other way around.
@@ -299,6 +242,90 @@ impl<'a> PrettyPrinter<'a> {
             }
         };
         doc.enclose(get_delim(repr.start_bound), get_delim(repr.end_bound))
+    }
+
+    fn convert_markup_body(&'a self, ctx: Context, repr: &MarkupRepr<'a>) -> ArenaDoc<'a> {
+        let mut doc = self.arena.nil();
+        for &MarkupLine {
+            ref nodes,
+            breaks,
+            mixed_text,
+        } in repr.lines.iter()
+        {
+            for node in nodes.iter() {
+                doc += if node.kind() == SyntaxKind::Space {
+                    self.arena.space()
+                } else if let Some(text) = node.cast::<Text>() {
+                    self.convert_text(text)
+                } else if let Some(expr) = node.cast::<Expr>() {
+                    let ctx = if mixed_text {
+                        ctx.suppress_breaks()
+                    } else {
+                        ctx
+                    };
+                    self.convert_expr(ctx, expr)
+                } else if is_comment_node(node) {
+                    self.convert_comment(ctx, node)
+                } else {
+                    // can be Hash, Semicolon, Shebang
+                    self.convert_trivia_untyped(node)
+                };
+            }
+            if breaks > 0 {
+                doc += self.arena.hardline().repeat_n(breaks);
+            }
+        }
+        doc
+    }
+
+    fn convert_markup_body_reflow(&'a self, ctx: Context, repr: &MarkupRepr<'a>) -> ArenaDoc<'a> {
+        let mut doc = self.arena.nil();
+        for (
+            i,
+            &MarkupLine {
+                ref nodes, breaks, ..
+            },
+        ) in repr.lines.iter().enumerate()
+        {
+            for (j, node) in nodes.iter().enumerate() {
+                doc += if node.kind() == SyntaxKind::Space {
+                    if !nodes
+                        .get(j + 1)
+                        .is_some_and(|peek| matches!(peek.text().as_str(), "=" | "+" | "-" | "/"))
+                    {
+                        self.arena.softline()
+                    } else {
+                        self.arena.space()
+                    }
+                } else if let Some(text) = node.cast::<Text>() {
+                    self.convert_text_wrapped(text)
+                } else if let Some(expr) = node.cast::<Expr>() {
+                    self.convert_expr(ctx, expr)
+                } else if is_comment_node(node) {
+                    self.convert_comment(ctx, node)
+                } else {
+                    // can be Hash, Semicolon, Shebang
+                    self.convert_trivia_untyped(node)
+                };
+            }
+            if breaks == 1
+                && !nodes.last().is_some_and(|last| {
+                    last.kind() == SyntaxKind::LineComment || is_block_elem(last)
+                })
+                && !repr.lines.get(i + 1).is_some_and(|next_line| {
+                    let next_nodes = &next_line.nodes;
+                    let len = next_nodes.len();
+                    len > 0 && is_block_elem(next_nodes[0])
+                        || len == 2 && next_nodes[0].kind() == SyntaxKind::Hash
+                        || len == 1 && next_nodes[0].kind() != SyntaxKind::Text
+                })
+            {
+                doc += self.arena.softline();
+            } else if breaks > 0 {
+                doc += self.arena.hardline().repeat_n(breaks);
+            }
+        }
+        doc
     }
 }
 
