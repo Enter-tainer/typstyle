@@ -289,7 +289,13 @@ impl<'a> PrettyPrinter<'a> {
         {
             for (j, node) in nodes.iter().enumerate() {
                 doc += if node.kind() == SyntaxKind::Space {
-                    if !nodes
+                    if nodes.get(j + 1).is_some_and(|next| is_block_equation(next))
+                        || nodes
+                            .get(j.saturating_sub(1))
+                            .is_some_and(|prev| is_block_equation(prev))
+                    {
+                        self.arena.hardline()
+                    } else if !nodes
                         .get(j + 1)
                         .is_some_and(|peek| matches!(peek.text().as_str(), "=" | "+" | "-" | "/"))
                     {
@@ -310,7 +316,9 @@ impl<'a> PrettyPrinter<'a> {
             }
             if breaks == 1
                 && !nodes.last().is_some_and(|last| {
-                    last.kind() == SyntaxKind::LineComment || is_block_elem(last)
+                    last.kind() == SyntaxKind::LineComment
+                        || is_block_elem(last)
+                        || is_block_equation(last)
                 })
                 && !repr.lines.get(i + 1).is_some_and(|next_line| {
                     let next_nodes = &next_line.nodes;
@@ -480,4 +488,9 @@ fn is_block_elem(it: &'_ SyntaxNode) -> bool {
         it.kind(),
         SyntaxKind::Heading | SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
     )
+}
+
+fn is_block_equation(it: &'_ SyntaxNode) -> bool {
+    it.cast::<Equation>()
+        .is_some_and(|equation| equation.block())
 }

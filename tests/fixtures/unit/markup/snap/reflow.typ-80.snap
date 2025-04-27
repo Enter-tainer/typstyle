@@ -23,9 +23,9 @@ text.
 
 This line contains *strong text* mixed with `raw code` and regular words.
 
-Let's add a complex equation: $
-  integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2
-$ surrounded by text.
+Let's add a complex equation:
+$ integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2 $
+surrounded by text.
 
 Testing _multiple_ `inline` $"elements"$ in a single line with various _spacing_
 patterns.
@@ -126,7 +126,8 @@ Multi-paragraph markup with complex elements:
   )
 
 / Term with display math:
-  $ sum_(i=0)^n i = frac(n(n+1), 2) $ And explanation with more text following
+  $ sum_(i=0)^n i = frac(n(n+1), 2) $
+  And explanation with more text following
 Text with special Unicode: "Em—dash" and "en–dash" with *formatting* mixed in
 áéíóú äëïöü characters.
 
