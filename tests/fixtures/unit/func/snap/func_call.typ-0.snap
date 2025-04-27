@@ -23,20 +23,14 @@ input_file: tests/fixtures/unit/func/func_call.typ
 ) => {
   args
 }
-#f(
-  {
-    "aaaaaaaaaaaaaaaaaaaaa"
-  },
-)
-#f(
-  (
-    (),
-  ),
-)
+#f({
+  "aaaaaaaaaaaaaaaaaaaaa"
+})
+#f((
+  (),
+))
 
-#f(
-  { },
-)
+#f({ })
 #f(
   `xx
 `,
@@ -45,9 +39,7 @@ input_file: tests/fixtures/unit/func/func_call.typ
   ```aa
   ```,
 )
-#f(
-  (),
-)
+#f(())
 #pad(
   left: 1em,
 )[```typ

@@ -76,31 +76,26 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
       + X,
   )
 })
-#let LaTeX = style(
-  styles => {
-    let l = measure(
-      text(10pt, "L"),
-      styles,
-    )
-    let a = measure(
-      text(7pt, "A"),
-      styles,
-    )
-    let L = "L"
-    let A = text(
-      7pt,
-      baseline: a.height - l.height,
-      "A",
-    )
-    box(
-      L
-        + kern(-0.36em)
-        + A
-        + kern(-0.15em)
-        + TeX,
-    )
-  },
-)
+#let LaTeX = style(styles => {
+  let l = measure(
+    text(10pt, "L"),
+    styles,
+  )
+  let a = measure(text(7pt, "A"), styles)
+  let L = "L"
+  let A = text(
+    7pt,
+    baseline: a.height - l.height,
+    "A",
+  )
+  box(
+    L
+      + kern(-0.36em)
+      + A
+      + kern(-0.15em)
+      + TeX,
+  )
+})
 
 // Unavailable (last check version)
 #show "??": box(text(

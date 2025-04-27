@@ -1014,11 +1014,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     last-subslide: calc.max(
       ..subslides-contents
         .pairs()
-        .map(
-          kv => utils.last-required-subslide(
-            kv.at(0),
-          ),
-        ),
+        .map(kv => utils.last-required-subslide(
+          kv.at(0),
+        )),
     ),
     subslides-contents,
     position: position,
@@ -1367,13 +1365,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       "(#meanwhile;?)|(meanwhile)",
     ))
     .intersperse("touying-meanwhile")
-    .map(
-      s => s
-        .split(regex(
-          "(#pause;?)|(pause)",
-        ))
-        .intersperse("touying-pause"),
-    )
+    .map(s => s
+      .split(regex("(#pause;?)|(pause)"))
+      .intersperse("touying-pause"))
     .flatten()
     .map(s => s
       .split(
@@ -2402,9 +2396,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       result.push(cover(cover-arr.sum()))
       cover-arr = ()
     }
-    result-arr.push(result.sum(
-      default: [],
-    ))
+    result-arr.push(
+      result.sum(default: []),
+    )
   }
   max-repetitions = calc.max(
     max-repetitions,
@@ -2796,77 +2790,70 @@ input_file: tests/fixtures/packages/touying/core.typ
         != ()
     ) {
       place(
-        hide(
-          {
-            set heading(offset: 0)
-            let headings = self
-              .at(
-                "headings",
-                default: (),
-              )
-              .map(
-                it => if it.has("label") {
-                  if (
-                    str(it.label)
-                      in (
-                        "touying:hidden",
-                        "touying:unnumbered",
-                        "touying:unoutlined",
-                        "touying:unbookmarked",
-                      )
-                  ) {
-                    let fields = it.fields()
-                    let _ = fields.remove(
-                      "label",
-                      default: none,
-                    )
-                    let _ = fields.remove(
-                      "body",
-                      default: none,
-                    )
-                    if (
-                      str(it.label)
-                        == "touying:hidden"
-                    ) {
-                      fields.numbering = none
-                      fields.outlined = false
-                      fields.bookmarked = false
-                    }
-                    if (
-                      str(it.label)
-                        == "touying:unnumbered"
-                    ) {
-                      fields.numbering = none
-                    }
-                    if (
-                      str(it.label)
-                        == "touying:unoutlined"
-                    ) {
-                      fields.outlined = false
-                    }
-                    if (
-                      str(it.label)
-                        == "touying:unbookmarked"
-                    ) {
-                      fields.bookmarked = false
-                    }
-                    utils.label-it(
-                      heading(
-                        ..fields,
-                        it.body,
-                      ),
-                      it.label,
-                    )
-                  } else {
-                    it
-                  }
-                } else {
-                  it
-                },
-              )
-            headings.sum(default: none)
-          },
-        ),
+        hide({
+          set heading(offset: 0)
+          let headings = self
+            .at("headings", default: ())
+            .map(it => if it.has("label") {
+              if (
+                str(it.label)
+                  in (
+                    "touying:hidden",
+                    "touying:unnumbered",
+                    "touying:unoutlined",
+                    "touying:unbookmarked",
+                  )
+              ) {
+                let fields = it.fields()
+                let _ = fields.remove(
+                  "label",
+                  default: none,
+                )
+                let _ = fields.remove(
+                  "body",
+                  default: none,
+                )
+                if (
+                  str(it.label)
+                    == "touying:hidden"
+                ) {
+                  fields.numbering = none
+                  fields.outlined = false
+                  fields.bookmarked = false
+                }
+                if (
+                  str(it.label)
+                    == "touying:unnumbered"
+                ) {
+                  fields.numbering = none
+                }
+                if (
+                  str(it.label)
+                    == "touying:unoutlined"
+                ) {
+                  fields.outlined = false
+                }
+                if (
+                  str(it.label)
+                    == "touying:unbookmarked"
+                ) {
+                  fields.bookmarked = false
+                }
+                utils.label-it(
+                  heading(
+                    ..fields,
+                    it.body,
+                  ),
+                  it.label,
+                )
+              } else {
+                it
+              }
+            } else {
+              it
+            })
+          headings.sum(default: none)
+        }),
       )
     }
     utils.call-or-display(self, self.at(
@@ -2902,9 +2889,7 @@ input_file: tests/fixtures/packages/touying/core.typ
           utils
             .saved-frozen-states
             .update(
-              self.frozen-states.map(
-                s => s.get(),
-              ),
+              self.frozen-states.map(s => s.get()),
             )
           utils
             .saved-default-frozen-states
@@ -3102,24 +3087,22 @@ input_file: tests/fixtures/packages/touying/core.typ
         page-preamble(self) + header
       )
       // update the counter in the first subslide only
-      result.push(
-        {
-          set page(..(
-            self.page
-              + page-extra-args
-              + (
-                header: new-header,
-                footer: footer,
-              )
-          ))
-          setting-with-auto-offset-for-heading(
-            subslide-preamble(self)
-              + composer-with-side-by-side(
-                ..conts,
-              ),
-          )
-        },
-      )
+      result.push({
+        set page(..(
+          self.page
+            + page-extra-args
+            + (
+              header: new-header,
+              footer: footer,
+            )
+        ))
+        setting-with-auto-offset-for-heading(
+          subslide-preamble(self)
+            + composer-with-side-by-side(
+              ..conts,
+            ),
+        )
+      })
     }
     // return the result
     result.sum()

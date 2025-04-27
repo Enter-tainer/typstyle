@@ -238,19 +238,17 @@ input_file: tests/fixtures/packages/cetz-tree.typ
           1,
         )
         .enumerate()
-        .map(
+        .map((
           (
-            (
-              n,
-              c,
-            ),
-          ) => build-node(
+            n,
             c,
-            depth: depth
-              + 1,
-            sibling: n,
           ),
-        )
+        ) => build-node(
+          c,
+          depth: depth
+            + 1,
+          sibling: n,
+        ))
       cnt = tree.at(
         0,
       )
@@ -560,16 +558,14 @@ input_file: tests/fixtures/packages/cetz-tree.typ
       before: ctx => {
         ctx
           .groups
-          .push(
-            (
-              ctx: ctx,
-              anchors: (:),
-              tree-root: layout(
-                root,
-                ctx,
-              ),
+          .push((
+            ctx: ctx,
+            anchors: (:),
+            tree-root: layout(
+              root,
+              ctx,
             ),
-          )
+          ))
         return ctx
       },
       after: ctx => {

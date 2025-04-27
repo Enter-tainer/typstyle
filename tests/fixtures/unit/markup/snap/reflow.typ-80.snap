@@ -80,10 +80,8 @@ $sum_(i=1)^n x_i$.
     Multi-line block content with nested #strong[formatting] and extra spaces
   ]
 
-/ Functions with parameters: Definition using #text(
-    weight: "bold",
-    size: 12pt,
-  )[Formatted text with spaces] and $"equations"$
+/ Functions with parameters: Definition using #text(weight: "bold", size: 12pt)[Formatted
+    text with spaces] and $"equations"$
 
 = Heading with *mixed* `formatting` and $"math"$ elements
 Text between headings.

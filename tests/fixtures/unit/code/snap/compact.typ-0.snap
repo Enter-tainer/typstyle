@@ -69,22 +69,14 @@ input_file: tests/fixtures/unit/code/compact.typ
     111111
       + 2222222,
   )
-  f(
-    { },
-  )
-  f(
-    { },
-  )
-  f(
-    context {
-      1
-    },
-  )
-  f(
-    context {
-      1
-    },
-  )
+  f({ })
+  f({ })
+  f(context {
+    1
+  })
+  f(context {
+    1
+  })
 }
 
 

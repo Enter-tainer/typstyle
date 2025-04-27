@@ -22,18 +22,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 #let draw-node(node, debug: 0) = {
   let result = {
     if node.stroke != none or node.fill != none {
-      cetz.draw.group(
-        {
-          cetz.draw.translate(node.pos.xyz)
-          for (i, extrude) in node.extrude.enumerate() {
-            cetz.draw.set-style(
-              fill: if i == 0 { node.fill },
-              stroke: node.stroke,
-            )
-            (node.shape)(node, extrude)
-          }
-        },
-      )
+      cetz.draw.group({
+        cetz.draw.translate(node.pos.xyz)
+        for (i, extrude) in node.extrude.enumerate() {
+          cetz.draw.set-style(fill: if i == 0 { node.fill }, stroke: node.stroke)
+          (node.shape)(node, extrude)
+        }
+      })
     }
 
     if node.label != none {

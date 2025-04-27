@@ -377,12 +377,10 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
             or state.state == "finished"
         )
     ) {
-      state.params.push(
-        (
-          name: args.first(),
-          desc-lines: state.unmatched-description,
-        ),
-      )
+      state.params.push((
+        name: args.first(),
+        desc-lines: state.unmatched-description,
+      ))
       state.unmatched-description = ()
       state.params += args
         .slice(1)

@@ -190,16 +190,14 @@ input_file: tests/fixtures/packages/codly.typ
   position,
   length,
 ) = {
-  state("codly-skips", ()).update(
-    skips => {
-      if skips == none {
-        skips = ()
-      }
+  state("codly-skips", ()).update(skips => {
+    if skips == none {
+      skips = ()
+    }
 
-      skips.push((position, length))
-      skips
-    },
-  )
+    skips.push((position, length))
+    skips
+  })
 }
 
 
@@ -417,9 +415,9 @@ input_file: tests/fixtures/packages/codly.typ
   }
 
   // Filter the highlights to only keep the relevant ones.
-  let highlights = highlights.filter(
-    x => x.line == (it.number - 1),
-  )
+  let highlights = highlights.filter(x => (
+    x.line == (it.number - 1)
+  ))
   let highlighted = it.body
 
   // Smart indentation code.
@@ -747,9 +745,7 @@ input_file: tests/fixtures/packages/codly.typ
             baseline: highlight-inset,
             collection.join() + label,
           )
-          children.push(
-            [#content<codly-highlight>],
-          )
+          children.push([#content<codly-highlight>])
         } else {
           let col = collection.join()
           let height-col = measure(col).height
@@ -1238,32 +1234,30 @@ input_file: tests/fixtures/packages/codly.typ
     } else {
       annotations
         .sorted(key: x => x.start)
-        .map(
-          x => {
-            if (
-              (not "end" in x)
-                or x.end == none
-            ) {
-              x.insert("end", x.start)
-            }
+        .map(x => {
+          if (
+            (not "end" in x)
+              or x.end == none
+          ) {
+            x.insert("end", x.start)
+          }
 
-            if (not "content" in x) {
-              x.insert("content", none)
-            }
+          if (not "content" in x) {
+            x.insert("content", none)
+          }
 
-            if "label" in x {
-              if block-label == none {
-                panic(
-                  "codly: label "
-                    + str(x.label)
-                    + " is only allowed in a figure block",
-                )
-              }
+          if "label" in x {
+            if block-label == none {
+              panic(
+                "codly: label "
+                  + str(x.label)
+                  + " is only allowed in a figure block",
+              )
             }
+          }
 
-            x
-          },
-        )
+          x
+        })
     }
 
     // Check for overlapping annotations.
@@ -2262,11 +2256,9 @@ input_file: tests/fixtures/packages/codly.typ
         "codly-extra-args",
         (:),
       ).get()
-      state("codly-extra-args", (:)).update(
-        old => {
-          old + extra
-        },
-      )
+      state("codly-extra-args", (:)).update(old => {
+        old + extra
+      })
 
       let args = current + extra
       show ref: it => __codly-ref(

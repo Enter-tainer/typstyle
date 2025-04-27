@@ -89,9 +89,8 @@ $sum_(i=1)^n x_i$.
     #strike[strikethrough]] and
   continuation
 
-/ Term with functions: Using
-  #text(blue)[colored text] with $alpha$
-  formula
+/ Term with functions: Using #text(blue)[colored
+    text] with $alpha$ formula
 / Complex function:
   #table(
     columns: (auto, auto),
@@ -101,9 +100,9 @@ $sum_(i=1)^n x_i$.
   )
   Text after function call.
 
-+ Enumerated with
-  #link("https://example.com")[link
-    text] and `code`
++ Enumerated with #link(
+    "https://example.com",
+  )[link text] and `code`
 + Item using #text(size: 1.2em)[larger
     text] with spacing
 + Mixed #strong[formatted] and
@@ -116,11 +115,8 @@ $sum_(i=1)^n x_i$.
   ]
 
 / Functions with parameters: Definition
-  using #text(
-    weight: "bold",
-    size: 12pt,
-  )[Formatted text with spaces] and
-  $"equations"$
+  using #text(weight: "bold", size: 12pt)[Formatted
+    text with spaces] and $"equations"$
 
 = Heading with *mixed* `formatting` and $"math"$ elements
 Text between headings.
@@ -165,9 +161,11 @@ Multi-paragraph list item:
 
 Multi-paragraph markup with complex
 elements:
-- List item with #text(
-    fill: rgb(10%, 20%, 30%),
-  )[
+- List item with #text(fill: rgb(
+    10%,
+    20%,
+    30%,
+  ))[
     Multi-line content inside a function
     with nested #strong[formatting] and
     equations $sum_(i=1)^n x_i^2$
@@ -273,9 +271,9 @@ mixed with $alpha + beta$.
 Multiple scripts: أهلاً بك في *타이프스트*
 เอกสาร with `inline code`.
 
-RTL with URLs: متن فارسی با
-#link("https://example.com/페이지")[لینک]
-و עברית טקסט.
+RTL with URLs: متن فارسی با #link(
+  "https://example.com/페이지",
+)[لینک] و עברית טקסט.
 
 Thai text flowing: นี่คือข้อความภาษาไทยที่มี
 https://example.th/ อยู่ด้วย และ
