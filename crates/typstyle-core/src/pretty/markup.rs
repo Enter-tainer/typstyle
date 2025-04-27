@@ -279,20 +279,27 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_markup_body_reflow(&'a self, ctx: Context, repr: &MarkupRepr<'a>) -> ArenaDoc<'a> {
+        fn can_turn_exclusive(node: &&SyntaxNode) -> bool {
+            is_block_equation(node)
+        }
+
+        fn is_line_exclusive(line: &MarkupLine) -> bool {
+            let nodes = &line.nodes;
+            let len = nodes.len();
+            len > 0 && is_block_elem(nodes[0])
+                || len == 2 && nodes[0].kind() == SyntaxKind::Hash
+                || len == 1 && nodes[0].kind() != SyntaxKind::Text
+        }
+
         let mut doc = self.arena.nil();
-        for (
-            i,
-            &MarkupLine {
+        for (i, line) in repr.lines.iter().enumerate() {
+            let &MarkupLine {
                 ref nodes, breaks, ..
-            },
-        ) in repr.lines.iter().enumerate()
-        {
+            } = line;
             for (j, node) in nodes.iter().enumerate() {
                 doc += if node.kind() == SyntaxKind::Space {
-                    if nodes.get(j + 1).is_some_and(|next| is_block_equation(next))
-                        || nodes
-                            .get(j.saturating_sub(1))
-                            .is_some_and(|prev| is_block_equation(prev))
+                    if nodes.get(j + 1).is_some_and(can_turn_exclusive)
+                        || j > 0 && nodes.get(j - 1).is_some_and(can_turn_exclusive)
                     {
                         self.arena.hardline()
                     } else if !nodes
@@ -318,19 +325,8 @@ impl<'a> PrettyPrinter<'a> {
                 && !nodes.last().is_some_and(|last| {
                     last.kind() == SyntaxKind::LineComment || is_block_elem(last)
                 })
-                && !{
-                    let len = nodes.len();
-                    len > 0 && is_block_elem(nodes[0])
-                        || len == 2 && nodes[0].kind() == SyntaxKind::Hash
-                        || len == 1 && nodes[0].kind() != SyntaxKind::Text
-                }
-                && !repr.lines.get(i + 1).is_some_and(|next_line| {
-                    let next_nodes = &next_line.nodes;
-                    let len = next_nodes.len();
-                    len > 0 && is_block_elem(next_nodes[0])
-                        || len == 2 && next_nodes[0].kind() == SyntaxKind::Hash
-                        || len == 1 && next_nodes[0].kind() != SyntaxKind::Text
-                })
+                && !is_line_exclusive(line)
+                && !repr.lines.get(i + 1).is_some_and(is_line_exclusive)
             {
                 doc += self.arena.softline();
             } else if breaks > 0 {
@@ -487,14 +483,14 @@ fn collect_markup_repr(markup: Markup<'_>) -> MarkupRepr {
     repr
 }
 
-fn is_block_elem(it: &'_ SyntaxNode) -> bool {
+fn is_block_elem(it: &SyntaxNode) -> bool {
     matches!(
         it.kind(),
         SyntaxKind::Heading | SyntaxKind::ListItem | SyntaxKind::EnumItem | SyntaxKind::TermItem
     )
 }
 
-fn is_block_equation(it: &'_ SyntaxNode) -> bool {
+fn is_block_equation(it: &SyntaxNode) -> bool {
     it.cast::<Equation>()
         .is_some_and(|equation| equation.block())
 }
