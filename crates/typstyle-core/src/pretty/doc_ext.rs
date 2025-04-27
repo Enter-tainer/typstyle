@@ -45,7 +45,7 @@ impl<'a> DocBuilderFlatten<'a> for DocBuilder<'a, Arena<'a>> {
                 alloc,
                 Doc::Append(alloc.flatten(a), alloc.flatten(b)).into(),
             ),
-            Doc::Group(g) => DocBuilder(alloc, Doc::Group(alloc.flatten(g)).into()),
+            Doc::Group(g) => DocBuilder(alloc, alloc.flatten(g).into()),
             Doc::FlatAlt(_, b) => b.pretty(alloc).flatten(),
             Doc::Nest(a, b) => DocBuilder(alloc, Doc::Nest(a, alloc.flatten(b)).into()),
             Doc::Hardline => DocBuilder(alloc, Doc::Fail.into()),

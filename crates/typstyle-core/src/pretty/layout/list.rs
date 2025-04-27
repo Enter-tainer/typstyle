@@ -419,20 +419,20 @@ impl<'a> ListStylist<'a> {
                     //         .pretty(arena),
                     // );
                     // NOTE: we can't pad here, since this can appear in inline chains.
-                    let compact = (arena.intersperse(
+                    let compact = arena.intersperse(
                         docs.iter().map(|doc| doc.clone().flatten()),
                         sep.clone() + arena.space(),
-                    )) + sep.clone()
+                    ) + sep.clone()
                         + arena.space()
                         + last.clone();
                     let loose = (arena.line_()
-                        + (arena.intersperse(docs.clone(), sep.clone() + arena.line()))
+                        + arena.intersperse(docs.clone(), sep.clone() + arena.line())
                         + sep.clone()
                         + arena.line()
                         + last
-                        + sep.clone())
-                    .nest(2)
-                        + arena.line_();
+                        + sep.clone()
+                        + arena.line_())
+                    .nest(2);
                     compact.union(loose)
                 };
                 if is_single && sty.omit_delim_single {
@@ -447,12 +447,8 @@ impl<'a> ListStylist<'a> {
                 } else if sty.add_delim_space {
                     inner
                         .enclose(
-                            arena
-                                .text(delim.0)
-                                .flat_alt(arena.text(delim.0) + arena.space()),
-                            arena
-                                .text(delim.1)
-                                .flat_alt(arena.space() + arena.text(delim.1)),
+                            arena.text(delim.0) + arena.nil().flat_alt(arena.space()),
+                            arena.nil().flat_alt(arena.space()) + arena.text(delim.1),
                         )
                         .group()
                 } else {
@@ -529,12 +525,8 @@ impl<'a> ListStylist<'a> {
                 } else if sty.add_delim_space {
                     inner
                         .enclose(
-                            arena
-                                .text(delim.0)
-                                .flat_alt(arena.text(delim.0) + arena.space()),
-                            arena
-                                .text(delim.1)
-                                .flat_alt(arena.space() + arena.text(delim.1)),
+                            arena.text(delim.0) + arena.nil().flat_alt(arena.space()),
+                            arena.nil().flat_alt(arena.space()) + arena.text(delim.1),
                         )
                         .group()
                 } else {
