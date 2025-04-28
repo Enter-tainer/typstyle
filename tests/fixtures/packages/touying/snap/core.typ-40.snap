@@ -2396,9 +2396,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       result.push(cover(cover-arr.sum()))
       cover-arr = ()
     }
-    result-arr.push(
-      result.sum(default: []),
-    )
+    result-arr.push(result.sum(
+      default: [],
+    ))
   }
   max-repetitions = calc.max(
     max-repetitions,

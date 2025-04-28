@@ -511,9 +511,11 @@ input_file: tests/fixtures/packages/codly.typ
       ()
     } else {
       highlights
-        .sorted(key: x => {
-          x.line
-        })
+        .sorted(
+          key: x => {
+            x.line
+          },
+        )
         .map(x => {
           if (
             not "start"
@@ -1665,9 +1667,11 @@ input_file: tests/fixtures/packages/codly.typ
       ()
     } else {
       skips
-        .sorted(key: x => x.at(
-          0,
-        ))
+        .sorted(
+          key: x => x.at(
+            0,
+          ),
+        )
         .dedup()
     }
   }
@@ -1829,9 +1833,11 @@ input_file: tests/fixtures/packages/codly.typ
       ()
     } else {
       annotations
-        .sorted(key: x => {
-          x.start
-        })
+        .sorted(
+          key: x => {
+            x.start
+          },
+        )
         .map(x => {
           if (
             (

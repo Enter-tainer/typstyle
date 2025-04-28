@@ -1309,12 +1309,14 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             ),
           )
         })
-        .sorted(key: point => vector-len(
-          vector.sub(
-            point,
-            target,
+        .sorted(
+          key: point => vector-len(
+            vector.sub(
+              point,
+              target,
+            ),
           ),
-        ))
+        )
 
       let anchor = anchor-points.at(
         -1,
@@ -2011,11 +2013,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         + .5pt,
     )
 
-    draw.set-style(stroke: (
-      paint: DEBUG_COLOR,
-      thickness: .3pt,
-      dash: "densely-dotted",
-    ))
+    draw.set-style(
+      stroke: (
+        paint: DEBUG_COLOR,
+        thickness: .3pt,
+        dash: "densely-dotted",
+      ),
+    )
 
     for axis in range(
       2,

@@ -102,7 +102,9 @@ impl<'a> PrettyPrinter<'a> {
             is_only_one_and(args.items().take(arg_count), |arg| {
                 let expr = match arg {
                     Arg::Pos(p) => *p,
-                    Arg::Named(n) => n.expr(),
+                    Arg::Named(_) => {
+                        return false;
+                    }
                     Arg::Spread(s) => s.expr(),
                 };
                 if matches!(
