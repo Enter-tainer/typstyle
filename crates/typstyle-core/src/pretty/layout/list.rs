@@ -390,7 +390,11 @@ impl<'a> ListStylist<'a> {
                     inner.enclose(delim.0, delim.1)
                 }
             }
-            FoldStyle::Compact if !self.has_comment => {
+            FoldStyle::Compact
+                if !self.has_comment
+                    && !self.items.iter().any(|it| matches!(it, Item::Linebreak(_))) =>
+            {
+                // no line comment or linebreak here
                 let mut docs = vec![];
                 for item in self.items {
                     match item {
