@@ -2,24 +2,32 @@
 pub struct Context {
     pub mode: Mode,
     pub break_suppressed: bool,
+    pub in_aligned: bool,
 }
 
 impl Context {
-    pub fn with_mode(&self, mode: Mode) -> Self {
-        Self { mode, ..*self }
+    pub fn with_mode(self, mode: Mode) -> Self {
+        Self { mode, ..self }
     }
 
-    pub fn with_mode_if(&self, mode: Mode, cond: bool) -> Self {
+    pub fn with_mode_if(self, mode: Mode, cond: bool) -> Self {
         Self {
             mode: if cond { mode } else { self.mode },
-            ..*self
+            ..self
         }
     }
 
-    pub fn suppress_breaks(&self) -> Self {
+    pub fn suppress_breaks(self) -> Self {
         Self {
             break_suppressed: true,
-            ..*self
+            ..self
+        }
+    }
+
+    pub fn aligned(self) -> Self {
+        Self {
+            in_aligned: true,
+            ..self
         }
     }
 }

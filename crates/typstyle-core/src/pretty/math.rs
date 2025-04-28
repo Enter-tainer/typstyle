@@ -61,9 +61,20 @@ impl<'a> PrettyPrinter<'a> {
             return res;
         }
         let ctx = ctx.suppress_breaks();
+        if let Some(res) = self.try_convert_math_aligned(ctx, math) {
+            return res;
+        }
+        self.convert_math_children(ctx, math.to_untyped().children())
+    }
+
+    pub(super) fn convert_math_children(
+        &'a self,
+        ctx: Context,
+        math_children: impl Iterator<Item = &'a SyntaxNode>,
+    ) -> ArenaDoc<'a> {
         let mut doc = self.arena.nil();
         let mut peek_hash = false;
-        for node in math.to_untyped().children() {
+        for node in math_children {
             let at_hash = peek_hash;
             peek_hash = false;
             if let Some(expr) = node.cast::<Expr>() {
@@ -88,6 +99,8 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math_delimited: MathDelimited<'a>,
     ) -> ArenaDoc<'a> {
+        let ctx = ctx.aligned(); // should not align within
+
         let mut inner_nodes = math_delimited.to_untyped().children().as_slice();
         inner_nodes = &inner_nodes[1..inner_nodes.len() - 1];
 

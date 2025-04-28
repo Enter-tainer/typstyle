@@ -133,6 +133,8 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_args_in_math(&'a self, ctx: Context, args: Args<'a>) -> ArenaDoc<'a> {
+        let ctx = ctx.aligned();
+
         // strip spaces
         let children = {
             let children = args.to_untyped().children().as_slice();

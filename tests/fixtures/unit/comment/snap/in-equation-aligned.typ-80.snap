@@ -1,0 +1,95 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/comment/in-equation-aligned.typ
+---
+// Pure block comments in simple alignments
+$
+  x &= y /* basic comment */ \
+  &= z /* another
+          block comment */ \
+  &= w /* multi
+       line
+       comment */
+$
+
+// Block comments with nesting
+$
+  a & = b /* outer /* inner */ comment */ \
+    & = c                                 \ /* first /* second /* third */ */ */
+$
+
+// Block comments between alignment markers
+$
+  f(x) /* pre */ & = /* mid */ y /* post */ \
+    /* before */ & = /* between */ z        \ /* after */
+$
+
+// Block comments in single line
+$ p /* c1 */ & = /* c2 */ q /* c3 */ & = /* c4 */ r /* c5 */ $
+
+// Empty block comments
+$
+  m & = n /**/  \
+    & = p /* */ \
+    & = q       \ /*    */
+$
+
+// Comments mixed with aligned equations
+$
+  // Starting with a comment
+  x &= y & // After first equation
+  &= z // End of line comment
+  \
+  // Comment between lines
+  &= w /* Block comment */ & "where" & x > 0 \
+  // Multiple comments
+  &= v // Comment 1
+  // Comment 2
+  \
+  &= u /* Nested /* comments */ here */
+$
+
+// Comments in matrix
+$
+  mat(
+    1 & 2, // Row 1
+    3 & 4, /* Row 2 */
+     // Comment between rows
+    5 & 6 // Last row
+  )
+$
+
+// Comments in complex structures
+$
+  cases(
+    x &= y, // First case
+    // Middle comment
+    z &= w /* Second case */
+  ) &= sum x // Right hand side \
+  // Line comment between rows
+  &= product y /* Block
+                   comment */ \
+  &= z // Final result $
+  // Mixed Unicode and comments
+$ α &= β // Greek variables \
+&= γ /* Mixed شرح explanation */ \
+&= θ // 说明 $
+
+// Comments with decorators
+$
+  arrow(
+    x &= y // Inside arrow \
+    &= z /* Still inside */
+  )
+$
+
+// Comments in nested alignments
+$
+  mat(
+    a &= b, // Row 1
+    cases(
+      x &= y, // Nested case 1
+      z &= w /* Nested case 2 */
+    ) // End of cases
+  )
+$

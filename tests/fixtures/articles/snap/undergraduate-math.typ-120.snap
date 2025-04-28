@@ -564,8 +564,8 @@ Align equations using `&`
     column-gutter: 1em,
     [
       $
-        nabla dot bold(D) &= rho \
-        nabla dot bold(B) &= 0
+        nabla dot bold(D) & = rho \
+        nabla dot bold(B) & = 0   \
       $
     ],
     ```

@@ -1,0 +1,227 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/aligned.typ
+---
+$
+  Re \
+  Im
+$
+
+$
+  1 & 2 & 3 \
+  4 & 5 & 6 \
+  7 & 8 & 9 \
+$
+
+// Mixed content in cells
+$
+        "text" & x^2                 &             sin(x) \
+  vec(1, 2, 3) & integral_0^infinity & sum_(n=0)^infinity \
+       (1 / 2) & "mixed spacing"     &               f(x) \
+$
+
+// Nested alignments and complex expressions
+$
+  cases(
+    1 & 2 & 3,
+    4 & 5 & 6
+  ) & display(sum x) & integral_0^1 f(x) \
+  vec(1&2&3, 4&5&6) & cases(a&b, c&d) & display(product)
+$
+
+// Really messy spacing and newlines
+$
+  1 & 2 & 3 \
+  4 & 5 & 6 \
+  7 & 8 & 9 \
+$
+
+// Mixed math and text with varying spaces
+$
+  "Step 1" & = &    x+y \
+  "Step 2" & = &     2x \
+  "Step 3" & = & 3x + y \
+$
+
+// Alignment with subscripts and superscripts
+$
+        x_1^2 & y_2^3           &                   z_3^4 \
+      a_(123) & b^(456)         &           c_(789)^(012) \
+  sum_(i=1)^n & product_(j=1)^m & integral_(k=0)^infinity \
+$
+
+// Complex fractions and operators
+$
+      frac(1, 2) & frac(3, 4)     &     frac(5, 6) \
+      frac(7, 8) & frac(9, 10)    &   frac(11, 12) \
+  frac(a+b, c+d) & frac(e+f, g+h) & frac(i+j, k+l) \
+$
+
+// Mixed parentheses and brackets
+$
+  (1) & [2] & {3} \
+  [4] & {5} & (6) \
+  {7} & (8) & [9] \
+$
+
+// Breaking long expressions across rows
+$
+  sum_(k=1)^n a_k & = (a_1 + a_2 + dots.c \
+    & + a_(n-1) + a_n) \
+  & = x
+$
+
+// Merging short related equations
+$
+   f(x) & = x^2 &  g(x) & = 2x &  h(x) & = sqrt(x)        \
+  f'(x) & = 2x  & g'(x) & = 2  & h'(x) & = 1 / (2sqrt(x)) \
+$
+
+// Mixed breaking and alignment patterns
+$
+  "Long equation:" & a + b + c + d                       \
+                   & = (x + y) + (z + w)                 \
+                   & = alpha + beta                      \
+     "Short ones:" & x                   & = 1 & y & = 2 \
+$
+
+// Complex nested breaks
+$
+  mat(1, 2, 3; 4, 5, 6) & = mat(
+    a, b; & c, d; \
+    & e,
+    f
+  ) \
+  & = "result"
+$
+
+// Multi-level alignment with breaks
+$
+  cases(
+    x & text("case 1") & = alpha \
+    & & = beta, \
+    y & text("case 2") & = gamma \
+    & & = delta
+  )
+$
+
+// Breaking inside fractions
+$
+  frac(
+    1 + 2 + 3 & + 4 + 5,
+    6 + 7 & + 8 + 9
+  ) & = "result"
+$
+
+// Varying column counts
+$
+  x & = 1 & = 2 & = 3 \
+  y & = 4             \
+  z & = 5 & = 6       \
+$
+
+// Mixed equation lengths with comments
+$
+  "Identity 1:" & = a + b             \
+                & = c + d & = "final" \
+  "Identity 2:" & = x                 \
+$
+
+// Nested structures with varying alignments
+$
+  cases(
+    1 &= x &= y,
+    2 &= z,
+    3 &= w &= v &= u
+  )
+$
+
+// Complex mixed alignment
+$
+  sum x & = y       & text("where") & x in X           \
+        & = z                                          \
+        & = w       &         "and" & y in Y & "holds" \
+        & = "final"                                    \
+$
+
+// Equations with side conditions
+$
+  f(x) & = 2x  & "if" & x > 0 \
+       & = 0                  \
+       & = -2x & "if" & x < 0 \
+$
+
+// Mismatched brackets and parentheses
+$
+  [1 + 2 &= 3] \
+  {4 &= 5 &= 6} \
+  (7 &= 8)
+$
+
+// Mixed delimiters and alignment
+$
+  ((a &= b) & "and" & [c &= d]) \
+  {(e &= f) & "or" & (g &= h)}
+$
+
+// Alignment with decorations
+$
+  arrow(x x &= y) \
+  circle(a &= b b) \
+  hat(c &= d d d)
+$
+
+---
+
+// Non-ASCII variables and symbols
+$
+  α & = β + γ & = δ \
+  ε & = ζ           \
+  η & = θ     & = ι \
+$
+
+// Mixed Latin and Greek with operators
+$
+  x_α & = y_β + z_γ & "where" & α ∈ ℝ \
+      & = w_δ       &   "and" & β ≥ 0 \
+$
+
+// Chinese characters in equations
+$
+  f(零) & = 一 + 二                        \
+        & = 三            & "满足" & x ∈ ℂ \
+        & = "四十四" + 五                  \
+$
+
+// Japanese and Korean in aligned math
+$
+  "関数" f(x) & = ア β & "かつ" & x ≥ 0 \
+              & = イ γ                  \
+  "함수" g(x) & = 값   &   "및" & x ≤ 0 \
+$
+
+// Mixed scripts in matrix
+$
+  mat(
+    α & β & γ,
+    零 & 一 & 二,
+    함 & 수 & ζ
+  ) &= mat(
+    ℕ & ℤ,
+    ℚ & ℝ
+  )
+$
+
+// Complex alignment with various Unicode symbols
+$
+  ∫_0^∞ & = ∑_(n=1)^∞ & "subject to" & α ≤ β \
+        & = ∏_(k=1)^n &       "또는" & γ ∈ Δ \
+        & = √(π + φ)                         \
+$
+
+// Non-ASCII function names
+$
+  λ(x) & = μ_1 + ν_2 & "wenn" & x ∈ ℕ \
+       & = ξ(x)      &   "或" & x ∈ ℚ \
+       & = π r²                       \
+$
