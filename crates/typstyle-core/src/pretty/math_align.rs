@@ -2,9 +2,8 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use unicode_width::UnicodeWidthStr;
 
-use crate::{ext::StrExt, AttrStore};
-
 use super::{context::AlignMode, doc_ext::AllocExt, ArenaDoc, Context, PrettyPrinter};
+use crate::{ext::StrExt, AttrStore};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn try_convert_math_aligned(
@@ -12,15 +11,15 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math: Math<'a>,
     ) -> Option<ArenaDoc<'a>> {
-        if math
-            .to_untyped()
-            .children()
-            .any(|it| it.kind() == SyntaxKind::LineComment)
+        if ctx.align_mode == AlignMode::Never
+            || math
+                .to_untyped()
+                .children()
+                .any(|it| it.kind() == SyntaxKind::LineComment)
             || !self.attr_store.has_math_align_point(math.to_untyped())
         {
             return None;
         }
-
         let ctx = ctx.aligned(AlignMode::Outer);
         let aligned_elems = collect_aligned(math, &self.attr_store);
         let (printed, col_widths) = self.render_cells_in_aligned(ctx, aligned_elems)?;

@@ -17,11 +17,11 @@ $
 
 // Nested alignments and complex expressions
 $
-                     cases(
-                 1 & 2 & 3,
-                  4 & 5 & 6
-                          ) & display(sum x)      & integral_0^1 f(x) \
-  vec(1 & 2 & 3, 4 & 5 & 6) & cases(a & b, c & d) &  display(product) \
+             cases(
+         1 & 2 & 3,
+          4 & 5 & 6
+                  ) & display(sum x)  & integral_0^1 f(x) \
+  vec(1&2&3, 4&5&6) & cases(a&b, c&d) &  display(product) \
 $
 
 // Really messy spacing and newlines

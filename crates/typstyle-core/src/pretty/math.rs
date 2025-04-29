@@ -103,15 +103,16 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math_delimited: MathDelimited<'a>,
     ) -> ArenaDoc<'a> {
-        let ctx = ctx.aligned(AlignMode::Inner); // should not align within
-
         let mut inner_nodes = math_delimited.to_untyped().children().as_slice();
         inner_nodes = &inner_nodes[1..inner_nodes.len() - 1];
 
+        let mut has_open_linebreak = false;
+        let mut has_close_space = false;
         let open_space = if let Some((first, rest)) = inner_nodes.split_first() {
             if first.kind() == SyntaxKind::Space {
                 inner_nodes = rest;
                 if first.text().has_linebreak() {
+                    has_open_linebreak = true;
                     self.arena.hardline()
                 } else {
                     self.arena.space()
@@ -124,6 +125,7 @@ impl<'a> PrettyPrinter<'a> {
         };
         let close_space = if let Some((last, rest)) = inner_nodes.split_last() {
             if last.kind() == SyntaxKind::Space {
+                has_close_space = true;
                 inner_nodes = rest;
                 if last.text().has_linebreak() {
                     self.arena.hardline()
@@ -138,6 +140,11 @@ impl<'a> PrettyPrinter<'a> {
         };
         let body = self.convert_flow_like_iter(ctx, inner_nodes.iter(), |ctx, node| {
             if let Some(math) = node.cast::<Math>() {
+                let ctx = ctx.aligned(if has_open_linebreak && has_close_space {
+                    AlignMode::Inner
+                } else {
+                    AlignMode::Never
+                });
                 FlowItem::tight(self.convert_math(ctx, math))
             } else if node.kind() == SyntaxKind::Space {
                 // We can not arbitrarily break line here, as it may become ugly.

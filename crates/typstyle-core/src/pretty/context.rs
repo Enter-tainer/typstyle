@@ -27,11 +27,10 @@ impl Context {
     pub fn aligned(self, mode: AlignMode) -> Self {
         Self {
             align_mode: match (self.align_mode, mode) {
+                (_, AlignMode::Never) | (AlignMode::Never, _) => AlignMode::Never,
+                (AlignMode::Inner, _) => AlignMode::Inner,
                 (AlignMode::Outer, _) => mode,
-                (AlignMode::Inner, AlignMode::Outer) => AlignMode::Inner,
-                (AlignMode::Inner, AlignMode::Inner) => AlignMode::Inner,
-                (AlignMode::Inner, AlignMode::None) => AlignMode::None,
-                (AlignMode::None, _) => mode,
+                (AlignMode::Auto, _) => mode,
             },
             ..self
         }
@@ -70,8 +69,9 @@ impl Mode {
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum AlignMode {
+    #[default]
+    Auto,
     Outer,
     Inner,
-    #[default]
-    None,
+    Never,
 }

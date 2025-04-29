@@ -54,3 +54,33 @@ $ cases(
                   &= f
               )
 ) $
+
+// Cases that may fail to property align
+$ a + lr(size: #1cm,
+b +& c mid(|) \
+       mid(|) d +& e) $
+
+$ a + lr(size: #1cm, b +& c mid(|) \
+       mid(|) d +& e) $
+
+$ a + lr(size: #1cm, (b +& c mid(|) \
+       mid(|) d +& e)) $
+
+$ a + lr(size: #1cm, (b +& c mid(|) \
+       mid(|) d +& e)) + f $
+
+$ a + lr(size: #1cm, (
+  b +& c mid(|) \
+       mid(|) d +& e)) + f $
+
+$ a + lr(size: #1cm, (
+  b +& c mid(|) \
+       mid(|) d +& e  )) + f $
+
+$
+  a + lr(
+    size: #1cm, (
+             b + & c mid(|) \
+      mid(|) d + & e        )
+  ) + f
+$
