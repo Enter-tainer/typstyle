@@ -20,13 +20,13 @@ $
 
 // Block comments between alignment markers
 $
-  f(x) /* pre */ & = /* mid */ y /* post */ \
-    /* before */ & = /* between */ z        \ /* after */
+  f(x) /* pre */ &= /* mid */ y /* post */ \
+  /* before */ &= /* between */ z /* after */
 $
 
 // Block comments in single line
 $
-  p /* c1 */ & = /* c2 */ q /* c3 */ & = /* c4 */ r /* c5 */
+  p /* c1 */ &= /* c2 */ q /* c3 */ &= /* c4 */ r /* c5 */
 $
 
 // Empty block comments

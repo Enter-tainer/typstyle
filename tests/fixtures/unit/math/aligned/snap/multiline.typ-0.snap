@@ -4,25 +4,30 @@ input_file: tests/fixtures/unit/math/aligned/multiline.typ
 ---
 // Basic multiline with continuation
 $
-  x & = y + z    \
-    & = (a + b +
-        c)       \
-    & = w        \
+  x
+  &= y + z \
+  &= (a + b +
+    c) \
+  &= w
 $
 
 // Mixed indentation levels
 $
-  f(x) & = integral_0^1
-         f(t)
-         d t                  \
-       & = sum_(n=0)^infinity
-         x^n / n!             \
-       & = e^x                \
+  f(x) &= integral_0^1
+  f(t)
+  d t \
+  &= sum_(n=0)^infinity
+  x^n / n! \
+  &= e^x
 $
 
 // Alignment points on separate lines
 $
-  "Left side" & = "Right side" & "Comment"
+  "Left side"
+  &
+  = "Right side"
+  &
+  "Comment"
 $
 
 // Long expressions with operation breaks
@@ -30,45 +35,46 @@ $
   vec(
     1,
     2,
-     3
-     ) & = (1 + 2 +
-           3) + (4 +
-           5 + 6)          \
-       & = sum_(i=1)^3 i +
-         sum_(i=4)^6 i     \
+    3
+  )
+  &= (1 + 2 +
+    3) + (4 +
+    5 + 6) \
+  &= sum_(i=1)^3 i +
+  sum_(i=4)^6 i
 $
 
 // Multiple columns with mixed single/multiline content
 $
-  x & = y + z & "where" & y = alpha +
-                          beta +
-                          gamma       \
-    & = w     &   "and" & z = theta   \
+  x &= y + z & "where" & y = alpha +
+  beta +
+  gamma \
+  &= w & "and" & z = theta
 $
 
 // Columns with different break patterns
 $
-  f(x) & = y_1 +
-         y_2     & = & z_1 +
-                       z_2 +
-                       z_3      \
-       & = w     & = & "result" \
+  f(x) &= y_1 +
+  y_2 & = & z_1 +
+  z_2 +
+  z_3 \
+  &= w & = & "result"
 $
 
 // Matrix-like alignment with breaks
 $
-  a_11 & a_12   & a_13 +
-                  b_13 +
-                    c_13 \
+  a_11 & a_12 & a_13 +
+  b_13 +
+  c_13 \
   a_21 & a_22 +
-         b_22   &   a_23 \
-  a_31 & a_32   &   a_33 \
+  b_22 & a_23 \
+  a_31 & a_32 & a_33
 $
 
 // Mixed text and math columns
 $
-  "Identity" & = & sum x_i & "where" &     x_i =
-                                         1 / i +
-                                       1 / (i+1) \
-    "Result" & = &       y & "and"   &    y = pi \
+  "Identity" & = & sum x_i & "where" & x_i =
+  1 / i +
+  1 / (i+1) \
+  "Result" & = & y & "and" & y = pi
 $

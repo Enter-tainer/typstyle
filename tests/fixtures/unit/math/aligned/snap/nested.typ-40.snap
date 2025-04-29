@@ -12,11 +12,11 @@ $
 // Complex nested breaks
 $
   mat(1, 2, 3; 4, 5, 6) & = mat(
-                            a, b; & c, d; \
-                            & e,
-                            f
-                          )                 \
-                        & = "result"        \
+    a, b; & c, d; \
+    & e,
+    f
+  ) \
+  & = "result"
 $
 
 // Multi-level alignment with breaks

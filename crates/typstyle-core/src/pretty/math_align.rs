@@ -37,6 +37,10 @@ impl<'a> PrettyPrinter<'a> {
 
         let col_num = aligned_elems.iter().map(|row| row.len()).max().unwrap_or(0);
         let mut col_widths = vec![0; col_num];
+        let mut grid_width = col_num;
+        if grid_width > self.config.max_width {
+            return None;
+        }
 
         let mut printed = vec![];
         for row in aligned_elems {
@@ -58,7 +62,14 @@ impl<'a> PrettyPrinter<'a> {
                         render_width + 2
                     }
                 };
-                col_widths[j] = col_widths[j].max(cell_width);
+                if cell_width > col_widths[j] {
+                    grid_width += cell_width - col_widths[j];
+                    col_widths[j] = cell_width;
+                    if grid_width > self.config.max_width {
+                        return None; // exceeds max width
+                    }
+                }
+
                 row_doc.push((rendered, cell_width));
             }
             printed.push(row_doc);

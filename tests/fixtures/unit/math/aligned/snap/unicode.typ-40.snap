@@ -43,9 +43,9 @@ $
 
 // Complex alignment with various Unicode symbols
 $
-  ∫_0^∞ & = ∑_(n=1)^∞ & "subject to" & α ≤ β \
-        & = ∏_(k=1)^n &       "또는" & γ ∈ Δ \
-        & = √(π + φ)                         \
+  ∫_0^∞ &= ∑_(n=1)^∞ & "subject to" & α ≤ β \
+  &= ∏_(k=1)^n & "또는" & γ ∈ Δ \
+  &= √(π + φ)
 $
 
 // Non-ASCII function names

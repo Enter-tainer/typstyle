@@ -4,36 +4,36 @@ input_file: tests/fixtures/unit/math/aligned/commented.typ
 ---
 // Pure block comments in simple alignments
 $
-  x & = y /* basic comment */ \
-    & = z /* another
-          block comment */    \
-    & = w                     \ /* multi
-                                line
-                                comment */
+  x &= y /* basic comment */ \
+  &= z /* another
+       block comment */ \
+  &= w /* multi
+       line
+       comment */
 $
 
 // Block comments with nesting
 $
-  a & = b /* outer /* inner */ comment */ \
-    & = c                                 \ /* first /* second /* third */ */ */
+  a &= b /* outer /* inner */ comment */ \
+  &= c /* first /* second /* third */ */ */
 $
 
 // Block comments between alignment markers
 $
-  f(x) /* pre */ & = /* mid */ y /* post */ \
-    /* before */ & = /* between */ z        \ /* after */
+  f(x) /* pre */ &= /* mid */ y /* post */ \
+  /* before */ &= /* between */ z /* after */
 $
 
 // Block comments in single line
 $
-  p /* c1 */ & = /* c2 */ q /* c3 */ & = /* c4 */ r /* c5 */
+  p /* c1 */ &= /* c2 */ q /* c3 */ &= /* c4 */ r /* c5 */
 $
 
 // Empty block comments
 $
-  m & = n /**/  \
-    & = p /* */ \
-    & = q       \ /*    */
+  m &= n /**/ \
+  &= p /* */ \
+  &= q /*    */
 $
 
 // Comments mixed with aligned equations
@@ -64,9 +64,9 @@ $
 // Comments in complex structures
 $
   cases(
-    x & = y, // First case
+    x &= y, // First case
     // Middle comment
-    z & = w /* Second case */
+    z &= w /* Second case */
   ) &= sum x // Right hand side \
   // Line comment between rows
   &= product y /* Block
@@ -88,10 +88,10 @@ $
 // Comments in nested alignments
 $
   mat(
-    a & = b, // Row 1
+    a &= b, // Row 1
     cases(
-      x & = y, // Nested case 1
-      z & = w /* Nested case 2 */
+      x &= y, // Nested case 1
+      z &= w /* Nested case 2 */
     ) // End of cases
   )
 $

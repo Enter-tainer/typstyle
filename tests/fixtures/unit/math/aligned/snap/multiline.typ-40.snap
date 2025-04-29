@@ -67,8 +67,8 @@ $
 
 // Mixed text and math columns
 $
-  "Identity" & = & sum x_i & "where" &     x_i =
-                                         1 / i +
-                                       1 / (i+1) \
-    "Result" & = &       y & "and"   &    y = pi \
+  "Identity" & = & sum x_i & "where" & x_i =
+  1 / i +
+  1 / (i+1) \
+  "Result" & = & y & "and" & y = pi
 $
