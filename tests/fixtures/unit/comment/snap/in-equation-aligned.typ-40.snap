@@ -4,12 +4,12 @@ input_file: tests/fixtures/unit/comment/in-equation-aligned.typ
 ---
 // Pure block comments in simple alignments
 $
-  x &= y /* basic comment */ \
-  &= z /* another
-          block comment */ \
-  &= w /* multi
-       line
-       comment */
+  x & = y /* basic comment */ \
+    & = z /* another
+      block comment */        \
+    & = w                     \ /* multi
+                                line
+                                comment */
 $
 
 // Block comments with nesting

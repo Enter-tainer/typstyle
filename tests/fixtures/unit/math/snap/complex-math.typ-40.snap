@@ -3,10 +3,10 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/complex-math.typ
 ---
 $
-  Re[epsilon(omega) \/ epsilon.alt_0] =& 1 + 2 / pi cal(P) integral_0^oo (omega' Im[
-    epsilon(omega') \/ epsilon_0
-  ]) / (omega'^2 - omega^2) dif omega' \
-  Im[epsilon(omega) \/ epsilon.alt_0] =& sigma / (epsilon_0 omega) - (2 omega) / pi cal(P) integral_0^oo (omega' Re[
-    epsilon(omega') \/ epsilon_0 - 1
-  ]) / (omega'^2 - omega^2) dif omega'
+  Re[epsilon(omega) \/ epsilon.alt_0] = & 1 + 2 / pi cal(P) integral_0^oo (omega' Im[
+                                          epsilon(omega') \/ epsilon_0
+                                          ]) / (omega'^2 - omega^2) dif omega'                                        \
+  Im[epsilon(omega) \/ epsilon.alt_0] = & sigma / (epsilon_0 omega) - (2 omega) / pi cal(P) integral_0^oo (omega' Re[
+                                          epsilon(omega') \/ epsilon_0 - 1
+                                          ]) / (omega'^2 - omega^2) dif omega'                                        \
 $
