@@ -1,0 +1,46 @@
+// Mismatched brackets and parentheses
+$ [1 + 2 &= 3] \
+  {4 &= 5 &= 6} \
+  (7 &= 8) $
+
+// Mixed delimiters and alignment
+$ ((a &= b) & "and" & [c &= d]) \
+  {(e &= f) & "or" & (g &= h)} $
+
+// Breaking long expressions across rows
+$ sum_(k=1)^n a_k & = (a_1 + a_2 + dots.c \
+    & + a_(n-1) + a_n) \
+    & = x $
+
+---
+
+// Alignment with decorations
+$ arrow(x x &= y) \
+  circle(a &= b b) \
+  hat(c &= d d d) $
+
+// Complex nested breaks
+$ mat(1,2,3; 4,5,6) & = mat(a,b; & c,d; \
+    & e,f) \
+    & = "result" $
+
+// Multi-level alignment with breaks
+$ cases(
+  x & text("case 1") & = alpha \
+    & & = beta, \
+  y & text("case 2") & = gamma \
+    & & = delta
+) $
+
+// Breaking inside fractions
+$ frac(
+    1 + 2 + 3 & + 4 + 5,
+    6 + 7 & + 8 + 9
+  ) & = "result" $
+
+// Nested structures with varying alignments
+$ cases(
+    1 &= x &= y,
+    2 &= z,
+    3 &= w &= v &= u
+) $

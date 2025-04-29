@@ -22,3 +22,33 @@ where
         doc
     }
 }
+
+pub trait AllocExt<'a, A> {
+    fn spaces(&'a self, n: usize) -> DocBuilder<'a, Self, A>
+    where
+        Self: DocAllocator<'a, A>;
+}
+
+impl<'a, T, A> AllocExt<'a, A> for T
+where
+    T: DocAllocator<'a, A>,
+    A: 'a,
+{
+    fn spaces(&'a self, n: usize) -> DocBuilder<'a, Self, A> {
+        static SPACES: &str =
+            "                                                                                ";
+
+        if n <= SPACES.len() {
+            self.text(&SPACES[..n])
+        } else {
+            let mut doc = self.nil();
+            let mut remaining = n;
+            while remaining != 0 {
+                let i = SPACES.len().min(remaining);
+                remaining -= i;
+                doc = doc.append(self.text(&SPACES[..i]))
+            }
+            doc
+        }
+    }
+}
