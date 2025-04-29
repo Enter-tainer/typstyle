@@ -2,98 +2,76 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/aligned/nested.typ
 ---
-// Mismatched brackets and parentheses
-$
-  [1 + 2 & = 3]        \
-      {4 & = 5  & = 6} \
-      (7 & = 8)        \
-$
-
-// Mixed delimiters and alignment
-$
-   ((a & = b)  & "and" & [CC &  = d]) \
-  {(EE & = FF) &  "or" & (g  & = HH)} \
-$
-
-// Breaking long expressions across rows
-$
-  sum_(k=1)^n a_k & = (a_1 + a_2 + dots.c \
-                  & + a_(n-1) + a_n)      \
-                  & = x                   \
-$
-
----
-
 // Alignment with decorations
 $
-  arrow(x x &= y) \
-  circle(a &= b b) \
-  hat(c &= d d d)
+  arrow(x x & = y) \
+  circle(a & = b b) \
+  hat(c & = d d d)
 $
 
 // Complex nested breaks
 $
   mat(1, 2, 3; 4, 5, 6) & = mat(
-                          a, b; & c, d; \
-                          & e,
-                          f
-                          )               \
-                        & = "result"      \
+                            a, b; & c, d;     \
+                            & e ,
+                            f
+                          )                     \
+                        & = "result"            \
 $
 
 // Multi-level alignment with breaks
 $
   cases(
     x & text("case 1") & = alpha \
-    & & = beta, \
+      &                &  = beta ,                              \
     y & text("case 2") & = gamma \
-    & & = delta
+      &                & = delta
   )
 $
 
 // Breaking inside fractions
 $
-                 frac(
-  1 + 2 + 3 & + 4 + 5,
-       6 + 7 & + 8 + 9
-                     ) & = "result"
+                   frac(
+    1 + 2 + 3 & + 4 + 5,
+         6 + 7 & + 8 + 9
+                       ) & = "result"
 $
 
 // Nested structures with varying alignments
 $
   cases(
-    1 &= x &= y,
-    2 &= z,
-    3 &= w &= v &= u
+    1 & = x & = y,
+    2 & = z,
+    3 & = w & = v & = u
   )
 $
 
 // Cases with alignment and breaks in each branch
 $
   cases(
-    x &= alpha &= beta \
-    &= gamma &= delta,
-    y &= epsilon \
-    &= zeta \
-    &= eta,
-    z &= theta &= iota \
-    &= kappa &= lambda \
-    &= mu
+    x & = alpha &  = beta \
+      & = gamma & = delta ,
+    y & = epsilon \
+      & = zeta    \
+      & = eta     ,
+    z & = theta &   = iota \
+      & = kappa & = lambda \
+      & = mu
   )
 $
 
 // Cases with mixed content and breaks
 $
   cases(
-    "Case 1:" &= sum x_n \
-    &= product y_n,
-    "Case 2: " &= integral_0^1 f(t) \
-    &= g(x),
-    "Case 3:  " &= cases(
-      a &= b \
-      &= c,
-      d &= e \
-      &= f
-    )
+    "Case 1:" & = sum x_n     \
+              & = product y_n ,
+    "Case 2: " & = integral_0^1 f(t) \
+               & = g(x)              ,
+    "Case 3:  " & = cases(
+                    a & = b \
+                      & = c ,
+                    d & = e \
+                      & = f
+                  )
   )
 $

@@ -2,6 +2,7 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
+    context::AlignMode,
     layout::{
         flow::FlowItem,
         list::{ListStyle, ListStylist},
@@ -133,7 +134,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     fn convert_args_in_math(&'a self, ctx: Context, args: Args<'a>) -> ArenaDoc<'a> {
-        let ctx = ctx.aligned();
+        let ctx = ctx.aligned(AlignMode::Inner);
 
         // strip spaces
         let children = {

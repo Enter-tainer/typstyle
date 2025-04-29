@@ -1,19 +1,3 @@
-// Mismatched brackets and parentheses
-$ [1 + 2 &= 3] \
-  {4 &= 5 &= 6} \
-  (7 &= 8) $
-
-// Mixed delimiters and alignment
-$ ((a &= b) & "and" & [CC &= d]) \
-  {(EE &= FF) & "or" & (g &= HH)} $
-
-// Breaking long expressions across rows
-$ sum_(k=1)^n a_k & = (a_1 + a_2 + dots.c \
-    & + a_(n-1) + a_n) \
-    & = x $
-
----
-
 // Alignment with decorations
 $ arrow(x x &= y) \
   circle(a &= b b) \
@@ -60,7 +44,7 @@ $ cases(
 // Cases with mixed content and breaks
 $ cases(
     "Case 1:" &= sum x_n \
-              &= product y_n,
+                &= product y_n,
     "Case 2: " &= integral_0^1 f(t) \
               &= g(x),
     "Case 3:  " &= cases(

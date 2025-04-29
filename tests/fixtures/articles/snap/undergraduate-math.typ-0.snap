@@ -1076,8 +1076,8 @@ Definition by cases can be easily obtained with the `cases` function.
     [
       $
         f_n = cases(
-          a &"if" n = 0,
-          r dot f_(n - 1) &"else"
+          a & "if" n = 0,
+          r dot f_(n - 1) & "else"
         )
       $
     ],

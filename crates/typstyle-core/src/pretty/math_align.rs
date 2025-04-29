@@ -4,7 +4,7 @@ use unicode_width::UnicodeWidthStr;
 
 use crate::{ext::StrExt, AttrStore};
 
-use super::{doc_ext::AllocExt, ArenaDoc, Context, PrettyPrinter};
+use super::{context::AlignMode, doc_ext::AllocExt, ArenaDoc, Context, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn try_convert_math_aligned(
@@ -12,21 +12,19 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math: Math<'a>,
     ) -> Option<ArenaDoc<'a>> {
-        if ctx.in_aligned
-            || math
-                .to_untyped()
-                .children()
-                .any(|it| it.kind() == SyntaxKind::LineComment)
+        if math
+            .to_untyped()
+            .children()
+            .any(|it| it.kind() == SyntaxKind::LineComment)
             || !self.attr_store.has_math_align_point(math.to_untyped())
         {
             return None;
         }
 
-        let ctx = ctx.aligned();
+        let ctx = ctx.aligned(AlignMode::Outer);
         let aligned_elems = collect_aligned(math, &self.attr_store);
-
         let (printed, col_widths) = self.render_cells_in_aligned(ctx, aligned_elems)?;
-        let doc = self.print_aligned_cells(printed, col_widths);
+        let doc = self.print_aligned_cells(printed, col_widths, ctx.align_mode == AlignMode::Outer);
         Some(doc)
     }
 
@@ -47,16 +45,14 @@ impl<'a> PrettyPrinter<'a> {
             for (j, col) in row.into_iter().enumerate() {
                 let cell_doc = self.convert_math_children(ctx, col.into_iter());
                 let mut rendered = String::new();
-                cell_doc.render_fmt(200, &mut rendered).ok()?;
+                cell_doc
+                    .render_fmt(self.config.max_width, &mut rendered)
+                    .ok()?;
 
                 let cell_width = if rendered.is_empty() {
                     0
                 } else {
-                    let render_width = rendered
-                        .lines()
-                        .map(|line| line.trim_ascii().width())
-                        .max()
-                        .unwrap_or(0);
+                    let render_width = rendered.lines().map(|line| line.width()).max().unwrap_or(0);
                     if j == 0 || j + 1 == col_num {
                         render_width + 1
                     } else {
@@ -76,6 +72,7 @@ impl<'a> PrettyPrinter<'a> {
         &'a self,
         printed: Vec<Vec<(String, usize)>>,
         col_widths: Vec<usize>,
+        add_trailing_linebreak: bool,
     ) -> ArenaDoc<'a> {
         /*
         printed as:
@@ -95,37 +92,39 @@ impl<'a> PrettyPrinter<'a> {
                 let is_cur_empty = cell_width == 0;
 
                 let padded_cell_doc = if cell.has_linebreak() {
+                    let common_indent = cell
+                        .lines()
+                        .filter(|line| !line.trim().is_empty())
+                        .map(|line| line.chars().take_while(|c| *c == ' ').count())
+                        .min()
+                        .unwrap_or(0);
                     let mut indent = col_widths[..j].iter().sum::<usize>() + j;
                     if j > 0 {
                         indent += 1;
                     }
                     self.arena
                         .intersperse(
-                            cell.lines()
-                                .filter_map(|line| {
-                                    let trimmed = line.trim_ascii();
-                                    if trimmed.is_empty() {
-                                        None
-                                    } else {
-                                        Some(trimmed)
-                                    }
-                                })
-                                .map(|line| {
-                                    let render_width = line.width();
-                                    let line_width = if j == 0 || j + 1 == col_num {
-                                        render_width + 1
-                                    } else {
-                                        render_width + 2
-                                    };
-                                    let pad_spaces = self.arena.spaces(col_width - line_width);
-                                    let line_doc = self.arena.text(line.to_string());
-                                    #[allow(clippy::if_same_then_else)]
-                                    if j % 2 == 1 || col_widths.len() == 1 {
-                                        line_doc + pad_spaces
-                                    } else {
-                                        pad_spaces + line_doc
-                                    }
-                                }),
+                            cell.lines().map(|line| {
+                                let line = if line.len() >= common_indent {
+                                    &line[common_indent..]
+                                } else {
+                                    line
+                                };
+                                let render_width = line.width();
+                                let line_width = if j == 0 || j + 1 == col_num {
+                                    render_width + 1
+                                } else {
+                                    render_width + 2
+                                };
+                                let pad_spaces = self.arena.spaces(col_width - line_width);
+                                let line_doc = self.arena.text(line.to_string());
+                                #[allow(clippy::if_same_then_else)]
+                                if j % 2 == 1 || col_widths.len() == 1 {
+                                    line_doc + pad_spaces
+                                } else {
+                                    pad_spaces + line_doc
+                                }
+                            }),
                             self.arena.hardline(),
                         )
                         .nest(indent as isize)
@@ -167,7 +166,11 @@ impl<'a> PrettyPrinter<'a> {
             }
             doc += row_doc;
             if row_num > 1 {
-                doc += self.arena.text(" \\");
+                doc += if add_trailing_linebreak || i + 1 != row_num {
+                    self.arena.text(" \\")
+                } else {
+                    self.arena.text(" ")
+                };
             }
             if i + 1 != row_num {
                 doc += self.arena.hardline();

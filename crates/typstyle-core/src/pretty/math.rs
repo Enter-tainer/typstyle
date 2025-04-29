@@ -2,11 +2,13 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
+    context::AlignMode,
     layout::{
         flow::FlowItem,
         list::{ListStyle, ListStylist},
     },
     style::FoldStyle,
+    util::is_comment_node,
     ArenaDoc, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
@@ -86,6 +88,8 @@ impl<'a> PrettyPrinter<'a> {
             } else if node.kind() == SyntaxKind::Hash {
                 doc += self.arena.text("#");
                 peek_hash = true;
+            } else if is_comment_node(node) {
+                doc += self.convert_comment(ctx, node);
             } else {
                 // may be LeftParen, RightParen
                 doc += self.convert_trivia_untyped(node);
@@ -99,7 +103,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math_delimited: MathDelimited<'a>,
     ) -> ArenaDoc<'a> {
-        let ctx = ctx.aligned(); // should not align within
+        let ctx = ctx.aligned(AlignMode::Inner); // should not align within
 
         let mut inner_nodes = math_delimited.to_untyped().children().as_slice();
         inner_nodes = &inner_nodes[1..inner_nodes.len() - 1];

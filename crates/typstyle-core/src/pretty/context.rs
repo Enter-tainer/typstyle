@@ -2,7 +2,7 @@
 pub struct Context {
     pub mode: Mode,
     pub break_suppressed: bool,
-    pub in_aligned: bool,
+    pub align_mode: AlignMode,
 }
 
 impl Context {
@@ -24,9 +24,15 @@ impl Context {
         }
     }
 
-    pub fn aligned(self) -> Self {
+    pub fn aligned(self, mode: AlignMode) -> Self {
         Self {
-            in_aligned: true,
+            align_mode: match (self.align_mode, mode) {
+                (AlignMode::Outer, _) => mode,
+                (AlignMode::Inner, AlignMode::Outer) => AlignMode::Inner,
+                (AlignMode::Inner, AlignMode::Inner) => AlignMode::Inner,
+                (AlignMode::Inner, AlignMode::None) => AlignMode::None,
+                (AlignMode::None, _) => mode,
+            },
             ..self
         }
     }
@@ -60,4 +66,12 @@ impl Mode {
     pub fn is_math(self) -> bool {
         self == Self::Math
     }
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub enum AlignMode {
+    Outer,
+    Inner,
+    #[default]
+    None,
 }

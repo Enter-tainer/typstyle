@@ -1,12 +1,12 @@
 ---
 source: tests/src/unit.rs
-input_file: tests/fixtures/unit/comment/in-equation-aligned.typ
+input_file: tests/fixtures/unit/math/aligned/commented.typ
 ---
 // Pure block comments in simple alignments
 $
   x & = y /* basic comment */ \
     & = z /* another
-      block comment */        \
+          block comment */    \
     & = w                     \ /* multi
                                 line
                                 comment */
@@ -25,7 +25,9 @@ $
 $
 
 // Block comments in single line
-$ p /* c1 */ & = /* c2 */ q /* c3 */ & = /* c4 */ r /* c5 */ $
+$
+  p /* c1 */ & = /* c2 */ q /* c3 */ & = /* c4 */ r /* c5 */
+$
 
 // Empty block comments
 $
@@ -62,13 +64,13 @@ $
 // Comments in complex structures
 $
   cases(
-    x &= y, // First case
+    x & = y, // First case
     // Middle comment
-    z &= w /* Second case */
+    z & = w /* Second case */
   ) &= sum x // Right hand side \
   // Line comment between rows
   &= product y /* Block
-                   comment */ \
+               comment */ \
   &= z // Final result $
   // Mixed Unicode and comments
 $ α &= β // Greek variables \
@@ -86,10 +88,10 @@ $
 // Comments in nested alignments
 $
   mat(
-    a &= b, // Row 1
+    a & = b, // Row 1
     cases(
-      x &= y, // Nested case 1
-      z &= w /* Nested case 2 */
+      x & = y, // Nested case 1
+      z & = w /* Nested case 2 */
     ) // End of cases
   )
 $
