@@ -4,8 +4,8 @@ $ [1 + 2 &= 3] \
   (7 &= 8) $
 
 // Mixed delimiters and alignment
-$ ((a &= b) & "and" & [c &= d]) \
-  {(e &= f) & "or" & (g &= h)} $
+$ ((a &= b) & "and" & [CC &= d]) \
+  {(EE &= FF) & "or" & (g &= HH)} $
 
 // Breaking long expressions across rows
 $ sum_(k=1)^n a_k & = (a_1 + a_2 + dots.c \
@@ -43,4 +43,30 @@ $ cases(
     1 &= x &= y,
     2 &= z,
     3 &= w &= v &= u
+) $
+
+// Cases with alignment and breaks in each branch
+$ cases(
+    x &= alpha &= beta \
+      &= gamma &= delta,
+    y &= epsilon \
+      &= zeta \
+      &= eta,
+    z &= theta &= iota \
+      &= kappa &= lambda \
+      &= mu
+) $
+
+// Cases with mixed content and breaks
+$ cases(
+    "Case 1:" &= sum x_n \
+              &= product y_n,
+    "Case 2: " &= integral_0^1 f(t) \
+              &= g(x),
+    "Case 3:  " &= cases(
+                a &= b \
+                  &= c,
+                d &= e \
+                  &= f
+              )
 ) $

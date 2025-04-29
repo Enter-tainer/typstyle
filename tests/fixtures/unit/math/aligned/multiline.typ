@@ -29,7 +29,6 @@ $ vec(1,
       5 + 6) \
   &= sum_(i=1)^3 i +
      sum_(i=4)^6 i $
-// ...existing code...
 
 // Multiple columns with mixed single/multiline content
 $ x &= y + z & "where" & y = alpha +

@@ -1,8 +1,5 @@
 use rustc_hash::FxHashMap;
-use typst_syntax::{
-    ast::{Args, AstNode},
-    Span, SyntaxKind, SyntaxNode,
-};
+use typst_syntax::{Span, SyntaxKind, SyntaxNode};
 
 use crate::ext::StrExt;
 
@@ -13,6 +10,8 @@ pub struct Attributes {
 
     /// Indicates whether any child node contains a comment.
     pub(self) has_comment: bool,
+
+    pub(self) has_math_align_point: bool,
 
     /// Indicates whether the node text contains a linebreak.
     /// Currently, it is only used for equations.
@@ -39,12 +38,17 @@ impl AttrStore {
         };
         store.compute_no_format(node);
         store.compute_multiline(node);
+        store.compute_math_align_point(node);
         store
     }
 
     /// Checks if a given syntax node contains a comment.
     pub fn has_comment(&self, node: &SyntaxNode) -> bool {
         self.check_node_attr(node, |attr| attr.has_comment)
+    }
+
+    pub fn has_math_align_point(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.has_math_align_point)
     }
 
     /// Checks if a given syntax node or any of its descendants contains a linebreak.
@@ -154,14 +158,33 @@ impl AttrStore {
     fn set_commented(&mut self, node: &SyntaxNode) {
         self.attr_map.entry(node.span()).or_default().has_comment = true;
     }
-}
 
-#[allow(unused)]
-fn is_2d_arg(arg: Args) -> bool {
-    for child in arg.to_untyped().children() {
-        if child.kind() == SyntaxKind::Semicolon {
+    fn compute_math_align_point(&mut self, root: &SyntaxNode) {
+        self.compute_math_align_point_impl(root);
+    }
+
+    fn compute_math_align_point_impl(&mut self, node: &SyntaxNode) -> bool {
+        if node.kind() == SyntaxKind::MathAlignPoint {
             return true;
         }
+        let mut has_math_align_point = false;
+        for child in node.children() {
+            has_math_align_point |= self.compute_math_align_point_impl(child);
+        }
+        if has_math_align_point
+            && matches!(node.kind(), SyntaxKind::Math | SyntaxKind::MathDelimited)
+        {
+            self.set_having_align_point(node);
+            true
+        } else {
+            false
+        }
     }
-    false
+
+    fn set_having_align_point(&mut self, node: &SyntaxNode) {
+        self.attr_map
+            .entry(node.span())
+            .or_default()
+            .has_math_align_point = true;
+    }
 }

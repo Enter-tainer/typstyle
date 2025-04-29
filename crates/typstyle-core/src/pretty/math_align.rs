@@ -2,7 +2,7 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use unicode_width::UnicodeWidthStr;
 
-use crate::ext::StrExt;
+use crate::{ext::StrExt, AttrStore};
 
 use super::{doc_ext::AllocExt, ArenaDoc, Context, PrettyPrinter};
 
@@ -17,15 +17,13 @@ impl<'a> PrettyPrinter<'a> {
                 .to_untyped()
                 .children()
                 .any(|it| it.kind() == SyntaxKind::LineComment)
-            || !math
-                .exprs()
-                .any(|expr| matches!(expr, Expr::MathAlignPoint(_)))
+            || !self.attr_store.has_math_align_point(math.to_untyped())
         {
             return None;
         }
 
         let ctx = ctx.aligned();
-        let aligned_elems = collect_aligned(math);
+        let aligned_elems = collect_aligned(math, &self.attr_store);
 
         let (printed, col_widths) = self.render_cells_in_aligned(ctx, aligned_elems)?;
         let doc = self.print_aligned_cells(printed, col_widths);
@@ -179,7 +177,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 }
 
-fn collect_aligned(math: Math<'_>) -> Vec<Vec<Vec<&SyntaxNode>>> {
+fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<Vec<Vec<&'a SyntaxNode>>> {
     // Helper function to remove trailing spaces from a cell.
     fn trim_trailing_spaces(cell: &mut Vec<&SyntaxNode>) {
         while cell
@@ -190,10 +188,29 @@ fn collect_aligned(math: Math<'_>) -> Vec<Vec<Vec<&SyntaxNode>>> {
         }
     }
 
+    fn collect_children<'a>(
+        node: &'a SyntaxNode,
+        attrs: &AttrStore,
+        out: &mut Vec<&'a SyntaxNode>,
+    ) {
+        if !(matches!(node.kind(), SyntaxKind::Math | SyntaxKind::MathDelimited)
+            && attrs.has_math_align_point(node))
+        {
+            out.push(node);
+            return;
+        }
+        for child in node.children() {
+            collect_children(child, attrs, out);
+        }
+    }
+
+    let mut flattened_children = Vec::new();
+    collect_children(math.to_untyped(), attrs, &mut flattened_children);
+
     // First pass: split all children into lines (split at Linebreak)
     let mut lines: Vec<Vec<&SyntaxNode>> = Vec::new();
     let mut current_line: Vec<&SyntaxNode> = Vec::new();
-    for node in math.to_untyped().children() {
+    for node in flattened_children {
         if node.kind() == SyntaxKind::Linebreak {
             lines.push(current_line);
             current_line = Vec::new();
