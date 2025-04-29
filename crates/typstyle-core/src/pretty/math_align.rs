@@ -12,27 +12,23 @@ impl<'a> PrettyPrinter<'a> {
         math: Math<'a>,
     ) -> Option<ArenaDoc<'a>> {
         if ctx.align_mode == AlignMode::Never
-            || math
-                .to_untyped()
-                .children()
-                .any(|it| it.kind() == SyntaxKind::LineComment)
             || !self.attr_store.has_math_align_point(math.to_untyped())
         {
             return None;
         }
         let ctx = ctx.aligned(AlignMode::Outer);
         let aligned_elems = collect_aligned(math, &self.attr_store);
-        let (printed, col_widths) = self.render_cells_in_aligned(ctx, aligned_elems)?;
-        let doc = self.print_aligned_cells(printed, col_widths, ctx.align_mode == AlignMode::Outer);
+        let aligned = self.render_cells_in_aligned(ctx, aligned_elems)?;
+
+        let doc = self.print_aligned_cells(aligned, ctx.align_mode == AlignMode::Outer);
         Some(doc)
     }
 
-    #[allow(clippy::type_complexity)]
     fn render_cells_in_aligned(
         &'a self,
         ctx: Context,
-        aligned_elems: Vec<Vec<Vec<&'a SyntaxNode>>>,
-    ) -> Option<(Vec<Vec<(String, usize)>>, Vec<usize>)> {
+        aligned_elems: Vec<RawRow<'a>>,
+    ) -> Option<Aligned<'a>> {
         // column widths have already considered padding around separators
 
         let col_num = aligned_elems.iter().map(|row| row.len()).max().unwrap_or(0);
@@ -44,44 +40,75 @@ impl<'a> PrettyPrinter<'a> {
 
         let mut printed = vec![];
         for row in aligned_elems {
-            let mut row_doc = vec![];
-            for (j, col) in row.into_iter().enumerate() {
-                let cell_doc = self.convert_math_children(ctx, col.into_iter());
-                let mut rendered = String::new();
-                cell_doc
-                    .render_fmt(self.config.max_width, &mut rendered)
-                    .ok()?;
+            let rendered_row = match row {
+                RawRow::Comment(comment) => Row::Comment(comment.text()),
+                RawRow::Cells(items) => {
+                    let mut row_doc = vec![];
+                    for (j, cell) in items.into_iter().enumerate() {
+                        let ends_with_line_comment = cell
+                            .last()
+                            .is_some_and(|last| last.kind() == SyntaxKind::LineComment);
+                        let cell_doc = self.convert_math_children(ctx, cell.into_iter());
+                        let mut rendered = String::new();
+                        cell_doc
+                            .render_fmt(self.config.max_width, &mut rendered)
+                            .ok()?;
+                        if ends_with_line_comment {
+                            rendered.push_str("\n\n"); // ensure an extra line is added
+                        }
 
-                let cell_width = if rendered.is_empty() {
-                    0
-                } else {
-                    let render_width = rendered.lines().map(|line| line.width()).max().unwrap_or(0);
-                    if j == 0 || j + 1 == col_num {
-                        render_width + 1
-                    } else {
-                        render_width + 2
+                        let rendered_cell = if rendered.is_empty() {
+                            Cell::Empty
+                        } else if rendered.has_linebreak() {
+                            Cell::MultiLine(
+                                rendered
+                                    .lines()
+                                    .map(|line| {
+                                        let render_width = line.width();
+                                        let line_width = if j == 0 || j + 1 == col_num {
+                                            render_width + 1
+                                        } else {
+                                            render_width + 2
+                                        };
+                                        (line.to_string(), line_width)
+                                    })
+                                    .collect(),
+                            )
+                        } else {
+                            let render_width = rendered.width();
+                            let line_width = if j == 0 || j + 1 == col_num {
+                                render_width + 1
+                            } else {
+                                render_width + 2
+                            };
+                            Cell::SingleLine(rendered, line_width)
+                        };
+                        let cell_width = rendered_cell.width();
+                        if cell_width > col_widths[j] {
+                            grid_width += cell_width - col_widths[j];
+                            col_widths[j] = cell_width;
+                            if grid_width > self.config.max_width {
+                                return None; // exceeds max width
+                            }
+                        }
+
+                        row_doc.push(rendered_cell);
                     }
-                };
-                if cell_width > col_widths[j] {
-                    grid_width += cell_width - col_widths[j];
-                    col_widths[j] = cell_width;
-                    if grid_width > self.config.max_width {
-                        return None; // exceeds max width
-                    }
+                    Row::Cells(row_doc)
                 }
-
-                row_doc.push((rendered, cell_width));
-            }
-            printed.push(row_doc);
+            };
+            printed.push(rendered_row);
         }
 
-        Some((printed, col_widths))
+        Some(Aligned {
+            rows: printed,
+            col_widths,
+        })
     }
 
     fn print_aligned_cells(
         &'a self,
-        printed: Vec<Vec<(String, usize)>>,
-        col_widths: Vec<usize>,
+        aligned: Aligned<'a>,
         add_trailing_linebreak: bool,
     ) -> ArenaDoc<'a> {
         /*
@@ -89,108 +116,144 @@ impl<'a> PrettyPrinter<'a> {
           aa & bbbb && cccc \
         dddd & e    && f    \
          */
-        let mut doc = self.arena.nil();
-
+        let printed = aligned.rows;
+        let col_widths = aligned.col_widths;
         let row_num = printed.len();
         let col_num = col_widths.len();
+
+        let mut doc = self.arena.nil();
+
         for (i, row) in printed.into_iter().enumerate() {
             let mut row_doc = self.arena.nil();
-            let row_len = row.len();
-            let mut is_prev_empty = false;
-            for (j, (cell, cell_width)) in row.into_iter().enumerate() {
-                let col_width = col_widths[j];
-                let is_cur_empty = cell_width == 0;
-
-                let padded_cell_doc = if cell.has_linebreak() {
-                    let common_indent = cell
-                        .lines()
-                        .filter(|line| !line.trim().is_empty())
-                        .map(|line| line.chars().take_while(|c| *c == ' ').count())
-                        .min()
-                        .unwrap_or(0);
-                    let mut indent = col_widths[..j].iter().sum::<usize>() + j;
-                    if j > 0 {
-                        indent += 1;
-                    }
-                    self.arena
-                        .intersperse(
-                            cell.lines().map(|line| {
-                                let line = if line.len() >= common_indent {
-                                    &line[common_indent..]
-                                } else {
-                                    line
-                                };
-                                let render_width = line.width();
-                                let line_width = if j == 0 || j + 1 == col_num {
-                                    render_width + 1
-                                } else {
-                                    render_width + 2
-                                };
-                                let pad_spaces = self.arena.spaces(col_width - line_width);
-                                let line_doc = self.arena.text(line.to_string());
-                                #[allow(clippy::if_same_then_else)]
-                                if j % 2 == 1 || col_widths.len() == 1 {
-                                    line_doc + pad_spaces
-                                } else {
-                                    pad_spaces + line_doc
-                                }
-                            }),
-                            self.arena.hardline(),
-                        )
-                        .nest(indent as isize)
-                } else {
-                    let pad_spaces = self.arena.spaces(col_width - cell_width);
-                    let cell_doc = self.arena.text(cell);
-                    #[allow(clippy::if_same_then_else)]
-                    if j % 2 == 1 || col_widths.len() == 1 {
-                        cell_doc + pad_spaces
-                    } else {
-                        pad_spaces + cell_doc
-                    }
-                };
-
-                let sep = {
-                    let mut sep = self.arena.nil();
-                    if j > 0 {
-                        if !is_prev_empty {
-                            sep += self.arena.space();
-                        }
-                        sep += self.arena.text("&");
-                        if !is_cur_empty {
-                            sep += self.arena.space();
-                        }
-                    }
-                    sep
-                };
-
-                row_doc += sep + padded_cell_doc;
-
-                is_prev_empty = is_cur_empty;
-            }
-            if row_len < col_num {
-                let mut padding = (col_num - row_len) + col_widths[row_len..].iter().sum::<usize>();
-                if !is_prev_empty {
-                    padding += 1;
+            match row {
+                Row::Comment(cmt) => {
+                    row_doc = self.arena.text(cmt) + self.arena.hardline();
                 }
-                row_doc += self.arena.spaces(padding);
+                Row::Cells(row) => {
+                    let row_len = row.len();
+                    let mut is_prev_empty = false;
+                    for (j, cell) in row.into_iter().enumerate() {
+                        let col_width = col_widths[j];
+                        let mut is_cur_empty = false;
+
+                        let pad = |cell_doc: ArenaDoc<'a>, width: usize| {
+                            let pad_spaces = self.arena.spaces(col_width - width);
+                            #[allow(clippy::if_same_then_else)]
+                            if j % 2 == 1 || col_widths.len() == 1 {
+                                cell_doc + pad_spaces
+                            } else {
+                                pad_spaces + cell_doc
+                            }
+                        };
+
+                        let padded_cell_doc = match cell {
+                            Cell::Empty => {
+                                is_cur_empty = true;
+                                pad(self.arena.nil(), 0)
+                            }
+                            Cell::SingleLine(line, width) => pad(self.arena.text(line), width),
+                            Cell::MultiLine(lines) => {
+                                let mut indent = col_widths[..j].iter().sum::<usize>() + j;
+                                if j > 0 {
+                                    indent += 1;
+                                }
+                                self.arena
+                                    .intersperse(
+                                        lines
+                                            .into_iter()
+                                            .map(|(line, width)| pad(self.arena.text(line), width)),
+                                        self.arena.hardline(),
+                                    )
+                                    .nest(indent as isize)
+                            }
+                        };
+
+                        let sep = {
+                            let mut sep = self.arena.nil();
+                            if j > 0 {
+                                if !is_prev_empty {
+                                    sep += self.arena.space();
+                                }
+                                sep += self.arena.text("&");
+                                if !is_cur_empty {
+                                    sep += self.arena.space();
+                                }
+                            }
+                            sep
+                        };
+
+                        row_doc += sep + padded_cell_doc;
+
+                        is_prev_empty = is_cur_empty;
+                    }
+                    if row_len < col_num {
+                        let mut padding =
+                            (col_num - row_len) + col_widths[row_len..].iter().sum::<usize>();
+                        if !is_prev_empty {
+                            padding += 1;
+                        }
+                        row_doc += self.arena.spaces(padding);
+                    }
+                    if row_num > 1 {
+                        row_doc += if add_trailing_linebreak || i + 1 != row_num {
+                            self.arena.text(" \\")
+                        } else {
+                            self.arena.text(" ")
+                        };
+                    }
+                    if i + 1 != row_num {
+                        row_doc += self.arena.hardline();
+                    }
+                }
             }
+
             doc += row_doc;
-            if row_num > 1 {
-                doc += if add_trailing_linebreak || i + 1 != row_num {
-                    self.arena.text(" \\")
-                } else {
-                    self.arena.text(" ")
-                };
-            }
-            if i + 1 != row_num {
-                doc += self.arena.hardline();
-            }
         }
         doc
     }
 }
 
-fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<Vec<Vec<&'a SyntaxNode>>> {
+struct Aligned<'a> {
+    rows: Vec<Row<'a>>,
+    col_widths: Vec<usize>,
+}
+
+enum Row<'a> {
+    Cells(Vec<Cell>),
+    Comment(&'a str),
+}
+
+enum Cell {
+    Empty,
+    SingleLine(String, usize),
+    MultiLine(Vec<(String, usize)>),
+}
+
+impl Cell {
+    pub fn width(&self) -> usize {
+        match self {
+            Cell::Empty => 0,
+            Cell::SingleLine(_, width) => *width,
+            Cell::MultiLine(lines) => lines.iter().map(|(_, width)| *width).max().unwrap_or(0),
+        }
+    }
+}
+
+enum RawRow<'a> {
+    Cells(Vec<Vec<&'a SyntaxNode>>),
+    Comment(&'a SyntaxNode),
+}
+
+impl RawRow<'_> {
+    pub fn len(&self) -> usize {
+        match self {
+            RawRow::Cells(items) => items.len(),
+            RawRow::Comment(_) => 0,
+        }
+    }
+}
+
+fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
     // Helper function to remove trailing spaces from a cell.
     fn trim_trailing_spaces(cell: &mut Vec<&SyntaxNode>) {
         while cell
@@ -231,33 +294,39 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<Vec<Vec<&'a Syn
             current_line.push(node);
         }
     }
-    // Push any remaining nodes as the final line.
     if !current_line.is_empty() {
         lines.push(current_line);
     }
 
-    // Second pass: for each line, split by MathAlignPoint.
-    let mut rows: Vec<Vec<Vec<&SyntaxNode>>> = Vec::new();
+    // Second pass: create rows; if a line starts with a line comment, create a Comment row.
+    let mut rows = Vec::new();
     for line in lines {
-        let mut row: Vec<Vec<&SyntaxNode>> = Vec::new();
-        let mut current_cell: Vec<&SyntaxNode> = Vec::new();
+        let mut cells = Vec::new();
+        let mut current_cell = Vec::new();
         for node in line {
-            if node.kind() == SyntaxKind::MathAlignPoint {
-                trim_trailing_spaces(&mut current_cell);
-                row.push(current_cell);
-                current_cell = Vec::new();
-            } else if current_cell.is_empty() && node.kind() == SyntaxKind::Space {
-                // Skip leading spaces in a cell.
-                continue;
-            } else {
-                current_cell.push(node);
+            match node.kind() {
+                SyntaxKind::MathAlignPoint => {
+                    trim_trailing_spaces(&mut current_cell);
+                    cells.push(current_cell);
+                    current_cell = Vec::new();
+                }
+                SyntaxKind::Space if current_cell.is_empty() => {}
+                SyntaxKind::LineComment
+                    if node.kind() == SyntaxKind::LineComment
+                        && cells.is_empty()
+                        && current_cell.is_empty() =>
+                {
+                    rows.push(RawRow::Comment(node));
+                }
+                _ => {
+                    current_cell.push(node);
+                }
             }
         }
         trim_trailing_spaces(&mut current_cell);
-        row.push(current_cell);
-        // Only add the row if it has at least one cell.
-        if !row.is_empty() {
-            rows.push(row);
+        cells.push(current_cell);
+        if !cells.is_empty() {
+            rows.push(RawRow::Cells(cells));
         }
     }
     rows

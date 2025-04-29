@@ -48,20 +48,23 @@ $ cases(
   x &= y,   // First case
   // Middle comment
   z &= w    /* Second case */
-) &= sum x  // Right hand side \
+) &= sum x  // Right hand side
+          \
   // Line comment between rows
   &= product y   /* Block
                    comment */ \
   &= z      // Final result $
 
 // Mixed Unicode and comments
-$ α &= β    // Greek variables \
+$ α &= β    // Greek variables
+\
   &= γ      /* Mixed شرح explanation */ \
   &= θ      // 说明 $
 
 // Comments with decorators
 $ arrow(
-  x &= y    // Inside arrow \
+  x &= y    // Inside arrow
+  \
   &= z      /* Still inside */
 ) $
 
@@ -73,3 +76,31 @@ $ mat(
     z &= w  /* Nested case 2 */
   )         // End of cases
 ) $
+
+// Line comments between alignment parts
+$ x &= y // comment right after y
+    \
+    &= // comment before z
+    z // comment after z
+    \
+    &= // lonely comment
+    w $
+
+// Comments breaking alignment parts
+$ g(x) &=
+    // comment before expression
+    y + 2 // after expression
+    \
+    &=
+    // comment before next line
+    z // end comment
+  $
+
+// Comments in multi-column alignment
+$ x &= y & z // right side comment
+    \
+    &= p x & q // another comment
+    // comment between rows
+    \
+    &= r & s // final row
+$
