@@ -38,7 +38,9 @@ where
         static SPACES: &str =
             "                                                                                ";
 
-        if n <= SPACES.len() {
+        if n == 0 {
+            self.nil()
+        } else if n <= SPACES.len() {
             self.text(&SPACES[..n])
         } else {
             let mut doc = self.nil();

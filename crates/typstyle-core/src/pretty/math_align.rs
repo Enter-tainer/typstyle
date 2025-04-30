@@ -65,7 +65,7 @@ impl<'a> PrettyPrinter<'a> {
                             .render_fmt(self.config.max_width, &mut buf)
                             .ok()?;
                         if ends_with_line_comment {
-                            buf.push_str("\n\n"); // ensure an extra line is added
+                            buf.push_str("\n "); // ensure an extra line is added
                         }
 
                         let measure_width = |line: &str| {
@@ -118,6 +118,20 @@ impl<'a> PrettyPrinter<'a> {
         let col_widths = aligned.col_widths;
         let num_rows = rows.len();
         let num_cols = col_widths.len();
+        let col_widths_sum = {
+            let mut sums = Vec::with_capacity(num_cols + 1);
+            sums.push(0);
+            for &width in &col_widths {
+                sums.push(sums.last().unwrap() + width);
+            }
+            sums
+        };
+        let grid_width = col_widths_sum.last().unwrap() + num_cols;
+
+        enum Alignment {
+            Left,
+            Right,
+        }
 
         (self.arena).concat(rows.into_iter().enumerate().map(|(i, row)| match row {
             Row::Comment(cmt) => {
@@ -131,36 +145,47 @@ impl<'a> PrettyPrinter<'a> {
                 let num_cells = cells.len();
                 let mut is_prev_empty = false;
                 for (j, cell) in cells.into_iter().enumerate() {
+                    let alignment = if j % 2 == 1 || num_cols == 1 {
+                        Alignment::Left
+                    } else {
+                        Alignment::Right
+                    };
                     let col_width = col_widths[j];
 
                     let pad = |cell_doc: ArenaDoc<'a>, width: usize| {
                         let pad_spaces = self.arena.spaces(col_width - width);
-                        #[allow(clippy::if_same_then_else)]
-                        if j % 2 == 1 || col_widths.len() == 1 {
-                            cell_doc + pad_spaces
-                        } else {
-                            pad_spaces + cell_doc
+                        match alignment {
+                            Alignment::Left => cell_doc + pad_spaces,
+                            Alignment::Right => pad_spaces + cell_doc,
                         }
                     };
 
+                    let cell_width = cell.width();
                     let (padded_cell_doc, is_cur_empty) = match cell {
                         Cell::Empty => (pad(self.arena.nil(), 0), true),
                         Cell::SingleLine(line, width) => (pad(self.arena.text(line), width), false),
                         Cell::MultiLine(lines) => {
-                            let mut indent = col_widths[..j].iter().sum::<usize>() + j;
-                            if j > 0 {
-                                indent += 1;
-                            }
-                            let doc = self
-                                .arena
-                                .intersperse(
-                                    lines
-                                        .into_iter()
-                                        .map(|(line, width)| pad(self.arena.text(line), width)),
+                            let padding_left = match alignment {
+                                Alignment::Left => 0,
+                                Alignment::Right => col_width - cell_width,
+                            };
+                            let indent = {
+                                let mut indent = col_widths_sum[j] + j + padding_left;
+                                if j > 0 {
+                                    indent += 1;
+                                }
+                                indent
+                            };
+
+                            let trailing_padding =
+                                col_width - padding_left - lines[lines.len() - 1].1;
+                            let doc = self.arena.spaces(padding_left)
+                                + self.arena.intersperse(
+                                    lines.into_iter().map(|(line, _)| line),
                                     self.arena.hardline(),
                                 )
-                                .nest(indent as isize);
-                            (doc, false)
+                                + self.arena.spaces(trailing_padding);
+                            (doc.nest(indent as isize), false)
                         }
                     };
 
@@ -185,8 +210,7 @@ impl<'a> PrettyPrinter<'a> {
 
                 // If row has fewer cells than columns, add trailing spaces
                 if num_cells < num_cols {
-                    let mut padding =
-                        (num_cols - num_cells) + col_widths[num_cells..].iter().sum::<usize>();
+                    let mut padding = grid_width - num_cells - col_widths_sum[num_cells];
                     if !is_prev_empty {
                         padding += 1;
                     }
@@ -224,6 +248,7 @@ enum Row<'a> {
 }
 
 /// A formatted cell, storing its content and computed width.
+#[derive(Debug)]
 enum Cell {
     Empty,
     SingleLine(String, usize),       // text and its width

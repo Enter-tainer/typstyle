@@ -125,7 +125,7 @@ $
 $
   x & = y   & z // right side comment
                                       \
-    & = p x &    q // another comment
+    & = p x & q // another comment
               // comment between rows
                                       \
     & = r   &                       s \ // final row
