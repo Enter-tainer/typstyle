@@ -1,5 +1,97 @@
 # Changelog
 
+## v0.13.4 - [2025-04-30]
+
+- Feature: typstyle cli now enables import sorting by default. You can disable it with `--no-reorder-import-items` flag.
+
+- Feature: typstyle now supports `--wrap-text` flag to wrap texts in the markup. It is considered as experimental and may not work in all cases. Please report any issues you encounter.
+
+  For example, this code:
+  ```typst
+  Let's say you have a long text that needs to be wrapped in the markup. This is a very long sentence that needs to be wrapped in the markup. It should be wrapped in the markup.
+  ```
+
+  Will be formatted as following when column width is 80 and `--wrap-text` is enabled:
+  ```typst
+  Let's say you have a long text that needs to be wrapped in the markup. This is a
+  very long sentence that needs to be wrapped in the markup. It should be wrapped
+  in the markup.
+  ```
+
+- Feature: typstyle now tries to align `&`s in math equations, even if the cells are multiline. Currently it it works in most cases, except the following:
+  - Has multiline `Str` or `Raw` descendants.
+  - Not following a linebreak when in `MathDelimited` or `Args`.
+  - Across args of functions such as `cases`.
+
+  For example, this code:
+  ```typst
+  $
+  F_n &= sum_(i=1)^n i^2 & n > 0 \
+  a &< b+1 & forall b < 1
+  $
+  ```
+  Will be formatted as:
+  ```typst
+  $
+    F_n & = sum_(i=1)^n i^2 &        n > 0 \
+      a & < b+1             & forall b < 1 \
+  $
+  ```
+
+- Feature: typstyle now generate more compact result when formatting complex function calls. Similar to what [rustfmt does](https://doc.rust-lang.org/nightly/style-guide/expressions.html#combinable-expressions), when the only argument is combinable, it will be put in the same line as the function call. When the last argument is blocky, it will also be put in the same line if possible.
+
+  For example, this code:
+  ```typst
+  #figure(
+    fletcher.diagram(
+      node-outset: .5em,
+      node-stroke: .075em,
+
+      node(
+        (+1,0,),
+        [variable],
+        radius: 3em,
+      ), // test
+    ))
+  ```
+
+  Will be formatted as:
+  ```typst
+  #figure(fletcher.diagram(
+    node-outset: .5em,
+    node-stroke: .075em,
+
+    node((+1, 0), [variable], radius: 3em), // test
+  ))
+  ```
+
+  For another example, this code:
+  ```typst
+  #set page(
+    margin: 0.5in,
+    footer: context {
+      if counter(page).display() == "2" {
+        [test]
+      } else {
+        []
+      }
+    }
+  )
+  ```
+
+  Will be formatted as:
+  ```typst
+  #set page(margin: 0.5in, footer: context {
+    if counter(page).display() == "2" {
+      [test]
+    } else {
+      []
+    }
+  })
+  ```
+
+  Due to the limitations of the currently used pretty engine, there is still room for improvement in some cases.
+
 ## v0.13.3 - [2025-04-10]
 
 - Feature: Unified equation layout and removed indent for non-block equations
@@ -238,7 +330,7 @@ Now it will be formatted as:
 ## v0.12.9 - [2024-12-08]
 
 - Typstyle no longer force single arg function call to be in a single line. Instead, it is determined in a smarter way. And this fixes https://github.com/Enter-tainer/typstyle/issues/143.
-- Typstyle will always add newline at the end of the file. Previously, it only adds newline when it already exists. 
+- Typstyle will always add newline at the end of the file. Previously, it only adds newline when it already exists.
 
 ## v0.12.8 - [2024-12-07]
 
@@ -366,7 +458,7 @@ However, there are still some limitations. For more information, see [Limitation
 
 ## v0.12.2 - [2024-11-23]
 
-Introducing new contributor: @QuadnucYard. Welcome! 🎉 
+Introducing new contributor: @QuadnucYard. Welcome! 🎉
 
 - For single item code block, typstyle will try to keep it inline if it fits in a single line and it's inline in original code.
 
@@ -393,8 +485,8 @@ Instead of:
 For example, the following code:
 ```typst
 #{
-  
-  
+
+
   let x = 1
 
   let y = 2
@@ -420,12 +512,12 @@ For example, the following code:
       that spans
  multiple lines
   */
-  
+
   /* Block comment
       that spans
  multiple lines
   */
-  
+
   /* Block comment with leading stars
     *  that
         *  spans
@@ -550,7 +642,7 @@ Now it is fixed.
 ## v0.11.30 - [2024-07-14]
 
 - Bug fix: previously when a destructing pattern has extra parentheses, typstyle will completely remove everything inside the parentheses. Now it is fixed.
-- Typstyle now collapses extra parentheses in expression. 
+- Typstyle now collapses extra parentheses in expression.
 
 ## v0.11.29 - [2024-07-13]
 
@@ -578,7 +670,7 @@ Now it will be formatted as:
 }
 ```
 
-- Minor adjustment for closure body formatting. 
+- Minor adjustment for closure body formatting.
 
 ## v0.11.28 - [2024-06-25]
 
@@ -650,7 +742,7 @@ After formatting, it will become this. Notice the extra newlines are kept.
 ```typst
 #table(
   columns: 4 * (1fr,),
-  
+
   [a], [b], [c], [d],
   fill: (_, y) => if y == 0 { black },
   table.cell(rowspan: 2)[aa], table.cell(colspan: 2)[bc], [d],
@@ -786,7 +878,7 @@ For example, this code:
     [Substance],
     [Subcritical °C],
     [Supercritical °C],
-  
+
   [Hydrochloric Acid],
   [12.0], [92.1],
   [Sodium Myreth Sulfate],
@@ -934,7 +1026,7 @@ After formatting, it will become:
 ## v0.11.10 - [2024-04-02]
 
 - Block math equations are no longer indented.
-- We now support flavor detection for block equations. 
+- We now support flavor detection for block equations.
 
 For example, this code:
 ```typst

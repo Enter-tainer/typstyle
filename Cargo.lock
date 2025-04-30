@@ -3139,8 +3139,9 @@ dependencies = [
 
 [[package]]
 name = "tinymist-package"
-version = "0.13.12-rc4"
-source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
+version = "0.13.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1c34fb57d52ba192bd0dce88cbf76b0aeb0dd9f8afa8e78217558f1a10c3d81d"
 dependencies = [
  "base64",
  "comemo",
@@ -3162,8 +3163,9 @@ dependencies = [
 
 [[package]]
 name = "tinymist-std"
-version = "0.13.12-rc4"
-source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
+version = "0.13.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6db6bfaaa28e6a1196ad874f7440b35d0d0e6ffd6a82b49d32608ebe6dcf6f34"
 dependencies = [
  "anyhow",
  "base64",
@@ -3195,8 +3197,9 @@ dependencies = [
 
 [[package]]
 name = "tinymist-vfs"
-version = "0.13.12-rc4"
-source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
+version = "0.13.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2c2f11ca8c018eb33a656aeac4676e101e9c0a4faf76dfd455ba7875d44b87d5"
 dependencies = [
  "comemo",
  "ecow",
@@ -3211,8 +3214,9 @@ dependencies = [
 
 [[package]]
 name = "tinymist-world"
-version = "0.13.12-rc4"
-source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
+version = "0.13.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16b40390b7e18f7ef689436ca28d4f724bb6e30d27643f208a04dfdee7deefc2"
 dependencies = [
  "anyhow",
  "chrono",
@@ -3633,8 +3637,9 @@ dependencies = [
 
 [[package]]
 name = "typst-shim"
-version = "0.13.12-rc4"
-source = "git+https://github.com/Myriad-Dreamin/tinymist?rev=84569fb98c4eeea65d91677c31d803718143fc10#84569fb98c4eeea65d91677c31d803718143fc10"
+version = "0.13.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad3cbd4f48e17b0ea86320f042f4bd86d50cd30d1b47c30be1b567b587b70023"
 dependencies = [
  "cfg-if",
  "comemo",
@@ -3708,7 +3713,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle"
-version = "0.13.3"
+version = "0.13.4"
 dependencies = [
  "anstream",
  "anyhow",
@@ -3728,7 +3733,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle-consistency"
-version = "0.13.3"
+version = "0.13.4"
 dependencies = [
  "anyhow",
  "pretty_assertions",
@@ -3742,7 +3747,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle-core"
-version = "0.13.3"
+version = "0.13.4"
 dependencies = [
  "criterion",
  "ecow",
@@ -3760,7 +3765,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle-tests"
-version = "0.13.3"
+version = "0.13.4"
 dependencies = [
  "anyhow",
  "insta",
