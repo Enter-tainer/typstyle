@@ -53,13 +53,15 @@ $ cases(
   // Line comment between rows
   &= product y   /* Block
                    comment */ \
-  &= z      // Final result $
+  &= z      // Final result
+$
 
 // Mixed Unicode and comments
 $ α &= β    // Greek variables
 \
   &= γ      /* Mixed شرح explanation */ \
-  &= θ      // 说明 $
+  &= θ      // 说明
+$
 
 // Comments with decorators
 $ arrow(

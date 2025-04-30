@@ -311,7 +311,7 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
     }
 
     let flat = {
-        let mut flat = vec![];
+        let mut flat = Vec::with_capacity(math.to_untyped().children().len());
         collect_children(math.to_untyped(), attrs, &mut flat);
         flat
     };
@@ -320,7 +320,6 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
     let lines = {
         let mut lines = flat
             .split(|n| n.kind() == SyntaxKind::Linebreak)
-            .map(Vec::from)
             .collect_vec();
         if lines.last().is_some_and(|last| last.is_empty()) {
             lines.pop();
@@ -340,11 +339,7 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
                     cells.push(std::mem::take(&mut current_cell));
                 }
                 SyntaxKind::Space if current_cell.is_empty() => {}
-                SyntaxKind::LineComment
-                    if node.kind() == SyntaxKind::LineComment
-                        && cells.is_empty()
-                        && current_cell.is_empty() =>
-                {
+                SyntaxKind::LineComment if cells.is_empty() && current_cell.is_empty() => {
                     rows.push(RawRow::Comment(node));
                 }
                 _ => {
