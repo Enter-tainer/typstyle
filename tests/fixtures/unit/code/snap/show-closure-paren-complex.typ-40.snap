@@ -2,7 +2,9 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/show-closure-paren-complex.typ
 ---
-#show raw.where(block: false): it => if (
+#show raw.where(
+  block: false,
+): it => if (
   it.text.starts-with("<")
     and it.text.ends-with(">")
 ) {

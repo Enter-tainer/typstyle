@@ -1071,7 +1071,12 @@ input_file: tests/fixtures/packages/tablex.typ
       } else {
         let index = grid-index-at(px, py)
 
-        grid.items.at(index) = occupied(x: px, y: py, parent_x: this_x, parent_y: this_y) // indicate this position's parent cell (to join them later)
+        grid.items.at(index) = occupied(
+          x: px,
+          y: py,
+          parent_x: this_x,
+          parent_y: this_y,
+        ) // indicate this position's parent cell (to join them later)
       }
     }
 
@@ -2043,7 +2048,11 @@ input_file: tests/fixtures/packages/tablex.typ
   let right-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
   if default-if-auto(hline.stroke-expand, true) == true {
-    let largest-stroke = _largest-stroke-among-vlines-at-x.with(vlines: vlines, stroke-auto: stroke-auto, styles: styles)
+    let largest-stroke = _largest-stroke-among-vlines-at-x.with(
+      vlines: vlines,
+      stroke-auto: stroke-auto,
+      styles: styles,
+    )
     left-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2 // expand to the left to close stroke gap
     right-expand += largest-stroke(default-if-auto-or-none(end, columns.len())) / 2 // close stroke gap to the right
   }
@@ -2127,7 +2136,11 @@ input_file: tests/fixtures/packages/tablex.typ
   let bottom-expand = default-if-auto-or-none(expand.at(1), 0pt)
 
   if default-if-auto(vline.stroke-expand, true) == true {
-    let largest-stroke = _largest-stroke-among-hlines-at-y.with(hlines: hlines, stroke-auto: stroke-auto, styles: styles)
+    let largest-stroke = _largest-stroke-among-hlines-at-y.with(
+      hlines: hlines,
+      stroke-auto: stroke-auto,
+      styles: styles,
+    )
     top-expand += largest-stroke(default-if-auto-or-none(start, 0)) / 2 // close stroke gap to the top
     bottom-expand += largest-stroke(default-if-auto-or-none(end, rows.len())) / 2 // close stroke gap to the bottom
   }

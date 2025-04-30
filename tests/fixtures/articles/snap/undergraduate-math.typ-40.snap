@@ -22,7 +22,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
         block(
           inset: 4pt,
           stroke: (top: headcolor),
-          text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
+          text(
+            headcolor,
+          )[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
         ),
       )
     } else {
@@ -38,7 +40,10 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 #set text(size: normalsize, lang: "en")
 
 // Some horizontal spacing
-#let kern(length) = h(length, weak: true)
+#let kern(length) = h(
+  length,
+  weak: true,
+)
 #let enspace = kern(0.5em)
 
 // For table/grid, something like "lhs \enspace rhs"
@@ -81,7 +86,10 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
     text(10pt, "L"),
     styles,
   )
-  let a = measure(text(7pt, "A"), styles)
+  let a = measure(
+    text(7pt, "A"),
+    styles,
+  )
   let L = "L"
   let A = text(
     7pt,
@@ -120,7 +128,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 #set par(justify: true)
 
 // Run-in sections, like LaTeX \paragraph
-#show heading.where(level: 1): it => text(
+#show heading.where(
+  level: 1,
+): it => text(
   size: normalsize,
   weight: "bold",
   fill: headcolor,
@@ -141,7 +151,10 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
   link(
     "https://github.com/johanvx/typst-undergradmath",
   )[
-    #text(large, headcolor)[*Typst Math for Undergrads*]
+    #text(
+      large,
+      headcolor,
+    )[*Typst Math for Undergrads*]
   ],
 )
 

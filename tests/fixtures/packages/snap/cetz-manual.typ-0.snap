@@ -38,19 +38,17 @@ input_file: tests/fixtures/packages/cetz-manual.typ
 #set par(
   justify: true,
 )
-#set heading(
-  numbering: (
+#set heading(numbering: (
+  ..num,
+) => if num
+  .pos()
+  .len()
+  < 4 {
+  numbering(
+    "1.1",
     ..num,
-  ) => if num
-    .pos()
-    .len()
-    < 4 {
-    numbering(
-      "1.1",
-      ..num,
-    )
-  },
-)
+  )
+})
 #show link: set text(
   blue,
 )

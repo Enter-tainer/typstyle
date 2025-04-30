@@ -45,9 +45,7 @@ input_file: tests/fixtures/unit/chain/call.typ
 )
 
 #{
-  (1,)
-    .rev()
-    .map(((n, c)) => f(n, c, 1))
+  (1,).rev().map(((n, c)) => f(n, c, 1))
 }
 
 #{

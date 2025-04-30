@@ -9,16 +9,12 @@ input_file: tests/fixtures/unit/code/compact.typ
     none
   }
 
-  f(
-    if true {
-      let x = 3
-    },
-  )
-  f(
-    if true {
-      let x = 3
-    },
-  )
+  f(if true {
+    let x = 3
+  })
+  f(if true {
+    let x = 3
+  })
   f(
     1111,
     22222,

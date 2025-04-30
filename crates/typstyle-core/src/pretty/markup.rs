@@ -58,7 +58,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_raw(&'a self, _ctx: Context, raw: Raw<'a>) -> ArenaDoc<'a> {
         // no format multiline single backtick raw block
-        if !raw.block() && raw.lines().count() > 1 {
+        if !raw.block() && raw.lines().nth(1).is_some() {
             return self.convert_verbatim(raw);
         }
 

@@ -89,8 +89,9 @@ $sum_(i=1)^n x_i$.
     #strike[strikethrough]] and
   continuation
 
-/ Term with functions: Using #text(blue)[colored
-    text] with $alpha$ formula
+/ Term with functions: Using #text(
+    blue,
+  )[colored text] with $alpha$ formula
 / Complex function:
   #table(
     columns: (auto, auto),
@@ -115,8 +116,11 @@ $sum_(i=1)^n x_i$.
   ]
 
 / Functions with parameters: Definition
-  using #text(weight: "bold", size: 12pt)[Formatted
-    text with spaces] and $"equations"$
+  using #text(
+    weight: "bold",
+    size: 12pt,
+  )[Formatted text with spaces] and
+  $"equations"$
 
 = Heading with *mixed* `formatting` and $"math"$ elements
 Text between headings.

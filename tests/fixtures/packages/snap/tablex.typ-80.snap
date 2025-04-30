@@ -1285,8 +1285,7 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   if (
-    cell_align != auto
-      and type(cell_align) not in (_align-type, _2d-align-type)
+    cell_align != auto and type(cell_align) not in (_align-type, _2d-align-type)
   ) {
     panic(
       "Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').",
@@ -1452,7 +1451,10 @@ input_file: tests/fixtures/packages/tablex.typ
             )
           }
 
-          let pcell = get-parent-cell(cell, grid: grid) // in case this is a colspan
+          let pcell = get-parent-cell(
+            cell,
+            grid: grid,
+          ) // in case this is a colspan
           let last-auto-col = get-colspan-last-auto-col(pcell, columns: columns)
 
           let fit-this-span = if (
@@ -1514,7 +1516,10 @@ input_file: tests/fixtures/packages/tablex.typ
               align_default: auto,
             )
 
-            let width = measure(cell-box, styles).width // + 2*cell_inset // the box already considers inset
+            let width = measure(
+              cell-box,
+              styles,
+            ).width // + 2*cell_inset // the box already considers inset
 
             // here, we are excluding from the width of this cell
             // at this column all width that was already covered by
@@ -1741,7 +1746,10 @@ input_file: tests/fixtures/packages/tablex.typ
             )
           }
 
-          let pcell = get-parent-cell(cell, grid: grid) // in case this is a rowspan
+          let pcell = get-parent-cell(
+            cell,
+            grid: grid,
+          ) // in case this is a rowspan
           let last-auto-row = get-rowspan-last-auto-row(pcell, rows: rows)
 
           let fit-this-span = if (
@@ -1778,7 +1786,10 @@ input_file: tests/fixtures/packages/tablex.typ
             // measure the cell's actual height,
             // with its calculated width
             // and with other constraints
-            let height = measure(cell-box, styles).height // + 2*cell_inset (box already considers inset)
+            let height = measure(
+              cell-box,
+              styles,
+            ).height // + 2*cell_inset (box already considers inset)
 
             // here, we are excluding from the height of this cell
             // at this row all height that was already covered by
@@ -1941,7 +1952,10 @@ input_file: tests/fixtures/packages/tablex.typ
   gutter: none,
   pre-gutter: false,
 ) = {
-  let col-gutter = default-if-none(default-if-none(gutter, (col: 0pt)).col, 0pt)
+  let col-gutter = default-if-none(
+    default-if-none(gutter, (col: 0pt)).col,
+    0pt,
+  )
   end = default-if-none(end, columns.len())
 
   let col_range = range(start, calc.min(columns.len() + 1, end))
@@ -1967,7 +1981,10 @@ input_file: tests/fixtures/packages/tablex.typ
   gutter: none,
   pre-gutter: false,
 ) = {
-  let row-gutter = default-if-none(default-if-none(gutter, (row: 0pt)).row, 0pt)
+  let row-gutter = default-if-none(
+    default-if-none(gutter, (row: 0pt)).row,
+    0pt,
+  )
   end = default-if-none(end, rows.len())
 
   let row_range = range(start, calc.min(rows.len() + 1, end))
@@ -2217,12 +2234,18 @@ input_file: tests/fixtures/packages/tablex.typ
 
   if start == parent-start {
     // starts where its parent starts
-    expansion.at(0) = default-if-auto(line.expand.at(0), 0pt) // => expand to the left
+    expansion.at(0) = default-if-auto(
+      line.expand.at(0),
+      0pt,
+    ) // => expand to the left
   }
 
   if end == parent-end {
     // ends where its parent ends
-    expansion.at(1) = default-if-auto(line.expand.at(1), 0pt) // => expand to the right
+    expansion.at(1) = default-if-auto(
+      line.expand.at(1),
+      0pt,
+    ) // => expand to the right
   }
 
   expansion
@@ -2578,8 +2601,7 @@ input_file: tests/fixtures/packages/tablex.typ
                 type(repeat-header) == _int-type and rel_page <= repeat-header
               )
               or (
-                type(repeat-header) == _array-type
-                  and rel_page in repeat-header
+                type(repeat-header) == _array-type and rel_page in repeat-header
               )
           ) {
             let measures = measure(first-row-group.content, styles)
@@ -3147,7 +3169,9 @@ input_file: tests/fixtures/packages/tablex.typ
       }))
 
       if type(cells) != _array-type {
-        panic("Tablex error: 'map-rows' returned something that isn't an array.")
+        panic(
+          "Tablex error: 'map-rows' returned something that isn't an array.",
+        )
       }
 
       if cells.len() != original-cells.len() {
@@ -3217,7 +3241,9 @@ input_file: tests/fixtures/packages/tablex.typ
       }))
 
       if type(cells) != _array-type {
-        panic("Tablex error: 'map-cols' returned something that isn't an array.")
+        panic(
+          "Tablex error: 'map-cols' returned something that isn't an array.",
+        )
       }
 
       if cells.len() != original-cells.len() {

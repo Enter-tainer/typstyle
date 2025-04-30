@@ -24,7 +24,9 @@ input_file: tests/fixtures/unit/code/closure-simple.typ
 
 #set heading(numbering: (..num) => none)
 
-#show raw.where(block: false): it => if (
+#show raw.where(
+  block: false,
+): it => if (
   it.text.starts-with("<")
     and it.text.ends-with(">")
 ) { }

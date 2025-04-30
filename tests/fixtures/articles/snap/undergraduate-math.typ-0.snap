@@ -75,12 +75,10 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
     + rhs,
 )
 // Grid for code blocks
-#set grid(
-  columns: (
-    2em,
-    auto,
-  ),
-)
+#set grid(columns: (
+  2em,
+  auto,
+))
 // Table for math-code listing
 #set table(
   stroke: none,
@@ -176,17 +174,15 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
   ),
 )
 // Tricky figure numbering
-#set figure(
-  numbering: n => {
-    (
-      [??],
-      [!!],
-      [?!],
-    ).at(
-      n,
-    )
-  },
-)
+#set figure(numbering: n => {
+  (
+    [??],
+    [!!],
+    [?!],
+  ).at(
+    n,
+  )
+})
 // No prefix
 #set ref(
   supplement: "",

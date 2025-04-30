@@ -6,11 +6,11 @@
 # rev = "66b4469dcbbefa49fea60a406331d43ae5945e65" # Feb 11, 2025
 # entrypoint = "main.typ"
 
-# [[testcase]]
-# name = "tutorial"
-# git = "https://github.com/typst-doc-cn/tutorial"
-# rev = "83e8adf7abaec1a39240058d217a24b1683b8018" # Apr 7, 2025
-# entrypoint = "src/ebook.typ"
+[[testcase]]
+name = "tutorial"
+git = "https://github.com/typst-doc-cn/tutorial"
+rev = "d52bdcf8ee95933559278c06b4aef34ad7f656aa" # Apr 29, 2025
+entrypoint = "src/ebook.typ"
 
 [[testcase]]
 name = "typst-talk"

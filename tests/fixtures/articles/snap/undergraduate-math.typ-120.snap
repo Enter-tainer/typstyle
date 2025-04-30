@@ -14,11 +14,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
     grid(
       columns: (1fr, 1fr),
       [],
-      block(
-        inset: 4pt,
-        stroke: (top: headcolor),
-        text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
-      ),
+      block(inset: 4pt, stroke: (top: headcolor), text(
+        headcolor,
+      )[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()]),
     )
   } else {
     []

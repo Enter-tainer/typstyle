@@ -1,11 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/tight.typ
-snapshot_kind: text
 ---
-#text(```typ
-Test single arguments
-```)
+#text(
+  ```typ
+  Test single arguments
+  ```,
+)
 
 #let my-f(..args) = [#args]
 #let arr = (1, 2, 3)

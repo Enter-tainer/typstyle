@@ -158,9 +158,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       array.zip(cumsum(sizes), sizes, range(sizes.len())).map(((end, size, i)) => end - size / 2 + spacing * i)
     })
 
-  let bounding-size = array
-    .zip(centers, grid.cell-sizes)
-    .map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
+  let bounding-size = array.zip(centers, grid.cell-sizes).map(((centers, sizes)) => centers.at(-1) + sizes.at(-1) / 2)
 
   (
     centers: centers,

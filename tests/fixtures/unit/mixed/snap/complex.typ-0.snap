@@ -31,9 +31,7 @@ breaks. It also has*bold text*without proper spacing and_emphasized_content stuc
   [ First cell],
   [Second
     cell],
-)[Third *nested* content #align(
-    center,
-  )[with aligned
+)[Third *nested* content #align(center)[with aligned
     content]]
 
 - First list item with bad spacing
@@ -137,9 +135,7 @@ $
 #lorem(40) +
 #[This content is *oddly* _mixed_ with various
   syntactic elements] +
-#v(
-  1cm,
-) +
+#v(1cm) +
 #pad(
   x: 2em,
   top: 5pt,

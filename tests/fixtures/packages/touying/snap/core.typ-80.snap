@@ -151,7 +151,10 @@ input_file: tests/fixtures/packages/touying/core.typ
   let slide-level = self.slide-level
   let slide-fn = auto
   let new-section-slide-fn = self.at("new-section-slide-fn", default: none)
-  let new-subsection-slide-fn = self.at("new-subsection-slide-fn", default: none)
+  let new-subsection-slide-fn = self.at(
+    "new-subsection-slide-fn",
+    default: none,
+  )
   let new-subsubsection-slide-fn = self.at(
     "new-subsubsection-slide-fn",
     default: none,
@@ -1081,8 +1084,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     ),
   )
   if (
-    eqt-metadata.has("label")
-      and eqt-metadata.label != <touying-temporary-mark>
+    eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark>
   ) {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
@@ -1164,8 +1166,7 @@ input_file: tests/fixtures/packages/touying/core.typ
     result.sum(default: ""),
   )
   if (
-    eqt-metadata.has("label")
-      and eqt-metadata.label != <touying-temporary-mark>
+    eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark>
   ) {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
@@ -1809,8 +1810,14 @@ input_file: tests/fixtures/packages/touying/core.typ
 }
 
 #let _get-header-footer(self) = {
-  let header = utils.call-or-display(self, self.page.at("header", default: none))
-  let footer = utils.call-or-display(self, self.page.at("footer", default: none))
+  let header = utils.call-or-display(self, self.page.at(
+    "header",
+    default: none,
+  ))
+  let footer = utils.call-or-display(self, self.page.at(
+    "footer",
+    default: none,
+  ))
   // negative padding
   if self.at("zero-margin-header", default: true) {
     let negative-pad = _get-negative-pad(self)
@@ -1984,7 +1991,10 @@ input_file: tests/fixtures/packages/touying/core.typ
       }))
     }
     utils.call-or-display(self, self.at("slide-preamble", default: none))
-    utils.call-or-display(self, self.at("default-slide-preamble", default: none))
+    utils.call-or-display(self, self.at(
+      "default-slide-preamble",
+      default: none,
+    ))
   }
   // preamble for the subslides
   let subslide-preamble(self) = {

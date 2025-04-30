@@ -26,9 +26,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         or node.fill != none
     ) {
       cetz.draw.group({
-        cetz.draw.translate(node
-          .pos
-          .xyz)
+        cetz.draw.translate(
+          node.pos.xyz,
+        )
         for (
           i,
           extrude,
@@ -73,7 +73,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     )
   }
 
-  (node.post)(result) // post-process (e.g., hide)
+  (node.post)(
+    result,
+  ) // post-process (e.g., hide)
 
   // Draw debug stuff
   if debug >= 1 {
@@ -89,7 +91,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if debug >= 2 and node.radius != 0pt {
     // node bounding rectangle
     cetz.draw.rect(
-      ..rect-at(node.pos.xyz, node.size),
+      ..rect-at(
+        node.pos.xyz,
+        node.size,
+      ),
       stroke: DEBUG_COLOR + .1pt,
     )
 
@@ -126,7 +131,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   curve,
   debug: 0,
 ) = {
-  let curve-point = curve(edge.label-pos)
+  let curve-point = curve(
+    edge.label-pos,
+  )
   let curve-point-ε = curve(
     edge.label-pos + 1e-3,
   )
@@ -157,8 +164,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   } else if edge.label-angle == auto {
     edge.label-angle = θ
     if (
-      calc.abs(edge.label-angle)
-        > 90deg
+      calc.abs(edge.label-angle) > 90deg
     ) {
       edge.label-angle += 180deg
     }
@@ -310,7 +316,11 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   // Draw marks
-  let curve(t) = vector.lerp(from, to, t)
+  let curve(t) = vector.lerp(
+    from,
+    to,
+    t,
+  )
   for mark in edge.marks {
     place-mark-on-curve(
       mark,
@@ -575,9 +585,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     if edge.corner-radius == none {
       // add phantom marks to ensure segment joins are clean
       if i > 0 {
-        let Δθ = (
-          θs.at(i) - θs.at(i - 1)
-        )
+        let Δθ = θs.at(i) - θs.at(i - 1)
         marks.push((
           inherit: "bar",
           pos: 0,
@@ -586,9 +594,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         ))
       }
       if i < θs.len() - 1 {
-        let Δθ = (
-          θs.at(i + 1) - θs.at(i)
-        )
+        let Δθ = θs.at(i + 1) - θs.at(i)
         marks.push((
           inherit: "bar",
           pos: 1,
@@ -843,16 +849,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   (
     calc.max(
       0pt,
-      node.size.at(0)
-        / 2
-        * (1 - 1 / μ),
+      node.size.at(0) / 2 * (1 - 1 / μ),
     )
       * calc.cos(θ),
     calc.max(
       0pt,
-      node.size.at(1)
-        / 2
-        * (1 - μ / 1),
+      node.size.at(1) / 2 * (1 - μ / 1),
     )
       * calc.sin(θ),
   )
@@ -898,9 +900,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let intersection-objects = nodes.map(nodes => {
     for node in nodes {
       cetz.draw.group({
-        cetz.draw.translate(node
-          .pos
-          .xyz)
+        cetz.draw.translate(
+          node.pos.xyz,
+        )
         (node.shape)(node, node.outset)
       })
     }
@@ -920,7 +922,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           ),
         debug: debug,
       )
-      (edge.post)(obj) // post-process (e.g., hide)
+      (edge.post)(
+        obj,
+      ) // post-process (e.g., hide)
     },
   )
 }
@@ -953,10 +957,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .map(((nodes, dummy-line)) => {
       for node in nodes {
         cetz.draw.group({
-          cetz.draw.translate(node
-            .pos
-            .xyz)
-          (node.shape)(node, node.outset)
+          cetz.draw.translate(
+            node.pos.xyz,
+          )
+          (node.shape)(
+            node,
+            node.outset,
+          )
         })
       }
       // if node == none { return }
@@ -972,7 +979,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           + (final-vertices: anchors),
         debug: debug,
       )
-      (edge.post)(obj) // post-process (e.g., hide)
+      (edge.post)(
+        obj,
+      ) // post-process (e.g., hide)
     },
   )
 }
@@ -996,7 +1005,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let end-segments = (
     edge
       .final-vertices
-      .slice(0, 2), // first two vertices
+      .slice(
+        0,
+        2,
+      ), // first two vertices
     edge
       .final-vertices
       .slice(-2), // last two vertices
@@ -1011,10 +1023,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .map(((nodes, dummy-line)) => {
       for node in nodes {
         cetz.draw.group({
-          cetz.draw.translate(node
-            .pos
-            .xyz)
-          (node.shape)(node, node.outset)
+          cetz.draw.translate(
+            node.pos.xyz,
+          )
+          (node.shape)(
+            node,
+            node.outset,
+          )
         })
       }
       // if node == none { return }
@@ -1026,17 +1041,19 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     (from, to),
     anchors => {
       let edge = edge
-      edge.final-vertices.at(0) = anchors.at(
+      edge.final-vertices.at(
         0,
-      )
-      edge.final-vertices.at(-1) = anchors.at(
-        1,
-      )
+      ) = anchors.at(0)
+      edge.final-vertices.at(
+        -1,
+      ) = anchors.at(1)
       let obj = draw-edge-polyline(
         edge,
         debug: debug,
       )
-      (edge.post)(obj) // post-process (e.g., hide)
+      (edge.post)(
+        obj,
+      ) // post-process (e.g., hide)
     },
   )
 }
@@ -1092,15 +1109,14 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   grid,
   debug: false,
 ) = {
-  let (x-lims, y-lims) = range(2).map(axis => (
+  let (x-lims, y-lims) = range(
+    2,
+  ).map(axis => (
     grid.centers.at(axis).at(0)
       - grid.cell-sizes.at(axis).at(0)
         / 2,
     grid.centers.at(axis).at(-1)
-      + grid
-        .cell-sizes
-        .at(axis)
-        .at(-1)
+      + grid.cell-sizes.at(axis).at(-1)
         / 2,
   ))
 
@@ -1177,17 +1193,11 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         // coordinate line
         draw.line(
           swap(
-            grid
-              .centers
-              .at(axis)
-              .at(i),
+            grid.centers.at(axis).at(i),
             min,
           ),
           swap(
-            grid
-              .centers
-              .at(axis)
-              .at(i),
+            grid.centers.at(axis).at(i),
             max,
           ),
         )
