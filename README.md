@@ -40,8 +40,8 @@ Beautiful and reliable typst code formatter
 Usage: typstyle [OPTIONS] [INPUT]... [COMMAND]
 
 Commands:
-  format-all   Format all files in-place in the given directory
-  help         Print this message or the help of the given subcommand(s)
+  format-all  Format all files in-place in the given directory
+  help        Print this message or the help of the given subcommand(s)
 
 Arguments:
   [INPUT]...  Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
@@ -53,7 +53,10 @@ Options:
   -V, --version  Print version
 
 Format Configuration:
-  -c, --column <COLUMN>  The column width of the output [default: 80]
+  -c, --column <COLUMN>          The column width of the output [default: 80]
+  -t, --tab-width <TAB_WIDTH>    Spaces per level of indentation in the output [default: 2]
+      --no-reorder-import-items  Whether not to reorder import items
+      --wrap-text                Whether to wrap texts in the markup
 
 Debug Options:
   -a, --ast         Print the AST of the input file
@@ -77,7 +80,10 @@ Options:
   -h, --help   Print help
 
 Format Configuration:
-  -c, --column <COLUMN>  The column width of the output [default: 80]
+  -c, --column <COLUMN>          The column width of the output [default: 80]
+  -t, --tab-width <TAB_WIDTH>    Spaces per level of indentation in the output [default: 2]
+      --no-reorder-import-items  Whether not to reorder import items
+      --wrap-text                Whether to wrap texts in the markup
 
 Log Levels:
   -v, --verbose  Enable verbose logging

@@ -21,7 +21,7 @@ impl Default for Config {
             tab_spaces: 2,
             max_width: 80,
             blank_lines_upper_bound: 2,
-            reorder_import_items: false,
+            reorder_import_items: true,
             wrap_text: false,
         }
     }

@@ -7,20 +7,20 @@ input_file: tests/fixtures/unit/comment/in-import.typ
 #import "test.typ": *
 #import "test.typ": a.b.c.d, eee as fff
 #import "@preview/fletcher:0.5.2" as fletcher: (
-  node,
   edge,
+  node,
 )
 #import "@preview/fletcher:0.5.2" as fletcher: (
-  node,
   edge,
+  node,
 )
 #import "@preview/fletcher:0.5.2" as fletcher: (
-  node,
   edge,
+  node,
 )
 #import "@preview/fletcher:0.5.2" as fletcher: (
-  node,
   edge,
+  node,
 )
 
 #import /* 0 */ "test.typ"/* 1 */
