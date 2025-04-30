@@ -1,9 +1,8 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/import.typ
-snapshot_kind: text
 ---
 #import "@preview/fletcher:0.4.0" as fletcher: (
-  node,
   edge,
+  node,
 )

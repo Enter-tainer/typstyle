@@ -73,9 +73,9 @@ pub struct StyleArgs {
     #[arg(short, long, default_value_t = 2, global = true)]
     pub tab_width: usize,
 
-    /// Whether to reorder import items.
+    /// Whether not to reorder import items.
     #[arg(long, default_value_t = false, global = true)]
-    pub reorder_import_items: bool,
+    pub no_reorder_import_items: bool,
 
     /// Whether to wrap texts in the markup.
     #[arg(long, default_value_t = false, global = true)]

@@ -11,7 +11,7 @@ input_file: tests/fixtures/packages/codly.typ
  * This file is used as test case only and remains unchanged from the original.
  */
 
-#import "args.typ": __codly-args, __codly-save, __codly-load
+#import "args.typ": __codly-args, __codly-load, __codly-save
 
 #let __codly-inset(inset) = {
   if type(inset) == dictionary {

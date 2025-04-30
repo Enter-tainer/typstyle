@@ -33,7 +33,7 @@ impl StyleArgs {
         Config {
             max_width: self.column,
             tab_spaces: self.tab_width,
-            reorder_import_items: self.reorder_import_items,
+            reorder_import_items: !self.no_reorder_import_items,
             wrap_text: self.wrap_text,
             ..Default::default()
         }

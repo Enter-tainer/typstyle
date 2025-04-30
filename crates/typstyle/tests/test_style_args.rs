@@ -36,15 +36,15 @@ fn test_reorder_import_items() {
     success: true
     exit_code: 0
     ----- stdout -----
-    #import "module.typ": xyz, func as renamed, h.i.j, a.b.c
+    #import "module.typ": a.b.c, func as renamed, h.i.j, xyz
 
     ----- stderr -----
     "#);
-    typstyle_cmd_snapshot!(space.cli().args(["--reorder-import-items"]).pass_stdin(stdin), @r#"
+    typstyle_cmd_snapshot!(space.cli().args(["--no-reorder-import-items"]).pass_stdin(stdin), @r#"
     success: true
     exit_code: 0
     ----- stdout -----
-    #import "module.typ": a.b.c, func as renamed, h.i.j, xyz
+    #import "module.typ": xyz, func as renamed, h.i.j, a.b.c
 
     ----- stderr -----
     "#);
