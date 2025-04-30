@@ -15,7 +15,7 @@ impl<'a> PrettyPrinter<'a> {
     ) -> Option<ArenaDoc<'a>> {
         // Skip if alignment is disabled or no math align points present
         if ctx.align_mode == AlignMode::Never
-            || !self.attr_store.has_math_align_point(math.to_untyped())
+            || !self.attr_store.can_align_in_math(math.to_untyped())
         {
             return None;
         }
