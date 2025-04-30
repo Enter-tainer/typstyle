@@ -3754,6 +3754,7 @@ dependencies = [
  "smallvec",
  "thiserror 2.0.11",
  "typst-syntax",
+ "unicode-width 0.1.14",
  "wasm-bindgen",
 ]
 

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/137-math-align-panic.typ
-snapshot_kind: text
 ---
 $
   a

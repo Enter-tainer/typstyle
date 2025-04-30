@@ -1,8 +1,5 @@
 use rustc_hash::FxHashMap;
-use typst_syntax::{
-    ast::{Args, AstNode},
-    Span, SyntaxKind, SyntaxNode,
-};
+use typst_syntax::{Span, SyntaxKind, SyntaxNode};
 
 use crate::ext::StrExt;
 
@@ -13,6 +10,12 @@ pub struct Attributes {
 
     /// Indicates whether any child node contains a comment.
     pub(self) has_comment: bool,
+
+    /// Indicates whether any descendant has a multiline string or raw.
+    pub(self) has_multiline_str: bool,
+
+    /// Indicates whether any descendant has a `MathAlignPoint`.
+    pub(self) has_math_align_point: bool,
 
     /// Indicates whether the node text contains a linebreak.
     /// Currently, it is only used for equations.
@@ -39,12 +42,27 @@ impl AttrStore {
         };
         store.compute_no_format(node);
         store.compute_multiline(node);
+        store.compute_math_align_point(node);
         store
     }
 
     /// Checks if a given syntax node contains a comment.
     pub fn has_comment(&self, node: &SyntaxNode) -> bool {
         self.check_node_attr(node, |attr| attr.has_comment)
+    }
+
+    pub fn has_multiline_str(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.has_multiline_str)
+    }
+
+    pub fn has_math_align_point(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| attr.has_math_align_point)
+    }
+
+    pub fn can_align_in_math(&self, node: &SyntaxNode) -> bool {
+        self.check_node_attr(node, |attr| {
+            attr.has_math_align_point && !attr.has_multiline_str
+        })
     }
 
     /// Checks if a given syntax node or any of its descendants contains a linebreak.
@@ -78,39 +96,41 @@ impl AttrStore {
         self.compute_multiline_impl(root);
     }
 
-    fn compute_multiline_impl(&mut self, node: &SyntaxNode) -> bool {
+    fn compute_multiline_impl(&mut self, node: &SyntaxNode) -> (bool, bool) {
         let mut is_multiline = false;
+        let mut has_multiline_str = false;
         let mut seen_space = false;
         for child in node.children() {
-            if child.kind() == SyntaxKind::Space {
-                if child.text().has_linebreak() {
-                    is_multiline = true;
-                    if !seen_space {
-                        // Decide multiline flavor based on the first space
-                        self.set_multiline_flavor(node);
+            match child.kind() {
+                SyntaxKind::Space => {
+                    if child.text().has_linebreak() {
+                        is_multiline = true;
+                        if !seen_space {
+                            // Decide multiline flavor based on the first space
+                            self.attrs_mut_of(node).is_multiline_flavor = true;
+                        }
                     }
+                    seen_space = true;
                 }
-                seen_space = true;
-            } else if child.kind() == SyntaxKind::BlockComment {
-                is_multiline |= child.text().has_linebreak();
+                SyntaxKind::BlockComment => {
+                    is_multiline |= child.text().has_linebreak();
+                }
+                SyntaxKind::Str | SyntaxKind::Raw => {
+                    has_multiline_str |= child.text().has_linebreak();
+                }
+                _ => {}
             }
-            is_multiline |= self.compute_multiline_impl(child);
+            let res = self.compute_multiline_impl(child);
+            is_multiline |= res.0;
+            has_multiline_str |= res.1;
         }
         if is_multiline {
-            self.set_multiline(node);
+            self.attrs_mut_of(node).is_multiline = true;
         }
-        is_multiline
-    }
-
-    fn set_multiline(&mut self, node: &SyntaxNode) {
-        self.attr_map.entry(node.span()).or_default().is_multiline = true;
-    }
-
-    fn set_multiline_flavor(&mut self, node: &SyntaxNode) {
-        self.attr_map
-            .entry(node.span())
-            .or_default()
-            .is_multiline_flavor = true;
+        if has_multiline_str {
+            self.attrs_mut_of(node).has_multiline_str = true;
+        }
+        (is_multiline, has_multiline_str)
     }
 
     fn compute_no_format(&mut self, root: &SyntaxNode) {
@@ -121,47 +141,53 @@ impl AttrStore {
         let mut disable_next = false;
         let mut commented = false;
         for child in node.children() {
-            let child_kind = child.kind();
-            if child_kind == SyntaxKind::LineComment || child_kind == SyntaxKind::BlockComment {
-                commented = true;
-                // @typstyle off affects the whole next block
-                if child.text().contains("@typstyle off") {
-                    disable_next = true;
-                    self.set_format_disabled(child);
+            match child.kind() {
+                SyntaxKind::LineComment | SyntaxKind::BlockComment => {
+                    commented = true;
+                    // @typstyle off affects the whole next block
+                    if child.text().contains("@typstyle off") {
+                        disable_next = true;
+                    }
                 }
-                continue;
+                SyntaxKind::Space | SyntaxKind::Hash => {}
+                _ if disable_next => {
+                    // no format nodes with @typstyle off
+                    self.attrs_mut_of(child).is_format_disabled = true;
+                    disable_next = false;
+                }
+                _ => {
+                    self.compute_no_format_impl(child);
+                }
             }
-            // no format nodes with @typstyle off
-            if disable_next && !matches!(child_kind, SyntaxKind::Space | SyntaxKind::Hash) {
-                self.set_format_disabled(child);
-                disable_next = false;
-                continue;
-            }
-            self.compute_no_format_impl(child);
         }
         if commented {
-            self.set_commented(node);
+            self.attrs_mut_of(node).has_comment = true;
         }
     }
 
-    fn set_format_disabled(&mut self, node: &SyntaxNode) {
-        self.attr_map
-            .entry(node.span())
-            .or_default()
-            .is_format_disabled = true;
+    fn compute_math_align_point(&mut self, root: &SyntaxNode) {
+        self.compute_math_align_point_impl(root);
     }
 
-    fn set_commented(&mut self, node: &SyntaxNode) {
-        self.attr_map.entry(node.span()).or_default().has_comment = true;
-    }
-}
-
-#[allow(unused)]
-fn is_2d_arg(arg: Args) -> bool {
-    for child in arg.to_untyped().children() {
-        if child.kind() == SyntaxKind::Semicolon {
+    fn compute_math_align_point_impl(&mut self, node: &SyntaxNode) -> bool {
+        if node.kind() == SyntaxKind::MathAlignPoint {
             return true;
         }
+        let mut has_math_align_point = false;
+        for child in node.children() {
+            has_math_align_point |= self.compute_math_align_point_impl(child);
+        }
+        if has_math_align_point
+            && matches!(node.kind(), SyntaxKind::Math | SyntaxKind::MathDelimited)
+        {
+            self.attrs_mut_of(node).has_math_align_point = true;
+            true
+        } else {
+            false
+        }
     }
-    false
+
+    fn attrs_mut_of(&mut self, node: &SyntaxNode) -> &mut Attributes {
+        self.attr_map.entry(node.span()).or_default()
+    }
 }

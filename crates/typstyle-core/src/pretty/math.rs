@@ -2,11 +2,13 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
+    context::AlignMode,
     layout::{
         flow::FlowItem,
         list::{ListStyle, ListStylist},
     },
     style::FoldStyle,
+    util::is_comment_node,
     ArenaDoc, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
@@ -61,9 +63,20 @@ impl<'a> PrettyPrinter<'a> {
             return res;
         }
         let ctx = ctx.suppress_breaks();
+        if let Some(res) = self.try_convert_math_aligned(ctx, math) {
+            return res;
+        }
+        self.convert_math_children(ctx, math.to_untyped().children())
+    }
+
+    pub(super) fn convert_math_children(
+        &'a self,
+        ctx: Context,
+        math_children: impl Iterator<Item = &'a SyntaxNode>,
+    ) -> ArenaDoc<'a> {
         let mut doc = self.arena.nil();
         let mut peek_hash = false;
-        for node in math.to_untyped().children() {
+        for node in math_children {
             let at_hash = peek_hash;
             peek_hash = false;
             if let Some(expr) = node.cast::<Expr>() {
@@ -75,6 +88,8 @@ impl<'a> PrettyPrinter<'a> {
             } else if node.kind() == SyntaxKind::Hash {
                 doc += self.arena.text("#");
                 peek_hash = true;
+            } else if is_comment_node(node) {
+                doc += self.convert_comment(ctx, node);
             } else {
                 // may be LeftParen, RightParen
                 doc += self.convert_trivia_untyped(node);
@@ -91,10 +106,13 @@ impl<'a> PrettyPrinter<'a> {
         let mut inner_nodes = math_delimited.to_untyped().children().as_slice();
         inner_nodes = &inner_nodes[1..inner_nodes.len() - 1];
 
+        let mut has_open_linebreak = false;
+        let mut has_close_space = false;
         let open_space = if let Some((first, rest)) = inner_nodes.split_first() {
             if first.kind() == SyntaxKind::Space {
                 inner_nodes = rest;
                 if first.text().has_linebreak() {
+                    has_open_linebreak = true;
                     self.arena.hardline()
                 } else {
                     self.arena.space()
@@ -107,6 +125,7 @@ impl<'a> PrettyPrinter<'a> {
         };
         let close_space = if let Some((last, rest)) = inner_nodes.split_last() {
             if last.kind() == SyntaxKind::Space {
+                has_close_space = true;
                 inner_nodes = rest;
                 if last.text().has_linebreak() {
                     self.arena.hardline()
@@ -121,6 +140,11 @@ impl<'a> PrettyPrinter<'a> {
         };
         let body = self.convert_flow_like_iter(ctx, inner_nodes.iter(), |ctx, node| {
             if let Some(math) = node.cast::<Math>() {
+                let ctx = ctx.aligned(if has_open_linebreak && has_close_space {
+                    AlignMode::Inner
+                } else {
+                    AlignMode::Never
+                });
                 FlowItem::tight(self.convert_math(ctx, math))
             } else if node.kind() == SyntaxKind::Space {
                 // We can not arbitrarily break line here, as it may become ugly.

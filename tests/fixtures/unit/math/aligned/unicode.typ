@@ -1,0 +1,38 @@
+// Non-ASCII variables and symbols
+$ α &= β + γ &= δ \
+  ε &= ζ \
+  η &= θ &= ι $
+
+// Mixed Latin and Greek with operators
+$ x_α &= y_β + z_γ & "where" & α ∈ ℝ \
+  &= w_δ & "and" & β ≥ 0 $
+
+// Chinese characters in equations
+$ f(零) &= 一 + 二 \
+  &= 三 & "满足" & x ∈ ℂ \
+  &= "四十四" + 五 $
+
+// Japanese and Korean in aligned math
+$ "関数" f(x) &= ア β & "かつ" & x ≥ 0 \
+  &= イ γ \
+  "함수" g(x) &= 값 & "및" & x ≤ 0 $
+
+// Mixed scripts in matrix
+$ mat(
+  α & β & γ,
+  零 & 一 & 二,
+  함 & 수 & ζ
+) &= mat(
+  ℕ & ℤ,
+  ℚ & ℝ
+) $
+
+// Complex alignment with various Unicode symbols
+$ ∫_0^∞ &= ∑_(n=1)^∞ & "subject to" & α ≤ β \
+  &= ∏_(k=1)^n & "또는" & γ ∈ Δ \
+  &= √(π + φ) $
+
+// Non-ASCII function names
+$ λ(x) &= μ_1 + ν_2 & "wenn" & x ∈ ℕ \
+  &= ξ(x) & "或" & x ∈ ℚ \
+  &= π r² $

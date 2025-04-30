@@ -1,0 +1,103 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/aligned/general.typ
+---
+$
+  1 & 2 &3 \
+  4& 5&6 \
+  7 &8 & 9
+$
+
+// Mixed content in cells
+$
+  "text" & x^2 &sin(x)\
+  vec(1, 2, 3)& integral_0^infinity & sum_(n=0)^infinity \
+  (1 / 2) & "mixed spacing"& f(x)
+$
+
+// Nested alignments and complex expressions
+$
+  cases(
+    1 & 2 & 3,
+    4 & 5 & 6
+  ) & display(sum x) & integral_0^1 f(x) \
+  vec(1&2&3, 4&5&6) & cases(a&b, c&d) & display(product)
+$
+
+// Really messy spacing and newlines
+$
+  1& 2 &3\
+  4 & 5 & 6\
+  7& 8 &9
+$
+
+// Mixed math and text with varying spaces
+$
+  "Step 1"&=&x+y \
+  "Step 2" &=& 2x\
+  "Step 3" & = & 3x + y
+$
+
+// Alignment with subscripts and superscripts
+$
+  x_1^2 &y_2^3 & z_3^4 \
+  a_(123)& b^(456)& c_(789)^(012)\
+  sum_(i=1)^n&product_(j=1)^m & integral_(k=0)^infinity
+$
+
+// Complex fractions and operators
+$
+  frac(1, 2)& frac(3, 4)&frac(5, 6)\
+  frac(7, 8) & frac(9, 10) &frac(11, 12) \
+  frac(a+b, c+d)&frac(e+f, g+h)&frac(i+j, k+l)
+$
+
+// Mixed parentheses and brackets
+$
+  (1)&[2]&{3}\
+  [4] &{5}&(6) \
+  {7}& (8)&[9]
+$
+
+// Merging short related equations
+$
+  f(x) &= x^2 & g(x) &= 2x & h(x) &= sqrt(x) \
+  f'(x) &= 2x & g'(x) &= 2 & h'(x) &= 1 / (2sqrt(x))
+$
+
+// Mixed breaking and alignment patterns
+$
+  "Long equation:" & a + b + c + d \
+  & = (x + y) + (z + w) \
+  & = alpha + beta \
+  "Short ones:" & x &= 1 & y &= 2
+$
+
+// Varying column counts
+$
+  x &= 1 &= 2 &= 33 \
+  y &= 4444 \
+  z &= 55 &= 6 \
+  w &= &&&& 7
+$
+
+// Mixed equation lengths
+$
+  "Identity 1:" &= a + b \
+  &= c + d &= "final" \
+  "Identity 22:" &= x
+$
+
+// Complex mixed alignment
+$
+  sum x &= y & text("where") & x in X \
+  &= z \
+  &= w & "and" & y in Y & "holds" \
+  &= "final"
+$
+
+// Equations with side conditions
+$
+  f(x) &= 2x & "if" & x > 0 \
+  &= 0 \ &= -2x & "if" & x < 0
+$

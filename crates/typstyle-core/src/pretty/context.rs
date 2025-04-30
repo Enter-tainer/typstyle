@@ -2,24 +2,37 @@
 pub struct Context {
     pub mode: Mode,
     pub break_suppressed: bool,
+    pub align_mode: AlignMode,
 }
 
 impl Context {
-    pub fn with_mode(&self, mode: Mode) -> Self {
-        Self { mode, ..*self }
+    pub fn with_mode(self, mode: Mode) -> Self {
+        Self { mode, ..self }
     }
 
-    pub fn with_mode_if(&self, mode: Mode, cond: bool) -> Self {
+    pub fn with_mode_if(self, mode: Mode, cond: bool) -> Self {
         Self {
             mode: if cond { mode } else { self.mode },
-            ..*self
+            ..self
         }
     }
 
-    pub fn suppress_breaks(&self) -> Self {
+    pub fn suppress_breaks(self) -> Self {
         Self {
             break_suppressed: true,
-            ..*self
+            ..self
+        }
+    }
+
+    pub fn aligned(self, mode: AlignMode) -> Self {
+        Self {
+            align_mode: match (self.align_mode, mode) {
+                (_, AlignMode::Never) | (AlignMode::Never, _) => AlignMode::Never,
+                (AlignMode::Inner, _) => AlignMode::Inner,
+                (AlignMode::Outer, _) => mode,
+                (AlignMode::Auto, _) => mode,
+            },
+            ..self
         }
     }
 }
@@ -52,4 +65,13 @@ impl Mode {
     pub fn is_math(self) -> bool {
         self == Self::Math
     }
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub enum AlignMode {
+    #[default]
+    Auto,
+    Outer,
+    Inner,
+    Never,
 }

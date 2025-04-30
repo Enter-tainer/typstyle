@@ -2,6 +2,7 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
+    context::AlignMode,
     layout::{
         flow::FlowItem,
         list::{ListStyle, ListStylist},
@@ -134,11 +135,15 @@ impl<'a> PrettyPrinter<'a> {
 
     fn convert_args_in_math(&'a self, ctx: Context, args: Args<'a>) -> ArenaDoc<'a> {
         // strip spaces
+        let mut peek_linebreak = false;
         let children = {
             let children = args.to_untyped().children().as_slice();
             let i = children
                 .iter()
                 .position(|child| {
+                    if child.kind() == SyntaxKind::Space {
+                        peek_linebreak = child.text().has_linebreak();
+                    }
                     !matches!(child.kind(), SyntaxKind::LeftParen | SyntaxKind::Space)
                 })
                 .unwrap_or(0);
@@ -154,7 +159,9 @@ impl<'a> PrettyPrinter<'a> {
         let mut peek_hashed_arg = false;
         let inner = self.convert_flow_like_iter(ctx, children, |ctx, child| {
             let at_hashed_arg = peek_hashed_arg;
+            let at_linebreak = peek_linebreak;
             peek_hashed_arg = false;
+            peek_linebreak = false;
             match child.kind() {
                 SyntaxKind::Comma => FlowItem::tight_spaced(self.arena.text(",")),
                 SyntaxKind::Semicolon => {
@@ -164,6 +171,7 @@ impl<'a> PrettyPrinter<'a> {
                 SyntaxKind::Space => {
                     peek_hashed_arg = at_hashed_arg;
                     if child.text().has_linebreak() {
+                        peek_linebreak = true;
                         FlowItem::tight(self.arena.hardline())
                     } else {
                         FlowItem::none()
@@ -174,6 +182,14 @@ impl<'a> PrettyPrinter<'a> {
                         if is_ends_with_hashed_expr(arg.to_untyped().children()) {
                             peek_hashed_arg = true;
                         }
+                        let ctx = ctx.aligned(
+                            if at_linebreak || arg.to_untyped().kind() == SyntaxKind::MathDelimited
+                            {
+                                AlignMode::Inner
+                            } else {
+                                AlignMode::Never
+                            },
+                        );
                         FlowItem::spaced(self.convert_arg(ctx, arg))
                     } else {
                         FlowItem::none()

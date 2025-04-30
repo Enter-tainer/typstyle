@@ -1,15 +1,13 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/137-math-align-panic.typ
-snapshot_kind: text
 ---
 $
-  a
-  &= b\
-  &= c & d
+  a & = b     \
+    & = c & d \
 $
 
 $
-  x &= a + b + c \
-  &= a & (c = -b)
+  x & = a + b + c            \
+    & = a         & (c = -b) \
 $
