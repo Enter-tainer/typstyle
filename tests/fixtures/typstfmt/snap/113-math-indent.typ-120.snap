@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/113-math-indent.typ
-snapshot_kind: text
 ---
 $
   EE_(i_k ~ "Unif"({1,...,d}))[f(x x_(k+1)) - f(x x_k)]

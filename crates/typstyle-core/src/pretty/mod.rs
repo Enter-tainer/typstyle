@@ -12,6 +12,7 @@ mod import;
 mod layout;
 mod markup;
 mod math;
+mod math_align;
 mod parened_expr;
 mod table;
 mod text;

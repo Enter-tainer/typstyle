@@ -28,6 +28,7 @@ rustc-hash.workspace = true
 serde = { workspace = true, optional = true }
 smallvec.workspace = true
 thiserror.workspace = true
+unicode-width.workspace = true
 wasm-bindgen = { workspace = true, optional = true }
 
 [dev-dependencies]

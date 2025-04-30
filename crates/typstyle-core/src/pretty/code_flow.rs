@@ -312,19 +312,19 @@ impl<'a> PrettyPrinter<'a> {
                     self.convert_comment(ctx, child),
                     child.kind() == SyntaxKind::BlockComment,
                 );
-            } else if at_line_comment
-                && child.kind() == SyntaxKind::Space
-                && child.text().has_linebreak()
-            {
-                flow.push_doc(self.arena.hardline(), false, false);
-                flow.enter_new_line();
             } else if child.kind() == SyntaxKind::Hash {
                 flow.push_doc(self.arena.text("#"), true, false);
                 peek_hash = true;
             } else {
                 let ctx = ctx.with_mode_if(Mode::Code, at_hash);
-                let item = producer(ctx, child);
-                if let Some(repr) = item.0 {
+                let item = producer(ctx, child); // the producer should know this linebreak
+                if at_line_comment
+                    && child.kind() == SyntaxKind::Space
+                    && child.text().has_linebreak()
+                {
+                    flow.push_doc(self.arena.hardline(), false, false);
+                    flow.enter_new_line();
+                } else if let Some(repr) = item.0 {
                     flow.push_doc(repr.doc, repr.space_before, repr.space_after);
                 }
             }
