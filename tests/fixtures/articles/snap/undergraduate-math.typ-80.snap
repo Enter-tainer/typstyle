@@ -19,7 +19,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
         block(
           inset: 4pt,
           stroke: (top: headcolor),
-          text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
+          text(
+            headcolor,
+          )[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
         ),
       )
     } else {

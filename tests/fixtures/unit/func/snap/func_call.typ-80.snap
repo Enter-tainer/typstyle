@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/func/func_call.typ
-snapshot_kind: text
 ---
 #text[123]
 
@@ -22,8 +21,10 @@ snapshot_kind: text
 #f({ })
 #f(`xx
 `)
-#f(```aa
-```)
+#f(
+  ```aa
+  ```,
+)
 #f(())
 #pad(left: 1em)[```typ
 

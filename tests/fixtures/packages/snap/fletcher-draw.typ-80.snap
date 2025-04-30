@@ -25,7 +25,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       cetz.draw.group({
         cetz.draw.translate(node.pos.xyz)
         for (i, extrude) in node.extrude.enumerate() {
-          cetz.draw.set-style(fill: if i == 0 { node.fill }, stroke: node.stroke)
+          cetz.draw.set-style(
+            fill: if i == 0 { node.fill },
+            stroke: node.stroke,
+          )
           (node.shape)(node, extrude)
         }
       })
@@ -137,7 +140,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   )
 
   if debug >= 2 {
-    cetz.draw.circle(label-pos, radius: 0.75pt, stroke: none, fill: DEBUG_COLOR2)
+    cetz.draw.circle(
+      label-pos,
+      radius: 0.75pt,
+      stroke: none,
+      fill: DEBUG_COLOR2,
+    )
   }
 }
 
@@ -756,10 +764,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         // size bracket
         let size = grid.cell-sizes.at(axis).at(i)
         draw.rect(
-          (
-            to: swap(grid.centers.at(axis).at(i), min),
-            rel: swap(-size / 2, 0),
-          ),
+          (to: swap(grid.centers.at(axis).at(i), min), rel: swap(-size / 2, 0)),
           (
             to: swap(grid.centers.at(axis).at(i), min),
             rel: swap(+size / 2, -1pt),

@@ -49,8 +49,7 @@ input_file: tests/fixtures/packages/indenta.typ
         or (
           fn == raw
             and not (
-              e.has("block")
-                and e.block
+              e.has("block") and e.block
             )
         )
         or fn == highlight
@@ -66,8 +65,7 @@ input_file: tests/fixtures/packages/indenta.typ
         or (
           fn == quote
             and not (
-              e.has("block")
-                and e.block
+              e.has("block") and e.block
             )
         )
     )
@@ -90,9 +88,7 @@ input_file: tests/fixtures/packages/indenta.typ
               or e == parbreak()
           )
       ) {
-        if (
-          unsafe or _is_inline(e, fn)
-        ) {
+        if unsafe or _is_inline(e, fn) {
           context h(
             par.first-line-indent,
           )

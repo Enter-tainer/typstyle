@@ -16,10 +16,12 @@ input_file: tests/fixtures/packages/cetz-manual.typ
 //   ```example
 //   /* canvas drawing code */
 //   ```
-#show raw.where(lang: "example"): example
-#show raw.where(lang: "example-vertical"): example.with(
-  vertical: true,
-)
+#show raw.where(
+  lang: "example",
+): example
+#show raw.where(
+  lang: "example-vertical",
+): example.with(vertical: true)
 
 
 
@@ -68,7 +70,9 @@ This is the minimal starting point:
   ```]
 Note that draw functions are imported inside the scope of the `canvas` block. This is recommended as some draw functions override Typst's function's such as `line`.
 
-#show raw.where(block: false): it => if (
+#show raw.where(
+  block: false,
+): it => if (
   it.text.starts-with("<")
     and it.text.ends-with(">")
 ) {
@@ -1108,10 +1112,14 @@ Axis names to be used for styling:
 )
 
 ==== Default `scientific` Style
-#raw(repr(axes.default-style-scientific))
+#raw(repr(
+  axes.default-style-scientific,
+))
 
 ==== Default `school-book` Style
-#raw(repr(axes.default-style-schoolbook))
+#raw(repr(
+  axes.default-style-schoolbook,
+))
 
 == Chart
 
@@ -1190,9 +1198,9 @@ styled the same way, see @plot.style.
 ))
 
 ==== Default `boxwhisker` Style
-#raw(
-  repr(chart.boxwhisker-default-style),
-)
+#raw(repr(
+  chart.boxwhisker-default-style,
+))
 
 ==== Default `piechart` Style
 #raw(repr(chart.piechart-default-style))

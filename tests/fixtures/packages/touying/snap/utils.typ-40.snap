@@ -201,7 +201,10 @@ input_file: tests/fixtures/packages/touying/utils.typ
   if named {
     if label != none and labeled {
       return label-it(
-        (it.func())(..fields, ..new-body),
+        (it.func())(
+          ..fields,
+          ..new-body,
+        ),
         label,
       )
     } else {
@@ -417,10 +420,7 @@ input_file: tests/fixtures/packages/touying/utils.typ
   if s.len() == 0 {
     return s
   }
-  s
-    .split(" ")
-    .map(capitalize)
-    .join(" ")
+  s.split(" ").map(capitalize).join(" ")
 }
 
 
@@ -478,15 +478,22 @@ input_file: tests/fixtures/packages/touying/utils.typ
 ) = {
   let current-page = here().page()
   if not hierachical and level != auto {
-    let headings = query(heading).filter(h => (
+    let headings = query(
+      heading,
+    ).filter(h => (
       h.location().page()
         <= current-page
         and h.level <= depth
         and h.level == level
     ))
-    return headings.at(-1, default: none)
+    return headings.at(
+      -1,
+      default: none,
+    )
   }
-  let headings = query(heading).filter(h => (
+  let headings = query(
+    heading,
+  ).filter(h => (
     h.location().page() <= current-page
       and h.level <= depth
   ))
@@ -771,25 +778,13 @@ input_file: tests/fixtures/packages/touying/utils.typ
             + "**"
         )
       } else {
-        (
-          "*"
-            + markup-text(it.body)
-            + "*"
-        )
+        "*" + markup-text(it.body) + "*"
       }
     } else if it.func() == emph {
       if mode == "md" {
-        (
-          "*"
-            + markup-text(it.body)
-            + "*"
-        )
+        "*" + markup-text(it.body) + "*"
       } else {
-        (
-          "_"
-            + markup-text(it.body)
-            + "_"
-        )
+        "_" + markup-text(it.body) + "_"
       }
     } else if (
       it.func() == link
@@ -1139,7 +1134,10 @@ input_file: tests/fixtures/packages/touying/utils.typ
         layout-size.width,
       )
       let wrapped-body-size = measure(
-        box(body, width: bounding-width),
+        box(
+          body,
+          width: bounding-width,
+        ),
       )
       let named = cover-args.named()
       if "width" not in named {
@@ -1232,7 +1230,10 @@ input_file: tests/fixtures/packages/touying/utils.typ
 #let alert-with-primary-color(
   self: none,
   body,
-) = text(fill: self.colors.primary, body)
+) = text(
+  fill: self.colors.primary,
+  body,
+)
 
 
 /// Alert content.
@@ -1703,7 +1704,10 @@ input_file: tests/fixtures/packages/touying/utils.typ
     ) {
       note.text
     } else {
-      markup-text(note, mode: mode).trim()
+      markup-text(
+        note,
+        mode: mode,
+      ).trim()
     }
     pdfpc.speaker-note(raw-text)
   }
@@ -1719,9 +1723,9 @@ input_file: tests/fixtures/packages/touying/utils.typ
   if (
     show-notes-on-second-screen != none
   ) {
-    slide-note-state.update(
-      setting(note),
-    )
+    slide-note-state.update(setting(
+      note,
+    ))
   }
 }
 

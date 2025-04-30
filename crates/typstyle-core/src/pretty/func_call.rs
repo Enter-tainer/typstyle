@@ -10,7 +10,7 @@ use super::{
     },
     style::FoldStyle,
     table,
-    util::{get_parenthesized_args_untyped, has_parenthesized_args, is_only_one_and},
+    util::{get_parenthesized_args, get_parenthesized_args_untyped, has_parenthesized_args},
     ArenaDoc, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
@@ -79,55 +79,75 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let ctx = ctx.with_mode(Mode::CodeCont);
 
-        let children = || {
+        let get_children = || {
             args.to_untyped()
                 .children()
                 .take_while(|it| it.kind() != SyntaxKind::RightParen)
         };
-        let arg_count = children().filter(|it| SyntaxNode::is::<Arg>(it)).count(); // should exclude args in brackets
+        let arg_count = get_children()
+            .filter(|it| SyntaxNode::is::<Arg>(it))
+            .count(); // should exclude args in brackets
 
-        let mut fold_style = match self.get_fold_style(ctx, args) {
-            FoldStyle::Always => FoldStyle::Always,
-            // FoldStyle::Never if arg_count > 1 => FoldStyle::Never,
-            _ if args.items().last()
-                .is_some_and(|arg|
-                     matches!(arg, Arg::Pos(Expr::Binary(_)))
-                     ||  matches!(arg, Arg::Named(named) if named.expr().to_untyped().kind() == SyntaxKind::Binary)) =>
-            {
-                FoldStyle::Fit
-            }
-            _ => FoldStyle::Compact,
+        // if there is only one blocky arg, and it's the last one, we can use compact style
+        let is_blocky = |expr| {
+            matches!(
+                expr,
+                Expr::Code(_)
+                    | Expr::Conditional(_)
+                    | Expr::While(_)
+                    | Expr::For(_)
+                    | Expr::Contextual(_)
+                    | Expr::Closure(_)
+            )
         };
-
-        if !ctx.break_suppressed {
-            is_only_one_and(args.items().take(arg_count), |arg| {
-                let expr = match arg {
-                    Arg::Pos(p) => *p,
-                    Arg::Named(_) => {
-                        return false;
-                    }
-                    Arg::Spread(s) => s.expr(),
-                };
-                if matches!(
-                    expr,
-                    Expr::Parenthesized(_)
-                        | Expr::Code(_)
+        // if there is only one arg, and it's combinable, we can use compact style
+        let is_combinable = |arg| {
+            is_blocky(arg)
+                || matches!(
+                    arg,
+                    Expr::FuncCall(_)
+                        | Expr::Parenthesized(_)
                         | Expr::Content(_)
                         | Expr::Array(_)
                         | Expr::Dict(_)
-                        | Expr::Contextual(_)
-                        | Expr::Closure(_)
-                ) {
-                    fold_style = FoldStyle::Always;
+                )
+        };
+
+        let fold_style = match self.get_fold_style(ctx, args) {
+            FoldStyle::Always => FoldStyle::Always,
+            _ if ctx.break_suppressed && arg_count == 1 => FoldStyle::Always,
+            _ if ctx.break_suppressed => FoldStyle::Fit,
+            _ => {
+                let mut fold_style = FoldStyle::Fit;
+                for (i, arg) in get_parenthesized_args(args).enumerate() {
+                    let expr = match arg {
+                        Arg::Pos(p) => p,
+                        Arg::Named(n) => n.expr(),
+                        Arg::Spread(s) => s.expr(),
+                    };
+                    if i < arg_count - 1 {
+                        if is_blocky(expr) {
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
+                    if is_combinable(expr) {
+                        fold_style = if arg_count == 1 && !matches!(expr, Expr::FuncCall(_)) {
+                            FoldStyle::Always
+                        } else {
+                            FoldStyle::Compact
+                        }
+                    }
                 }
-                true
-            });
-        }
+                fold_style
+            }
+        };
 
         ListStylist::new(self)
             .keep_linebreak(self.config.blank_lines_upper_bound)
             .with_fold_style(fold_style)
-            .process_iterable_impl(ctx, children(), |ctx, child| {
+            .process_iterable_impl(ctx, get_children(), |ctx, child| {
                 // We should ignore additional args here.
                 child.cast().map(|arg| self.convert_arg(ctx, arg))
             })

@@ -264,9 +264,7 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
     }
     if (
       args.len() > 0
-        and (
-          state.unfinished-param.ends-with(",") or state.state == "finished"
-        )
+        and (state.unfinished-param.ends-with(",") or state.state == "finished")
     ) {
       state.params.push((
         name: args.first(),

@@ -1,5 +1,5 @@
 use rustc_hash::FxHashMap;
-use typst_syntax::{Span, SyntaxKind, SyntaxNode};
+use typst_syntax::{ast, Span, SyntaxKind, SyntaxNode};
 
 use crate::ext::StrExt;
 
@@ -115,8 +115,12 @@ impl AttrStore {
                 SyntaxKind::BlockComment => {
                     is_multiline |= child.text().has_linebreak();
                 }
-                SyntaxKind::Str | SyntaxKind::Raw => {
+                SyntaxKind::Str => {
                     has_multiline_str |= child.text().has_linebreak();
+                }
+                SyntaxKind::Raw => {
+                    let raw = child.cast::<ast::Raw>().expect("raw");
+                    has_multiline_str |= !raw.block() && raw.lines().nth(1).is_some();
                 }
                 _ => {}
             }

@@ -517,9 +517,10 @@ input_file: tests/fixtures/packages/codly.typ
           )(if "reference-number-format" in extra {
             extra.reference-number-format
           } else {
-            state("codly-reference-number-format", __codly-args
-              .reference-number-format
-              .default).get()
+            state(
+              "codly-reference-number-format",
+              __codly-args.reference-number-format.default,
+            ).get()
           })
 
           reference-number-format(it.number)
@@ -857,9 +858,10 @@ input_file: tests/fixtures/packages/codly.typ
   )(if "reference-number-format" in extra {
     extra.reference-number-format
   } else {
-    state("codly-reference-number-format", __codly-args
-      .reference-number-format
-      .default).get()
+    state(
+      "codly-reference-number-format",
+      __codly-args.reference-number-format.default,
+    ).get()
   })
 
   let annotation-format = {
@@ -868,9 +870,10 @@ input_file: tests/fixtures/packages/codly.typ
     )(if "annotation-format" in extra {
       extra.annotation-format
     } else {
-      state("codly-annotation-format", __codly-args
-        .annotation-format
-        .default).get()
+      state(
+        "codly-annotation-format",
+        __codly-args.annotation-format.default,
+      ).get()
     })
     if fn == none {
       _ => none
@@ -1018,13 +1021,13 @@ input_file: tests/fixtures/packages/codly.typ
       } else {
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
       })
-      let padding = __codly-inset((__codly-args.lang-inset.type_check)(
-        if "lang-inset" in extra {
-          extra.lang-inset
-        } else {
-          state("codly-lang-inset", __codly-args.lang-inset.default).get()
-        },
-      ))
+      let padding = __codly-inset((
+        __codly-args.lang-inset.type_check
+      )(if "lang-inset" in extra {
+        extra.lang-inset
+      } else {
+        state("codly-lang-inset", __codly-args.lang-inset.default).get()
+      }))
 
       let lang-stroke = (
         __codly-args.lang-stroke.type_check
@@ -1082,13 +1085,13 @@ input_file: tests/fixtures/packages/codly.typ
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
       })
 
-      let padding = __codly-inset((__codly-args.lang-inset.type_check)(
-        if "lang-inset" in extra {
-          extra.lang-inset
-        } else {
-          state("codly-lang-inset", __codly-args.lang-inset.default).get()
-        },
-      ))
+      let padding = __codly-inset((
+        __codly-args.lang-inset.type_check
+      )(if "lang-inset" in extra {
+        extra.lang-inset
+      } else {
+        state("codly-lang-inset", __codly-args.lang-inset.default).get()
+      }))
 
       let lang-stroke = (
         __codly-args.lang-stroke.type_check
@@ -1154,18 +1157,20 @@ input_file: tests/fixtures/packages/codly.typ
     )(if "header-cell-args" in extra {
       extra.header-cell-args
     } else {
-      state("codly-header-cell-args", __codly-args
-        .header-cell-args
-        .default).get()
+      state(
+        "codly-header-cell-args",
+        __codly-args.header-cell-args.default,
+      ).get()
     })
     let transform = (
       __codly-args.header-transform.type_check
     )(if "header-transform" in extra {
       extra.header-transform
     } else {
-      state("codly-header-transform", __codly-args
-        .header-transform
-        .default).get()
+      state(
+        "codly-header-transform",
+        __codly-args.header-transform.default,
+      ).get()
     })
     (
       grid.header(repeat: header-repeat, grid.cell(
@@ -1244,7 +1249,12 @@ input_file: tests/fixtures/packages/codly.typ
     }
 
     // Always push the formatted line number
-    let l = [#raw.line(line.number + offset, line.count, line.text, line.body)<codly-highlighted>]
+    let l = [#raw.line(
+        line.number + offset,
+        line.count,
+        line.text,
+        line.body,
+      )<codly-highlighted>]
 
     // Must be done before the smart indentation code.
     // Otherwise it results in two paragraphs.
@@ -1309,18 +1319,20 @@ input_file: tests/fixtures/packages/codly.typ
     )(if "footer-cell-args" in extra {
       extra.footer-cell-args
     } else {
-      state("codly-footer-cell-args", __codly-args
-        .footer-cell-args
-        .default).get()
+      state(
+        "codly-footer-cell-args",
+        __codly-args.footer-cell-args.default,
+      ).get()
     })
     let transform = (
       __codly-args.footer-transform.type_check
     )(if "footer-transform" in extra {
       extra.footer-transform
     } else {
-      state("codly-footer-transform", __codly-args
-        .footer-transform
-        .default).get()
+      state(
+        "codly-footer-transform",
+        __codly-args.footer-transform.default,
+      ).get()
     })
     (
       grid.footer(repeat: footer-repeat, grid.cell(
@@ -1513,9 +1525,10 @@ input_file: tests/fixtures/packages/codly.typ
     )(if "reference-number-format" in extra {
       extra.reference-number-format
     } else {
-      state("codly-reference-number-format", __codly-args
-        .reference-number-format
-        .default).get()
+      state(
+        "codly-reference-number-format",
+        __codly-args.reference-number-format.default,
+      ).get()
     })
 
     link(it.target, (

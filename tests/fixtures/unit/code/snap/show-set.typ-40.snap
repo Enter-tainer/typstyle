@@ -2,6 +2,8 @@
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/show-set.typ
 ---
-#show heading.where(level: 2): set heading(
-  numbering: (..n) => [#n.pos().at(1).],
-)
+#show heading.where(
+  level: 2,
+): set heading(numbering: (
+  ..n,
+) => [#n.pos().at(1).])

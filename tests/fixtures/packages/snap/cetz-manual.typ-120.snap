@@ -307,7 +307,12 @@ line(..c)
   [A factor that is applied to the mark's length, width and inset.],
   default: 1,
 )
-#doc-style.show-parameter-block("sep", "number", [The distance between multiple marks along their path.], default: 0.1cm)
+#doc-style.show-parameter-block(
+  "sep",
+  "number",
+  [The distance between multiple marks along their path.],
+  default: 0.1cm,
+)
 #doc-style.show-parameter-block(
   "flex",
   "boolean",

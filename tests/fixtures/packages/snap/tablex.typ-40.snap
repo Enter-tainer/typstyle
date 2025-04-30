@@ -567,7 +567,9 @@ input_file: tests/fixtures/packages/tablex.typ
     init_function = () => element
   }
 
-  range(amount).map(i => init_function())
+  range(
+    amount,
+  ).map(i => init_function())
 }
 
 // Default 'x' to a certain value if it is equal to the forbidden value
@@ -924,9 +926,7 @@ input_file: tests/fixtures/packages/tablex.typ
       frac-amount,
       frac-total,
     )
-  } else if (
-    type(len) == _rel-len-type
-  ) {
+  } else if type(len) == _rel-len-type {
     convert-relative-type-to-pt(
       len,
       styles,
@@ -1034,9 +1034,7 @@ input_file: tests/fixtures/packages/tablex.typ
       and "thickness" in stroke
   ) {
     let thickness = stroke.thickness
-    if (
-      type(thickness) == _length-type
-    ) {
+    if type(thickness) == _length-type {
       convert-length-to-pt(
         thickness,
         styles: styles,
@@ -1163,11 +1161,9 @@ input_file: tests/fixtures/packages/tablex.typ
 
 // Fetches an entire column of cells (all positions with the given x).
 #let grid-get-column(grid, x) = {
-  range(grid-count-rows(grid)).map(y => grid-at(
+  range(grid-count-rows(
     grid,
-    x,
-    y,
-  ))
+  )).map(y => grid-at(grid, x, y))
 }
 
 // Expand grid to the given coords (add the missing cells)
@@ -1379,7 +1375,9 @@ input_file: tests/fixtures/packages/tablex.typ
           "Invalid line received (must be hline or vline).",
         )
       }
-      items.at(i) = item // override item with the new x / y coord set
+      items.at(
+        i,
+      ) = item // override item with the new x / y coord set
       continue
     }
 
@@ -1585,7 +1583,10 @@ input_file: tests/fixtures/packages/tablex.typ
 
         // other secondary position (from colspan / rowspan)
       } else {
-        let index = grid-index-at(px, py)
+        let index = grid-index-at(
+          px,
+          py,
+        )
 
         grid.items.at(index) = occupied(
           x: px,
@@ -1621,7 +1622,9 @@ input_file: tests/fixtures/packages/tablex.typ
     item,
   ) in grid.items.enumerate() {
     if item == none {
-      grid.items.at(index) = new_empty_cell(
+      grid.items.at(
+        index,
+      ) = new_empty_cell(
         grid,
         index: index,
       )
@@ -1636,7 +1639,9 @@ input_file: tests/fixtures/packages/tablex.typ
     )
       != 0
   ) {
-    grid.items.push(new_empty_cell(grid))
+    grid.items.push(new_empty_cell(
+      grid,
+    ))
   }
 
   (
@@ -1644,7 +1649,9 @@ input_file: tests/fixtures/packages/tablex.typ
     items: grid.items,
     hlines: hlines,
     vlines: vlines,
-    new_row_count: grid-count-rows(grid),
+    new_row_count: grid-count-rows(
+      grid,
+    ),
   )
 }
 
@@ -1670,16 +1677,21 @@ input_file: tests/fixtures/packages/tablex.typ
     type(align_default)
       == _function-type
   ) {
-    align_default(cell.x, cell.y) // column, row
+    align_default(
+      cell.x,
+      cell.y,
+    ) // column, row
   } else {
     align_default
   }
 
   let fill_default = if (
-    type(fill_default)
-      == _function-type
+    type(fill_default) == _function-type
   ) {
-    fill_default(cell.x, cell.y) // row, column
+    fill_default(
+      cell.x,
+      cell.y,
+    ) // row, column
   } else {
     fill_default
   }
@@ -1827,9 +1839,7 @@ input_file: tests/fixtures/packages/tablex.typ
 
   let amount-frac = frac-tracks.fold(
     0,
-    (acc, el) => (
-      acc + (el.at(1) / 1fr)
-    ),
+    (acc, el) => acc + (el.at(1) / 1fr),
   )
 
   if type(gutter) == _fraction-type {
@@ -3113,7 +3123,10 @@ input_file: tests/fixtures/packages/tablex.typ
     )
     left-expand += (
       largest-stroke(
-        default-if-auto-or-none(start, 0),
+        default-if-auto-or-none(
+          start,
+          0,
+        ),
       )
         / 2
     ) // expand to the left to close stroke gap
@@ -3267,7 +3280,10 @@ input_file: tests/fixtures/packages/tablex.typ
     )
     top-expand += (
       largest-stroke(
-        default-if-auto-or-none(start, 0),
+        default-if-auto-or-none(
+          start,
+          0,
+        ),
       )
         / 2
     ) // close stroke gap to the top
@@ -3996,9 +4012,9 @@ input_file: tests/fixtures/packages/tablex.typ
         let hlines = hlines.filter(h => (
           this_row_group
             .hlines
-            .filter(
-              is-same-hline.with(h),
-            )
+            .filter(is-same-hline.with(
+              h,
+            ))
             .len()
             == 0
         ))
@@ -4391,7 +4407,9 @@ input_file: tests/fixtures/packages/tablex.typ
         let orig-cell = original-cells.at(
           i,
         )
-        if not is-tablex-cell(orig-cell) {
+        if not is-tablex-cell(
+          orig-cell,
+        ) {
           // only modify non-occupied cells
           continue
         }
@@ -4488,7 +4506,9 @@ input_file: tests/fixtures/packages/tablex.typ
         let orig-cell = original-cells.at(
           i,
         )
-        if not is-tablex-cell(orig-cell) {
+        if not is-tablex-cell(
+          orig-cell,
+        ) {
           // only modify non-occupied cells
           continue
         }
@@ -4579,7 +4599,10 @@ input_file: tests/fixtures/packages/tablex.typ
   }
 
   repeat-header = default-if-auto(
-    default-if-none(repeat-header, false),
+    default-if-none(
+      repeat-header,
+      false,
+    ),
     false,
   )
 
@@ -4847,7 +4870,9 @@ input_file: tests/fixtures/packages/tablex.typ
     let validated_cols_rows = validate-cols-rows(
       columns,
       rows,
-      items: items.filter(is-tablex-cell),
+      items: items.filter(
+        is-tablex-cell,
+      ),
     )
 
     let columns = validated_cols_rows.columns
@@ -4879,7 +4904,9 @@ input_file: tests/fixtures/packages/tablex.typ
     for _ in range(
       grid_info.new_row_count - row_len,
     ) {
-      rows.push(last-row-size) // add new rows (due to extra cells)
+      rows.push(
+        last-row-size,
+      ) // add new rows (due to extra cells)
     }
 
     let col_len = columns.len()

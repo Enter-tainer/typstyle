@@ -51,7 +51,9 @@ input_file: tests/fixtures/unit/grid/colspan.typ
 
   [a], [b], [c], [d],
   fill: (_, y) => if y == 0 { black },
-  table.cell(rowspan: 2)[aa], table.cell(
+  table.cell(
+    rowspan: 2,
+  )[aa], table.cell(
     colspan: 2,
   )[bc], [d],
   [b], table.cell(colspan: 2)[cd],

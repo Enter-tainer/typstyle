@@ -1117,7 +1117,12 @@ input_file: tests/fixtures/packages/touying/core.typ
           repetitions = nextrepetitions
         } else if kind == "touying-reducer" {
           // handle touying-reducer
-          let (conts, nextrepetitions) = _parse-touying-reducer(self: self, base: repetitions, index: index, child.value)
+          let (conts, nextrepetitions) = _parse-touying-reducer(
+            self: self,
+            base: repetitions,
+            index: index,
+            child.value,
+          )
           let cont = conts.first()
           if repetitions <= index or not need-cover {
             result.push(cont)
@@ -1608,9 +1613,7 @@ input_file: tests/fixtures/packages/touying/core.typ
         let headings = self
           .at("headings", default: ())
           .map(it => if it.has("label") {
-            if (
-              str(it.label) in ("touying:hidden", "touying:unnumbered", "touying:unoutlined", "touying:unbookmarked")
-            ) {
+            if str(it.label) in ("touying:hidden", "touying:unnumbered", "touying:unoutlined", "touying:unbookmarked") {
               let fields = it.fields()
               let _ = fields.remove("label", default: none)
               let _ = fields.remove("body", default: none)

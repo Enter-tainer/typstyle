@@ -251,7 +251,9 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
 }
 
 #assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23"),
+  trim-trailing-comments(
+    "1+2+3+4 // 23",
+  ),
   "1+2+3+4",
 )
 #assert.eq(
