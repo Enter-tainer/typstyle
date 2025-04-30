@@ -46,9 +46,4 @@ impl Config {
         const CHAIN_WIDTH_RATIO: f32 = 0.6;
         (self.max_width as f32 * CHAIN_WIDTH_RATIO) as usize
     }
-
-    pub fn args_width(&self) -> usize {
-        const CHAIN_WIDTH_RATIO: f32 = 0.8;
-        (self.max_width as f32 * CHAIN_WIDTH_RATIO) as usize
-    }
 }

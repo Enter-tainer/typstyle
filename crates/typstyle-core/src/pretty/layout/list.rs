@@ -323,6 +323,29 @@ impl<'a> ListStylist<'a> {
             self.fold_style
         };
         let item_count = self.items.len();
+
+        let enclose_fitted = |inner: ArenaDoc<'a>| {
+            if is_single && sty.omit_delim_single {
+                inner.group()
+            } else if sty.omit_delim_flat {
+                inner
+                    .enclose(
+                        arena.text(delim.0).flat_alt(arena.nil()),
+                        arena.text(delim.1).flat_alt(arena.nil()),
+                    )
+                    .group()
+            } else if sty.add_delim_space {
+                inner
+                    .enclose(
+                        arena.text(delim.0) + arena.nil().flat_alt(arena.space()),
+                        arena.nil().flat_alt(arena.space()) + arena.text(delim.1),
+                    )
+                    .group()
+            } else {
+                inner.group().enclose(delim.0, delim.1)
+            }
+        };
+
         let mut seen_real_items = 0;
         match fold_style {
             FoldStyle::Never => {
@@ -417,11 +440,6 @@ impl<'a> ListStylist<'a> {
                     let loose = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
                     compact.union(loose)
                 } else {
-                    // let padding = self.printer.config.max_width - self.printer.config.args_width();
-                    // let pad = arena.nil().flat_alt(
-                    //     Doc::RenderLen(padding, arena.alloc_cow(Doc::BorrowedText("").into()))
-                    //         .pretty(arena),
-                    // );
                     // NOTE: we can't pad here, since this can appear in inline chains.
                     let compact = arena.intersperse(
                         docs.iter().map(|doc| doc.clone().flatten()),
@@ -439,25 +457,7 @@ impl<'a> ListStylist<'a> {
                     .nest(2);
                     compact.union(loose)
                 };
-                if is_single && sty.omit_delim_single {
-                    inner.group()
-                } else if sty.omit_delim_flat {
-                    inner
-                        .enclose(
-                            arena.text(delim.0).flat_alt(arena.nil()),
-                            arena.text(delim.1).flat_alt(arena.nil()),
-                        )
-                        .group()
-                } else if sty.add_delim_space {
-                    inner
-                        .enclose(
-                            arena.text(delim.0) + arena.nil().flat_alt(arena.space()),
-                            arena.nil().flat_alt(arena.space()) + arena.text(delim.1),
-                        )
-                        .group()
-                } else {
-                    inner.group().enclose(delim.0, delim.1)
-                }
+                enclose_fitted(inner)
             }
             FoldStyle::Fit | FoldStyle::Compact => {
                 let mut inner = if sty.tight_delim {
@@ -517,25 +517,7 @@ impl<'a> ListStylist<'a> {
                 if !sty.no_indent {
                     inner = inner.nest(indent as isize);
                 }
-                if is_single && sty.omit_delim_single {
-                    inner.group()
-                } else if sty.omit_delim_flat {
-                    inner
-                        .enclose(
-                            arena.text(delim.0).flat_alt(arena.nil()),
-                            arena.text(delim.1).flat_alt(arena.nil()),
-                        )
-                        .group()
-                } else if sty.add_delim_space {
-                    inner
-                        .enclose(
-                            arena.text(delim.0) + arena.nil().flat_alt(arena.space()),
-                            arena.nil().flat_alt(arena.space()) + arena.text(delim.1),
-                        )
-                        .group()
-                } else {
-                    inner.group().enclose(delim.0, delim.1)
-                }
+                enclose_fitted(inner)
             }
         }
     }
