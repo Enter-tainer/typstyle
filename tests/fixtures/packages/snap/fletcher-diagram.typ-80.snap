@@ -554,14 +554,14 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
 
 
     // now with grid determined, compute final (physical) coordinates for nodes and edges
-    let (ctx-with-xyz-anchors, nodes) = resolve-node-coordinates(
-      nodes,
-      ctx: (target-system: "xyz", grid: grid),
-    )
-    let (_, nodes) = resolve-node-coordinates(
-      nodes,
-      ctx: (target-system: "uv", grid: grid),
-    )
+    let (ctx-with-xyz-anchors, nodes) = resolve-node-coordinates(nodes, ctx: (
+      target-system: "xyz",
+      grid: grid,
+    ))
+    let (_, nodes) = resolve-node-coordinates(nodes, ctx: (
+      target-system: "uv",
+      grid: grid,
+    ))
 
 
     // resolve enclosing nodes

@@ -9,14 +9,18 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 )
 
 // headcolor
-#let headcolor = rgb("004225")
+#let headcolor = rgb(
+  "004225",
+)
 
 // Margin and footer
 #set page(
   margin: 0.5in,
   footer: context {
     if (
-      counter(page).display()
+      counter(
+        page,
+      ).display()
         == "2"
     ) {
       grid(
@@ -30,7 +34,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
           stroke: (
             top: headcolor,
           ),
-          text(headcolor)[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
+          text(
+            headcolor,
+          )[johanvx (https://github.com/johanvx) #h(1fr) #datetime.today().display()],
         ),
       )
     } else {
@@ -55,7 +61,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
   length,
   weak: true,
 )
-#let enspace = kern(0.5em)
+#let enspace = kern(
+  0.5em,
+)
 
 // For table/grid, something like "lhs \enspace rhs"
 #let cell(
@@ -174,7 +182,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
       [??],
       [!!],
       [?!],
-    ).at(n)
+    ).at(
+      n,
+    )
   },
 )
 // No prefix
@@ -195,7 +205,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
   weight: "bold",
   fill: headcolor,
   it.body
-    + h(0.67em),
+    + h(
+      0.67em,
+    ),
 )
 
 // Black raw code
@@ -214,7 +226,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 // Title
 #align(
   center,
-  link("https://github.com/johanvx/typst-undergradmath")[
+  link(
+    "https://github.com/johanvx/typst-undergradmath",
+  )[
     #text(
       large,
       headcolor,
@@ -666,7 +680,9 @@ Just type them!
   ),
 )
 
-#let cosec = math.op("cosec")
+#let cosec = math.op(
+  "cosec",
+)
 
 If an operator you wish to use does not exist, you can create one using `math.op`. For example, to create the $cosec$ operator:
 

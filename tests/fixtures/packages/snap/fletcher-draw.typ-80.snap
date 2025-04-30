@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/fletcher-draw.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [typst-fletcher]
@@ -26,10 +25,7 @@ snapshot_kind: text
       cetz.draw.group({
         cetz.draw.translate(node.pos.xyz)
         for (i, extrude) in node.extrude.enumerate() {
-          cetz.draw.set-style(
-            fill: if i == 0 { node.fill },
-            stroke: node.stroke,
-          )
+          cetz.draw.set-style(fill: if i == 0 { node.fill }, stroke: node.stroke)
           (node.shape)(node, extrude)
         }
       })
@@ -75,10 +71,7 @@ snapshot_kind: text
     // node anchoring outline (what edges snap to)
     cetz.draw.group({
       cetz.draw.translate(node.pos.xyz)
-      cetz.draw.set-style(
-        stroke: DEBUG_COLOR2 + 0.25pt,
-        fill: none,
-      )
+      cetz.draw.set-style(stroke: DEBUG_COLOR2 + 0.25pt, fill: none)
       (node.shape)(node, node.outset)
     })
   }
@@ -144,12 +137,7 @@ snapshot_kind: text
   )
 
   if debug >= 2 {
-    cetz.draw.circle(
-      label-pos,
-      radius: 0.75pt,
-      stroke: none,
-      fill: DEBUG_COLOR2,
-    )
+    cetz.draw.circle(label-pos, radius: 0.75pt, stroke: none, fill: DEBUG_COLOR2)
   }
 }
 
@@ -166,10 +154,7 @@ snapshot_kind: text
     let is-tip = (pos == 0) == mark.rev
     let sign = if mark.rev { -1 } else { +1 }
 
-    let x = cap-offset(
-      mark + (tip: is-tip),
-      sign * y / edge.stroke.thickness,
-    )
+    let x = cap-offset(mark + (tip: is-tip), sign * y / edge.stroke.thickness)
 
     let origin = if is-tip { mark.tip-origin } else { mark.tail-origin }
     x -= origin * float(mark.scale)
@@ -225,10 +210,7 @@ snapshot_kind: text
         point
       })
 
-    let obj = cetz.draw.line(
-      ..points,
-      stroke: edge.stroke,
-    )
+    let obj = cetz.draw.line(..points, stroke: edge.stroke)
 
     with-decorations(edge, obj)
   }
@@ -473,14 +455,11 @@ snapshot_kind: text
           }
 
           if debug >= 4 {
-            cetz.draw.on-layer(
-              1,
-              cetz.draw.circle(
-                arc-center,
-                radius: arc-radius - d,
-                stroke: debug-stroke,
-              ),
-            )
+            cetz.draw.on-layer(1, cetz.draw.circle(
+              arc-center,
+              radius: arc-radius - d,
+              stroke: debug-stroke,
+            ))
           }
         }
 
@@ -522,10 +501,7 @@ snapshot_kind: text
 
 
   if debug >= 4 {
-    cetz.draw.line(
-      ..verts,
-      stroke: debug-stroke,
-    )
+    cetz.draw.line(..verts, stroke: debug-stroke)
   }
 }
 
@@ -569,19 +545,11 @@ snapshot_kind: text
   (from-point, to-point),
   callback,
 ) = {
-  find-farthest-intersection(
-    from-group,
-    from-point,
-    from-anchor => {
-      find-farthest-intersection(
-        to-group,
-        to-point,
-        to-anchor => {
-          callback((from-anchor, to-anchor))
-        },
-      )
-    },
-  )
+  find-farthest-intersection(from-group, from-point, from-anchor => {
+    find-farthest-intersection(to-group, to-point, to-anchor => {
+      callback((from-anchor, to-anchor))
+    })
+  })
 }
 
 /// Get the anchor point around a node outline at a certain angle.
@@ -590,10 +558,7 @@ snapshot_kind: text
     cetz.draw.translate(node.pos.xyz)
     (node.shape)(node, node.outset)
   })
-  let dummy-line = cetz.draw.line(
-    node.pos.xyz,
-    (rel: (θ, 10 * node.radius)),
-  )
+  let dummy-line = cetz.draw.line(node.pos.xyz, (rel: (θ, 10 * node.radius)))
 
   find-farthest-intersection(outline + dummy-line, node.pos.xyz, callback)
 }
@@ -628,10 +593,7 @@ snapshot_kind: text
   }
 
 
-  let dummy-line = cetz.draw.line(
-    from,
-    to,
-  )
+  let dummy-line = cetz.draw.line(from, to)
 
   let intersection-objects = nodes.map(nodes => {
     for node in nodes {
@@ -645,20 +607,16 @@ snapshot_kind: text
   })
 
 
-  find-anchor-pair(
-    intersection-objects,
-    (from, to),
-    anchors => {
-      let obj = draw-edge-line(
-        edge
-          + (
-            final-vertices: anchors,
-          ),
-        debug: debug,
-      )
-      (edge.post)(obj) // post-process (e.g., hide)
-    },
-  )
+  find-anchor-pair(intersection-objects, (from, to), anchors => {
+    let obj = draw-edge-line(
+      edge
+        + (
+          final-vertices: anchors,
+        ),
+      debug: debug,
+    )
+    (edge.post)(obj) // post-process (e.g., hide)
+  })
 }
 
 
@@ -687,14 +645,10 @@ snapshot_kind: text
       dummy-line
     })
 
-  find-anchor-pair(
-    intersection-objects,
-    (from, to),
-    anchors => {
-      let obj = draw-edge-arc(edge + (final-vertices: anchors), debug: debug)
-      (edge.post)(obj) // post-process (e.g., hide)
-    },
-  )
+  find-anchor-pair(intersection-objects, (from, to), anchors => {
+    let obj = draw-edge-arc(edge + (final-vertices: anchors), debug: debug)
+    (edge.post)(obj) // post-process (e.g., hide)
+  })
 }
 
 
@@ -726,17 +680,13 @@ snapshot_kind: text
       dummy-line
     })
 
-  find-anchor-pair(
-    intersection-objects,
-    (from, to),
-    anchors => {
-      let edge = edge
-      edge.final-vertices.at(0) = anchors.at(0)
-      edge.final-vertices.at(-1) = anchors.at(1)
-      let obj = draw-edge-polyline(edge, debug: debug)
-      (edge.post)(obj) // post-process (e.g., hide)
-    },
-  )
+  find-anchor-pair(intersection-objects, (from, to), anchors => {
+    let edge = edge
+    edge.final-vertices.at(0) = anchors.at(0)
+    edge.final-vertices.at(-1) = anchors.at(1)
+    let obj = draw-edge-polyline(edge, debug: debug)
+    (edge.post)(obj) // post-process (e.g., hide)
+  })
 }
 
 
@@ -787,13 +737,11 @@ snapshot_kind: text
     if a == b { b = vector.add(b, (1e-3pt, 1e-3pt)) }
     draw.rect(a, b, stroke: DEBUG_COLOR + .5pt)
 
-    draw.set-style(
-      stroke: (
-        paint: DEBUG_COLOR,
-        thickness: .3pt,
-        dash: "densely-dotted",
-      ),
-    )
+    draw.set-style(stroke: (
+      paint: DEBUG_COLOR,
+      thickness: .3pt,
+      dash: "densely-dotted",
+    ))
 
     for axis in range(2) {
       let swap(a, b) = if axis != 1 { (a, b) } else { (b, a) }
@@ -801,14 +749,17 @@ snapshot_kind: text
       let (min, max) = (y-lims, x-lims).at(axis)
       for (i, x) in x-range.enumerate() {
         // coordinate line
-        draw.line(
-          swap(grid.centers.at(axis).at(i), min),
-          swap(grid.centers.at(axis).at(i), max),
-        )
+        draw.line(swap(grid.centers.at(axis).at(i), min), swap(
+          grid.centers.at(axis).at(i),
+          max,
+        ))
         // size bracket
         let size = grid.cell-sizes.at(axis).at(i)
         draw.rect(
-          (to: swap(grid.centers.at(axis).at(i), min), rel: swap(-size / 2, 0)),
+          (
+            to: swap(grid.centers.at(axis).at(i), min),
+            rel: swap(-size / 2, 0),
+          ),
           (
             to: swap(grid.centers.at(axis).at(i), min),
             rel: swap(+size / 2, -1pt),
@@ -838,10 +789,11 @@ snapshot_kind: text
 
       draw.content(
         (x-lims.at(0), y-lims.at(0)),
-        pad(
-          0.2em,
-          text(0.5em, DEBUG_COLOR, $(#grid.axes.map(dir-to-arrow).join($,$))$),
-        ),
+        pad(0.2em, text(
+          0.5em,
+          DEBUG_COLOR,
+          $(#grid.axes.map(dir-to-arrow).join($,$))$,
+        )),
         anchor: "north-east",
       )
     }
@@ -862,13 +814,10 @@ snapshot_kind: text
     let xy-pos = key
     let candidates = nodes.filter(node => {
       if node.snap == false { return false }
-      let verdict = point-is-in-rect(
-        xy-pos,
-        (
-          center: node.pos.xyz,
-          size: node.size,
-        ),
-      )
+      let verdict = point-is-in-rect(xy-pos, (
+        center: node.pos.xyz,
+        size: node.size,
+      ))
 
       verdict
     })

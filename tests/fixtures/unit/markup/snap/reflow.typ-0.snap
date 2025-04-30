@@ -292,7 +292,9 @@ $sum_(i=1)^n x_i$.
   continuation
 
 / Term with functions: Using
-  #text(blue)[colored
+  #text(
+    blue,
+  )[colored
     text]
   with
   $alpha$
@@ -320,7 +322,9 @@ $sum_(i=1)^n x_i$.
 
 + Enumerated
   with
-  #link("https://example.com")[link
+  #link(
+    "https://example.com",
+  )[link
     text]
   and
   `code`
@@ -671,7 +675,9 @@ with
 $"math"$
 // final comment
 and
-#text(red)[colored
+#text(
+  red,
+)[colored
   text]
 // with formatting
 
@@ -694,7 +700,9 @@ definitions:
 
 #{
   // Title row.
-  align(center)[
+  align(
+    center,
+  )[
     #block(
       text(
         weight: 700,
@@ -706,10 +714,14 @@ definitions:
       weak: true,
     )
     v#version
-    #h(1.2cm)
+    #h(
+      1.2cm,
+    )
     #datetime.today()
     #block(
-      link("link"),
+      link(
+        "link",
+      ),
     )
     #v(
       1.5em,
@@ -793,7 +805,9 @@ URLs:
 متن
 فارسی
 با
-#link("https://example.com/페이지")[لینک]
+#link(
+  "https://example.com/페이지",
+)[لینک]
 و
 עברית
 טקסט.

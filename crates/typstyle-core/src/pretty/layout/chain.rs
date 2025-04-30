@@ -214,10 +214,11 @@ impl<'a> ChainStylist<'a> {
         let first_doc = docs.remove(0);
         let follow_docs = arena.concat(docs);
         if use_simple_layout {
-            (first_doc + follow_docs).group()
+            first_doc + follow_docs
         } else {
-            (first_doc + (follow_docs).nest(self.printer.config.tab_spaces as isize)).group()
+            first_doc + follow_docs.nest(self.printer.config.tab_spaces as isize)
         }
+        .group()
     }
 }
 

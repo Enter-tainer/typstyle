@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/core.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -100,7 +99,9 @@ snapshot_kind: text
     if current-headings
       .at(-1)
       .has("label") {
-      str(current-headings.at(-1).label)
+      str(current-headings
+        .at(-1)
+        .label)
     }
   }
 }
@@ -195,7 +196,8 @@ snapshot_kind: text
   )
   assert(
     "slide-level" in self
-      and type(self.slide-level) == int,
+      and type(self.slide-level)
+        == int,
     message: "`self.slide-level` must be an integer",
   )
   assert(
@@ -226,7 +228,9 @@ snapshot_kind: text
     "horizontal-line-to-pagebreak",
     default: true,
   )
-  let children = if utils.is-sequence(body) {
+  let children = if utils.is-sequence(
+    body,
+  ) {
     body.children
   } else {
     (body,)
@@ -309,7 +313,9 @@ snapshot_kind: text
         and horizontal-line
         and child not in ([—], [–], [-])
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       (
         cont,
         recaller-map,
@@ -324,9 +330,7 @@ snapshot_kind: text
             is-first-slide: is-first-slide,
           ),
         slide-fn,
-        current-slide.sum(
-          default: none,
-        ),
+        current-slide.sum(default: none),
         recaller-map,
       )
       result.push(cont)
@@ -337,7 +341,9 @@ snapshot_kind: text
       child,
       "touying-slide-wrapper",
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide != ()
           or _get-slide-fn(
@@ -403,7 +409,9 @@ snapshot_kind: text
       child,
       "touying-slide-recaller",
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide != ()
           or current-headings != ()
@@ -438,7 +446,9 @@ snapshot_kind: text
       result.push(recaller-map.at(lbl))
     } else if child == pagebreak() {
       // split content when we have a pagebreak
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       (
         cont,
         recaller-map,
@@ -453,9 +463,7 @@ snapshot_kind: text
             is-first-slide: is-first-slide,
           ),
         slide-fn,
-        current-slide.sum(
-          default: none,
-        ),
+        current-slide.sum(default: none),
         recaller-map,
       )
       result.push(cont)
@@ -475,8 +483,12 @@ snapshot_kind: text
       child,
       depth: slide-level,
     ) {
-      let last-heading-depth = _get-last-heading-depth(current-headings)
-      current-slide = utils.trim(current-slide)
+      let last-heading-depth = _get-last-heading-depth(
+        current-headings,
+      )
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         _get-slide-fn(
           self
@@ -510,7 +522,9 @@ snapshot_kind: text
                 != none
           )
       ) {
-        current-slide = utils.trim(current-slide)
+        current-slide = utils.trim(
+          current-slide,
+        )
         if (
           current-slide != ()
             or current-headings != ()
@@ -681,7 +695,9 @@ snapshot_kind: text
       child,
       "touying-set-config",
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide != ()
           or current-headings != ()
@@ -723,7 +739,9 @@ snapshot_kind: text
       is-first-slide
         and utils.is-styled(child)
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide != ()
           or current-headings != ()
@@ -762,7 +780,9 @@ snapshot_kind: text
         ),
       )
     } else {
-      let child = if utils.is-styled(child) {
+      let child = if utils.is-styled(
+        child,
+      ) {
         // Split the content into slides recursively for styled content
         let (
           start-part,
@@ -798,7 +818,9 @@ snapshot_kind: text
   }
 
   // Handle the last slide
-  current-slide = utils.trim(current-slide)
+  current-slide = utils.trim(
+    current-slide,
+  )
   if (
     current-slide != ()
       or current-headings != ()
@@ -926,7 +948,9 @@ snapshot_kind: text
 ) = {
   touying-fn-wrapper(
     utils.uncover,
-    last-subslide: utils.last-required-subslide(visible-subslides),
+    last-subslide: utils.last-required-subslide(
+      visible-subslides,
+    ),
     visible-subslides,
     uncover-cont,
   )
@@ -955,7 +979,9 @@ snapshot_kind: text
 ) = {
   touying-fn-wrapper(
     utils.only,
-    last-subslide: utils.last-required-subslide(visible-subslides),
+    last-subslide: utils.last-required-subslide(
+      visible-subslides,
+    ),
     visible-subslides,
     only-cont,
   )
@@ -1073,7 +1099,9 @@ snapshot_kind: text
 ) = {
   let end = if end == none {
     if count == none {
-      panic("You must specify either end or count.")
+      panic(
+        "You must specify either end or count.",
+      )
     } else {
       start + count
     }
@@ -1121,11 +1149,9 @@ snapshot_kind: text
 ) = {
   touying-fn-wrapper(
     utils.alternatives-cases,
-    last-subslide: calc.max(
-      ..cases.map(
-        utils.last-required-subslide,
-      ),
-    ),
+    last-subslide: calc.max(..cases.map(
+      utils.last-required-subslide,
+    )),
     cases,
     fn,
     position: position,
@@ -1335,14 +1361,12 @@ snapshot_kind: text
   let result = ()
   let cover-arr = ()
   let children = it
-    .split(
-      regex("(#meanwhile;?)|(meanwhile)"),
-    )
+    .split(regex(
+      "(#meanwhile;?)|(meanwhile)",
+    ))
     .intersperse("touying-meanwhile")
     .map(s => s
-      .split(
-        regex("(#pause;?)|(pause)"),
-      )
+      .split(regex("(#pause;?)|(pause)"))
       .intersperse("touying-pause"))
     .flatten()
     .map(s => s
@@ -1482,9 +1506,9 @@ snapshot_kind: text
       .intersperse("touying-pause"))
     .flatten()
     .map(s => s
-      .split(
-        regex("(\\\\\\\\\s)|(\\\\\\\\\n)"),
-      )
+      .split(regex(
+        "(\\\\\\\\\s)|(\\\\\\\\\n)",
+      ))
       .intersperse("\\\\\n"))
     .flatten()
     .map(s => s
@@ -1603,9 +1627,9 @@ snapshot_kind: text
       ) {
         // clear the cover-arr when encounter #meanwhile
         if cover-arr.len() != 0 {
-          result.push(
-            cover(cover-arr.sum()),
-          )
+          result.push(cover(
+            cover-arr.sum(),
+          ))
           cover-arr = ()
         }
         // then reset the repetitions
@@ -1639,12 +1663,10 @@ snapshot_kind: text
     }
     cover-arr = ()
   }
-  result-arr.push(
-    (reducer.reduce)(
-      ..reducer.kwargs,
-      result,
-    ),
-  )
+  result-arr.push((reducer.reduce)(
+    ..reducer.kwargs,
+    result,
+  ))
   max-repetitions = calc.max(
     max-repetitions,
     repetitions,
@@ -1724,7 +1746,9 @@ snapshot_kind: text
     // parse the content
     let result = ()
     let cover-arr = ()
-    let children = if utils.is-sequence(it) {
+    let children = if utils.is-sequence(
+      it,
+    ) {
       it.children
     } else {
       (it,)
@@ -1747,9 +1771,9 @@ snapshot_kind: text
         ) {
           // clear the cover-arr when encounter #meanwhile
           if cover-arr.len() != 0 {
-            result.push(
-              cover(cover-arr.sum()),
-            )
+            result.push(cover(
+              cover-arr.sum(),
+            ))
             cover-arr = ()
           }
           // then reset the repetitions
@@ -1842,11 +1866,9 @@ snapshot_kind: text
               != none
           ) {
             if (
-              type(
-                child
-                  .value
-                  .last-subslide,
-              )
+              type(child
+                .value
+                .last-subslide)
                 == function
             ) {
               (
@@ -1870,21 +1892,21 @@ snapshot_kind: text
             repetitions <= index
               or not need-cover
           ) {
-            result.push(
-              (child.value.fn)(
-                self: self,
-                ..child.value.args,
-                ..extra-args,
-              ),
-            )
+            result.push((
+              child.value.fn
+            )(
+              self: self,
+              ..child.value.args,
+              ..extra-args,
+            ))
           } else {
-            cover-arr.push(
-              (child.value.fn)(
-                self: self,
-                ..child.value.args,
-                ..extra-args,
-              ),
-            )
+            cover-arr.push((
+              child.value.fn
+            )(
+              self: self,
+              ..child.value.args,
+              ..extra-args,
+            ))
           }
           repetitions = nextrepetitions
         } else if (
@@ -1896,13 +1918,13 @@ snapshot_kind: text
               repetitions <= index
                 or not need-cover
             ) {
-              result.push(
-                child.value.body,
-              )
+              result.push(child
+                .value
+                .body)
             } else {
-              cover-arr.push(
-                child.value.body,
-              )
+              cover-arr.push(child
+                .value
+                .body)
             }
           }
         } else {
@@ -1921,9 +1943,9 @@ snapshot_kind: text
       ) {
         // clear the cover-arr when encounter linebreak or parbreak
         if cover-arr.len() != 0 {
-          result.push(
-            cover(cover-arr.sum()),
-          )
+          result.push(cover(
+            cover-arr.sum(),
+          ))
           cover-arr = ()
         }
         result.push(child)
@@ -2021,15 +2043,13 @@ snapshot_kind: text
           repetitions <= index
             or not need-cover
         ) {
-          result.push(
-            utils.reconstruct(
-              child,
-              labeled: labeled(
-                child.func(),
-              ),
-              cont,
+          result.push(utils.reconstruct(
+            child,
+            labeled: labeled(
+              child.func(),
             ),
-          )
+            cont,
+          ))
         } else {
           cover-arr.push(
             utils.reconstruct(
@@ -2136,26 +2156,21 @@ snapshot_kind: text
           base: repetitions,
           index: index,
           // Some functions (e.g. square) may have no body
-          child.at(
-            "body",
-            default: none,
-          ),
+          child.at("body", default: none),
         )
         let cont = conts.first()
         if (
           repetitions <= index
             or not need-cover
         ) {
-          result.push(
-            utils.reconstruct(
-              named: true,
-              labeled: labeled(
-                child.func(),
-              ),
-              child,
-              cont,
+          result.push(utils.reconstruct(
+            named: true,
+            labeled: labeled(
+              child.func(),
             ),
-          )
+            child,
+            cont,
+          ))
         } else {
           cover-arr.push(
             utils.reconstruct(
@@ -2195,19 +2210,15 @@ snapshot_kind: text
           repetitions <= index
             or not need-cover
         ) {
-          result.push(
-            terms.item(
-              child.term,
-              cont,
-            ),
-          )
+          result.push(terms.item(
+            child.term,
+            cont,
+          ))
         } else {
-          cover-arr.push(
-            terms.item(
-              child.term,
-              cont,
-            ),
-          )
+          cover-arr.push(terms.item(
+            child.term,
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(
@@ -2244,21 +2255,17 @@ snapshot_kind: text
           repetitions <= index
             or not need-cover
         ) {
-          result.push(
-            columns(
-              count,
-              ..args,
-              cont,
-            ),
-          )
+          result.push(columns(
+            count,
+            ..args,
+            cont,
+          ))
         } else {
-          cover-arr.push(
-            columns(
-              count,
-              ..args,
-              cont,
-            ),
-          )
+          cover-arr.push(columns(
+            count,
+            ..args,
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(
@@ -2292,7 +2299,9 @@ snapshot_kind: text
           "body",
           default: none,
         )
-        let alignment = if child.has("alignment") {
+        let alignment = if child.has(
+          "alignment",
+        ) {
           child.alignment
         } else {
           start
@@ -2301,21 +2310,17 @@ snapshot_kind: text
           repetitions <= index
             or not need-cover
         ) {
-          result.push(
-            place(
-              alignment,
-              ..fields,
-              cont,
-            ),
-          )
+          result.push(place(
+            alignment,
+            ..fields,
+            cont,
+          ))
         } else {
-          cover-arr.push(
-            place(
-              alignment,
-              ..fields,
-              cont,
-            ),
-          )
+          cover-arr.push(place(
+            alignment,
+            ..fields,
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(
@@ -2358,21 +2363,17 @@ snapshot_kind: text
           repetitions <= index
             or not need-cover
         ) {
-          result.push(
-            rotate(
-              angle,
-              ..fields,
-              cont,
-            ),
-          )
+          result.push(rotate(
+            angle,
+            ..fields,
+            cont,
+          ))
         } else {
-          cover-arr.push(
-            rotate(
-              angle,
-              ..fields,
-              cont,
-            ),
-          )
+          cover-arr.push(rotate(
+            angle,
+            ..fields,
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(
@@ -2392,14 +2393,12 @@ snapshot_kind: text
     }
     // clear the cover-arr when end
     if cover-arr.len() != 0 {
-      result.push(
-        cover(cover-arr.sum()),
-      )
+      result.push(cover(cover-arr.sum()))
       cover-arr = ()
     }
-    result-arr.push(
-      result.sum(default: []),
-    )
+    result-arr.push(result.sum(
+      default: [],
+    ))
   }
   max-repetitions = calc.max(
     max-repetitions,
@@ -2569,31 +2568,29 @@ snapshot_kind: text
 #let _get-header-footer(self) = {
   let header = utils.call-or-display(
     self,
-    self.page.at(
-      "header",
-      default: none,
-    ),
+    self.page.at("header", default: none),
   )
   let footer = utils.call-or-display(
     self,
-    self.page.at(
-      "footer",
-      default: none,
-    ),
+    self.page.at("footer", default: none),
   )
   // negative padding
   if self.at(
     "zero-margin-header",
     default: true,
   ) {
-    let negative-pad = _get-negative-pad(self)
+    let negative-pad = _get-negative-pad(
+      self,
+    )
     header = negative-pad(header)
   }
   if self.at(
     "zero-margin-footer",
     default: true,
   ) {
-    let negative-pad = _get-negative-pad(self)
+    let negative-pad = _get-negative-pad(
+      self,
+    )
     footer = negative-pad(footer)
   }
   if (
@@ -2603,7 +2600,9 @@ snapshot_kind: text
     )
       == bottom
   ) {
-    let bottom-pad = _get-bottom-pad(self)
+    let bottom-pad = _get-bottom-pad(
+      self,
+    )
     footer = bottom-pad(footer)
   }
   // speaker note
@@ -2738,12 +2737,10 @@ snapshot_kind: text
   let setting-with-auto-offset-for-heading(
     body,
   ) = {
-    set heading(
-      offset: self.at(
-        "slide-level",
-        default: 0,
-      ),
-    ) if self.at(
+    set heading(offset: self.at(
+      "slide-level",
+      default: 0,
+    )) if self.at(
       "auto-offset-for-heading",
       default: true,
     )
@@ -2859,20 +2856,14 @@ snapshot_kind: text
         }),
       )
     }
-    utils.call-or-display(
-      self,
-      self.at(
-        "slide-preamble",
-        default: none,
-      ),
-    )
-    utils.call-or-display(
-      self,
-      self.at(
-        "default-slide-preamble",
-        default: none,
-      ),
-    )
+    utils.call-or-display(self, self.at(
+      "slide-preamble",
+      default: none,
+    ))
+    utils.call-or-display(self, self.at(
+      "default-slide-preamble",
+      default: none,
+    ))
   }
   // preamble for the subslides
   let subslide-preamble(self) = {
@@ -2902,36 +2893,28 @@ snapshot_kind: text
             )
           utils
             .saved-default-frozen-states
-            .update(
-              self
-                .default-frozen-states
-                .map(s => s.get()),
-            )
+            .update(self
+              .default-frozen-states
+              .map(s => s.get()))
           utils
             .saved-frozen-counters
-            .update(
-              self
-                .frozen-counters
-                .map(s => s.get()),
-            )
+            .update(self
+              .frozen-counters
+              .map(s => s.get()))
           utils
             .saved-default-frozen-counters
-            .update(
-              self
-                .default-frozen-counters
-                .map(s => s.get()),
-            )
+            .update(self
+              .default-frozen-counters
+              .map(s => s.get()))
         }
       } else {
         // restore the states and counters
         context {
           self
             .frozen-states
-            .zip(
-              utils
-                .saved-frozen-states
-                .get(),
-            )
+            .zip(utils
+              .saved-frozen-states
+              .get())
             .map(pair => pair
               .at(0)
               .update(pair.at(1)))
@@ -2949,11 +2932,9 @@ snapshot_kind: text
             .sum(default: none)
           self
             .frozen-counters
-            .zip(
-              utils
-                .saved-frozen-counters
-                .get(),
-            )
+            .zip(utils
+              .saved-frozen-counters
+              .get())
             .map(pair => pair
               .at(0)
               .update(pair.at(1)))
@@ -2972,20 +2953,14 @@ snapshot_kind: text
         }
       }
     }
-    utils.call-or-display(
-      self,
-      self.at(
-        "subslide-preamble",
-        default: none,
-      ),
-    )
-    utils.call-or-display(
-      self,
-      self.at(
-        "default-subslide-preamble",
-        default: none,
-      ),
-    )
+    utils.call-or-display(self, self.at(
+      "subslide-preamble",
+      default: none,
+    ))
+    utils.call-or-display(self, self.at(
+      "default-subslide-preamble",
+      default: none,
+    ))
   }
   // update states for every page
   let page-preamble(self) = {
@@ -3011,20 +2986,14 @@ snapshot_kind: text
         }
       }
     }
-    utils.call-or-display(
-      self,
-      self.at(
-        "page-preamble",
-        default: none,
-      ),
-    )
-    utils.call-or-display(
-      self,
-      self.at(
-        "default-page-preamble",
-        default: none,
-      ),
-    )
+    utils.call-or-display(self, self.at(
+      "page-preamble",
+      default: none,
+    ))
+    utils.call-or-display(self, self.at(
+      "default-page-preamble",
+      default: none,
+    ))
   }
 
 
@@ -3056,7 +3025,9 @@ snapshot_kind: text
     header,
     footer,
   ) = _get-header-footer(self)
-  let page-extra-args = _get-page-extra-args(self)
+  let page-extra-args = _get-page-extra-args(
+    self,
+  )
 
   if self.handout {
     self.subslide = repeat
@@ -3083,7 +3054,9 @@ snapshot_kind: text
     ))
     setting-with-auto-offset-for-heading(
       subslide-preamble(self)
-        + composer-with-side-by-side(..conts),
+        + composer-with-side-by-side(
+          ..conts,
+        ),
     )
   } else {
     // render all the subslides
@@ -3125,7 +3098,9 @@ snapshot_kind: text
         ))
         setting-with-auto-offset-for-heading(
           subslide-preamble(self)
-            + composer-with-side-by-side(..conts),
+            + composer-with-side-by-side(
+              ..conts,
+            ),
         )
       })
     }

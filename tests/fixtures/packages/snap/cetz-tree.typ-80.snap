@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cetz-tree.typ
-snapshot_kind: text
 ---
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
@@ -99,10 +98,10 @@ snapshot_kind: text
         draw.content((), [?], name: "content")
       }
       if draw-node == "rect" {
-        draw.rect(
-          (rel: (-.1, .1), to: "content.top-left"),
-          (rel: (.1, -.1), to: "content.bottom-right"),
-        )
+        draw.rect((rel: (-.1, .1), to: "content.top-left"), (
+          rel: (.1, -.1),
+          to: "content.bottom-right",
+        ))
       }
     }
   }
@@ -148,11 +147,7 @@ snapshot_kind: text
         let child = node.children.at(i)
         let (child-min-x, child-max-x) = (none, none)
 
-        (child, child-min-x, child-max-x) = layout-node(
-          child,
-          shift-x,
-          ctx,
-        )
+        (child, child-min-x, child-max-x) = layout-node(child, shift-x, ctx)
         node.children.at(i) = child
 
         left = util.min(child.x, left)
@@ -220,14 +215,11 @@ snapshot_kind: text
     let name = "node-" + str(node.depth) + "-" + str(node.n)
 
     let cmds = ()
-    cmds += draw.group(
-      name: name,
-      {
-        draw.move-to(node-position(node))
-        draw.anchor("center", ())
-        draw-node(node, parent-name)
-      },
-    )
+    cmds += draw.group(name: name, {
+      draw.move-to(node-position(node))
+      draw.anchor("center", ())
+      draw-node(node, parent-name)
+    })
 
     if parent-name != none {
       cmds += draw-edge(parent-name, name, node)

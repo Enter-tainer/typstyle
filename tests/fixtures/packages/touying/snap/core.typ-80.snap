@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/core.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -48,10 +47,7 @@ snapshot_kind: text
 /// Example: `#show: appendix`
 ///
 /// - `body` (content): The content of the appendix.
-#let appendix(body) = touying-set-config(
-  (appendix: true),
-  body,
-)
+#let appendix(body) = touying-set-config((appendix: true), body)
 
 
 /// Recall a slide by its label
@@ -155,10 +151,7 @@ snapshot_kind: text
   let slide-level = self.slide-level
   let slide-fn = auto
   let new-section-slide-fn = self.at("new-section-slide-fn", default: none)
-  let new-subsection-slide-fn = self.at(
-    "new-subsection-slide-fn",
-    default: none,
-  )
+  let new-subsection-slide-fn = self.at("new-subsection-slide-fn", default: none)
   let new-subsubsection-slide-fn = self.at(
     "new-subsubsection-slide-fn",
     default: none,
@@ -342,10 +335,7 @@ snapshot_kind: text
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
       if (
-        _get-slide-fn(
-          self + (headings: current-headings),
-          default: none,
-        )
+        _get-slide-fn(self + (headings: current-headings), default: none)
           != none
           or child.depth <= last-heading-depth
           or current-slide != ()
@@ -499,14 +489,12 @@ snapshot_kind: text
         result.push(cont)
       }
       // Appendix content
-      result.push(
-        split-content-into-slides(
-          self: utils.merge-dicts(self, child.value.config),
-          recaller-map: recaller-map,
-          new-start: true,
-          child.value.body,
-        ),
-      )
+      result.push(split-content-into-slides(
+        self: utils.merge-dicts(self, child.value.config),
+        recaller-map: recaller-map,
+        new-start: true,
+        child.value.body,
+      ))
     } else if is-first-slide and utils.is-styled(child) {
       current-slide = utils.trim(current-slide)
       if current-slide != () or current-headings != () {
@@ -525,18 +513,13 @@ snapshot_kind: text
         )
         result.push(cont)
       }
-      result.push(
-        utils.reconstruct-styled(
-          child,
-          split-content-into-slides(
-            self: self,
-            recaller-map: recaller-map,
-            new-start: true,
-            is-first-slide: is-first-slide,
-            child.child,
-          ),
-        ),
-      )
+      result.push(utils.reconstruct-styled(child, split-content-into-slides(
+        self: self,
+        recaller-map: recaller-map,
+        new-start: true,
+        is-first-slide: is-first-slide,
+        child.child,
+      )))
     } else {
       let child = if utils.is-styled(child) {
         // Split the content into slides recursively for styled content
@@ -730,11 +713,9 @@ snapshot_kind: text
 ) = {
   touying-fn-wrapper(
     utils.alternatives-match,
-    last-subslide: calc.max(
-      ..subslides-contents
-        .pairs()
-        .map(kv => utils.last-required-subslide(kv.at(0))),
-    ),
+    last-subslide: calc.max(..subslides-contents
+      .pairs()
+      .map(kv => utils.last-required-subslide(kv.at(0)))),
     subslides-contents,
     position: position,
     stretch: true,
@@ -1042,7 +1023,9 @@ snapshot_kind: text
   let children = it
     .split(regex("(#meanwhile;?)|(meanwhile)"))
     .intersperse("touying-meanwhile")
-    .map(s => s.split(regex("(#pause;?)|(pause)")).intersperse("touying-pause"))
+    .map(s => s
+      .split(regex("(#pause;?)|(pause)"))
+      .intersperse("touying-pause"))
     .flatten()
     .map(s => s.split(regex("(\\\\\\s)|(\\\\\\n)")).intersperse("\\\n"))
     .flatten()
@@ -1098,7 +1081,8 @@ snapshot_kind: text
     ),
   )
   if (
-    eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark>
+    eqt-metadata.has("label")
+      and eqt-metadata.label != <touying-temporary-mark>
   ) {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
@@ -1135,7 +1119,9 @@ snapshot_kind: text
     .intersperse("touying-meanwhile")
     .map(s => s.split(regex("\\\\pause")).intersperse("touying-pause"))
     .flatten()
-    .map(s => s.split(regex("(\\\\\\\\\s)|(\\\\\\\\\n)")).intersperse("\\\\\n"))
+    .map(s => s
+      .split(regex("(\\\\\\\\\s)|(\\\\\\\\\n)"))
+      .intersperse("\\\\\n"))
     .flatten()
     .map(s => s.split(regex("&")).intersperse("&"))
     .flatten()
@@ -1178,7 +1164,8 @@ snapshot_kind: text
     result.sum(default: ""),
   )
   if (
-    eqt-metadata.has("label") and eqt-metadata.label != <touying-temporary-mark>
+    eqt-metadata.has("label")
+      and eqt-metadata.label != <touying-temporary-mark>
   ) {
     equation = utils.label-it(equation, eqt-metadata.label)
   }
@@ -1241,12 +1228,7 @@ snapshot_kind: text
     }
     cover-arr = ()
   }
-  result-arr.push(
-    (reducer.reduce)(
-      ..reducer.kwargs,
-      result,
-    ),
-  )
+  result-arr.push((reducer.reduce)(..reducer.kwargs, result))
   max-repetitions = calc.max(max-repetitions, repetitions)
   return (result-arr, max-repetitions)
 }
@@ -1382,21 +1364,25 @@ snapshot_kind: text
           let extra-args = (:)
           if child.value.last-subslide != none {
             if type(child.value.last-subslide) == function {
-              (last-subslide, extra-args) = (
-                child.value.last-subslide
-              )(repetitions)
+              (last-subslide, extra-args) = (child.value.last-subslide)(
+                repetitions,
+              )
             } else {
               last-subslide = calc.max(last-subslide, child.value.last-subslide)
             }
           }
           if repetitions <= index or not need-cover {
-            result.push(
-              (child.value.fn)(self: self, ..child.value.args, ..extra-args),
-            )
+            result.push((child.value.fn)(
+              self: self,
+              ..child.value.args,
+              ..extra-args,
+            ))
           } else {
-            cover-arr.push(
-              (child.value.fn)(self: self, ..child.value.args, ..extra-args),
-            )
+            cover-arr.push((child.value.fn)(
+              self: self,
+              ..child.value.args,
+              ..extra-args,
+            ))
           }
           repetitions = nextrepetitions
         } else if kind == "touying-delayed-wrapper" {
@@ -1481,13 +1467,17 @@ snapshot_kind: text
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(
-            utils.reconstruct(child, labeled: labeled(child.func()), cont),
-          )
+          result.push(utils.reconstruct(
+            child,
+            labeled: labeled(child.func()),
+            cont,
+          ))
         } else {
-          cover-arr.push(
-            utils.reconstruct(child, labeled: labeled(child.func()), cont),
-          )
+          cover-arr.push(utils.reconstruct(
+            child,
+            labeled: labeled(child.func()),
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1507,21 +1497,17 @@ snapshot_kind: text
           ..child.children,
         )
         if repetitions <= index or not need-cover {
-          result.push(
-            utils.reconstruct-table-like(
-              child,
-              labeled: labeled(child.func()),
-              conts,
-            ),
-          )
+          result.push(utils.reconstruct-table-like(
+            child,
+            labeled: labeled(child.func()),
+            conts,
+          ))
         } else {
-          cover-arr.push(
-            utils.reconstruct-table-like(
-              child,
-              labeled: labeled(child.func()),
-              conts,
-            ),
-          )
+          cover-arr.push(utils.reconstruct-table-like(
+            child,
+            labeled: labeled(child.func()),
+            conts,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1571,23 +1557,19 @@ snapshot_kind: text
         )
         let cont = conts.first()
         if repetitions <= index or not need-cover {
-          result.push(
-            utils.reconstruct(
-              named: true,
-              labeled: labeled(child.func()),
-              child,
-              cont,
-            ),
-          )
+          result.push(utils.reconstruct(
+            named: true,
+            labeled: labeled(child.func()),
+            child,
+            cont,
+          ))
         } else {
-          cover-arr.push(
-            utils.reconstruct(
-              named: true,
-              labeled: labeled(child.func()),
-              child,
-              cont,
-            ),
-          )
+          cover-arr.push(utils.reconstruct(
+            named: true,
+            labeled: labeled(child.func()),
+            child,
+            cont,
+          ))
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(last-subslide, next-last-subslide)
@@ -1827,14 +1809,8 @@ snapshot_kind: text
 }
 
 #let _get-header-footer(self) = {
-  let header = utils.call-or-display(
-    self,
-    self.page.at("header", default: none),
-  )
-  let footer = utils.call-or-display(
-    self,
-    self.page.at("footer", default: none),
-  )
+  let header = utils.call-or-display(self, self.page.at("header", default: none))
+  let footer = utils.call-or-display(self, self.page.at("footer", default: none))
   // negative padding
   if self.at("zero-margin-header", default: true) {
     let negative-pad = _get-negative-pad(self)
@@ -1880,17 +1856,9 @@ snapshot_kind: text
       0pt
     }
     if self.show-notes-on-second-screen == bottom {
-      footer += place(
-        left + bottom,
-        dx: -margin-left,
-        show-notes,
-      )
+      footer += place(left + bottom, dx: -margin-left, show-notes)
     } else if self.show-notes-on-second-screen == right {
-      footer += place(
-        left + bottom,
-        dx: page-width - margin-left,
-        show-notes,
-      )
+      footer += place(left + bottom, dx: page-width - margin-left, show-notes)
     }
   }
   (header, footer)
@@ -1974,54 +1942,49 @@ snapshot_kind: text
     [#metadata((kind: "touying-new-slide")) <touying-metadata>]
     // add headings for the first subslide
     if self.at("headings", default: ()) != () {
-      place(
-        hide({
-          set heading(offset: 0)
-          let headings = self
-            .at("headings", default: ())
-            .map(it => if it.has("label") {
-              if (
-                str(it.label)
-                  in (
-                    "touying:hidden",
-                    "touying:unnumbered",
-                    "touying:unoutlined",
-                    "touying:unbookmarked",
-                  )
-              ) {
-                let fields = it.fields()
-                let _ = fields.remove("label", default: none)
-                let _ = fields.remove("body", default: none)
-                if str(it.label) == "touying:hidden" {
-                  fields.numbering = none
-                  fields.outlined = false
-                  fields.bookmarked = false
-                }
-                if str(it.label) == "touying:unnumbered" {
-                  fields.numbering = none
-                }
-                if str(it.label) == "touying:unoutlined" {
-                  fields.outlined = false
-                }
-                if str(it.label) == "touying:unbookmarked" {
-                  fields.bookmarked = false
-                }
-                utils.label-it(heading(..fields, it.body), it.label)
-              } else {
-                it
+      place(hide({
+        set heading(offset: 0)
+        let headings = self
+          .at("headings", default: ())
+          .map(it => if it.has("label") {
+            if (
+              str(it.label)
+                in (
+                  "touying:hidden",
+                  "touying:unnumbered",
+                  "touying:unoutlined",
+                  "touying:unbookmarked",
+                )
+            ) {
+              let fields = it.fields()
+              let _ = fields.remove("label", default: none)
+              let _ = fields.remove("body", default: none)
+              if str(it.label) == "touying:hidden" {
+                fields.numbering = none
+                fields.outlined = false
+                fields.bookmarked = false
               }
+              if str(it.label) == "touying:unnumbered" {
+                fields.numbering = none
+              }
+              if str(it.label) == "touying:unoutlined" {
+                fields.outlined = false
+              }
+              if str(it.label) == "touying:unbookmarked" {
+                fields.bookmarked = false
+              }
+              utils.label-it(heading(..fields, it.body), it.label)
             } else {
               it
-            })
-          headings.sum(default: none)
-        }),
-      )
+            }
+          } else {
+            it
+          })
+        headings.sum(default: none)
+      }))
     }
     utils.call-or-display(self, self.at("slide-preamble", default: none))
-    utils.call-or-display(
-      self,
-      self.at("default-slide-preamble", default: none),
-    )
+    utils.call-or-display(self, self.at("default-slide-preamble", default: none))
   }
   // preamble for the subslides
   let subslide-preamble(self) = {
@@ -2075,10 +2038,10 @@ snapshot_kind: text
       }
     }
     utils.call-or-display(self, self.at("subslide-preamble", default: none))
-    utils.call-or-display(
-      self,
-      self.at("default-subslide-preamble", default: none),
-    )
+    utils.call-or-display(self, self.at(
+      "default-subslide-preamble",
+      default: none,
+    ))
   }
   // update states for every page
   let page-preamble(self) = {

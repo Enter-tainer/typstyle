@@ -79,33 +79,47 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let ctx = ctx.with_mode(Mode::CodeCont);
 
-        let mut fold_style = self.get_fold_style(ctx, args);
-
         let children = || {
             args.to_untyped()
                 .children()
                 .take_while(|it| it.kind() != SyntaxKind::RightParen)
         };
-        let arg_count = children().filter(|it| it.is::<Arg>()).count();
+        let arg_count = children().filter(|it| SyntaxNode::is::<Arg>(it)).count(); // should exclude args in brackets
+
+        let mut fold_style = match self.get_fold_style(ctx, args) {
+            FoldStyle::Always => FoldStyle::Always,
+            // FoldStyle::Never if arg_count > 1 => FoldStyle::Never,
+            _ if args.items().last()
+                .is_some_and(|arg|
+                     matches!(arg, Arg::Pos(Expr::Binary(_)))
+                     ||  matches!(arg, Arg::Named(named) if named.expr().to_untyped().kind() == SyntaxKind::Binary)) =>
+            {
+                FoldStyle::Fit
+            }
+            _ => FoldStyle::Compact,
+        };
 
         if !ctx.break_suppressed {
             is_only_one_and(args.items().take(arg_count), |arg| {
-                let inner = match arg {
+                let expr = match arg {
                     Arg::Pos(p) => *p,
                     Arg::Named(_) => {
-                        fold_style = FoldStyle::Fit;
                         return false;
                     }
                     Arg::Spread(s) => s.expr(),
                 };
-                fold_style = if matches!(
-                    inner,
-                    Expr::FuncCall(_) | Expr::FieldAccess(_) | Expr::Unary(_) | Expr::Binary(_)
+                if matches!(
+                    expr,
+                    Expr::Parenthesized(_)
+                        | Expr::Code(_)
+                        | Expr::Content(_)
+                        | Expr::Array(_)
+                        | Expr::Dict(_)
+                        | Expr::Contextual(_)
+                        | Expr::Closure(_)
                 ) {
-                    FoldStyle::Fit
-                } else {
-                    FoldStyle::Always
-                };
+                    fold_style = FoldStyle::Always;
+                }
                 true
             });
         }

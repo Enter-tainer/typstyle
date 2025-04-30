@@ -4,9 +4,15 @@ input_file: tests/fixtures/unit/chain/call.typ
 ---
 #{
   a
-    .b(1)(2)
+    .b(
+      1,
+    )(
+      2,
+    )
     .c
-    .d(3)
+    .d(
+      3,
+    )
 }
 
 #{
@@ -27,7 +33,9 @@ input_file: tests/fixtures/unit/chain/call.typ
   a
     .bbbbbbbbbbbbbb()[c][d]
     .eeeeeeeeee()
-    .f(123)[444][ccc]
+    .f(
+      123,
+    )[444][ccc]
 }
 
 #{
@@ -131,7 +139,9 @@ input_file: tests/fixtures/unit/chain/call.typ
     from,
     to,
   )
-    .zip(offsets)
+    .zip(
+      offsets,
+    )
     .map((
       (
         point,

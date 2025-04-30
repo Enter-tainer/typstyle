@@ -75,9 +75,13 @@ input_file: tests/fixtures/packages/touying/core.typ
 ) = utils.label-it(
   metadata((
     kind: "touying-slide-recaller",
-    label: if type(lbl)
+    label: if type(
+      lbl,
+    )
       == label {
-      str(lbl)
+      str(
+        lbl,
+      )
     } else {
       lbl
     },
@@ -113,7 +117,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       .at(
         -1,
       )
-      .has("label") {
+      .has(
+        "label",
+      ) {
       str(
         current-headings
           .at(
@@ -201,11 +207,15 @@ input_file: tests/fixtures/packages/touying/core.typ
     fn
       == auto
   ) {
-    _get-slide-fn(self)
+    _get-slide-fn(
+      self,
+    )
   } else {
     fn
   }
-  let slide-wrapper = slide-fn(body)
+  let slide-wrapper = slide-fn(
+    body,
+  )
   assert(
     utils.is-kind(
       slide-wrapper,
@@ -217,7 +227,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     slide-wrapper
       .value
       .fn
-  )(self)
+  )(
+    self,
+  )
 }
 
 
@@ -231,7 +243,9 @@ input_file: tests/fixtures/packages/touying/core.typ
 ) = {
   // Extract arguments
   assert(
-    type(self)
+    type(
+      self,
+    )
       == dictionary,
     message: "`self` must be a dictionary",
   )
@@ -275,7 +289,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     "horizontal-line-to-pagebreak",
     default: true,
   )
-  let children = if utils.is-sequence(body) {
+  let children = if utils.is-sequence(
+    body,
+  ) {
     body.children
   } else {
     (
@@ -286,16 +302,22 @@ input_file: tests/fixtures/packages/touying/core.typ
   let sequence-to-array(
     it,
   ) = {
-    if utils.is-sequence(it) {
+    if utils.is-sequence(
+      it,
+    ) {
       it
         .children
-        .map(sequence-to-array)
+        .map(
+          sequence-to-array,
+        )
     } else {
       it
     }
   }
   children = children
-    .map(sequence-to-array)
+    .map(
+      sequence-to-array,
+    )
     .flatten()
   let call-slide-fn-and-reset(
     self,
@@ -305,7 +327,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     recaller-map,
   ) = {
     let cont = if already-slide-wrapper {
-      slide-fn(self)
+      slide-fn(
+        self,
+      )
     } else {
       _call-slide-fn(
         self,
@@ -374,7 +398,9 @@ input_file: tests/fixtures/packages/touying/core.typ
             [-],
           )
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       (
         cont,
         recaller-map,
@@ -394,7 +420,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         ),
         recaller-map,
       )
-      result.push(cont)
+      result.push(
+        cont,
+      )
       horizontal-line = false
     }
     // Main logic
@@ -402,7 +430,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       child,
       "touying-slide-wrapper",
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide
           != ()
@@ -434,7 +464,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           ),
           recaller-map,
         )
-        result.push(cont)
+        result.push(
+          cont,
+        )
       }
       (
         cont,
@@ -457,7 +489,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         recaller-map,
       )
       if (
-        child.has("label")
+        child.has(
+          "label",
+        )
           and child.label
             != <touying-temporary-mark>
       ) {
@@ -468,12 +502,16 @@ input_file: tests/fixtures/packages/touying/core.typ
           cont,
         )
       }
-      result.push(cont)
+      result.push(
+        cont,
+      )
     } else if utils.is-kind(
       child,
       "touying-slide-recaller",
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide
           != ()
@@ -499,7 +537,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           ),
           recaller-map,
         )
-        result.push(cont)
+        result.push(
+          cont,
+        )
       }
       let lbl = child
         .value
@@ -511,14 +551,18 @@ input_file: tests/fixtures/packages/touying/core.typ
       )
       // recall the slide
       result.push(
-        recaller-map.at(lbl),
+        recaller-map.at(
+          lbl,
+        ),
       )
     } else if (
       child
         == pagebreak()
     ) {
       // split content when we have a pagebreak
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       (
         cont,
         recaller-map,
@@ -538,7 +582,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         ),
         recaller-map,
       )
-      result.push(cont)
+      result.push(
+        cont,
+      )
     } else if (
       horizontal-line-to-pagebreak
         and child
@@ -560,8 +606,12 @@ input_file: tests/fixtures/packages/touying/core.typ
       child,
       depth: slide-level,
     ) {
-      let last-heading-depth = _get-last-heading-depth(current-headings)
-      current-slide = utils.trim(current-slide)
+      let last-heading-depth = _get-last-heading-depth(
+        current-headings,
+      )
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         _get-slide-fn(
           self
@@ -600,7 +650,9 @@ input_file: tests/fixtures/packages/touying/core.typ
                 != none
           )
       ) {
-        current-slide = utils.trim(current-slide)
+        current-slide = utils.trim(
+          current-slide,
+        )
         if (
           current-slide
             != ()
@@ -626,15 +678,21 @@ input_file: tests/fixtures/packages/touying/core.typ
             ),
             recaller-map,
           )
-          result.push(cont)
+          result.push(
+            cont,
+          )
         }
       }
 
-      current-headings.push(child)
+      current-headings.push(
+        child,
+      )
       new-start = true
 
       if (
-        not child.has("label")
+        not child.has(
+          "label",
+        )
           or str(
             child.label,
           )
@@ -667,7 +725,9 @@ input_file: tests/fixtures/packages/touying/core.typ
             none,
             recaller-map,
           )
-          result.push(cont)
+          result.push(
+            cont,
+          )
         } else if (
           child.depth
             == 2
@@ -692,7 +752,9 @@ input_file: tests/fixtures/packages/touying/core.typ
             none,
             recaller-map,
           )
-          result.push(cont)
+          result.push(
+            cont,
+          )
         } else if (
           child.depth
             == 3
@@ -717,7 +779,9 @@ input_file: tests/fixtures/packages/touying/core.typ
             none,
             recaller-map,
           )
-          result.push(cont)
+          result.push(
+            cont,
+          )
         } else if (
           child.depth
             == 4
@@ -742,7 +806,9 @@ input_file: tests/fixtures/packages/touying/core.typ
             none,
             recaller-map,
           )
-          result.push(cont)
+          result.push(
+            cont,
+          )
         }
       }
     } else if (
@@ -750,7 +816,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         "auto-offset-for-heading",
         default: true,
       )
-        and utils.is-heading(child)
+        and utils.is-heading(
+          child,
+        )
     ) {
       let fields = child.fields()
       let lbl = fields.remove(
@@ -780,15 +848,21 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
       }
       if new-start {
-        current-slide.push(new-heading)
+        current-slide.push(
+          new-heading,
+        )
       } else {
-        start-part.push(new-heading)
+        start-part.push(
+          new-heading,
+        )
       }
     } else if utils.is-kind(
       child,
       "touying-set-config",
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide
           != ()
@@ -814,7 +888,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           ),
           recaller-map,
         )
-        result.push(cont)
+        result.push(
+          cont,
+        )
       }
       // Appendix content
       result.push(
@@ -834,9 +910,13 @@ input_file: tests/fixtures/packages/touying/core.typ
       )
     } else if (
       is-first-slide
-        and utils.is-styled(child)
+        and utils.is-styled(
+          child,
+        )
     ) {
-      current-slide = utils.trim(current-slide)
+      current-slide = utils.trim(
+        current-slide,
+      )
       if (
         current-slide
           != ()
@@ -862,7 +942,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           ),
           recaller-map,
         )
-        result.push(cont)
+        result.push(
+          cont,
+        )
       }
       result.push(
         utils.reconstruct-styled(
@@ -877,7 +959,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         ),
       )
     } else {
-      let child = if utils.is-styled(child) {
+      let child = if utils.is-styled(
+        child,
+      ) {
         // Split the content into slides recursively for styled content
         let (
           start-part,
@@ -908,15 +992,21 @@ input_file: tests/fixtures/packages/touying/core.typ
       }
       if new-start {
         // Add the child to the current slide
-        current-slide.push(child)
+        current-slide.push(
+          child,
+        )
       } else {
-        start-part.push(child)
+        start-part.push(
+          child,
+        )
       }
     }
   }
 
   // Handle the last slide
-  current-slide = utils.trim(current-slide)
+  current-slide = utils.trim(
+    current-slide,
+  )
   if (
     current-slide
       != ()
@@ -942,7 +1032,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       ),
       recaller-map,
     )
-    result.push(cont)
+    result.push(
+      cont,
+    )
   }
 
   if is-new-start {
@@ -1054,7 +1146,9 @@ input_file: tests/fixtures/packages/touying/core.typ
 ) = {
   touying-fn-wrapper(
     utils.uncover,
-    last-subslide: utils.last-required-subslide(visible-subslides),
+    last-subslide: utils.last-required-subslide(
+      visible-subslides,
+    ),
     visible-subslides,
     uncover-cont,
   )
@@ -1083,7 +1177,9 @@ input_file: tests/fixtures/packages/touying/core.typ
 ) = {
   touying-fn-wrapper(
     utils.only,
-    last-subslide: utils.last-required-subslide(visible-subslides),
+    last-subslide: utils.last-required-subslide(
+      visible-subslides,
+    ),
     visible-subslides,
     only-cont,
   )
@@ -1118,7 +1214,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       ..subslides-contents
         .pairs()
         .map(kv => utils.last-required-subslide(
-          kv.at(0),
+          kv.at(
+            0,
+          ),
         )),
     ),
     subslides-contents,
@@ -1219,7 +1317,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       count
         == none
     ) {
-      panic("You must specify either end or count.")
+      panic(
+        "You must specify either end or count.",
+      )
     } else {
       (
         start
@@ -1354,26 +1454,36 @@ input_file: tests/fixtures/packages/touying/core.typ
     scope: scope,
     body: {
       if (
-        type(body)
+        type(
+          body,
+        )
           == function
       ) {
         body
       } else if (
-        type(body)
+        type(
+          body,
+        )
           == str
       ) {
         body
       } else if (
-        type(body)
+        type(
+          body,
+        )
           == content
-          and body.has("text")
+          and body.has(
+            "text",
+          )
       ) {
         body.text
       } else {
         panic(
           "Unsupported type: "
             + str(
-              type(body),
+              type(
+                body,
+              ),
             ),
         )
       }
@@ -1417,26 +1527,36 @@ input_file: tests/fixtures/packages/touying/core.typ
     mitex: mitex,
     body: {
       if (
-        type(body)
+        type(
+          body,
+        )
           == function
       ) {
         body
       } else if (
-        type(body)
+        type(
+          body,
+        )
           == str
       ) {
         body
       } else if (
-        type(body)
+        type(
+          body,
+        )
           == content
-          and body.has("text")
+          and body.has(
+            "text",
+          )
       ) {
         body.text
       } else {
         panic(
           "Unsupported type: "
             + str(
-              type(body),
+              type(
+                body,
+              ),
             ),
         )
       }
@@ -1501,17 +1621,25 @@ input_file: tests/fixtures/packages/touying/core.typ
   let it = eqt.body
   // if it is a function, then call it with self
   if (
-    type(it)
+    type(
+      it,
+    )
       == function
   ) {
-    it = it(self)
+    it = it(
+      self,
+    )
   }
   assert(
-    type(it)
+    type(
+      it,
+    )
       == str,
     message: "Unsupported type: "
       + str(
-        type(it),
+        type(
+          it,
+        ),
       ),
   )
   // parse the content
@@ -1519,26 +1647,42 @@ input_file: tests/fixtures/packages/touying/core.typ
   let cover-arr = ()
   let children = it
     .split(
-      regex("(#meanwhile;?)|(meanwhile)"),
+      regex(
+        "(#meanwhile;?)|(meanwhile)",
+      ),
     )
-    .intersperse("touying-meanwhile")
+    .intersperse(
+      "touying-meanwhile",
+    )
     .map(s => s
       .split(
-        regex("(#pause;?)|(pause)"),
+        regex(
+          "(#pause;?)|(pause)",
+        ),
       )
-      .intersperse("touying-pause"))
+      .intersperse(
+        "touying-pause",
+      ))
     .flatten()
     .map(s => s
       .split(
-        regex("(\\\\\\s)|(\\\\\\n)"),
+        regex(
+          "(\\\\\\s)|(\\\\\\n)",
+        ),
       )
-      .intersperse("\\\n"))
+      .intersperse(
+        "\\\n",
+      ))
     .flatten()
     .map(s => s
       .split(
-        regex("&"),
+        regex(
+          "&",
+        ),
       )
-      .intersperse("&"))
+      .intersperse(
+        "&",
+      ))
     .flatten()
   for child in (
     children
@@ -1588,16 +1732,22 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
         cover-arr = ()
       }
-      result.push(child)
+      result.push(
+        child,
+      )
     } else {
       if (
         repetitions
           <= index
           or not need-cover
       ) {
-        result.push(child)
+        result.push(
+          child,
+        )
       } else {
-        cover-arr.push(child)
+        cover-arr.push(
+          child,
+        )
       }
     }
   }
@@ -1651,7 +1801,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     ),
   )
   if (
-    eqt-metadata.has("label")
+    eqt-metadata.has(
+      "label",
+    )
       and eqt-metadata.label
         != <touying-temporary-mark>
   ) {
@@ -1660,7 +1812,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       eqt-metadata.label,
     )
   }
-  result-arr.push(equation)
+  result-arr.push(
+    equation,
+  )
   max-repetitions = calc.max(
     max-repetitions,
     repetitions,
@@ -1688,17 +1842,25 @@ input_file: tests/fixtures/packages/touying/core.typ
   let it = eqt.body
   // if it is a function, then call it with self
   if (
-    type(it)
+    type(
+      it,
+    )
       == function
   ) {
-    it = it(self)
+    it = it(
+      self,
+    )
   }
   assert(
-    type(it)
+    type(
+      it,
+    )
       == str,
     message: "Unsupported type: "
       + str(
-        type(it),
+        type(
+          it,
+        ),
       ),
   )
   // parse the content
@@ -1706,26 +1868,42 @@ input_file: tests/fixtures/packages/touying/core.typ
   let cover-arr = ()
   let children = it
     .split(
-      regex("\\\\meanwhile"),
+      regex(
+        "\\\\meanwhile",
+      ),
     )
-    .intersperse("touying-meanwhile")
+    .intersperse(
+      "touying-meanwhile",
+    )
     .map(s => s
       .split(
-        regex("\\\\pause"),
+        regex(
+          "\\\\pause",
+        ),
       )
-      .intersperse("touying-pause"))
+      .intersperse(
+        "touying-pause",
+      ))
     .flatten()
     .map(s => s
       .split(
-        regex("(\\\\\\\\\s)|(\\\\\\\\\n)"),
+        regex(
+          "(\\\\\\\\\s)|(\\\\\\\\\n)",
+        ),
       )
-      .intersperse("\\\\\n"))
+      .intersperse(
+        "\\\\\n",
+      ))
     .flatten()
     .map(s => s
       .split(
-        regex("&"),
+        regex(
+          "&",
+        ),
       )
-      .intersperse("&"))
+      .intersperse(
+        "&",
+      ))
     .flatten()
   for child in (
     children
@@ -1775,16 +1953,22 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
         cover-arr = ()
       }
-      result.push(child)
+      result.push(
+        child,
+      )
     } else {
       if (
         repetitions
           <= index
           or not need-cover
       ) {
-        result.push(child)
+        result.push(
+          child,
+        )
       } else {
-        cover-arr.push(child)
+        cover-arr.push(
+          child,
+        )
       }
     }
   }
@@ -1811,7 +1995,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     ),
   )
   if (
-    eqt-metadata.has("label")
+    eqt-metadata.has(
+      "label",
+    )
       and eqt-metadata.label
         != <touying-temporary-mark>
   ) {
@@ -1820,7 +2006,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       eqt-metadata.label,
     )
   }
-  result-arr.push(equation)
+  result-arr.push(
+    equation,
+  )
   max-repetitions = calc.max(
     max-repetitions,
     repetitions,
@@ -1851,7 +2039,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     .args
     .flatten() {
     if (
-      type(child)
+      type(
+        child,
+      )
         == content
         and child.func()
           == metadata
@@ -1898,9 +2088,13 @@ input_file: tests/fixtures/packages/touying/core.typ
           repetitions
             <= index
         ) {
-          result.push(child)
+          result.push(
+            child,
+          )
         } else {
-          cover-arr.push(child)
+          cover-arr.push(
+            child,
+          )
         }
       }
     } else {
@@ -1908,9 +2102,13 @@ input_file: tests/fixtures/packages/touying/core.typ
         repetitions
           <= index
       ) {
-        result.push(child)
+        result.push(
+          child,
+        )
       } else {
-        cover-arr.push(child)
+        cover-arr.push(
+          child,
+        )
       }
     }
   }
@@ -1919,14 +2117,20 @@ input_file: tests/fixtures/packages/touying/core.typ
     cover-arr.len()
       != 0
   ) {
-    let r = cover(cover-arr)
+    let r = cover(
+      cover-arr,
+    )
     if (
-      type(r)
+      type(
+        r,
+      )
         == array
     ) {
       result += r
     } else {
-      result.push(r)
+      result.push(
+        r,
+      )
     }
     cover-arr = ()
   }
@@ -1992,7 +2196,9 @@ input_file: tests/fixtures/packages/touying/core.typ
   ) {
     // a hack for code like #table([A], pause, [B])
     if (
-      type(it)
+      type(
+        it,
+      )
         == content
         and it.func()
           in (
@@ -2045,16 +2251,22 @@ input_file: tests/fixtures/packages/touying/core.typ
     }
     // if it is a function, then call it with self
     if (
-      type(it)
+      type(
+        it,
+      )
         == function
     ) {
       // subslide index
-      it = it(self)
+      it = it(
+        self,
+      )
     }
     // parse the content
     let result = ()
     let cover-arr = ()
-    let children = if utils.is-sequence(it) {
+    let children = if utils.is-sequence(
+      it,
+    ) {
       it.children
     } else {
       (
@@ -2065,7 +2277,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       children
     ) {
       if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             == metadata
@@ -2129,9 +2343,13 @@ input_file: tests/fixtures/packages/touying/core.typ
               <= index
               or not need-cover
           ) {
-            result.push(cont)
+            result.push(
+              cont,
+            )
           } else {
-            cover-arr.push(cont)
+            cover-arr.push(
+              cont,
+            )
           }
           repetitions = nextrepetitions
         } else if (
@@ -2156,9 +2374,13 @@ input_file: tests/fixtures/packages/touying/core.typ
               <= index
               or not need-cover
           ) {
-            result.push(cont)
+            result.push(
+              cont,
+            )
           } else {
-            cover-arr.push(cont)
+            cover-arr.push(
+              cont,
+            )
           }
           repetitions = nextrepetitions
         } else if (
@@ -2181,9 +2403,13 @@ input_file: tests/fixtures/packages/touying/core.typ
               <= index
               or not need-cover
           ) {
-            result.push(cont)
+            result.push(
+              cont,
+            )
           } else {
-            cover-arr.push(cont)
+            cover-arr.push(
+              cont,
+            )
           }
           repetitions = nextrepetitions
         } else if (
@@ -2214,7 +2440,9 @@ input_file: tests/fixtures/packages/touying/core.typ
                 child
                   .value
                   .last-subslide
-              )(repetitions)
+              )(
+                repetitions,
+              )
             } else {
               last-subslide = calc.max(
                 last-subslide,
@@ -2287,9 +2515,13 @@ input_file: tests/fixtures/packages/touying/core.typ
               <= index
               or not need-cover
           ) {
-            result.push(child)
+            result.push(
+              child,
+            )
           } else {
-            cover-arr.push(child)
+            cover-arr.push(
+              child,
+            )
           }
         }
       } else if (
@@ -2310,8 +2542,12 @@ input_file: tests/fixtures/packages/touying/core.typ
           )
           cover-arr = ()
         }
-        result.push(child)
-      } else if utils.is-sequence(child) {
+        result.push(
+          child,
+        )
+      } else if utils.is-sequence(
+        child,
+      ) {
         // handle the sequence
         let (
           conts,
@@ -2331,16 +2567,22 @@ input_file: tests/fixtures/packages/touying/core.typ
             <= index
             or not need-cover
         ) {
-          result.push(cont)
+          result.push(
+            cont,
+          )
         } else {
-          cover-arr.push(cont)
+          cover-arr.push(
+            cont,
+          )
         }
         repetitions = nextrepetitions
         last-subslide = calc.max(
           last-subslide,
           next-last-subslide,
         )
-      } else if utils.is-styled(child) {
+      } else if utils.is-styled(
+        child,
+      ) {
         // handle styled
         let (
           conts,
@@ -2380,7 +2622,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             in (
@@ -2435,7 +2679,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             in (
@@ -2488,7 +2734,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             in (
@@ -2570,7 +2818,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             == terms.item
@@ -2614,7 +2864,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             == columns
@@ -2633,12 +2885,16 @@ input_file: tests/fixtures/packages/touying/core.typ
           child.body,
         )
         let cont = conts.first()
-        let args = if child.has("gutter") {
+        let args = if child.has(
+          "gutter",
+        ) {
           (
             gutter: child.gutter,
           )
         }
-        let count = if child.has("count") {
+        let count = if child.has(
+          "count",
+        ) {
           child.count
         } else {
           2
@@ -2670,7 +2926,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             == place
@@ -2698,7 +2956,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           "body",
           default: none,
         )
-        let alignment = if child.has("alignment") {
+        let alignment = if child.has(
+          "alignment",
+        ) {
           child.alignment
         } else {
           start
@@ -2730,7 +2990,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           next-last-subslide,
         )
       } else if (
-        type(child)
+        type(
+          child,
+        )
           == content
           and child.func()
             == rotate
@@ -2758,7 +3020,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           "body",
           default: none,
         )
-        let angle = if child.has("angle") {
+        let angle = if child.has(
+          "angle",
+        ) {
           child.angle
         } else {
           0deg
@@ -2795,9 +3059,13 @@ input_file: tests/fixtures/packages/touying/core.typ
             <= index
             or not need-cover
         ) {
-          result.push(child)
+          result.push(
+            child,
+          )
         } else {
-          cover-arr.push(child)
+          cover-arr.push(
+            child,
+          )
         }
       }
     }
@@ -2838,11 +3106,17 @@ input_file: tests/fixtures/packages/touying/core.typ
     .page
     .margin
   if (
-    type(margin)
+    type(
+      margin,
+    )
       != dictionary
-      and type(margin)
+      and type(
+        margin,
+      )
         != length
-      and type(margin)
+      and type(
+        margin,
+      )
         != relative
   ) {
     return it => {
@@ -2857,14 +3131,20 @@ input_file: tests/fixtures/packages/touying/core.typ
     breakable: false,
   )
   if (
-    type(margin)
+    type(
+      margin,
+    )
       == length
-      or type(margin)
+      or type(
+        margin,
+      )
         == relative
   ) {
     return it => pad(
       x: -margin,
-      cell(it),
+      cell(
+        it,
+      ),
     )
   }
   let pad-args = (:)
@@ -2894,7 +3174,9 @@ input_file: tests/fixtures/packages/touying/core.typ
   }
   it => pad(
     ..pad-args,
-    cell(it),
+    cell(
+      it,
+    ),
   )
 }
 
@@ -2932,7 +3214,9 @@ input_file: tests/fixtures/packages/touying/core.typ
   }
   it => pad(
     bottom: page-height,
-    cell(it),
+    cell(
+      it,
+    ),
   )
 }
 
@@ -2982,19 +3266,29 @@ input_file: tests/fixtures/packages/touying/core.typ
       595.28pt
     }
     if (
-      type(margin)
+      type(
+        margin,
+      )
         != dictionary
-        and type(margin)
+        and type(
+          margin,
+        )
           != length
-        and type(margin)
+        and type(
+          margin,
+        )
           != relative
     ) {
       return (:)
     }
     if (
-      type(margin)
+      type(
+        margin,
+      )
         == length
-        or type(margin)
+        or type(
+          margin,
+        )
           == relative
     ) {
       margin = (
@@ -3077,15 +3371,23 @@ input_file: tests/fixtures/packages/touying/core.typ
     "zero-margin-header",
     default: true,
   ) {
-    let negative-pad = _get-negative-pad(self)
-    header = negative-pad(header)
+    let negative-pad = _get-negative-pad(
+      self,
+    )
+    header = negative-pad(
+      header,
+    )
   }
   if self.at(
     "zero-margin-footer",
     default: true,
   ) {
-    let negative-pad = _get-negative-pad(self)
-    footer = negative-pad(footer)
+    let negative-pad = _get-negative-pad(
+      self,
+    )
+    footer = negative-pad(
+      footer,
+    )
   }
   if (
     self.at(
@@ -3094,8 +3396,12 @@ input_file: tests/fixtures/packages/touying/core.typ
     )
       == bottom
   ) {
-    let bottom-pad = _get-bottom-pad(self)
-    footer = bottom-pad(footer)
+    let bottom-pad = _get-bottom-pad(
+      self,
+    )
+    footer = bottom-pad(
+      footer,
+    )
   }
   // speaker note
   if (
@@ -3289,16 +3595,22 @@ input_file: tests/fixtures/packages/touying/core.typ
       "auto-offset-for-heading",
       default: true,
     )
-    setting(body)
+    setting(
+      body,
+    )
   }
   let composer-with-side-by-side(
     ..args,
   ) = {
     if (
-      type(composer)
+      type(
+        composer,
+      )
         == function
     ) {
-      composer(..args)
+      composer(
+        ..args,
+      )
     } else {
       components.side-by-side(
         columns: composer,
@@ -3352,7 +3664,9 @@ input_file: tests/fixtures/packages/touying/core.typ
               "headings",
               default: (),
             )
-            .map(it => if it.has("label") {
+            .map(it => if it.has(
+              "label",
+            ) {
               if (
                 str(
                   it.label,
@@ -3450,7 +3764,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         or self.subslide
           == 1
     ) {
-      slide-preamble(self)
+      slide-preamble(
+        self,
+      )
     }
     [#metadata((
         kind: "touying-new-subslide",
@@ -3510,9 +3826,13 @@ input_file: tests/fixtures/packages/touying/core.typ
                 .get(),
             )
             .map(pair => pair
-              .at(0)
+              .at(
+                0,
+              )
               .update(
-                pair.at(1),
+                pair.at(
+                  1,
+                ),
               ))
             .sum(
               default: none,
@@ -3525,9 +3845,13 @@ input_file: tests/fixtures/packages/touying/core.typ
                 .get(),
             )
             .map(pair => pair
-              .at(0)
+              .at(
+                0,
+              )
               .update(
-                pair.at(1),
+                pair.at(
+                  1,
+                ),
               ))
             .sum(
               default: none,
@@ -3540,9 +3864,13 @@ input_file: tests/fixtures/packages/touying/core.typ
                 .get(),
             )
             .map(pair => pair
-              .at(0)
+              .at(
+                0,
+              )
               .update(
-                pair.at(1),
+                pair.at(
+                  1,
+                ),
               ))
             .sum(
               default: none,
@@ -3555,9 +3883,13 @@ input_file: tests/fixtures/packages/touying/core.typ
                 .get(),
             )
             .map(pair => pair
-              .at(0)
+              .at(
+                0,
+              )
               .update(
-                pair.at(1),
+                pair.at(
+                  1,
+                ),
               ))
             .sum(
               default: none,
@@ -3650,7 +3982,9 @@ input_file: tests/fixtures/packages/touying/core.typ
     )
   }
   assert(
-    type(repeat)
+    type(
+      repeat,
+    )
       == int,
     message: "The repeat should be an integer",
   )
@@ -3659,8 +3993,12 @@ input_file: tests/fixtures/packages/touying/core.typ
   let (
     header,
     footer,
-  ) = _get-header-footer(self)
-  let page-extra-args = _get-page-extra-args(self)
+  ) = _get-header-footer(
+    self,
+  )
+  let page-extra-args = _get-page-extra-args(
+    self,
+  )
 
   if self.handout {
     self.subslide = repeat
@@ -3675,7 +4013,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       ..bodies,
     )
     header = (
-      page-preamble(self)
+      page-preamble(
+        self,
+      )
         + header
     )
     set page(..(
@@ -3687,8 +4027,12 @@ input_file: tests/fixtures/packages/touying/core.typ
         )
     ))
     setting-with-auto-offset-for-heading(
-      subslide-preamble(self)
-        + composer-with-side-by-side(..conts),
+      subslide-preamble(
+        self,
+      )
+        + composer-with-side-by-side(
+          ..conts,
+        ),
     )
   } else {
     // render all the subslides
@@ -3703,7 +4047,9 @@ input_file: tests/fixtures/packages/touying/core.typ
       let (
         header,
         footer,
-      ) = _get-header-footer(self)
+      ) = _get-header-footer(
+        self,
+      )
       let delayed-args = if (
         i
           == repeat
@@ -3723,7 +4069,9 @@ input_file: tests/fixtures/packages/touying/core.typ
         ..bodies,
       )
       let new-header = (
-        page-preamble(self)
+        page-preamble(
+          self,
+        )
           + header
       )
       // update the counter in the first subslide only
@@ -3737,8 +4085,12 @@ input_file: tests/fixtures/packages/touying/core.typ
             )
         ))
         setting-with-auto-offset-for-heading(
-          subslide-preamble(self)
-            + composer-with-side-by-side(..conts),
+          subslide-preamble(
+            self,
+          )
+            + composer-with-side-by-side(
+              ..conts,
+            ),
         )
       })
     }

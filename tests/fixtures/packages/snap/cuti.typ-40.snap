@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cuti.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [cuti]
@@ -97,9 +96,7 @@ snapshot_kind: text
   s,
 ) = {
   show regex(reg-exp): it => {
-    box(
-      skew(ax: ang, reflow: false, it),
-    )
+    box(skew(ax: ang, reflow: false, it))
   }
   s
 }

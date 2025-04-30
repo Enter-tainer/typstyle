@@ -1,19 +1,24 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/show-closure-paren-complex.typ
-snapshot_kind: text
 ---
 #show raw.where(
   block: false,
 ): it => if (
   it
     .text
-    .starts-with("<")
+    .starts-with(
+      "<",
+    )
     and it
       .text
-      .ends-with(">")
+      .ends-with(
+        ">",
+      )
 ) {
-  set text(1.2em)
+  set text(
+    1.2em,
+  )
   doc-style.show-type(
     it
       .text

@@ -3,7 +3,11 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{doc_ext::DocExt, style::FoldStyle, ArenaDoc, Context, Mode, PrettyPrinter},
+    pretty::{
+        doc_ext::{DocBuilderFlatten, DocExt},
+        style::FoldStyle,
+        ArenaDoc, Context, Mode, PrettyPrinter,
+    },
 };
 
 pub struct ListStylist<'a> {
@@ -319,6 +323,29 @@ impl<'a> ListStylist<'a> {
             self.fold_style
         };
         let item_count = self.items.len();
+
+        let enclose_fitted = |inner: ArenaDoc<'a>| {
+            if is_single && sty.omit_delim_single {
+                inner.group()
+            } else if sty.omit_delim_flat {
+                inner
+                    .enclose(
+                        arena.text(delim.0).flat_alt(arena.nil()),
+                        arena.text(delim.1).flat_alt(arena.nil()),
+                    )
+                    .group()
+            } else if sty.add_delim_space {
+                inner
+                    .enclose(
+                        arena.text(delim.0) + arena.nil().flat_alt(arena.space()),
+                        arena.nil().flat_alt(arena.space()) + arena.text(delim.1),
+                    )
+                    .group()
+            } else {
+                inner.group().enclose(delim.0, delim.1)
+            }
+        };
+
         let mut seen_real_items = 0;
         match fold_style {
             FoldStyle::Never => {
@@ -386,7 +413,53 @@ impl<'a> ListStylist<'a> {
                     inner.enclose(delim.0, delim.1)
                 }
             }
-            FoldStyle::Fit => {
+            FoldStyle::Compact
+                if !self.has_comment
+                    && !self.items.iter().any(|it| matches!(it, Item::Linebreak(_))) =>
+            {
+                // no line comment or linebreak here
+                let mut docs = vec![];
+                for item in self.items {
+                    match item {
+                        Item::Comment(_) => {}
+                        Item::Commented { body, .. } => {
+                            docs.push(body);
+                        }
+                        Item::Linebreak(_) => {}
+                    }
+                }
+                let last = docs.pop().unwrap();
+                let inner = if docs.is_empty() {
+                    // only one item
+                    let last = if sty.add_trailing_sep_single {
+                        last + sep.clone()
+                    } else {
+                        last
+                    };
+                    let compact = last.clone();
+                    let loose = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
+                    compact.union(loose)
+                } else {
+                    // NOTE: we can't pad here, since this can appear in inline chains.
+                    let compact = arena.intersperse(
+                        docs.iter().map(|doc| doc.clone().flatten()),
+                        sep.clone() + arena.space(),
+                    ) + sep.clone()
+                        + arena.space()
+                        + last.clone();
+                    let loose = (arena.line_()
+                        + arena.intersperse(docs.clone(), sep.clone() + arena.line())
+                        + sep.clone()
+                        + arena.line()
+                        + last
+                        + sep.clone()
+                        + arena.line_())
+                    .nest(2);
+                    compact.union(loose)
+                };
+                enclose_fitted(inner)
+            }
+            FoldStyle::Fit | FoldStyle::Compact => {
                 let mut inner = if sty.tight_delim {
                     arena.nil()
                 } else {
@@ -444,29 +517,7 @@ impl<'a> ListStylist<'a> {
                 if !sty.no_indent {
                     inner = inner.nest(indent as isize);
                 }
-                if is_single && sty.omit_delim_single {
-                    inner.group()
-                } else if sty.omit_delim_flat {
-                    inner
-                        .enclose(
-                            arena.text(delim.0).flat_alt(arena.nil()),
-                            arena.text(delim.1).flat_alt(arena.nil()),
-                        )
-                        .group()
-                } else if sty.add_delim_space {
-                    inner
-                        .enclose(
-                            arena
-                                .text(delim.0)
-                                .flat_alt(arena.text(delim.0) + arena.space()),
-                            arena
-                                .text(delim.1)
-                                .flat_alt(arena.space() + arena.text(delim.1)),
-                        )
-                        .group()
-                } else {
-                    inner.group().enclose(delim.0, delim.1)
-                }
+                enclose_fitted(inner)
             }
         }
     }

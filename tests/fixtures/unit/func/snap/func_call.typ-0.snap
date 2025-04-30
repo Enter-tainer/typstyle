@@ -14,7 +14,9 @@ input_file: tests/fixtures/unit/func/func_call.typ
 
 #table[123][456]
 
-#link("http://example.com")[test]
+#link(
+  "http://example.com",
+)[test]
 
 #let f = (
   ..args,
@@ -29,10 +31,14 @@ input_file: tests/fixtures/unit/func/func_call.typ
 ))
 
 #f({ })
-#f(`xx
-`)
-#f(```aa
-```)
+#f(
+  `xx
+`,
+)
+#f(
+  ```aa
+  ```,
+)
 #f(())
 #pad(
   left: 1em,

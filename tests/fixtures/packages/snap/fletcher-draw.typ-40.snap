@@ -26,9 +26,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         or node.fill != none
     ) {
       cetz.draw.group({
-        cetz.draw.translate(
-          node.pos.xyz,
-        )
+        cetz.draw.translate(node
+          .pos
+          .xyz)
         for (
           i,
           extrude,
@@ -73,9 +73,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     )
   }
 
-  (
-    node.post
-  )(result) // post-process (e.g., hide)
+  (node.post)(result) // post-process (e.g., hide)
 
   // Draw debug stuff
   if debug >= 1 {
@@ -91,10 +89,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   if debug >= 2 and node.radius != 0pt {
     // node bounding rectangle
     cetz.draw.rect(
-      ..rect-at(
-        node.pos.xyz,
-        node.size,
-      ),
+      ..rect-at(node.pos.xyz, node.size),
       stroke: DEBUG_COLOR + .1pt,
     )
 
@@ -131,19 +126,15 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   curve,
   debug: 0,
 ) = {
-  let curve-point = curve(
-    edge.label-pos,
-  )
+  let curve-point = curve(edge.label-pos)
   let curve-point-ε = curve(
     edge.label-pos + 1e-3,
   )
 
-  let θ = wrap-angle-180(
-    angle-between(
-      curve-point,
-      curve-point-ε,
-    ),
-  )
+  let θ = wrap-angle-180(angle-between(
+    curve-point,
+    curve-point-ε,
+  ))
   let θ-normal = (
     θ
       + if edge.label-side == right {
@@ -166,7 +157,8 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   } else if edge.label-angle == auto {
     edge.label-angle = θ
     if (
-      calc.abs(edge.label-angle) > 90deg
+      calc.abs(edge.label-angle)
+        > 90deg
     ) {
       edge.label-angle += 180deg
     }
@@ -318,11 +310,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   // Draw marks
-  let curve(t) = vector.lerp(
-    from,
-    to,
-    t,
-  )
+  let curve(t) = vector.lerp(from, to, t)
   for mark in edge.marks {
     place-mark-on-curve(
       mark,
@@ -407,10 +395,11 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   // Draw marks
   let curve(t) = vector.add(
     center,
-    vector-polar(
-      radius,
-      lerp(start, stop, t),
-    ),
+    vector-polar(radius, lerp(
+      start,
+      stop,
+      t,
+    )),
   )
   for mark in edge.marks {
     place-mark-on-curve(
@@ -535,10 +524,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   let rounded-corners
   if edge.corner-radius != none {
-    rounded-corners = range(
-      1,
-      θs.len(),
-    ).map(calculate-rounded-corner)
+    rounded-corners = range(1, θs.len()).map(
+      calculate-rounded-corner,
+    )
   }
 
   let lerp-scale(t, i) = {
@@ -587,7 +575,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     if edge.corner-radius == none {
       // add phantom marks to ensure segment joins are clean
       if i > 0 {
-        let Δθ = θs.at(i) - θs.at(i - 1)
+        let Δθ = (
+          θs.at(i) - θs.at(i - 1)
+        )
         marks.push((
           inherit: "bar",
           pos: 0,
@@ -596,7 +586,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         ))
       }
       if i < θs.len() - 1 {
-        let Δθ = θs.at(i + 1) - θs.at(i)
+        let Δθ = (
+          θs.at(i + 1) - θs.at(i)
+        )
         marks.push((
           inherit: "bar",
           pos: 1,
@@ -605,9 +597,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         ))
       }
 
-      Δphase += vector-len(
-        vector.sub(from, to),
-      )
+      Δphase += vector-len(vector.sub(
+        from,
+        to,
+      ))
     } else {
       // rounded corners
 
@@ -641,9 +634,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           ),
         )
 
-        Δphase += vector-len(
-          vector.sub(from, to),
-        )
+        Δphase += vector-len(vector.sub(
+          from,
+          to,
+        ))
 
         for d in edge.extrude {
           if delta != 0deg {
@@ -711,7 +705,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           kind: "line",
           final-vertices: (from, to),
           marks: marks,
-          stroke: stroke-with-phase(phase),
+          stroke: stroke-with-phase(
+            phase,
+          ),
         )
         + label-options,
       debug: debug,
@@ -768,15 +764,14 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       .map(point => {
         // funky disagreement between coordinate systems??
         point.at(1) *= -1
-        vector-2d(
-          vector.scale(point, 1cm),
-        )
+        vector-2d(vector.scale(
+          point,
+          1cm,
+        ))
       })
-      .sorted(
-        key: point => vector-len(
-          vector.sub(point, target),
-        ),
-      )
+      .sorted(key: point => vector-len(
+        vector.sub(point, target),
+      ))
 
     let anchor = anchor-points.at(
       -1,
@@ -848,12 +843,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   (
     calc.max(
       0pt,
-      node.size.at(0) / 2 * (1 - 1 / μ),
+      node.size.at(0)
+        / 2
+        * (1 - 1 / μ),
     )
       * calc.cos(θ),
     calc.max(
       0pt,
-      node.size.at(1) / 2 * (1 - μ / 1),
+      node.size.at(1)
+        / 2
+        * (1 - μ / 1),
     )
       * calc.sin(θ),
   )
@@ -899,9 +898,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let intersection-objects = nodes.map(nodes => {
     for node in nodes {
       cetz.draw.group({
-        cetz.draw.translate(
-          node.pos.xyz,
-        )
+        cetz.draw.translate(node
+          .pos
+          .xyz)
         (node.shape)(node, node.outset)
       })
     }
@@ -921,9 +920,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           ),
         debug: debug,
       )
-      (
-        edge.post
-      )(obj) // post-process (e.g., hide)
+      (edge.post)(obj) // post-process (e.g., hide)
     },
   )
 }
@@ -945,10 +942,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .zip(θs)
     .map(((point, φ)) => cetz.draw.line(
       point,
-      vector.add(
-        point,
-        vector-polar(10cm, φ),
-      ), // ray emanating from node
+      vector.add(point, vector-polar(
+        10cm,
+        φ,
+      )), // ray emanating from node
     ))
 
   let intersection-objects = nodes
@@ -956,13 +953,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .map(((nodes, dummy-line)) => {
       for node in nodes {
         cetz.draw.group({
-          cetz.draw.translate(
-            node.pos.xyz,
-          )
-          (node.shape)(
-            node,
-            node.outset,
-          )
+          cetz.draw.translate(node
+            .pos
+            .xyz)
+          (node.shape)(node, node.outset)
         })
       }
       // if node == none { return }
@@ -978,9 +972,7 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           + (final-vertices: anchors),
         debug: debug,
       )
-      (
-        edge.post
-      )(obj) // post-process (e.g., hide)
+      (edge.post)(obj) // post-process (e.g., hide)
     },
   )
 }
@@ -1004,29 +996,25 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let end-segments = (
     edge
       .final-vertices
-      .slice(
-        0,
-        2,
-      ), // first two vertices
+      .slice(0, 2), // first two vertices
     edge
       .final-vertices
       .slice(-2), // last two vertices
   )
 
-  let dummy-lines = end-segments.map(points => cetz.draw.line(..points))
+  let dummy-lines = end-segments.map(points => cetz.draw.line(
+    ..points,
+  ))
 
   let intersection-objects = nodes
     .zip(dummy-lines)
     .map(((nodes, dummy-line)) => {
       for node in nodes {
         cetz.draw.group({
-          cetz.draw.translate(
-            node.pos.xyz,
-          )
-          (node.shape)(
-            node,
-            node.outset,
-          )
+          cetz.draw.translate(node
+            .pos
+            .xyz)
+          (node.shape)(node, node.outset)
         })
       }
       // if node == none { return }
@@ -1038,17 +1026,17 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     (from, to),
     anchors => {
       let edge = edge
-      edge.final-vertices.at(0) = anchors.at(0)
-      edge.final-vertices.at(
-        -1,
-      ) = anchors.at(1)
+      edge.final-vertices.at(0) = anchors.at(
+        0,
+      )
+      edge.final-vertices.at(-1) = anchors.at(
+        1,
+      )
       let obj = draw-edge-polyline(
         edge,
         debug: debug,
       )
-      (
-        edge.post
-      )(obj) // post-process (e.g., hide)
+      (edge.post)(obj) // post-process (e.g., hide)
     },
   )
 }
@@ -1104,15 +1092,15 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   grid,
   debug: false,
 ) = {
-  let (
-    x-lims,
-    y-lims,
-  ) = range(2).map(axis => (
+  let (x-lims, y-lims) = range(2).map(axis => (
     grid.centers.at(axis).at(0)
       - grid.cell-sizes.at(axis).at(0)
         / 2,
     grid.centers.at(axis).at(-1)
-      + grid.cell-sizes.at(axis).at(-1)
+      + grid
+        .cell-sizes
+        .at(axis)
+        .at(-1)
         / 2,
   ))
 
@@ -1153,10 +1141,10 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       y-lims,
     )
     if a == b {
-      b = vector.add(
-        b,
-        (1e-3pt, 1e-3pt),
-      )
+      b = vector.add(b, (
+        1e-3pt,
+        1e-3pt,
+      ))
     }
     draw.rect(
       a,
@@ -1164,13 +1152,11 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       stroke: DEBUG_COLOR + .5pt,
     )
 
-    draw.set-style(
-      stroke: (
-        paint: DEBUG_COLOR,
-        thickness: .3pt,
-        dash: "densely-dotted",
-      ),
-    )
+    draw.set-style(stroke: (
+      paint: DEBUG_COLOR,
+      thickness: .3pt,
+      dash: "densely-dotted",
+    ))
 
     for axis in range(2) {
       let swap(a, b) = if axis != 1 {
@@ -1191,11 +1177,17 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         // coordinate line
         draw.line(
           swap(
-            grid.centers.at(axis).at(i),
+            grid
+              .centers
+              .at(axis)
+              .at(i),
             min,
           ),
           swap(
-            grid.centers.at(axis).at(i),
+            grid
+              .centers
+              .at(axis)
+              .at(i),
             max,
           ),
         )

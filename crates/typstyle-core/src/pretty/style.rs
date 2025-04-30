@@ -7,4 +7,6 @@ pub enum FoldStyle {
     Never,
     /// Always fold items
     Always,
+    /// Try to fold items except the last one in a single line
+    Compact,
 }

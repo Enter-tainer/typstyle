@@ -64,12 +64,16 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
 
   (
     flip: (
-      x: axes.at(0)
+      x: axes.at(
+        0,
+      )
         in (
           rtl,
           ttb,
         ),
-      y: axes.at(1)
+      y: axes.at(
+        1,
+      )
         in (
           rtl,
           ttb,
@@ -110,47 +114,79 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     ) {
       let coord = rect
         .center
-        .at(axis)
+        .at(
+          axis,
+        )
       let size = rect
         .size
-        .at(axis)
+        .at(
+          axis,
+        )
 
       if (
-        calc.fract(coord)
+        calc.fract(
+          coord,
+        )
           == 0
       ) {
         rect
           .center
-          .at(axis) = calc.trunc(coord)
-        new-rects.push(rect)
+          .at(
+            axis,
+          ) = calc.trunc(
+          coord,
+        )
+        new-rects.push(
+          rect,
+        )
       } else {
         rect
           .center
-          .at(axis) = calc.floor(coord)
+          .at(
+            axis,
+          ) = calc.floor(
+          coord,
+        )
         rect
           .size
-          .at(axis) = (
+          .at(
+            axis,
+          ) = (
           size
             * (
-              calc.ceil(coord)
+              calc.ceil(
+                coord,
+              )
                 - coord
             )
         )
-        new-rects.push(rect)
+        new-rects.push(
+          rect,
+        )
 
         rect
           .center
-          .at(axis) = calc.ceil(coord)
+          .at(
+            axis,
+          ) = calc.ceil(
+          coord,
+        )
         rect
           .size
-          .at(axis) = (
+          .at(
+            axis,
+          ) = (
           size
             * (
               coord
-                - calc.floor(coord)
+                - calc.floor(
+                  coord,
+                )
             )
         )
-        new-rects.push(rect)
+        new-rects.push(
+          rect,
+        )
       }
     }
     rects = new-rects
@@ -175,7 +211,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   verts,
   rects,
 ) = {
-  rects = expand-fractional-rects(rects)
+  rects = expand-fractional-rects(
+    rects,
+  )
 
   // all points in diagram that should be spanned by coordinate grid
   let points = rects.map(r => {
@@ -197,23 +235,31 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     a,
   ) = (
     calc.floor(
-      calc.min(..a),
+      calc.min(
+        ..a,
+      ),
     ),
     calc.ceil(
-      calc.max(..a),
+      calc.max(
+        ..a,
+      ),
     ),
   )
   let (
     x-min,
     x-max,
   ) = min-max-int(
-    points.map(p => p.at(0)),
+    points.map(p => p.at(
+      0,
+    )),
   )
   let (
     y-min,
     y-max,
   ) = min-max-int(
-    points.map(p => p.at(1)),
+    points.map(p => p.at(
+      1,
+    )),
   )
   let origin = (
     x-min,
@@ -247,17 +293,25 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     if grid
       .flip
       .x {
-      indices.at(0) = (
+      indices.at(
+        0,
+      ) = (
         -1
-          - indices.at(0)
+          - indices.at(
+            0,
+          )
       )
     }
     if grid
       .flip
       .y {
-      indices.at(1) = (
+      indices.at(
+        1,
+      ) = (
         -1
-          - indices.at(1)
+          - indices.at(
+            1,
+          )
       )
     }
     for axis in (
@@ -269,7 +323,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         .xy {
         rect
           .size
-          .at(axis)
+          .at(
+            axis,
+          )
       } else {
         rect
           .size
@@ -279,18 +335,28 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
           )
       }
       cell-sizes
-        .at(axis)
         .at(
-          indices.at(axis),
+          axis,
+        )
+        .at(
+          indices.at(
+            axis,
+          ),
         ) = calc.max(
         cell-sizes
-          .at(axis)
           .at(
-            indices.at(axis),
+            axis,
+          )
+          .at(
+            indices.at(
+              axis,
+            ),
           ),
         rect
           .size
-          .at(axis),
+          .at(
+            axis,
+          ),
       )
     }
   }
@@ -331,7 +397,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     ) => {
       array
         .zip(
-          cumsum(sizes),
+          cumsum(
+            sizes,
+          ),
           sizes,
           range(
             sizes.len(),
@@ -416,10 +484,14 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     ) => sizes.map(
       calc
         .max
-        .with(min-size),
+        .with(
+          min-size,
+        ),
     ))
 
-  grid += compute-cell-centers(grid)
+  grid += compute-cell-centers(
+    grid,
+  )
 
   grid
 }
@@ -473,7 +545,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
             y,
           ),
         )
-        nodes.push(node)
+        nodes.push(
+          node,
+        )
       } else if (
         child
           .value
@@ -483,10 +557,14 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         let edge = child.value
         edge
           .vertices
-          .at(0) = map-auto(
+          .at(
+            0,
+          ) = map-auto(
           edge
             .vertices
-            .at(0),
+            .at(
+              0,
+            ),
           (
             x,
             y,
@@ -516,7 +594,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
           ),
         )
         edge.node-index = none
-        edges.push(edge)
+        edges.push(
+          edge,
+        )
       }
     } else if (
       repr(
@@ -540,7 +620,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         .at(
           -1,
         )
-        .push(none)
+        .push(
+          none,
+        )
     } else {
       matrix
         .at(
@@ -561,7 +643,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       x,
       item,
     ) in row.enumerate() {
-      if not is-space(item) {
+      if not is-space(
+        item,
+      ) {
         nodes.push(
           node(
             (
@@ -626,7 +710,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
           == "node"
       ) {
         let node = obj.value
-        nodes.push(node)
+        nodes.push(
+          node,
+        )
       } else if (
         obj
           .value
@@ -635,13 +721,17 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       ) {
         let edge = obj.value
         edge.node-index = nodes.len()
-        edges.push(edge)
+        edges.push(
+          edge,
+        )
       }
     } else if (
       obj.func()
         == math.equation
     ) {
-      let result = extract-nodes-and-edges-from-equation(obj)
+      let result = extract-nodes-and-edges-from-equation(
+        obj,
+      )
       nodes += result.nodes
       edges += result.edges
     } else {
@@ -848,11 +938,21 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     )
   },
 ) = {
-  let spacing = as-pair(spacing).map(as-length)
-  let cell-size = as-pair(cell-size).map(as-length)
+  let spacing = as-pair(
+    spacing,
+  ).map(
+    as-length,
+  )
+  let cell-size = as-pair(
+    cell-size,
+  ).map(
+    as-length,
+  )
 
   let options = (
-    debug: int(debug),
+    debug: int(
+      debug,
+    ),
     axes: axes,
     spacing: spacing,
     cell-size: cell-size,
@@ -867,7 +967,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     label-sep: label-sep,
     label-size: label-size,
     label-wrapper: label-wrapper,
-    edge-stroke: as-stroke(edge-stroke),
+    edge-stroke: as-stroke(
+      edge-stroke,
+    ),
     mark-scale: mark-scale,
     crossing-fill: crossing-fill,
     crossing-thickness: crossing-thickness,
@@ -876,13 +978,17 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   let (
     nodes,
     edges,
-  ) = interpret-diagram-args(args)
+  ) = interpret-diagram-args(
+    args,
+  )
 
   box(context {
     let options = options
 
     options.em-size = measure(
-      h(1em),
+      h(
+        1em,
+      ),
     ).width
     let to-pt(
       len,
@@ -892,17 +998,23 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     )
     options.spacing = options
       .spacing
-      .map(to-pt)
+      .map(
+        to-pt,
+      )
     options.cell-size = options
       .cell-size
-      .map(to-pt)
+      .map(
+        to-pt,
+      )
 
     let nodes = nodes.map(node => {
       node = resolve-node-options(
         node,
         options,
       )
-      node = measure-node-size(node)
+      node = measure-node-size(
+        node,
+      )
       node
     })
     let edges = edges.map(edge => resolve-edge-options(
@@ -960,7 +1072,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         + ()
     ) // coerce none to ()
     vertices-affecting-grid = vertices-affecting-grid.filter(vert => {
-      not is-nan-vector(vert)
+      not is-nan-vector(
+        vert,
+      )
     })
 
 
@@ -1018,7 +1132,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         nodes,
       )
 
-      edge = convert-edge-corner-to-poly(edge)
+      edge = convert-edge-corner-to-poly(
+        edge,
+      )
       edge = apply-edge-shift(
         grid,
         edge,

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/grid/cell-ugly.typ
-snapshot_kind: text
 ---
 #table(
   columns: 3,
@@ -35,7 +34,9 @@ snapshot_kind: text
   ),
   cell(
     align: right,
-    fill: fuchsia.lighten(80%),
+    fill: fuchsia.lighten(
+      80%,
+    ),
     [🚗],
   ),
 
@@ -49,6 +50,8 @@ snapshot_kind: text
 
   cell(
     inset: 0.06em,
-    text(1.62em)[🛖🌅🌊],
+    text(
+      1.62em,
+    )[🛖🌅🌊],
   ),
 )

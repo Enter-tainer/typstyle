@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/line-attach.typ
-snapshot_kind: text
 ---
 #import "@preview/cheq:0.1.0": checklist
 

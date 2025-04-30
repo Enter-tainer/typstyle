@@ -83,17 +83,25 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       let size = rect.size.at(axis)
 
       if calc.fract(coord) == 0 {
-        rect.center.at(axis) = calc.trunc(coord)
+        rect.center.at(axis) = calc.trunc(
+          coord,
+        )
         new-rects.push(rect)
       } else {
-        rect.center.at(axis) = calc.floor(coord)
+        rect.center.at(axis) = calc.floor(
+          coord,
+        )
         rect.size.at(axis) = (
           size
-            * (calc.ceil(coord) - coord)
+            * (
+              calc.ceil(coord) - coord
+            )
         )
         new-rects.push(rect)
 
-        rect.center.at(axis) = calc.ceil(coord)
+        rect.center.at(axis) = calc.ceil(
+          coord,
+        )
         rect.size.at(axis) = (
           size
             * (
@@ -163,10 +171,14 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       origin,
     )
     if grid.flip.x {
-      indices.at(0) = -1 - indices.at(0)
+      indices.at(0) = (
+        -1 - indices.at(0)
+      )
     }
     if grid.flip.y {
-      indices.at(1) = -1 - indices.at(1)
+      indices.at(1) = (
+        -1 - indices.at(1)
+      )
     }
     for axis in (0, 1) {
       let size = if grid.flip.xy {
@@ -174,9 +186,7 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
       } else { rect.size.at(1 - axis) }
       cell-sizes
         .at(axis)
-        .at(
-          indices.at(axis),
-        ) = calc.max(
+        .at(indices.at(axis)) = calc.max(
         cell-sizes
           .at(axis)
           .at(indices.at(axis)),
@@ -223,7 +233,8 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   let bounding-size = array
     .zip(centers, grid.cell-sizes)
     .map(((centers, sizes)) => (
-      centers.at(-1) + sizes.at(-1) / 2
+      centers.at(-1)
+        + sizes.at(-1) / 2
     ))
 
   (
@@ -260,9 +271,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     .zip(options.cell-size)
     .map((
       (sizes, min-size),
-    ) => sizes.map(
-      calc.max.with(min-size),
-    ))
+    ) => sizes.map(calc.max.with(
+      min-size,
+    )))
 
   grid += compute-cell-centers(grid)
 
@@ -373,7 +384,9 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     } else if (
       obj.func() == math.equation
     ) {
-      let result = extract-nodes-and-edges-from-equation(obj)
+      let result = extract-nodes-and-edges-from-equation(
+        obj,
+      )
       nodes += result.nodes
       edges += result.edges
     } else {
@@ -567,18 +580,20 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
     edges,
     options,
   ) => {
-    cetz.canvas(
-      draw-diagram(
-        grid,
-        nodes,
-        edges,
-        debug: options.debug,
-      ),
-    )
+    cetz.canvas(draw-diagram(
+      grid,
+      nodes,
+      edges,
+      debug: options.debug,
+    ))
   },
 ) = {
-  let spacing = as-pair(spacing).map(as-length)
-  let cell-size = as-pair(cell-size).map(as-length)
+  let spacing = as-pair(spacing).map(
+    as-length,
+  )
+  let cell-size = as-pair(cell-size).map(
+    as-length,
+  )
 
   let options = (
     debug: int(debug),
@@ -610,15 +625,17 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   box(context {
     let options = options
 
-    options.em-size = measure(
-      h(1em),
-    ).width
+    options.em-size = measure(h(1em)).width
     let to-pt(len) = to-abs-length(
       len,
       options.em-size,
     )
-    options.spacing = options.spacing.map(to-pt)
-    options.cell-size = options.cell-size.map(to-pt)
+    options.spacing = options.spacing.map(
+      to-pt,
+    )
+    options.cell-size = options.cell-size.map(
+      to-pt,
+    )
 
     let nodes = nodes.map(node => {
       node = resolve-node-options(
@@ -733,11 +750,10 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
         nodes,
       )
 
-      edge = convert-edge-corner-to-poly(edge)
-      edge = apply-edge-shift(
-        grid,
+      edge = convert-edge-corner-to-poly(
         edge,
       )
+      edge = apply-edge-shift(grid, edge)
       edge
     })
 

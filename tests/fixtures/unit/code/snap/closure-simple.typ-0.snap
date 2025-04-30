@@ -45,10 +45,14 @@ input_file: tests/fixtures/unit/code/closure-simple.typ
 ): it => if (
   it
     .text
-    .starts-with("<")
+    .starts-with(
+      "<",
+    )
     and it
       .text
-      .ends-with(">")
+      .ends-with(
+        ">",
+      )
 ) { }
 
 #let show-palette(
@@ -71,4 +75,6 @@ input_file: tests/fixtures/unit/code/closure-simple.typ
   none
 })
 
-#range(amount).map(i => init_function())
+#range(
+  amount,
+).map(i => init_function())

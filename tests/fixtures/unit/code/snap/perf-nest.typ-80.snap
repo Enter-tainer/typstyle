@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/perf-nest.typ
-snapshot_kind: text
 ---
 #let f(..arg) = arg
 

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tidy-new-parser.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [tidy]
@@ -179,11 +178,9 @@ snapshot_kind: text
 ) = {
   let description = lines
     .enumerate(start: first-line-number)
-    .map(
-      eval-doc-comment-test.with(
-        label-prefix: label-prefix,
-      ),
-    )
+    .map(eval-doc-comment-test.with(
+      label-prefix: label-prefix,
+    ))
     .join("\n")
 
   if description == none {
@@ -258,7 +255,9 @@ snapshot_kind: text
   "1+2+3+4",
 )
 #assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23 // 3"),
+  trim-trailing-comments(
+    "1+2+3+4 // 23 // 3",
+  ),
   "1+2+3+4",
 )
 
@@ -329,7 +328,9 @@ snapshot_kind: text
   definition
 }
 
-#let curry-matcher = regex(" *= *([.\w\d\-_]+)\.with\(")
+#let curry-matcher = regex(
+  " *= *([.\w\d\-_]+)\.with\(",
+)
 
 #let parameter-parser(state, line) = {
   if line.starts-with("///") {
@@ -337,7 +338,9 @@ snapshot_kind: text
       .unmatched-description
       .push(line.slice(3))
   } else {
-    state.unfinished-param += trim-trailing-comments(line)
+    state.unfinished-param += trim-trailing-comments(
+      line,
+    )
 
     let (
       args,
@@ -529,7 +532,9 @@ snapshot_kind: text
           and name == none
       ) {
         found-code = true
-        let match = line.match(definition-name-regex)
+        let match = line.match(
+          definition-name-regex,
+        )
         if match != none {
           name = match.captures.first()
           if (
@@ -551,7 +556,9 @@ snapshot_kind: text
         // neither /// nor (#)let
         if not found-code {
           found-code = true
-          module-description = desc-lines.join("\n")
+          module-description = desc-lines.join(
+            "\n",
+          )
         }
         if name == none {
           desc-lines = ()
@@ -560,7 +567,9 @@ snapshot_kind: text
     }
   }
 
-  definitions = definitions.map(process-definition)
+  definitions = definitions.map(
+    process-definition,
+  )
   (
     description: module-description,
     functions: definitions.filter(x => (
@@ -581,21 +590,18 @@ snapshot_kind: text
   )
   ```.text
 
-  assert.eq(
-    parse(src).functions,
+  assert.eq(parse(src).functions, (
     (
-      (
-        name: "func",
-        description: "Description",
-        args: (
-          pos: (description: ""),
-          named: (
-            description: "",
-            default: "2",
-          ),
+      name: "func",
+      description: "Description",
+      args: (
+        pos: (description: ""),
+        named: (
+          description: "",
+          default: "2",
         ),
-        return-types: none,
       ),
+      return-types: none,
     ),
-  )
+  ))
 }

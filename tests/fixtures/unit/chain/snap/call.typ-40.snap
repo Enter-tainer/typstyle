@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/chain/call.typ
-snapshot_kind: text
 ---
 #{ a.b(1)(2).c.d(3) }
 
@@ -27,9 +26,9 @@ snapshot_kind: text
 }
 
 #{
-  let (title, _) = query(
-    heading.where(level: 1),
-  )
+  let (title, _) = query(heading.where(
+    level: 1,
+  ))
     .map(e => (
       e.body,
       e.location().page(),
@@ -46,7 +45,9 @@ snapshot_kind: text
 )
 
 #{
-  (1,).rev().map(((n, c)) => f(n, c, 1))
+  (1,)
+    .rev()
+    .map(((n, c)) => f(n, c, 1))
 }
 
 #{

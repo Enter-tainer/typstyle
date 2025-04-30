@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/touying/utils.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [touying]
@@ -344,10 +343,7 @@ snapshot_kind: text
   style: (setting: body => body, numbered: true, current-heading) => setting({
     if numbered and current-heading.numbering != none {
       (
-        _typst-builtin-numbering(
-          current-heading.numbering,
-          ..counter(heading).at(current-heading.location()),
-        )
+        _typst-builtin-numbering(current-heading.numbering, ..counter(heading).at(current-heading.location()))
           + h(.3em)
       )
     }
@@ -608,11 +604,7 @@ snapshot_kind: text
       // Provide a sensible initial width, which will define initial scale parameters.
       // Note this is different from the post-scale width, which is a limiting factor
       // on the allowable scaling ratio
-      let boxed-content = _limit-content-width(
-        width: prescale-width,
-        body,
-        container-size,
-      )
+      let boxed-content = _limit-content-width(width: prescale-width, body, container-size)
 
       // post-scaling width
       let mutable-width = width
@@ -636,11 +628,7 @@ snapshot_kind: text
         // fit. This is because scale doesn't update the layout information.
         // Boxing in a container without clipping will inform typst that content
         // will indeed fit in the remaining space
-        box(
-          width: new-width,
-          height: available-height,
-          scale(x: ratio, y: ratio, origin: top + left, boxed-content),
-        )
+        box(width: new-width, height: available-height, scale(x: ratio, y: ratio, origin: top + left, boxed-content))
       } else {
         body
       }
@@ -668,12 +656,7 @@ snapshot_kind: text
     if (content-width != 0pt and ((shrink and (width < content-width)) or (grow and (width > content-width)))) {
       let ratio = width / content-width * 100%
       // The first box keeps content from prematurely wrapping
-      let scaled = scale(
-        box(content, width: content-width),
-        origin: top + left,
-        x: ratio,
-        y: ratio,
-      )
+      let scaled = scale(box(content, width: content-width), origin: top + left, x: ratio, y: ratio)
       // The second box lets typst know the post-scaled dimensions, since `scale`
       // doesn't update layout information
       box(scaled, width: width, height: content-size.height * ratio)
@@ -727,11 +710,7 @@ snapshot_kind: text
         // of a color change.
         named.insert("outset", (top: 0.15em, bottom: 0.25em))
       }
-      stack(
-        spacing: -wrapped-body-size.height,
-        body,
-        rect(fill: fill, ..named, ..cover-args.pos()),
-      )
+      stack(spacing: -wrapped-body-size.height, body, rect(fill: fill, ..named, ..cover-args.pos()))
     }
   })
   if inline {
@@ -757,14 +736,7 @@ snapshot_kind: text
 ///
 /// Example: `config-methods(cover: utils.semi-transparent-cover)`
 #let semi-transparent-cover(self: none, constructor: rgb, alpha: 85%, body) = {
-  cover-with-rect(
-    fill: update-alpha(
-      constructor: constructor,
-      self.page.fill,
-      alpha,
-    ),
-    body,
-  )
+  cover-with-rect(fill: update-alpha(constructor: constructor, self.page.fill, alpha), body)
 }
 
 
@@ -966,15 +938,7 @@ snapshot_kind: text
       let max-width = calc.max(..sizes.map(sz => sz.width))
       let max-height = calc.max(..sizes.map(sz => sz.height))
       for (subslides, content) in subslides-contents {
-        only(
-          self: self,
-          subslides,
-          box(
-            width: max-width,
-            height: max-height,
-            align(position, content),
-          ),
-        )
+        only(self: self, subslides, box(width: max-width, height: max-height, align(position, content)))
       }
     }
   } else {

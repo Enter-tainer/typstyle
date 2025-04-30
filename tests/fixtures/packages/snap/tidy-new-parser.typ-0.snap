@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tidy-new-parser.typ
-snapshot_kind: text
 ---
 /*
  * This test case is copied from [tidy]
@@ -16,7 +15,9 @@ snapshot_kind: text
   string,
   delimiter,
 ) = {
-  let pos = string.position(delimiter)
+  let pos = string.position(
+    delimiter,
+  )
   if (
     pos
       == none
@@ -193,7 +194,9 @@ snapshot_kind: text
 }
 
 #assert.eq(
-  parse-argument-list("text)"),
+  parse-argument-list(
+    "text)",
+  ),
   (
     args: (
       (
@@ -205,7 +208,9 @@ snapshot_kind: text
   ),
 )
 #assert.eq(
-  parse-argument-list("pos,"),
+  parse-argument-list(
+    "pos,",
+  ),
   (
     args: (
       (
@@ -217,7 +222,9 @@ snapshot_kind: text
   ),
 )
 #assert.eq(
-  parse-argument-list("12, 13, a)"),
+  parse-argument-list(
+    "12, 13, a)",
+  ),
   (
     args: (
       (
@@ -235,7 +242,9 @@ snapshot_kind: text
   ),
 )
 #assert.eq(
-  parse-argument-list("a: 2, b: 3)"),
+  parse-argument-list(
+    "a: 2, b: 3)",
+  ),
   (
     args: (
       (
@@ -260,14 +269,20 @@ snapshot_kind: text
   ),
   label-prefix: "",
 ) = {
-  if line.starts-with(" >>> ") {
+  if line.starts-with(
+    " >>> ",
+  ) {
     return (
       " #test(`"
-        + line.slice(8)
+        + line.slice(
+          8,
+        )
         + "`, source-location: (module: \""
         + parse-info.label-prefix
         + "\", line: "
-        + str(line-number)
+        + str(
+          line-number,
+        )
         + "))"
     )
   }
@@ -289,7 +304,9 @@ snapshot_kind: text
         label-prefix: label-prefix,
       ),
     )
-    .join("\n")
+    .join(
+      "\n",
+    )
 
   if (
     description
@@ -299,15 +316,21 @@ snapshot_kind: text
   }
 
   let types = none
-  if description.contains("->") {
-    let parts = description.split("->")
+  if description.contains(
+    "->",
+  ) {
+    let parts = description.split(
+      "->",
+    )
     types = parts
       .last()
       .replace(
         ",",
         "|",
       )
-      .split("|")
+      .split(
+        "|",
+      )
       .map(
         str.trim,
       )
@@ -316,7 +339,9 @@ snapshot_kind: text
         0,
         -1,
       )
-      .join("->")
+      .join(
+        "->",
+      )
   }
 
   return (
@@ -385,7 +410,9 @@ snapshot_kind: text
 #let trim-trailing-comments(
   line,
 ) = {
-  let pos = line.position("//")
+  let pos = line.position(
+    "//",
+  )
   if (
     pos
       == none
@@ -401,11 +428,15 @@ snapshot_kind: text
 }
 
 #assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23"),
+  trim-trailing-comments(
+    "1+2+3+4 // 23",
+  ),
   "1+2+3+4",
 )
 #assert.eq(
-  trim-trailing-comments("1+2+3+4 // 23 // 3"),
+  trim-trailing-comments(
+    "1+2+3+4 // 23 // 3",
+  ),
   "1+2+3+4",
 )
 
@@ -477,7 +508,9 @@ snapshot_kind: text
     definition.args
       == none
   ) {
-    definition.remove("args")
+    definition.remove(
+      "args",
+    )
     if (
       types
         != none
@@ -494,20 +527,28 @@ snapshot_kind: text
   definition
 }
 
-#let curry-matcher = regex(" *= *([.\w\d\-_]+)\.with\(")
+#let curry-matcher = regex(
+  " *= *([.\w\d\-_]+)\.with\(",
+)
 
 #let parameter-parser(
   state,
   line,
 ) = {
-  if line.starts-with("///") {
+  if line.starts-with(
+    "///",
+  ) {
     state
       .unmatched-description
       .push(
-        line.slice(3),
+        line.slice(
+          3,
+        ),
       )
   } else {
-    state.unfinished-param += trim-trailing-comments(line)
+    state.unfinished-param += trim-trailing-comments(
+      line,
+    )
 
     let (
       args,
@@ -524,8 +565,12 @@ snapshot_kind: text
       state.state = "finished"
       let curry = state
         .unfinished-param
-        .slice(processed-chars)
-        .match(curry-matcher)
+        .slice(
+          processed-chars,
+        )
+        .match(
+          curry-matcher,
+        )
       if (
         curry
           != none
@@ -549,7 +594,9 @@ snapshot_kind: text
         and (
           state
             .unfinished-param
-            .ends-with(",")
+            .ends-with(
+              ",",
+            )
             or state.state
               == "finished"
         )
@@ -562,7 +609,9 @@ snapshot_kind: text
         ))
       state.unmatched-description = ()
       state.params += args
-        .slice(1)
+        .slice(
+          1,
+        )
         .map(arg => (
           name: arg,
           desc-lines: (),
@@ -609,7 +658,9 @@ snapshot_kind: text
   src,
 ) = {
   let lines = (
-    src.split("\n")
+    src.split(
+      "\n",
+    )
       + (
         "",
       )
@@ -730,10 +781,14 @@ snapshot_kind: text
     }
 
 
-    if line.starts-with("///") {
+    if line.starts-with(
+      "///",
+    ) {
       // is a doc-comment line
       desc-lines.push(
-        line.slice(3),
+        line.slice(
+          3,
+        ),
       )
     } else if (
       desc-lines
@@ -747,12 +802,16 @@ snapshot_kind: text
         at: start,
       )
       if (
-        line.starts-with("let ")
+        line.starts-with(
+          "let ",
+        )
           and name
             == none
       ) {
         found-code = true
-        let match = line.match(definition-name-regex)
+        let match = line.match(
+          definition-name-regex,
+        )
         if (
           match
             != none
@@ -763,7 +822,9 @@ snapshot_kind: text
           if (
             match
               .captures
-              .at(1)
+              .at(
+                1,
+              )
               != ""
           ) {
             // it's a function
@@ -784,7 +845,9 @@ snapshot_kind: text
         // neither /// nor (#)let
         if not found-code {
           found-code = true
-          module-description = desc-lines.join("\n")
+          module-description = desc-lines.join(
+            "\n",
+          )
         }
         if (
           name
@@ -796,7 +859,9 @@ snapshot_kind: text
     }
   }
 
-  definitions = definitions.map(process-definition)
+  definitions = definitions.map(
+    process-definition,
+  )
   (
     description: module-description,
     functions: definitions.filter(x => (
@@ -820,7 +885,9 @@ snapshot_kind: text
   ```.text
 
   assert.eq(
-    parse(src).functions,
+    parse(
+      src,
+    ).functions,
     (
       (
         name: "func",

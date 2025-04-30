@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/for-loop-line-break.typ
-snapshot_kind: text
 ---
 #import "@preview/cetz:0.2.2"
 

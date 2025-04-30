@@ -17,8 +17,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   uv-to-xy,
 )
 
-#let DEBUG_COLOR = rgb("f008")
-#let DEBUG_COLOR2 = rgb("0f08")
+#let DEBUG_COLOR = rgb(
+  "f008",
+)
+#let DEBUG_COLOR2 = rgb(
+  "0f08",
+)
 
 
 #let draw-node(
@@ -93,12 +97,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             },
             width: node
               .size
-              .at(0)
+              .at(
+                0,
+              )
               - 2
                 * node.inset,
             height: node
               .size
-              .at(1)
+              .at(
+                1,
+              )
               - 2
                 * node.inset,
           ),
@@ -121,7 +129,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   (
     node.post
-  )(result) // post-process (e.g., hide)
+  )(
+    result,
+  ) // post-process (e.g., hide)
 
   // Draw debug stuff
   if (
@@ -297,7 +307,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           )
           (
             edge.label-wrapper
-          )(edge)
+          )(
+            edge,
+          )
         },
         stroke: if debug
           >= 2 {
@@ -440,13 +452,17 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   // TODO: should this be an absolute offset, not 10% the path length?
   let ε = 1e-3 // cetz assertions sometimes fail from floating point errors
   decor = decor.with(
-    start: if has-mark-at(0) {
+    start: if has-mark-at(
+      0,
+    ) {
       0.1
     } else {
       ε
     }
       * 100%,
-    stop: if has-mark-at(1) {
+    stop: if has-mark-at(
+      1,
+    ) {
       0.9
     } else {
       (
@@ -457,7 +473,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       * 100%,
   )
 
-  decor(path)
+  decor(
+    path,
+  )
 }
 
 /// Draw a straight edge.
@@ -496,7 +514,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       from,
       to,
     )
-      .zip(offsets)
+      .zip(
+        offsets,
+      )
       .map((
         (
           point,
@@ -568,7 +588,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         == auto
     ) {
       edge.label-side = if (
-        calc.abs(θ)
+        calc.abs(
+          θ,
+        )
           < 90deg
       ) {
         left
@@ -745,12 +767,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   )
 
   // angles of each segment
-  let θs = range(n-segments).map(i => {
+  let θs = range(
+    n-segments,
+  ).map(i => {
     let (
       vert,
       vert-next,
     ) = (
-      verts.at(i),
+      verts.at(
+        i,
+      ),
       verts.at(
         i
           + 1,
@@ -772,9 +798,13 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let calculate-rounded-corner(
     i,
   ) = {
-    let pt = verts.at(i)
+    let pt = verts.at(
+      i,
+    )
     let Δθ = wrap-angle-180(
-      θs.at(i)
+      θs.at(
+        i,
+      )
         - θs.at(
           i
             - 1,
@@ -804,7 +834,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     // radius *= 90deg/calc.max(calc.abs(Δθ), 45deg) // visual adjustment so that tighter bends have smaller radii
     radius *= (
       1
-        + calc.cos(Δθ)
+        + calc.cos(
+          Δθ,
+        )
     )
     // skip correcting the corner radius for extruded strokes if there's no stroke at all
     if (
@@ -827,7 +859,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     radius *= dir // ??? makes math easier or something
 
     if (
-      calc.abs(Δθ)
+      calc.abs(
+        Δθ,
+      )
         > 179deg
     ) {
       // singular line; skip arc
@@ -840,7 +874,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             - 1,
         )
           - 90deg,
-        delta: wrap-angle-180(Δθ),
+        delta: wrap-angle-180(
+          Δθ,
+        ),
         line-shift: 0
           * radius, // distance from vertex to beginning of arc
       )
@@ -868,7 +904,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             - 1,
         )
           - 90deg,
-        delta: wrap-angle-180(Δθ),
+        delta: wrap-angle-180(
+          Δθ,
+        ),
         line-shift: radius
           * calc.tan(
             Δθ
@@ -886,7 +924,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     rounded-corners = range(
       1,
       θs.len(),
-    ).map(calculate-rounded-corner)
+    ).map(
+      calculate-rounded-corner,
+    )
   }
 
   let lerp-scale(
@@ -953,12 +993,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   )
 
   // draw each segment
-  for i in range(n-segments) {
+  for i in range(
+    n-segments,
+  ) {
     let (
       from,
       to,
     ) = (
-      verts.at(i),
+      verts.at(
+        i,
+      ),
       verts.at(
         i
           + 1,
@@ -978,7 +1022,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           > 0
       ) {
         let Δθ = (
-          θs.at(i)
+          θs.at(
+            i,
+          )
             - θs.at(
               i
                 - 1,
@@ -1003,7 +1049,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             i
               + 1,
           )
-            - θs.at(i)
+            - θs.at(
+              i,
+            )
         )
         marks.push((
           inherit: "bar",
@@ -1037,7 +1085,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           from,
           vector-polar(
             line-shift,
-            θs.at(i),
+            θs.at(
+              i,
+            ),
           ),
         )
       }
@@ -1053,12 +1103,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           start,
           delta,
           line-shift,
-        ) = rounded-corners.at(i)
+        ) = rounded-corners.at(
+          i,
+        )
         to = vector.add(
           to,
           vector-polar(
             -line-shift,
-            θs.at(i),
+            θs.at(
+              i,
+            ),
           ),
         )
 
@@ -1120,7 +1174,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       }
     }
 
-    marks = marks.map(resolve-mark)
+    marks = marks.map(
+      resolve-mark,
+    )
 
     // distribute original marks across segments
     marks += edge
@@ -1165,7 +1221,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             to,
           ),
           marks: marks,
-          stroke: stroke-with-phase(phase),
+          stroke: stroke-with-phase(
+            phase,
+          ),
         )
         + label-options,
       debug: debug,
@@ -1208,7 +1266,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     objects
       == none
   ) {
-    return callback(target)
+    return callback(
+      target,
+    )
   }
 
   let node-name = "intersection-finder"
@@ -1228,14 +1288,20 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     .get-ctx(ctx => {
       let calculate-anchors = ctx
         .nodes
-        .at(node-name)
+        .at(
+          node-name,
+        )
         .anchors
       let anchor-names = calculate-anchors(())
       let anchor-points = anchor-names
-        .map(calculate-anchors)
+        .map(
+          calculate-anchors,
+        )
         .map(point => {
           // funky disagreement between coordinate systems??
-          point.at(1) *= -1
+          point.at(
+            1,
+          ) *= -1
           vector-2d(
             vector.scale(
               point,
@@ -1257,7 +1323,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         default: target,
       )
 
-      callback(anchor)
+      callback(
+        anchor,
+      )
     })
 }
 
@@ -1367,7 +1435,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       0pt,
       node
         .size
-        .at(0)
+        .at(
+          0,
+        )
         / 2
         * (
           1
@@ -1375,12 +1445,16 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
               / μ
         ),
     )
-      * calc.cos(θ),
+      * calc.cos(
+        θ,
+      ),
     calc.max(
       0pt,
       node
         .size
-        .at(1)
+        .at(
+          1,
+        )
         / 2
         * (
           1
@@ -1388,7 +1462,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
               / 1
         ),
     )
-      * calc.sin(θ),
+      * calc.sin(
+        θ,
+      ),
   )
 }
 
@@ -1413,7 +1489,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   // TODO: do defocus adjustment sensibly
   if (
     nodes
-      .at(0)
+      .at(
+        0,
+      )
       .len()
       == 1
   ) {
@@ -1421,8 +1499,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       from,
       defocus-adjustment(
         nodes
-          .at(0)
-          .at(0),
+          .at(
+            0,
+          )
+          .at(
+            0,
+          ),
         θ
           - 90deg,
       ),
@@ -1430,7 +1512,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
   if (
     nodes
-      .at(1)
+      .at(
+        1,
+      )
       .len()
       == 1
   ) {
@@ -1438,8 +1522,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       to,
       defocus-adjustment(
         nodes
-          .at(1)
-          .at(0),
+          .at(
+            1,
+          )
+          .at(
+            0,
+          ),
         θ
           + 90deg,
       ),
@@ -1497,7 +1585,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       )
       (
         edge.post
-      )(obj) // post-process (e.g., hide)
+      )(
+        obj,
+      ) // post-process (e.g., hide)
     },
   )
 }
@@ -1528,7 +1618,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
     from,
     to,
   )
-    .zip(θs)
+    .zip(
+      θs,
+    )
     .map((
       (
         point,
@@ -1548,7 +1640,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       ))
 
   let intersection-objects = nodes
-    .zip(dummy-lines)
+    .zip(
+      dummy-lines,
+    )
     .map((
       (
         nodes,
@@ -1596,7 +1690,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       )
       (
         edge.post
-      )(obj) // post-process (e.g., hide)
+      )(
+        obj,
+      ) // post-process (e.g., hide)
     },
   )
 }
@@ -1621,7 +1717,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   ) = (
     edge
       .final-vertices
-      .at(0),
+      .at(
+        0,
+      ),
     edge
       .final-vertices
       .at(
@@ -1645,10 +1743,14 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
   let dummy-lines = end-segments.map(points => cetz
     .draw
-    .line(..points))
+    .line(
+      ..points,
+    ))
 
   let intersection-objects = nodes
-    .zip(dummy-lines)
+    .zip(
+      dummy-lines,
+    )
     .map((
       (
         nodes,
@@ -1690,19 +1792,27 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       let edge = edge
       edge
         .final-vertices
-        .at(0) = anchors.at(0)
+        .at(
+          0,
+        ) = anchors.at(
+        0,
+      )
       edge
         .final-vertices
         .at(
           -1,
-        ) = anchors.at(1)
+        ) = anchors.at(
+        1,
+      )
       let obj = draw-edge-polyline(
         edge,
         debug: debug,
       )
       (
         edge.post
-      )(obj) // post-process (e.g., hide)
+      )(
+        obj,
+      ) // post-process (e.g., hide)
     },
   )
 }
@@ -1779,25 +1889,39 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let (
     x-lims,
     y-lims,
-  ) = range(2).map(axis => (
+  ) = range(
+    2,
+  ).map(axis => (
     grid
       .centers
-      .at(axis)
-      .at(0)
+      .at(
+        axis,
+      )
+      .at(
+        0,
+      )
       - grid
         .cell-sizes
-        .at(axis)
-        .at(0)
+        .at(
+          axis,
+        )
+        .at(
+          0,
+        )
         / 2,
     grid
       .centers
-      .at(axis)
+      .at(
+        axis,
+      )
       .at(
         -1,
       )
       + grid
         .cell-sizes
-        .at(axis)
+        .at(
+          axis,
+        )
         .at(
           -1,
         )
@@ -1897,7 +2021,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       ),
     )
 
-    for axis in range(2) {
+    for axis in range(
+      2,
+    ) {
       let swap(
         a,
         b,
@@ -1918,14 +2044,18 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       let x-range = (
         u-range,
         v-range,
-      ).at(axis)
+      ).at(
+        axis,
+      )
       let (
         min,
         max,
       ) = (
         y-lims,
         x-lims,
-      ).at(axis)
+      ).at(
+        axis,
+      )
       for (
         i,
         x,
@@ -1935,30 +2065,46 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           swap(
             grid
               .centers
-              .at(axis)
-              .at(i),
+              .at(
+                axis,
+              )
+              .at(
+                i,
+              ),
             min,
           ),
           swap(
             grid
               .centers
-              .at(axis)
-              .at(i),
+              .at(
+                axis,
+              )
+              .at(
+                i,
+              ),
             max,
           ),
         )
         // size bracket
         let size = grid
           .cell-sizes
-          .at(axis)
-          .at(i)
+          .at(
+            axis,
+          )
+          .at(
+            i,
+          )
         draw.rect(
           (
             to: swap(
               grid
                 .centers
-                .at(axis)
-                .at(i),
+                .at(
+                  axis,
+                )
+                .at(
+                  i,
+                ),
               min,
             ),
             rel: swap(
@@ -1971,8 +2117,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             to: swap(
               grid
                 .centers
-                .at(axis)
-                .at(i),
+                .at(
+                  axis,
+                )
+                .at(
+                  i,
+                ),
               min,
             ),
             rel: swap(
@@ -1990,8 +2140,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
             to: swap(
               grid
                 .centers
-                .at(axis)
-                .at(i),
+                .at(
+                  axis,
+                )
+                .at(
+                  i,
+                ),
               min,
             ),
             rel: swap(
@@ -2059,8 +2213,12 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
 
       draw.content(
         (
-          x-lims.at(0),
-          y-lims.at(0),
+          x-lims.at(
+            0,
+          ),
+          y-lims.at(
+            0,
+          ),
         ),
         pad(
           0.2em,
@@ -2092,7 +2250,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   if (
-    type(key)
+    type(
+      key,
+    )
       == label
   ) {
     return nodes.filter(node => (
@@ -2102,7 +2262,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   }
 
   if (
-    type(key)
+    type(
+      key,
+    )
       == array
       and key.len()
         == 2
@@ -2169,7 +2331,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   let first-last(
     x,
   ) = (
-    x.at(0),
+    x.at(
+      0,
+    ),
     x.at(
       -1,
     ),
@@ -2200,14 +2364,18 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       ) => {
         let key = map-auto(
           given,
-          if type(raw)
+          if type(
+            raw,
+          )
             == label {
             raw
           } else {
             xyz
           },
         )
-        let node = node-finder(key)
+        let node = node-finder(
+          key,
+        )
         node
       })
     draw-edge(
@@ -2259,7 +2427,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
   bounds: true,
 ) = {
   if (
-    type(objects)
+    type(
+      objects,
+    )
       == array
   ) {
     objects = objects.join()
@@ -2282,7 +2452,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           .with(
             bounds: bounds,
           )
-        metadata(value)
+        metadata(
+          value,
+        )
       } else {
         child
       }

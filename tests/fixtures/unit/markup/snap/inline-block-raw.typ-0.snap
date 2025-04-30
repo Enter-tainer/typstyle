@@ -1,7 +1,10 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/inline-block-raw.typ
-snapshot_kind: text
 ---
-#text(``` test ```)
-#text(```test ```)
+#text(
+  ``` test ```,
+)
+#text(
+  ```test ```,
+)

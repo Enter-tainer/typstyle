@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/cetz-tree.typ
-snapshot_kind: text
 ---
 // CeTZ Library for Layouting Tree-Nodes
 #import "../util.typ"
@@ -91,7 +90,9 @@ snapshot_kind: text
           + direction,
         target-name
           + "."
-          + opposite-dir.at(direction),
+          + opposite-dir.at(
+            direction,
+          ),
       )
 
       draw.line(
@@ -133,12 +134,16 @@ snapshot_kind: text
     ) => {
       let content = node.content
       if (
-        type(content)
+        type(
+          content,
+        )
           == str
       ) {
         content = [#content]
       } else if (
-        type(content)
+        type(
+          content,
+        )
           in (
             float,
             int,
@@ -146,19 +151,25 @@ snapshot_kind: text
       ) {
         content = $#content$
       } else if (
-        type(content)
+        type(
+          content,
+        )
           == dictionary
           and "content"
             in content
       ) {
         content = content.content
       } else if (
-        type(content)
+        type(
+          content,
+        )
           != typst-content
       ) {
         panic(
           "Unsupported content type "
-            + type(content)
+            + type(
+              content,
+            )
             + "! "
             + "Provide your own `draw-node` implementation.",
         )
@@ -217,11 +228,15 @@ snapshot_kind: text
     let children = ()
     let cnt = none
     if (
-      type(tree)
+      type(
+        tree,
+      )
         == array
     ) {
       children = tree
-        .slice(1)
+        .slice(
+          1,
+        )
         .enumerate()
         .map((
           (
@@ -234,7 +249,9 @@ snapshot_kind: text
             + 1,
           sibling: n,
         ))
-      cnt = tree.at(0)
+      cnt = tree.at(
+        0,
+      )
     } else {
       cnt = tree
     }
@@ -296,7 +313,9 @@ snapshot_kind: text
       ) {
         let child = node
           .children
-          .at(i)
+          .at(
+            i,
+          )
         let (
           child-min-x,
           child-max-x,
@@ -316,7 +335,9 @@ snapshot_kind: text
         )
         node
           .children
-          .at(i) = child
+          .at(
+            i,
+          ) = child
 
         left = util.min(
           child.x,
@@ -450,7 +471,9 @@ snapshot_kind: text
         + str(
           node.n,
         ),
-      node-position(node),
+      node-position(
+        node,
+      ),
     )
     for child in (
       node.children
@@ -486,7 +509,9 @@ snapshot_kind: text
       name: name,
       {
         draw.move-to(
-          node-position(node),
+          node-position(
+            node,
+          ),
         )
         draw.anchor(
           "center",
@@ -522,7 +547,9 @@ snapshot_kind: text
     return cmds
   }
 
-  let root = build-node(root)
+  let root = build-node(
+    root,
+  )
 
   (
     (
@@ -555,7 +582,9 @@ snapshot_kind: text
             .nodes
             .insert(
               name,
-              nodes.at(name),
+              nodes.at(
+                name,
+              ),
             )
         }
         return ctx

@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/chain/binary-0.typ
-snapshot_kind: text
 ---
 #{
   let f(x) = x

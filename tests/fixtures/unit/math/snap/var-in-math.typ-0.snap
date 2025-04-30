@@ -1,13 +1,14 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/var-in-math.typ
-snapshot_kind: text
 ---
 #let f(
   content,
 ) = {
   if (
-    type(content)
+    type(
+      content,
+    )
       in (
         float,
         int,

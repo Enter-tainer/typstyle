@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/typstfmt/160-fletcher.typ
-snapshot_kind: text
 ---
 #figure(
   fletcher.diagram(
@@ -21,11 +20,7 @@ snapshot_kind: text
 
     edge((0, 0), (+1, 0), "=>"),
     edge((0.25, .75), (+1, 0), "->"),
-    edge(
-      (0.25, .75),
-      (+1.25, .75),
-      "=>",
-    ),
+    edge((0.25, .75), (+1.25, .75), "=>"),
 
     node(
       (+0, 0),
@@ -50,10 +45,6 @@ snapshot_kind: text
 
     edge((-1, 0), (+0, 0), "=>"),
     edge((-.75, .75), (+0, 0), "-X->"),
-    edge(
-      (-.75, .75),
-      (+0.25, .75),
-      "=>",
-    ),
+    edge((-.75, .75), (+0.25, .75), "=>"),
   ),
 )

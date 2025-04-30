@@ -51,7 +51,9 @@ input_file: tests/fixtures/packages/cetz-manual.typ
     )
   },
 )
-#show link: set text(blue)
+#show link: set text(
+  blue,
+)
 
 // Outline
 #{
@@ -70,7 +72,9 @@ input_file: tests/fixtures/packages/cetz-manual.typ
 
 #set page(
   numbering: "1/1",
-  header: align(right)[CeTZ],
+  header: align(
+    right,
+  )[CeTZ],
 )
 
 = Introduction
@@ -98,12 +102,18 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
 ): it => if (
   it
     .text
-    .starts-with("<")
+    .starts-with(
+      "<",
+    )
     and it
       .text
-      .ends-with(">")
+      .ends-with(
+        ">",
+      )
 ) {
-  set text(1.2em)
+  set text(
+    1.2em,
+  )
   doc-style.show-type(
     it
       .text
@@ -195,7 +205,9 @@ content((name: "line", anchor: 50pt), [50pt])
 
 == Canvas
 
-#doc-style.parse-show-module("/src/canvas.typ")
+#doc-style.parse-show-module(
+  "/src/canvas.typ",
+)
 
 == Styling <styling>
 You can style draw elements by passing the relevant named arguments to their draw functions. All elements that draw something have stroke and fill styling unless said otherwise.
@@ -316,22 +328,32 @@ Marks are arrow tips that can be added to the end of path based elements that su
             .mnemonics
         ) {
           let list = name-to-mnemonic.at(
-            item.at(0),
+            item.at(
+              0,
+            ),
             default: (),
           )
           list += (
-            raw(name)
-              + if item.at(1) {
+            raw(
+              name,
+            )
+              + if item.at(
+                1,
+              ) {
                 " (reversed)"
               },
           )
           name-to-mnemonic.insert(
-            item.at(0),
+            item.at(
+              0,
+            ),
             list,
           )
         }
         (
-          raw(name),
+          raw(
+            name,
+          ),
           name-to-mnemonic
             .at(
               name,
@@ -536,11 +558,15 @@ line(..c)
 
 #pagebreak()
 == Shapes
-#doc-style.parse-show-module("/src/draw/shapes.typ")
+#doc-style.parse-show-module(
+  "/src/draw/shapes.typ",
+)
 
 #pagebreak()
 == Grouping
-#doc-style.parse-show-module("/src/draw/grouping.typ")
+#doc-style.parse-show-module(
+  "/src/draw/grouping.typ",
+)
 
 #pagebreak()
 == Transformations
@@ -551,7 +577,9 @@ $
   M_"world" = M_"world" dot M_"local"
 $
 
-#doc-style.parse-show-module("/src/draw/transformations.typ")
+#doc-style.parse-show-module(
+  "/src/draw/transformations.typ",
+)
 
 = Coordinate Systems <coordinate-systems>
 A _coordinate_ is a position on the canvas on which the picture is drawn. They take the form of dictionaries and the following sub-sections define the key value pairs for each system. Some systems have a more implicit form as an array of values and `CeTZ` attempts to infer the system based on the element types.
@@ -943,7 +971,9 @@ circle((v => cetz.vector.add(v, (0, -1)), "c.west"), radius: 0.3)
 == Tree
 The tree library allows the drawing diagrams with simple tree layout algorithms
 
-#doc-style.parse-show-module("/src/lib/tree.typ")
+#doc-style.parse-show-module(
+  "/src/lib/tree.typ",
+)
 
 == Plot
 
@@ -973,7 +1003,9 @@ Types commonly used by function of the `plot` library:
   })
   ```
 
-#doc-style.parse-show-module("/src/lib/plot.typ")
+#doc-style.parse-show-module(
+  "/src/lib/plot.typ",
+)
 
 === Legends <plot-legends>
 A legend for a plot will be drawn if at least one set of data with a label that is not `none` is given.
@@ -1143,12 +1175,24 @@ plot.plot(
 )
 
 
-#doc-style.parse-show-module("/src/lib/plot/line.typ")
-#doc-style.parse-show-module("/src/lib/plot/contour.typ")
-#doc-style.parse-show-module("/src/lib/plot/boxwhisker.typ")
-#doc-style.parse-show-module("/src/lib/plot/bar.typ")
-#doc-style.parse-show-module("/src/lib/plot/annotation.typ")
-#doc-style.parse-show-module("/src/lib/plot/sample.typ")
+#doc-style.parse-show-module(
+  "/src/lib/plot/line.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/plot/contour.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/plot/boxwhisker.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/plot/bar.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/plot/annotation.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/plot/sample.typ",
+)
 
 === Examples
 
@@ -1201,7 +1245,9 @@ Axis names to be used for styling:
   - `bottom`: X-Axis
   - `top`: X2-Axis
 
-#doc-style.parse-show-module("/src/lib/axes.typ")
+#doc-style.parse-show-module(
+  "/src/lib/axes.typ",
+)
 
 ==== Default `scientific` Style
 #raw(
@@ -1221,10 +1267,18 @@ Axis names to be used for styling:
 
 With the `chart` library it is easy to draw charts.
 
-#doc-style.parse-show-module("/src/lib/chart/barchart.typ")
-#doc-style.parse-show-module("/src/lib/chart/columnchart.typ")
-#doc-style.parse-show-module("/src/lib/chart/piechart.typ")
-#doc-style.parse-show-module("/src/lib/chart/boxwhisker.typ")
+#doc-style.parse-show-module(
+  "/src/lib/chart/barchart.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/chart/columnchart.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/chart/piechart.typ",
+)
+#doc-style.parse-show-module(
+  "/src/lib/chart/boxwhisker.typ",
+)
 
 === Examples -- Bar Chart <barchart-examples>
 ```example-vertical
@@ -1315,7 +1369,9 @@ can use palettes to apply different styles per plot.
 
 The palette library provides some predefined palettes.
 
-#doc-style.parse-show-module("/src/lib/palette.typ")
+#doc-style.parse-show-module(
+  "/src/lib/palette.typ",
+)
 
 #let show-palette(
   p,
@@ -1329,7 +1385,9 @@ The palette library provides some predefined palettes.
       import cetz.draw: *
       for i in range(
         0,
-        p("len"),
+        p(
+          "len",
+        ),
       ) {
         if (
           calc.rem(
@@ -1354,9 +1412,13 @@ The palette library provides some predefined palettes.
             ),
           ),
           name: "r",
-          ..p(i),
+          ..p(
+            i,
+          ),
         )
-        move-to("r.south-east")
+        move-to(
+          "r.south-east",
+        )
       }
     },
   )
@@ -1389,7 +1451,9 @@ The palette library provides some predefined palettes.
 
 The `angle` function of the angle module allows drawing angles with an optional label.
 
-#doc-style.parse-show-module("/src/lib/angle.typ")
+#doc-style.parse-show-module(
+  "/src/lib/angle.typ",
+)
 
 ==== Default `angle` Style
 #raw(
@@ -1403,7 +1467,9 @@ The `angle` function of the angle module allows drawing angles with an optional 
 Various pre-made shapes and path modifications.
 
 === Braces
-#doc-style.parse-show-module("/src/lib/decorations/brace.typ")
+#doc-style.parse-show-module(
+  "/src/lib/decorations/brace.typ",
+)
 
 === Path Decorations
 Path decorations are elements that accept a path as input and generate
@@ -1456,7 +1522,9 @@ All path decoration functions support the following style keys:
     the decoration does not fill up the full range between start and stop.],
 )
 
-#doc-style.parse-show-module("/src/lib/decorations/path.typ")
+#doc-style.parse-show-module(
+  "/src/lib/decorations/path.typ",
+)
 
 ==== Styling
 
@@ -1470,11 +1538,15 @@ All path decoration functions support the following style keys:
 
 == Coordinate
 
-#doc-style.parse-show-module("/src/coordinate.typ")
+#doc-style.parse-show-module(
+  "/src/coordinate.typ",
+)
 
 == Styles
 
-#doc-style.parse-show-module("/src/styles.typ")
+#doc-style.parse-show-module(
+  "/src/styles.typ",
+)
 
 
 === Default Style <default-style>

@@ -1,11 +1,10 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/show-closure.typ
-snapshot_kind: text
 ---
-#show heading.where(
-  level: 1,
-): it => box(width: 100%)[
+#show heading.where(level: 1): it => box(
+  width: 100%,
+)[
   #v(0.5em)
   #set align(center)
   #set heading(numbering: "一")

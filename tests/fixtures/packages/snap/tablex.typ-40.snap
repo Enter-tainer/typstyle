@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/packages/tablex.typ
-snapshot_kind: text
 ---
 // Welcome to tablex!
 // Feel free to contribute with any features you think are missing.
@@ -9,7 +8,9 @@ snapshot_kind: text
 
 // -- table counter --
 
-#let _tablex-table-counter = counter("_tablex-table-counter")
+#let _tablex-table-counter = counter(
+  "_tablex-table-counter",
+)
 
 // -- compat --
 
@@ -341,24 +342,18 @@ snapshot_kind: text
   // maximum explicit 'y' specified
   let max_explicit_y = items
     .filter(c => c.y != auto)
-    .fold(
-      0,
-      (acc, cell) => {
-        if (
-          is-tablex-cell(cell)
-            and type(cell.y)
-              in (
-                _int-type,
-                _float-type,
-              )
-            and cell.y > acc
-        ) {
-          cell.y
-        } else {
-          acc
-        }
-      },
-    )
+    .fold(0, (acc, cell) => {
+      if (
+        is-tablex-cell(cell)
+          and type(cell.y)
+            in (_int-type, _float-type)
+          and cell.y > acc
+      ) {
+        cell.y
+      } else {
+        acc
+      }
+    })
 
   for item in items {
     if (
@@ -464,11 +459,15 @@ snapshot_kind: text
   )
 
   if not columns.all(col_row_is_valid) {
-    panic("Invalid column sizes (must all be 'auto' or a valid, finite length specifier).")
+    panic(
+      "Invalid column sizes (must all be 'auto' or a valid, finite length specifier).",
+    )
   }
 
   if not rows.all(col_row_is_valid) {
-    panic("Invalid row sizes (must all be 'auto' or a valid, finite length specifier).")
+    panic(
+      "Invalid row sizes (must all be 'auto' or a valid, finite length specifier).",
+    )
   }
 
   let col_len = columns.len()
@@ -721,7 +720,9 @@ snapshot_kind: text
   // At this point, we will need to draw a line for measurement,
   // so we need the styles.
   if styles == none {
-    panic("Cannot convert length to pt ('styles' not specified).")
+    panic(
+      "Cannot convert length to pt ('styles' not specified).",
+    )
   }
 
   return measure-pt(len, styles)
@@ -740,7 +741,9 @@ snapshot_kind: text
   )
 
   if page-size == none {
-    panic("Cannot convert ratio to pt ('page-size' not specified).")
+    panic(
+      "Cannot convert ratio to pt ('page-size' not specified).",
+    )
   }
 
   if is-infinite-len(page-size) {
@@ -767,11 +770,15 @@ snapshot_kind: text
   )
 
   if frac-amount == none {
-    panic("Cannot convert fraction to pt ('frac-amount' not specified).")
+    panic(
+      "Cannot convert fraction to pt ('frac-amount' not specified).",
+    )
   }
 
   if frac-total == none {
-    panic("Cannot convert fraction to pt ('frac-total' not specified).")
+    panic(
+      "Cannot convert fraction to pt ('frac-total' not specified).",
+    )
   }
 
   if (
@@ -819,7 +826,9 @@ snapshot_kind: text
   // We will need to draw a line for measurement later,
   // so we need the styles.
   if styles == none {
-    panic("Cannot convert relative length to pt ('styles' not specified).")
+    panic(
+      "Cannot convert relative length to pt ('styles' not specified).",
+    )
   }
 
   // Note on precision: the `repr` for em components is precise, unlike
@@ -828,7 +837,9 @@ snapshot_kind: text
   let em-regex = regex(
     NUMBER-REGEX-STRING + "em",
   )
-  let em-part-repr = repr(len).find(em-regex)
+  let em-part-repr = repr(len).find(
+    em-regex,
+  )
 
   // Calculate the length minus its em component.
   // E.g., 1% + 1pt + 1em -> 1% + 1pt
@@ -913,7 +924,9 @@ snapshot_kind: text
       frac-amount,
       frac-total,
     )
-  } else if type(len) == _rel-len-type {
+  } else if (
+    type(len) == _rel-len-type
+  ) {
     convert-relative-type-to-pt(
       len,
       styles,
@@ -1021,7 +1034,9 @@ snapshot_kind: text
       and "thickness" in stroke
   ) {
     let thickness = stroke.thickness
-    if type(thickness) == _length-type {
+    if (
+      type(thickness) == _length-type
+    ) {
       convert-length-to-pt(
         thickness,
         styles: styles,
@@ -1066,10 +1081,9 @@ snapshot_kind: text
   grid: none,
   width: none,
 ) = {
-  width = default-if-none(
-    grid,
-    (width: width),
-  ).width
+  width = default-if-none(grid, (
+    width: width,
+  )).width
   width = calc.floor(width)
   (y * width) + calc-mod(x, width)
 }
@@ -1149,9 +1163,11 @@ snapshot_kind: text
 
 // Fetches an entire column of cells (all positions with the given x).
 #let grid-get-column(grid, x) = {
-  range(
-    grid-count-rows(grid),
-  ).map(y => grid-at(grid, x, y))
+  range(grid-count-rows(grid)).map(y => grid-at(
+    grid,
+    x,
+    y,
+  ))
 }
 
 // Expand grid to the given coords (add the missing cells)
@@ -1278,9 +1294,7 @@ snapshot_kind: text
   let first_cell_reached = false // if true, hline should always be placed after the current row
   let row_wrapped = false // if true, a vline should be added to the end of a row
 
-  let range_of_items = range(
-    items.len(),
-  )
+  let range_of_items = range(items.len())
 
   let new_empty_cell(
     grid,
@@ -1361,7 +1375,9 @@ snapshot_kind: text
 
         vlines.push(item)
       } else {
-        panic("Invalid line received (must be hline or vline).")
+        panic(
+          "Invalid line received (must be hline or vline).",
+        )
       }
       items.at(i) = item // override item with the new x / y coord set
       continue
@@ -1388,7 +1404,9 @@ snapshot_kind: text
     if (
       cell.x == none or cell.y == none
     ) {
-      panic("Error: Received cell with 'none' as x or y.")
+      panic(
+        "Error: Received cell with 'none' as x or y.",
+      )
     }
 
     if (
@@ -1443,7 +1461,9 @@ snapshot_kind: text
     if (
       this_x == none or this_y == none
     ) {
-      panic("Error: Cell with function as content returned another cell with 'none' as x or y!")
+      panic(
+        "Error: Cell with function as content returned another cell with 'none' as x or y!",
+      )
     }
 
     if (
@@ -1565,10 +1585,7 @@ snapshot_kind: text
 
         // other secondary position (from colspan / rowspan)
       } else {
-        let index = grid-index-at(
-          px,
-          py,
-        )
+        let index = grid-index-at(px, py)
 
         grid.items.at(index) = occupied(
           x: px,
@@ -1619,9 +1636,7 @@ snapshot_kind: text
     )
       != 0
   ) {
-    grid.items.push(
-      new_empty_cell(grid),
-    )
+    grid.items.push(new_empty_cell(grid))
   }
 
   (
@@ -1655,21 +1670,16 @@ snapshot_kind: text
     type(align_default)
       == _function-type
   ) {
-    align_default(
-      cell.x,
-      cell.y,
-    ) // column, row
+    align_default(cell.x, cell.y) // column, row
   } else {
     align_default
   }
 
   let fill_default = if (
-    type(fill_default) == _function-type
+    type(fill_default)
+      == _function-type
   ) {
-    fill_default(
-      cell.x,
-      cell.y,
-    ) // row, column
+    fill_default(cell.x, cell.y) // row, column
   } else {
     fill_default
   }
@@ -1711,9 +1721,10 @@ snapshot_kind: text
       // use mod to make the fill value pattern
       // repeat if there are more columns than
       // fill values.
-      cell_fill = cell_fill.at(
-        calc-mod(cell.x, fill_len),
-      )
+      cell_fill = cell_fill.at(calc-mod(
+        cell.x,
+        fill_len,
+      ))
     }
   }
 
@@ -1721,7 +1732,9 @@ snapshot_kind: text
     cell_fill != none
       and not is-color(cell_fill)
   ) {
-    panic("Tablex error: Invalid fill specified (must be either a function (column, row) -> fill, a color, an array of valid fill values, or 'none').")
+    panic(
+      "Tablex error: Invalid fill specified (must be either a function (column, row) -> fill, a color, an array of valid fill values, or 'none').",
+    )
   }
 
   if type(cell_align) == _array-type {
@@ -1754,7 +1767,9 @@ snapshot_kind: text
           _2d-align-type,
         )
   ) {
-    panic("Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').")
+    panic(
+      "Tablex error: Invalid alignment specified (must be either a function (column, row) -> alignment, an alignment value - such as 'left' or 'center + top' -, an array of alignment values (one for each column), or 'auto').",
+    )
   }
 
   let aligned_cell_content = if (
@@ -1766,7 +1781,9 @@ snapshot_kind: text
   }
 
   if is-infinite-len(inset) {
-    panic("Tablex error: inset must not be infinite")
+    panic(
+      "Tablex error: inset must not be infinite",
+    )
   }
 
   box(
@@ -1786,16 +1803,13 @@ snapshot_kind: text
 // Sums the sizes of fixed-size tracks (cols/rows). Anything else
 // (auto, 1fr, ...) is ignored.
 #let sum-fixed-size-tracks(tracks) = {
-  tracks.fold(
-    0pt,
-    (acc, el) => {
-      if type(el) == _length-type {
-        acc + el
-      } else {
-        acc
-      }
-    },
-  )
+  tracks.fold(0pt, (acc, el) => {
+    if type(el) == _length-type {
+      acc + el
+    } else {
+      acc
+    }
+  })
 }
 
 // Calculate the size of fraction tracks (cols/rows) (1fr, 2fr, ...),
@@ -1813,7 +1827,9 @@ snapshot_kind: text
 
   let amount-frac = frac-tracks.fold(
     0,
-    (acc, el) => acc + (el.at(1) / 1fr),
+    (acc, el) => (
+      acc + (el.at(1) / 1fr)
+    ),
   )
 
   if type(gutter) == _fraction-type {
@@ -1978,7 +1994,9 @@ snapshot_kind: text
         0pt,
         (max, cell) => {
           if cell == none {
-            panic("Not enough cells specified for the given amount of rows and columns.")
+            panic(
+              "Not enough cells specified for the given amount of rows and columns.",
+            )
           }
 
           let pcell = get-parent-cell(
@@ -2030,7 +2048,9 @@ snapshot_kind: text
             if (
               cell-spans-all-frac-columns
                 and page-width != 0pt
-                and not is-infinite-len(page-width)
+                and not is-infinite-len(
+                  page-width,
+                )
             ) {
               // HEURISTIC (only effective when the page width isn't 'auto' / infinite):
               // If this cell can expand auto cols, but it already
@@ -2343,7 +2363,9 @@ snapshot_kind: text
         0pt,
         (max, cell) => {
           if cell == none {
-            panic("Not enough cells specified for the given amount of rows and columns.")
+            panic(
+              "Not enough cells specified for the given amount of rows and columns.",
+            )
           }
 
           let pcell = get-parent-cell(
@@ -2590,10 +2612,9 @@ snapshot_kind: text
   pre-gutter: false,
 ) = {
   let col-gutter = default-if-none(
-    default-if-none(
-      gutter,
-      (col: 0pt),
-    ).col,
+    default-if-none(gutter, (
+      col: 0pt,
+    )).col,
     0pt,
   )
   end = default-if-none(
@@ -2601,10 +2622,10 @@ snapshot_kind: text
     columns.len(),
   )
 
-  let col_range = range(
-    start,
-    calc.min(columns.len() + 1, end),
-  )
+  let col_range = range(start, calc.min(
+    columns.len() + 1,
+    end,
+  ))
 
   let sum = 0pt
   for i in col_range {
@@ -2633,18 +2654,17 @@ snapshot_kind: text
   pre-gutter: false,
 ) = {
   let row-gutter = default-if-none(
-    default-if-none(
-      gutter,
-      (row: 0pt),
-    ).row,
+    default-if-none(gutter, (
+      row: 0pt,
+    )).row,
     0pt,
   )
   end = default-if-none(end, rows.len())
 
-  let row_range = range(
-    start,
-    calc.min(rows.len() + 1, end),
-  )
+  let row_range = range(start, calc.min(
+    rows.len() + 1,
+    end,
+  ))
 
   let sum = 0pt
   for i in row_range {
@@ -3093,10 +3113,7 @@ snapshot_kind: text
     )
     left-expand += (
       largest-stroke(
-        default-if-auto-or-none(
-          start,
-          0,
-        ),
+        default-if-auto-or-none(start, 0),
       )
         / 2
     ) // expand to the left to close stroke gap
@@ -3250,10 +3267,7 @@ snapshot_kind: text
     )
     top-expand += (
       largest-stroke(
-        default-if-auto-or-none(
-          start,
-          0,
-        ),
+        default-if-auto-or-none(start, 0),
       )
         / 2
     ) // close stroke gap to the top
@@ -3360,50 +3374,48 @@ snapshot_kind: text
 // and a possible box or block where the component using this function
 // could be contained in.
 #let get-page-dim-writer() = locate(w_loc => {
-  let table_id = _tablex-table-counter.at(w_loc)
-  let page_dim_state = get-page-dim-state(table_id)
-
-  place(
-    top + left,
-    locate(loc => {
-      page_dim_state.update(s => {
-        if s.top_left != none {
-          s
-        } else {
-          let pos = loc.position()
-          let width = s.width - pos.x
-          let height = s.width - pos.y
-          (
-            width: width,
-            height: height,
-            top_left: pos,
-            bottom_right: s.bottom_right,
-          )
-        }
-      })
-    }),
+  let table_id = _tablex-table-counter.at(
+    w_loc,
+  )
+  let page_dim_state = get-page-dim-state(
+    table_id,
   )
 
-  place(
-    bottom + right,
-    locate(loc => {
-      page_dim_state.update(s => {
-        if s.bottom_right != none {
-          s
-        } else {
-          let pos = loc.position()
-          let width = s.width + pos.x
-          let height = s.width + pos.y
-          (
-            width: width,
-            height: height,
-            top_left: s.top_left,
-            bottom_right: pos,
-          )
-        }
-      })
-    }),
-  )
+  place(top + left, locate(loc => {
+    page_dim_state.update(s => {
+      if s.top_left != none {
+        s
+      } else {
+        let pos = loc.position()
+        let width = s.width - pos.x
+        let height = s.width - pos.y
+        (
+          width: width,
+          height: height,
+          top_left: pos,
+          bottom_right: s.bottom_right,
+        )
+      }
+    })
+  }))
+
+  place(bottom + right, locate(loc => {
+    page_dim_state.update(s => {
+      if s.bottom_right != none {
+        s
+      } else {
+        let pos = loc.position()
+        let width = s.width + pos.x
+        let height = s.width + pos.y
+        (
+          width: width,
+          height: height,
+          top_left: s.top_left,
+          bottom_right: pos,
+        )
+      }
+    })
+  }))
 })
 
 // Draws a row group using locate() and a block().
@@ -3474,7 +3486,9 @@ snapshot_kind: text
     let at_top = (
       pos.y == min-pos.y
     ) // to guard against re-draw issues
-    let header_pages = header-pages-state.at(loc)
+    let header_pages = header-pages-state.at(
+      loc,
+    )
     let header_count = header_pages.len()
     let page_turned = (
       page not in header_pages
@@ -3633,12 +3647,10 @@ snapshot_kind: text
           // one less gutter at the end
         }
 
-        hide(
-          rect(
-            width: total-width,
-            height: row_group_height,
-          ),
-        )
+        hide(rect(
+          width: total-width,
+          height: row_group_height,
+        ))
 
         let draw-hline = draw-hline.with(
           initial_x: first_x,
@@ -4127,7 +4139,9 @@ snapshot_kind: text
                   _ratio-type,
                 )
             ) {
-              panic("'expand' argument to lines must be a pair (length, length).")
+              panic(
+                "'expand' argument to lines must be a pair (length, length).",
+              )
             }
 
             convert-length-to-pt(
@@ -4142,16 +4156,12 @@ snapshot_kind: text
     line
   }
   (
-    hlines: hlines.map(
-      parse-func.with(
-        page-size: page-width,
-      ),
-    ),
-    vlines: vlines.map(
-      parse-func.with(
-        page-size: page-height,
-      ),
-    ),
+    hlines: hlines.map(parse-func.with(
+      page-size: page-width,
+    )),
+    vlines: vlines.map(parse-func.with(
+      page-size: page-height,
+    )),
   )
 }
 
@@ -4272,7 +4282,9 @@ snapshot_kind: text
       and type(map-func)
         != _function-type
   ) {
-    panic("Tablex error: Map parameters, if specified (not 'none'), must be functions.")
+    panic(
+      "Tablex error: Map parameters, if specified (not 'none'), must be functions.",
+    )
   }
 
   map-func
@@ -4293,7 +4305,9 @@ snapshot_kind: text
     vlines = vlines.map(vline => {
       let vline = map-vlines(vline)
       if not is-tablex-vline(vline) {
-        panic("'map-vlines' function returned a non-vline.")
+        panic(
+          "'map-vlines' function returned a non-vline.",
+        )
       }
       vline
     })
@@ -4305,7 +4319,9 @@ snapshot_kind: text
     hlines = hlines.map(hline => {
       let hline = map-hlines(hline)
       if not is-tablex-hline(hline) {
-        panic("'map-hlines' function returned a non-hline.")
+        panic(
+          "'map-hlines' function returned a non-hline.",
+        )
       }
       hline
     })
@@ -4350,7 +4366,9 @@ snapshot_kind: text
       )
 
       if type(cells) != _array-type {
-        panic("Tablex error: 'map-rows' returned something that isn't an array.")
+        panic(
+          "Tablex error: 'map-rows' returned something that isn't an array.",
+        )
       }
 
       if (
@@ -4370,14 +4388,18 @@ snapshot_kind: text
         i,
         cell,
       ) in cells.enumerate() {
-        let orig-cell = original-cells.at(i)
+        let orig-cell = original-cells.at(
+          i,
+        )
         if not is-tablex-cell(orig-cell) {
           // only modify non-occupied cells
           continue
         }
 
         if not is-tablex-cell(cell) {
-          panic("Tablex error: 'map-rows' returned a non-cell.")
+          panic(
+            "Tablex error: 'map-rows' returned a non-cell.",
+          )
         }
 
         let x = cell.x
@@ -4391,11 +4413,15 @@ snapshot_kind: text
             or x >= col-len
             or y >= row-len
         ) {
-          panic("Tablex error: 'map-rows' returned a cell with invalid coordinates.")
+          panic(
+            "Tablex error: 'map-rows' returned a cell with invalid coordinates.",
+          )
         }
 
         if y != row {
-          panic("Tablex error: 'map-rows' returned a cell in a different row (the 'y' must be kept the same).")
+          panic(
+            "Tablex error: 'map-rows' returned a cell in a different row (the 'y' must be kept the same).",
+          )
         }
 
         if (
@@ -4404,17 +4430,17 @@ snapshot_kind: text
             or cell.rowspan
               != orig-cell.rowspan
         ) {
-          panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-rows'.")
+          panic(
+            "Tablex error: Please do not change the colspan or rowspan of a cell in 'map-rows'.",
+          )
         }
 
         cell.content = [#cell.content]
-        grid.items.at(
-          grid-index-at(
-            cell.x,
-            cell.y,
-            grid: grid,
-          ),
-        ) = cell
+        grid.items.at(grid-index-at(
+          cell.x,
+          cell.y,
+          grid: grid,
+        )) = cell
       }
     }
   }
@@ -4437,7 +4463,9 @@ snapshot_kind: text
       )
 
       if type(cells) != _array-type {
-        panic("Tablex error: 'map-cols' returned something that isn't an array.")
+        panic(
+          "Tablex error: 'map-cols' returned something that isn't an array.",
+        )
       }
 
       if (
@@ -4457,14 +4485,18 @@ snapshot_kind: text
         i,
         cell,
       ) in cells.enumerate() {
-        let orig-cell = original-cells.at(i)
+        let orig-cell = original-cells.at(
+          i,
+        )
         if not is-tablex-cell(orig-cell) {
           // only modify non-occupied cells
           continue
         }
 
         if not is-tablex-cell(cell) {
-          panic("Tablex error: 'map-cols' returned a non-cell.")
+          panic(
+            "Tablex error: 'map-cols' returned a non-cell.",
+          )
         }
 
         let x = cell.x
@@ -4478,10 +4510,14 @@ snapshot_kind: text
             or x >= col-len
             or y >= row-len
         ) {
-          panic("Tablex error: 'map-cols' returned a cell with invalid coordinates.")
+          panic(
+            "Tablex error: 'map-cols' returned a cell with invalid coordinates.",
+          )
         }
         if x != column {
-          panic("Tablex error: 'map-cols' returned a cell in a different column (the 'x' must be kept the same).")
+          panic(
+            "Tablex error: 'map-cols' returned a cell in a different column (the 'x' must be kept the same).",
+          )
         }
         if (
           cell.colspan
@@ -4489,17 +4525,17 @@ snapshot_kind: text
             or cell.rowspan
               != orig-cell.rowspan
         ) {
-          panic("Tablex error: Please do not change the colspan or rowspan of a cell in 'map-cols'.")
+          panic(
+            "Tablex error: Please do not change the colspan or rowspan of a cell in 'map-cols'.",
+          )
         }
 
         cell.content = [#cell.content]
-        grid.items.at(
-          grid-index-at(
-            cell.x,
-            cell.y,
-            grid: grid,
-          ),
-        ) = cell
+        grid.items.at(grid-index-at(
+          cell.x,
+          cell.y,
+          grid: grid,
+        )) = cell
       }
     }
   }
@@ -4523,7 +4559,9 @@ snapshot_kind: text
     type(header-rows) != _int-type
       or header-rows < 0
   ) {
-    panic("Tablex error: 'header-rows' must be a (positive) integer.")
+    panic(
+      "Tablex error: 'header-rows' must be a (positive) integer.",
+    )
   }
 
   header-rows
@@ -4541,10 +4579,7 @@ snapshot_kind: text
   }
 
   repeat-header = default-if-auto(
-    default-if-none(
-      repeat-header,
-      false,
-    ),
+    default-if-none(repeat-header, false),
     false,
   )
 
@@ -4556,14 +4591,18 @@ snapshot_kind: text
         _array-type,
       )
   ) {
-    panic("Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).")
+    panic(
+      "Tablex error: 'repeat-header' must be a boolean (true - always repeat the header, false - never), an integer (amount of pages for which to repeat the header), or an array of integers (relative pages in which the header should repeat).",
+    )
   } else if (
     type(repeat-header) == _array-type
       and repeat-header.any(i => (
         type(i) != _int-type
       ))
   ) {
-    panic("Tablex error: 'repeat-header' cannot be an array of anything other than integers!")
+    panic(
+      "Tablex error: 'repeat-header' cannot be an array of anything other than integers!",
+    )
   }
 
   repeat-header
@@ -4584,7 +4623,9 @@ snapshot_kind: text
     type(header-hlines-have-priority)
       != _bool-type
   ) {
-    panic("Tablex error: 'header-hlines-have-priority' option must be a boolean.")
+    panic(
+      "Tablex error: 'header-hlines-have-priority' option must be a boolean.",
+    )
   }
 
   header-hlines-have-priority
@@ -4732,26 +4773,46 @@ snapshot_kind: text
 
   get-page-dim-writer() // get the current page's dimensions
 
-  let header-rows = validate-header-rows(header-rows)
+  let header-rows = validate-header-rows(
+    header-rows,
+  )
   let repeat-header = validate-repeat-header(
     repeat-header,
     header-rows: header-rows,
   )
-  let header-hlines-have-priority = validate-header-hlines-priority(header-hlines-have-priority)
-  let map-cells = validate-map-func(map-cells)
-  let map-hlines = validate-map-func(map-hlines)
-  let map-vlines = validate-map-func(map-vlines)
-  let map-rows = validate-map-func(map-rows)
-  let map-cols = validate-map-func(map-cols)
+  let header-hlines-have-priority = validate-header-hlines-priority(
+    header-hlines-have-priority,
+  )
+  let map-cells = validate-map-func(
+    map-cells,
+  )
+  let map-hlines = validate-map-func(
+    map-hlines,
+  )
+  let map-vlines = validate-map-func(
+    map-vlines,
+  )
+  let map-rows = validate-map-func(
+    map-rows,
+  )
+  let map-cols = validate-map-func(
+    map-cols,
+  )
   let fit-spans = validate-fit-spans(
     fit-spans,
     default: (x: false, y: false),
   )
 
   layout(size => locate(t_loc => style(styles => {
-    let table_id = _tablex-table-counter.at(t_loc)
-    let page_dimensions = get-page-dim-state(table_id)
-    let page_dim_at = page_dimensions.final(t_loc)
+    let table_id = _tablex-table-counter.at(
+      t_loc,
+    )
+    let page_dimensions = get-page-dim-state(
+      table_id,
+    )
+    let page_dim_at = page_dimensions.final(
+      t_loc,
+    )
     let t_pos = t_loc.position()
 
     // Subtract the max width/height from current width/height to disregard margin/etc.

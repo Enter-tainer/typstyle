@@ -21,7 +21,9 @@ input_file: tests/fixtures/packages/codly.typ
   inset,
 ) = {
   if (
-    type(inset)
+    type(
+      inset,
+    )
       == dictionary
   ) {
     let other = inset.at(
@@ -88,7 +90,9 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .offset
       .update
-  )(offset)
+  )(
+    offset,
+  )
 }
 
 /// Lets you set a range of line numbers to highlight.
@@ -158,7 +162,9 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .enabled
       .update
-  )(false)
+  )(
+    false,
+  )
 }
 
 /// Enables codly.
@@ -186,7 +192,9 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .enabled
       .update
-  )(true)
+  )(
+    true,
+  )
 }
 
 /// Disabled codly locally.
@@ -210,13 +218,17 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .enabled
       .update
-  )(false)
+  )(
+    false,
+  )
   body
   (
     __codly-args
       .enabled
       .update
-  )(true)
+  )(
+    true,
+  )
 }
 
 /// Appends a skip to the list of skips.
@@ -314,7 +326,9 @@ input_file: tests/fixtures/packages/codly.typ
       .len()
       > 0
   ) {
-    panic("codly: no positional arguments are allowed")
+    panic(
+      "codly: no positional arguments are allowed",
+    )
   }
 
   for (
@@ -328,12 +342,16 @@ input_file: tests/fixtures/packages/codly.typ
         in pos
     ) {
       // Remove the argument from the list.
-      let i = pos.remove(key)
+      let i = pos.remove(
+        key,
+      )
 
       // Update the state.
       (
         arg.update
-      )(i)
+      )(
+        i,
+      )
     }
   }
 
@@ -345,7 +363,9 @@ input_file: tests/fixtures/packages/codly.typ
       "codly: unknown arguments: "
         + pos
           .keys()
-          .join(", "),
+          .join(
+            ", ",
+          ),
     )
   }
 }
@@ -372,104 +392,118 @@ input_file: tests/fixtures/packages/codly.typ
   block-label: none,
   extra: (:),
 ) = {
-  let indent-regex = regex("^\\s*")
+  let indent-regex = regex(
+    "^\\s*",
+  )
   let args = __codly-args
   let highlight-stroke = (
     __codly-args
       .highlight-stroke
       .type_check
-  )(if "highlight-stroke"
-    in extra {
-    extra.highlight-stroke
-  } else {
-    state(
-      "codly-highlight-stroke",
-      __codly-args
-        .highlight-stroke
-        .default,
-    ).get()
-  })
+  )(
+    if "highlight-stroke"
+      in extra {
+      extra.highlight-stroke
+    } else {
+      state(
+        "codly-highlight-stroke",
+        __codly-args
+          .highlight-stroke
+          .default,
+      ).get()
+    },
+  )
 
   let highlight-fill = (
     __codly-args
       .highlight-fill
       .type_check
-  )(if "highlight-fill"
-    in extra {
-    extra.highlight-fill
-  } else {
-    state(
-      "codly-highlight-fill",
-      __codly-args
-        .highlight-fill
-        .default,
-    ).get()
-  })
+  )(
+    if "highlight-fill"
+      in extra {
+      extra.highlight-fill
+    } else {
+      state(
+        "codly-highlight-fill",
+        __codly-args
+          .highlight-fill
+          .default,
+      ).get()
+    },
+  )
 
   let highlight-radius = (
     __codly-args
       .highlight-radius
       .type_check
-  )(if "highlight-radius"
-    in extra {
-    extra.highlight-radius
-  } else {
-    state(
-      "codly-highlight-radius",
-      __codly-args
-        .highlight-radius
-        .default,
-    ).get()
-  })
+  )(
+    if "highlight-radius"
+      in extra {
+      extra.highlight-radius
+    } else {
+      state(
+        "codly-highlight-radius",
+        __codly-args
+          .highlight-radius
+          .default,
+      ).get()
+    },
+  )
 
   let highlight-inset = (
     __codly-args
       .highlight-inset
       .type_check
-  )(if "highlight-inset"
-    in extra {
-    extra.highlight-inset
-  } else {
-    state(
-      "codly-highlight-inset",
-      __codly-args
-        .highlight-inset
-        .default,
-    ).get()
-  })
+  )(
+    if "highlight-inset"
+      in extra {
+      extra.highlight-inset
+    } else {
+      state(
+        "codly-highlight-inset",
+        __codly-args
+          .highlight-inset
+          .default,
+      ).get()
+    },
+  )
 
   let default-color = (
     __codly-args
       .default-color
       .type_check
-  )(if "default-color"
-    in extra {
-    extra.default-color
-  } else {
-    state(
-      "codly-default-color",
-      __codly-args
-        .default-color
-        .default,
-    ).get()
-  })
+  )(
+    if "default-color"
+      in extra {
+      extra.default-color
+    } else {
+      state(
+        "codly-default-color",
+        __codly-args
+          .default-color
+          .default,
+      ).get()
+    },
+  )
 
   let highlights = {
     let highlights = (
       __codly-args
         .highlights
         .type_check
-    )(if "highlights"
-      in extra {
-      extra.highlights
-    } else {
-      state(
-        "codly-highlights",
-        __codly-args
-          .highlights
-          .default,
-      ).get()
-    })
+    )(
+      if "highlights"
+        in extra {
+        extra.highlights
+      } else {
+        state(
+          "codly-highlights",
+          __codly-args
+            .highlights
+            .default,
+        ).get()
+      },
+    )
     if (
       highlights
         == none
@@ -536,20 +570,24 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .smart-indent
       .type_check
-  )(if "smart-indent"
-    in extra {
-    extra.smart-indent
-  } else {
-    state(
-      "codly-smart-indent",
-      __codly-args
-        .smart-indent
-        .default,
-    ).get()
-  })
+  )(
+    if "smart-indent"
+      in extra {
+      extra.smart-indent
+    } else {
+      state(
+        "codly-smart-indent",
+        __codly-args
+          .smart-indent
+          .default,
+      ).get()
+    },
+  )
   let body = if it
     .body
-    .has("children") {
+    .has(
+      "children",
+    ) {
     it
       .body
       .children
@@ -620,11 +658,15 @@ input_file: tests/fixtures/packages/codly.typ
     if (
       first
         != none
-        and first.has("text")
+        and first.has(
+          "text",
+        )
     ) {
       let match = first
         .text
-        .match(indent-regex)
+        .match(
+          indent-regex,
+        )
 
       // Ensure there is a match and it starts at the beginning of the line.
       if (
@@ -682,7 +724,9 @@ input_file: tests/fixtures/packages/codly.typ
         != none
     ) {
       let lab = label(
-        str(block-label)
+        str(
+          block-label,
+        )
           + ":"
           + str(
             it.number,
@@ -721,7 +765,9 @@ input_file: tests/fixtures/packages/codly.typ
       let fields = child.fields()
 
       if (
-        child.has("label")
+        child.has(
+          "label",
+        )
           and child.label
             == <codly-highlight>
       ) {
@@ -732,7 +778,9 @@ input_file: tests/fixtures/packages/codly.typ
       ) {
         fields
           .children
-          .map(get-len)
+          .map(
+            get-len,
+          )
           .sum()
       } else if (
         "text"
@@ -763,12 +811,16 @@ input_file: tests/fixtures/packages/codly.typ
     let children = ()
     let collection = none
     let i = 0
-    let ws_regex = regex("\s")
+    let ws_regex = regex(
+      "\s",
+    )
     let get-flattened-body(
       elem,
     ) = {
       if (
-        elem.has("label")
+        elem.has(
+          "label",
+        )
           and elem.label
             == <codly-highlight>
       ) {
@@ -777,14 +829,22 @@ input_file: tests/fixtures/packages/codly.typ
         )
       }
 
-      if elem.has("children") {
+      if elem.has(
+        "children",
+      ) {
         elem
           .children
-          .map(get-flattened-body)
+          .map(
+            get-flattened-body,
+          )
           .flatten()
       } else if (
-        elem.has("child")
-          and elem.has("styles")
+        elem.has(
+          "child",
+        )
+          and elem.has(
+            "styles",
+          )
       ) {
         get-flattened-body(
           elem.child,
@@ -796,14 +856,18 @@ input_file: tests/fixtures/packages/codly.typ
             elem.styles,
           ))
           .flatten()
-      } else if elem.has("text") {
+      } else if elem.has(
+        "text",
+      ) {
         // Separate the whitespaces at the start of text
         let out = ()
         let ws = none
         for cluster in elem
           .text
           .clusters() {
-          let m = cluster.match(ws_regex)
+          let m = cluster.match(
+            ws_regex,
+          )
           if (
             m
               != none
@@ -823,15 +887,21 @@ input_file: tests/fixtures/packages/codly.typ
               != none
           ) {
             out.push(
-              text(ws),
+              text(
+                ws,
+              ),
             )
             ws = none
             out.push(
-              text(cluster),
+              text(
+                cluster,
+              ),
             )
           } else {
             out.push(
-              text(cluster),
+              text(
+                cluster,
+              ),
             )
           }
         }
@@ -841,7 +911,9 @@ input_file: tests/fixtures/packages/codly.typ
             != none
         ) {
           out.push(
-            text(ws),
+            text(
+              ws,
+            ),
           )
         }
         out
@@ -852,7 +924,9 @@ input_file: tests/fixtures/packages/codly.typ
       }
     }
 
-    let body = get-flattened-body(highlighted)
+    let body = get-flattened-body(
+      highlighted,
+    )
 
     let len = body.len()
     for (
@@ -866,13 +940,17 @@ input_file: tests/fixtures/packages/codly.typ
       )
       let args = child.fields()
 
-      let len = get-len(child)
+      let len = get-len(
+        child,
+      )
 
       if (
         collection
           != none
       ) {
-        collection.push(child)
+        collection.push(
+          child,
+        )
       } else if (
         collection
           == none
@@ -892,7 +970,9 @@ input_file: tests/fixtures/packages/codly.typ
           child,
         )
       } else {
-        children.push(child)
+        children.push(
+          child,
+        )
       }
 
       let label = if (
@@ -905,32 +985,36 @@ input_file: tests/fixtures/packages/codly.typ
           __codly-args
             .reference-by
             .type_check
-        )(if "reference-by"
-          in extra {
-          extra.reference-by
-        } else {
-          state(
-            "codly-reference-by",
-            __codly-args
-              .reference-by
-              .default,
-          ).get()
-        })
+        )(
+          if "reference-by"
+            in extra {
+            extra.reference-by
+          } else {
+            state(
+              "codly-reference-by",
+              __codly-args
+                .reference-by
+                .default,
+            ).get()
+          },
+        )
         let reference-sep = (
           __codly-args
             .reference-sep
             .type_check
-        )(if "reference-sep"
-          in extra {
-          extra.reference-sep
-        } else {
-          state(
-            "codly-reference-sep",
-            __codly-args
-              .reference-sep
-              .default,
-          ).get()
-        })
+        )(
+          if "reference-sep"
+            in extra {
+            extra.reference-sep
+          } else {
+            state(
+              "codly-reference-sep",
+              __codly-args
+                .reference-sep
+                .default,
+            ).get()
+          },
+        )
 
         let referenced = if (
           reference-by
@@ -940,17 +1024,19 @@ input_file: tests/fixtures/packages/codly.typ
             __codly-args
               .reference-number-format
               .type_check
-          )(if "reference-number-format"
-            in extra {
-            extra.reference-number-format
-          } else {
-            state(
-              "codly-reference-number-format",
-              __codly-args
-                .reference-number-format
-                .default,
-            ).get()
-          })
+          )(
+            if "reference-number-format"
+              in extra {
+              extra.reference-number-format
+            } else {
+              state(
+                "codly-reference-number-format",
+                __codly-args
+                  .reference-number-format
+                  .default,
+              ).get()
+            },
+          )
 
           reference-number-format(
             it.number,
@@ -967,8 +1053,12 @@ input_file: tests/fixtures/packages/codly.typ
           hide[#figure(
               kind: "codly-referencer",
               supplement: none,
-            )[#box(referenced)#box(
-                str(block-label),
+            )[#box(
+                referenced,
+              )#box(
+                str(
+                  block-label,
+                ),
               )]#hl.label],
         )
       } else {
@@ -1002,8 +1092,12 @@ input_file: tests/fixtures/packages/codly.typ
           children.push([#content<codly-highlight>])
         } else {
           let col = collection.join()
-          let height-col = measure(col).height
-          let height-tag = measure(tag).height
+          let height-col = measure(
+            col,
+          ).height
+          let height-tag = measure(
+            tag,
+          ).height
           let max-height = (
             calc.max(
               height-col,
@@ -1082,7 +1176,9 @@ input_file: tests/fixtures/packages/codly.typ
       != none
   ) {
     let lab = label(
-      str(block-label)
+      str(
+        block-label,
+      )
         + ":"
         + str(
           it.number,
@@ -1111,12 +1207,16 @@ input_file: tests/fixtures/packages/codly.typ
   )
 
   if (
-    type(it)
+    type(
+      it,
+    )
       != content
       or it.func()
         != raw
   ) {
-    panic("codly-raw: body must be a raw content")
+    panic(
+      "codly-raw: body must be a raw content",
+    )
   }
 
   set par(
@@ -1126,17 +1226,19 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .enabled
       .type_check
-  )(if "enabled"
-    in extra {
-    extra.enabled
-  } else {
-    state(
-      "codly-enabled",
-      __codly-args
-        .enabled
-        .default,
-    ).get()
-  })
+  )(
+    if "enabled"
+      in extra {
+      extra.enabled
+    } else {
+      state(
+        "codly-enabled",
+        __codly-args
+          .enabled
+          .default,
+      ).get()
+    },
+  )
 
   if not enabled {
     return it
@@ -1147,33 +1249,37 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .range
       .type_check
-  )(if "range"
-    in extra {
-    extra.range
-  } else {
-    state(
-      "codly-range",
-      __codly-args
-        .range
-        .default,
-    ).get()
-  })
+  )(
+    if "range"
+      in extra {
+      extra.range
+    } else {
+      state(
+        "codly-range",
+        __codly-args
+          .range
+          .default,
+      ).get()
+    },
+  )
 
   let ranges = (
     __codly-args
       .ranges
       .type_check
-  )(if "ranges"
-    in extra {
-    extra.ranges
-  } else {
-    state(
-      "codly-ranges",
-      __codly-args
-        .ranges
-        .default,
-    ).get()
-  })
+  )(
+    if "ranges"
+      in extra {
+      extra.ranges
+    } else {
+      state(
+        "codly-ranges",
+        __codly-args
+          .ranges
+          .default,
+      ).get()
+    },
+  )
 
   if (
     ranges
@@ -1202,10 +1308,14 @@ input_file: tests/fixtures/packages/codly.typ
       ranges
     ) {
       assert(
-        type(r)
+        type(
+          r,
+        )
           == array,
         message: "codly: ranges must be an array of arrays, found "
-          + type(r),
+          + type(
+            r,
+          ),
       )
       assert(
         r.len()
@@ -1214,30 +1324,42 @@ input_file: tests/fixtures/packages/codly.typ
       )
 
       if (
-        r.at(0)
+        r.at(
+          0,
+        )
           == none
       ) {
         if (
           line
-            <= r.at(1)
+            <= r.at(
+              1,
+            )
         ) {
           return true
         }
       } else if (
-        r.at(1)
+        r.at(
+          1,
+        )
           == none
       ) {
         if (
-          r.at(0)
+          r.at(
+            0,
+          )
             <= line
         ) {
           return true
         }
       } else if (
-        r.at(0)
+        r.at(
+          0,
+        )
           <= line
           and line
-            <= r.at(1)
+            <= r.at(
+              1,
+            )
       ) {
         return true
       }
@@ -1251,66 +1373,74 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .display-name
       .type_check
-  )(if "display-name"
-    in extra {
-    extra.display-name
-  } else {
-    state(
-      "codly-display-name",
-      __codly-args
-        .display-name
-        .default,
-    ).get()
-  })
+  )(
+    if "display-name"
+      in extra {
+      extra.display-name
+    } else {
+      state(
+        "codly-display-name",
+        __codly-args
+          .display-name
+          .default,
+      ).get()
+    },
+  )
 
   let display-icons = (
     __codly-args
       .display-icon
       .type_check
-  )(if "display-icon"
-    in extra {
-    extra.display-icon
-  } else {
-    state(
-      "codly-display-icon",
-      __codly-args
-        .display-icon
-        .default,
-    ).get()
-  })
+  )(
+    if "display-icon"
+      in extra {
+      extra.display-icon
+    } else {
+      state(
+        "codly-display-icon",
+        __codly-args
+          .display-icon
+          .default,
+      ).get()
+    },
+  )
 
   let lang-outset = (
     __codly-args
       .lang-outset
       .type_check
-  )(if "lang-outset"
-    in extra {
-    extra.lang-outset
-  } else {
-    state(
-      "codly-lang-outset",
-      __codly-args
-        .lang-outset
-        .default,
-    ).get()
-  })
+  )(
+    if "lang-outset"
+      in extra {
+      extra.lang-outset
+    } else {
+      state(
+        "codly-lang-outset",
+        __codly-args
+          .lang-outset
+          .default,
+      ).get()
+    },
+  )
 
   let language-block = {
     let fn = (
       __codly-args
         .lang-format
         .type_check
-    )(if "lang-format"
-      in extra {
-      extra.lang-format
-    } else {
-      state(
-        "codly-lang-format",
-        __codly-args
-          .lang-format
-          .default,
-      ).get()
-    })
+    )(
+      if "lang-format"
+        in extra {
+        extra.lang-format
+      } else {
+        state(
+          "codly-lang-format",
+          __codly-args
+            .lang-format
+            .default,
+        ).get()
+      },
+    )
 
     if (
       fn
@@ -1334,180 +1464,202 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .default-color
       .type_check
-  )(if "default-color"
-    in extra {
-    extra.default-color
-  } else {
-    state(
-      "codly-default-color",
-      __codly-args
-        .default-color
-        .default,
-    ).get()
-  })
+  )(
+    if "default-color"
+      in extra {
+      extra.default-color
+    } else {
+      state(
+        "codly-default-color",
+        __codly-args
+          .default-color
+          .default,
+      ).get()
+    },
+  )
 
   let radius = (
     __codly-args
       .radius
       .type_check
-  )(if "radius"
-    in extra {
-    extra.radius
-  } else {
-    state(
-      "codly-radius",
-      __codly-args
-        .radius
-        .default,
-    ).get()
-  })
+  )(
+    if "radius"
+      in extra {
+      extra.radius
+    } else {
+      state(
+        "codly-radius",
+        __codly-args
+          .radius
+          .default,
+      ).get()
+    },
+  )
 
   let offset = (
     __codly-args
       .offset
       .type_check
-  )(if "offset"
-    in extra {
-    extra.offset
-  } else {
-    state(
-      "codly-offset",
-      __codly-args
-        .offset
-        .default,
-    ).get()
-  })
+  )(
+    if "offset"
+      in extra {
+      extra.offset
+    } else {
+      state(
+        "codly-offset",
+        __codly-args
+          .offset
+          .default,
+      ).get()
+    },
+  )
 
   let stroke = (
     __codly-args
       .stroke
       .type_check
-  )(if "stroke"
-    in extra {
-    extra.stroke
-  } else {
-    state(
-      "codly-stroke",
-      __codly-args
-        .stroke
-        .default,
-    ).get()
-  })
+  )(
+    if "stroke"
+      in extra {
+      extra.stroke
+    } else {
+      state(
+        "codly-stroke",
+        __codly-args
+          .stroke
+          .default,
+      ).get()
+    },
+  )
 
   let zebra-color = (
     __codly-args
       .zebra-fill
       .type_check
-  )(if "zebra-fill"
-    in extra {
-    extra.zebra-fill
-  } else {
-    state(
-      "codly-zebra-fill",
-      __codly-args
-        .zebra-fill
-        .default,
-    ).get()
-  })
+  )(
+    if "zebra-fill"
+      in extra {
+      extra.zebra-fill
+    } else {
+      state(
+        "codly-zebra-fill",
+        __codly-args
+          .zebra-fill
+          .default,
+      ).get()
+    },
+  )
 
   let numbers-format = (
     __codly-args
       .number-format
       .type_check
-  )(if "number-format"
-    in extra {
-    extra.number-format
-  } else {
-    state(
-      "codly-number-format",
-      __codly-args
-        .number-format
-        .default,
-    ).get()
-  })
+  )(
+    if "number-format"
+      in extra {
+      extra.number-format
+    } else {
+      state(
+        "codly-number-format",
+        __codly-args
+          .number-format
+          .default,
+      ).get()
+    },
+  )
 
   let numbers-alignment = (
     __codly-args
       .number-align
       .type_check
-  )(if "number-align"
-    in extra {
-    extra.number-align
-  } else {
-    state(
-      "codly-number-align",
-      __codly-args
-        .number-align
-        .default,
-    ).get()
-  })
+  )(
+    if "number-align"
+      in extra {
+      extra.number-align
+    } else {
+      state(
+        "codly-number-align",
+        __codly-args
+          .number-align
+          .default,
+      ).get()
+    },
+  )
 
   let padding = __codly-inset(
     (
       __codly-args
         .inset
         .type_check
-    )(if "inset"
-      in extra {
-      extrainset
-    } else {
-      state(
-        "codly-inset",
-        __codly-args
-          .inset
-          .default,
-      ).get()
-    }),
+    )(
+      if "inset"
+        in extra {
+        extrainset
+      } else {
+        state(
+          "codly-inset",
+          __codly-args
+            .inset
+            .default,
+        ).get()
+      },
+    ),
   )
 
   let breakable = (
     __codly-args
       .breakable
       .type_check
-  )(if "breakable"
-    in extra {
-    extra.breakable
-  } else {
-    state(
-      "codly-breakable",
-      __codly-args
-        .breakable
-        .default,
-    ).get()
-  })
+  )(
+    if "breakable"
+      in extra {
+      extra.breakable
+    } else {
+      state(
+        "codly-breakable",
+        __codly-args
+          .breakable
+          .default,
+      ).get()
+    },
+  )
 
   let fill = (
     __codly-args
       .fill
       .type_check
-  )(if "fill"
-    in extra {
-    extra.fill
-  } else {
-    state(
-      "codly-fill",
-      __codly-args
-        .fill
-        .default,
-    ).get()
-  })
+  )(
+    if "fill"
+      in extra {
+      extra.fill
+    } else {
+      state(
+        "codly-fill",
+        __codly-args
+          .fill
+          .default,
+      ).get()
+    },
+  )
 
   let skips = {
     let skips = (
       __codly-args
         .skips
         .type_check
-    )(if "skips"
-      in extra {
-      extra.skips
-    } else {
-      state(
-        "codly-skips",
-        __codly-args
-          .skips
-          .default,
-      ).get()
-    })
+    )(
+      if "skips"
+        in extra {
+        extra.skips
+      } else {
+        state(
+          "codly-skips",
+          __codly-args
+            .skips
+            .default,
+        ).get()
+      },
+    )
     if (
       skips
         == none
@@ -1516,7 +1668,9 @@ input_file: tests/fixtures/packages/codly.typ
     } else {
       skips
         .sorted(
-          key: x => x.at(0),
+          key: x => x.at(
+            0,
+          ),
         )
         .dedup()
     }
@@ -1526,49 +1680,55 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .skip-line
       .type_check
-  )(if "skip-line"
-    in extra {
-    extra.skip-line
-  } else {
-    state(
-      "codly-skip-line",
-      __codly-args
-        .skip-line
-        .default,
-    ).get()
-  })
+  )(
+    if "skip-line"
+      in extra {
+      extra.skip-line
+    } else {
+      state(
+        "codly-skip-line",
+        __codly-args
+          .skip-line
+          .default,
+      ).get()
+    },
+  )
 
   let skip-number = (
     __codly-args
       .skip-number
       .type_check
-  )(if "skip-number"
-    in extra {
-    extra.skip-number
-  } else {
-    state(
-      "codly-skip-number",
-      __codly-args
-        .skip-number
-        .default,
-    ).get()
-  })
+  )(
+    if "skip-number"
+      in extra {
+      extra.skip-number
+    } else {
+      state(
+        "codly-skip-number",
+        __codly-args
+          .skip-number
+          .default,
+      ).get()
+    },
+  )
 
   let reference-by = (
     __codly-args
       .reference-by
       .type_check
-  )(if "reference-by"
-    in extra {
-    extra.reference-by
-  } else {
-    state(
-      "codly-reference-by",
-      __codly-args
-        .reference-by
-        .default,
-    ).get()
-  })
+  )(
+    if "reference-by"
+      in extra {
+      extra.reference-by
+    } else {
+      state(
+        "codly-reference-by",
+        __codly-args
+          .reference-by
+          .default,
+      ).get()
+    },
+  )
 
   if not (
     reference-by
@@ -1577,57 +1737,65 @@ input_file: tests/fixtures/packages/codly.typ
         "item",
       )
   ) {
-    panic("codly: reference-by must be either 'line' or 'item'")
+    panic(
+      "codly: reference-by must be either 'line' or 'item'",
+    )
   }
 
   let reference-sep = (
     __codly-args
       .reference-sep
       .type_check
-  )(if "reference-sep"
-    in extra {
-    extra.reference-sep
-  } else {
-    state(
-      "codly-reference-sep",
-      __codly-args
-        .reference-sep
-        .default,
-    ).get()
-  })
+  )(
+    if "reference-sep"
+      in extra {
+      extra.reference-sep
+    } else {
+      state(
+        "codly-reference-sep",
+        __codly-args
+          .reference-sep
+          .default,
+      ).get()
+    },
+  )
 
   let reference-number-format = (
     __codly-args
       .reference-number-format
       .type_check
-  )(if "reference-number-format"
-    in extra {
-    extra.reference-number-format
-  } else {
-    state(
-      "codly-reference-number-format",
-      __codly-args
-        .reference-number-format
-        .default,
-    ).get()
-  })
+  )(
+    if "reference-number-format"
+      in extra {
+      extra.reference-number-format
+    } else {
+      state(
+        "codly-reference-number-format",
+        __codly-args
+          .reference-number-format
+          .default,
+      ).get()
+    },
+  )
 
   let annotation-format = {
     let fn = (
       __codly-args
         .annotation-format
         .type_check
-    )(if "annotation-format"
-      in extra {
-      extra.annotation-format
-    } else {
-      state(
-        "codly-annotation-format",
-        __codly-args
-          .annotation-format
-          .default,
-      ).get()
-    })
+    )(
+      if "annotation-format"
+        in extra {
+        extra.annotation-format
+      } else {
+        state(
+          "codly-annotation-format",
+          __codly-args
+            .annotation-format
+            .default,
+        ).get()
+      },
+    )
     if (
       fn
         == none
@@ -1645,17 +1813,19 @@ input_file: tests/fixtures/packages/codly.typ
       __codly-args
         .annotations
         .type_check
-    )(if "annotations"
-      in extra {
-      extra.annotations
-    } else {
-      state(
-        "codly-annotations",
-        __codly-args
-          .annotations
-          .default,
-      ).get()
-    })
+    )(
+      if "annotations"
+        in extra {
+        extra.annotations
+      } else {
+        state(
+          "codly-annotations",
+          __codly-args
+            .annotations
+            .default,
+        ).get()
+      },
+    )
     annotations = if (
       annotations
         == none
@@ -1726,7 +1896,9 @@ input_file: tests/fixtures/packages/codly.typ
           and a.start
             <= current.end
       ) {
-        panic("codly: overlapping annotations")
+        panic(
+          "codly: overlapping annotations",
+        )
       }
       current = a
     }
@@ -1746,7 +1918,9 @@ input_file: tests/fixtures/packages/codly.typ
   ) {
     1
   } else {
-    range.at(0)
+    range.at(
+      0,
+    )
   }
 
   // Get the widest annotation.
@@ -1754,7 +1928,9 @@ input_file: tests/fixtures/packages/codly.typ
     .map(x => {
       x.content
     })
-    .map(measure)
+    .map(
+      measure,
+    )
     .map(x => {
       x.width
     })
@@ -1817,49 +1993,55 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .header
       .type_check
-  )(if "header"
-    in extra {
-    extra.header
-  } else {
-    state(
-      "codly-header",
-      __codly-args
-        .header
-        .default,
-    ).get()
-  })
+  )(
+    if "header"
+      in extra {
+      extra.header
+    } else {
+      state(
+        "codly-header",
+        __codly-args
+          .header
+          .default,
+      ).get()
+    },
+  )
   let header-repeat = (
     __codly-args
       .header-repeat
       .type_check
-  )(if "header-repeat"
-    in extra {
-    extra.header-repeat
-  } else {
-    state(
-      "codly-header-repeat",
-      __codly-args
-        .header-repeat
-        .default,
-    ).get()
-  })
+  )(
+    if "header-repeat"
+      in extra {
+      extra.header-repeat
+    } else {
+      state(
+        "codly-header-repeat",
+        __codly-args
+          .header-repeat
+          .default,
+      ).get()
+    },
+  )
 
   // The language block (icon + name)
   let languages = (
     __codly-args
       .languages
       .type_check
-  )(if "languages"
-    in extra {
-    extra.languages
-  } else {
-    state(
-      "codly-languages",
-      __codly-args
-        .languages
-        .default,
-    ).get()
-  })
+  )(
+    if "languages"
+      in extra {
+      extra.languages
+    } else {
+      state(
+        "codly-languages",
+        __codly-args
+          .languages
+          .default,
+      ).get()
+    },
+  )
   let language-block = if (
     it.lang
       == none
@@ -1873,7 +2055,9 @@ input_file: tests/fixtures/packages/codly.typ
       it.lang,
     )
     let name = if (
-      type(lang)
+      type(
+        lang,
+      )
         == str
     ) {
       lang
@@ -1912,68 +2096,78 @@ input_file: tests/fixtures/packages/codly.typ
         __codly-args
           .lang-radius
           .type_check
-      )(if "lang-radius"
-        in extra {
-        extra.lang-radius
-      } else {
-        state(
-          "codly-lang-radius",
-          __codly-args
-            .lang-radius
-            .default,
-        ).get()
-      })
+      )(
+        if "lang-radius"
+          in extra {
+          extra.lang-radius
+        } else {
+          state(
+            "codly-lang-radius",
+            __codly-args
+              .lang-radius
+              .default,
+          ).get()
+        },
+      )
       let padding = __codly-inset(
         (
           __codly-args
             .lang-inset
             .type_check
-        )(if "lang-inset"
-          in extra {
-          extra.lang-inset
-        } else {
-          state(
-            "codly-lang-inset",
-            __codly-args
-              .lang-inset
-              .default,
-          ).get()
-        }),
+        )(
+          if "lang-inset"
+            in extra {
+            extra.lang-inset
+          } else {
+            state(
+              "codly-lang-inset",
+              __codly-args
+                .lang-inset
+                .default,
+            ).get()
+          },
+        ),
       )
 
       let lang-stroke = (
         __codly-args
           .lang-stroke
           .type_check
-      )(if "lang-stroke"
-        in extra {
-        extra.lang-stroke
-      } else {
-        state(
-          "codly-lang-stroke",
-          __codly-args
-            .lang-stroke
-            .default,
-        ).get()
-      })
+      )(
+        if "lang-stroke"
+          in extra {
+          extra.lang-stroke
+        } else {
+          state(
+            "codly-lang-stroke",
+            __codly-args
+              .lang-stroke
+              .default,
+          ).get()
+        },
+      )
       let lang-fill = (
         __codly-args
           .lang-fill
           .type_check
-      )(if "lang-fill"
-        in extra {
-        extra.lang-fill
-      } else {
-        state(
-          "codly-lang-fill",
-          __codly-args
-            .lang-fill
-            .default,
-        ).get()
-      })
+      )(
+        if "lang-fill"
+          in extra {
+          extra.lang-fill
+        } else {
+          state(
+            "codly-lang-fill",
+            __codly-args
+              .lang-fill
+              .default,
+          ).get()
+        },
+      )
 
       let fill = if (
-        type(lang-fill)
+        type(
+          lang-fill,
+        )
           == function
       ) {
         (
@@ -1984,11 +2178,17 @@ input_file: tests/fixtures/packages/codly.typ
           color: color,
         ))
       } else if (
-        type(lang-fill)
+        type(
+          lang-fill,
+        )
           == color
-          or type(lang-fill)
+          or type(
+            lang-fill,
+          )
             == gradient
-          or type(lang-fill)
+          or type(
+            lang-fill,
+          )
             == pattern
       ) {
         lang-fill
@@ -1997,7 +2197,9 @@ input_file: tests/fixtures/packages/codly.typ
       }
 
       let stroke = if (
-        type(lang-stroke)
+        type(
+          lang-stroke,
+        )
           == function
       ) {
         (
@@ -2045,70 +2247,80 @@ input_file: tests/fixtures/packages/codly.typ
         __codly-args
           .lang-radius
           .type_check
-      )(if "lang-radius"
-        in extra {
-        extra.lang-radius
-      } else {
-        state(
-          "codly-lang-radius",
-          __codly-args
-            .lang-radius
-            .default,
-        ).get()
-      })
+      )(
+        if "lang-radius"
+          in extra {
+          extra.lang-radius
+        } else {
+          state(
+            "codly-lang-radius",
+            __codly-args
+              .lang-radius
+              .default,
+          ).get()
+        },
+      )
 
       let padding = __codly-inset(
         (
           __codly-args
             .lang-inset
             .type_check
-        )(if "lang-inset"
-          in extra {
-          extra.lang-inset
-        } else {
-          state(
-            "codly-lang-inset",
-            __codly-args
-              .lang-inset
-              .default,
-          ).get()
-        }),
+        )(
+          if "lang-inset"
+            in extra {
+            extra.lang-inset
+          } else {
+            state(
+              "codly-lang-inset",
+              __codly-args
+                .lang-inset
+                .default,
+            ).get()
+          },
+        ),
       )
 
       let lang-stroke = (
         __codly-args
           .lang-stroke
           .type_check
-      )(if "lang-stroke"
-        in extra {
-        extra.lang-stroke
-      } else {
-        state(
-          "codly-lang-stroke",
-          __codly-args
-            .lang-stroke
-            .default,
-        ).get()
-      })
+      )(
+        if "lang-stroke"
+          in extra {
+          extra.lang-stroke
+        } else {
+          state(
+            "codly-lang-stroke",
+            __codly-args
+              .lang-stroke
+              .default,
+          ).get()
+        },
+      )
 
       let lang-fill = (
         __codly-args
           .lang-fill
           .type_check
-      )(if "lang-fill"
-        in extra {
-        extra.lang-fill
-      } else {
-        state(
-          "codly-lang-fill",
-          __codly-args
-            .lang-fill
-            .default,
-        ).get()
-      })
+      )(
+        if "lang-fill"
+          in extra {
+          extra.lang-fill
+        } else {
+          state(
+            "codly-lang-fill",
+            __codly-args
+              .lang-fill
+              .default,
+          ).get()
+        },
+      )
 
       let fill = if (
-        type(lang-fill)
+        type(
+          lang-fill,
+        )
           == function
       ) {
         (
@@ -2119,11 +2331,17 @@ input_file: tests/fixtures/packages/codly.typ
           color: default-color,
         ))
       } else if (
-        type(lang-fill)
+        type(
+          lang-fill,
+        )
           == color
-          or type(lang-fill)
+          or type(
+            lang-fill,
+          )
             == gradient
-          or type(lang-fill)
+          or type(
+            lang-fill,
+          )
             == pattern
       ) {
         lang-fill
@@ -2132,7 +2350,9 @@ input_file: tests/fixtures/packages/codly.typ
       }
 
       let stroke = if (
-        type(lang-stroke)
+        type(
+          lang-stroke,
+        )
           == function
       ) {
         (
@@ -2179,7 +2399,9 @@ input_file: tests/fixtures/packages/codly.typ
     dy: lang-outset.y,
     language-block,
   )
-  let lb = measure(language-block)
+  let lb = measure(
+    language-block,
+  )
 
   let header = if (
     header
@@ -2189,37 +2411,43 @@ input_file: tests/fixtures/packages/codly.typ
       __codly-args
         .header-cell-args
         .type_check
-    )(if "header-cell-args"
-      in extra {
-      extra.header-cell-args
-    } else {
-      state(
-        "codly-header-cell-args",
-        __codly-args
-          .header-cell-args
-          .default,
-      ).get()
-    })
+    )(
+      if "header-cell-args"
+        in extra {
+        extra.header-cell-args
+      } else {
+        state(
+          "codly-header-cell-args",
+          __codly-args
+            .header-cell-args
+            .default,
+        ).get()
+      },
+    )
     let transform = (
       __codly-args
         .header-transform
         .type_check
-    )(if "header-transform"
-      in extra {
-      extra.header-transform
-    } else {
-      state(
-        "codly-header-transform",
-        __codly-args
-          .header-transform
-          .default,
-      ).get()
-    })
+    )(
+      if "header-transform"
+        in extra {
+        extra.header-transform
+      } else {
+        state(
+          "codly-header-transform",
+          __codly-args
+            .header-transform
+            .default,
+        ).get()
+      },
+    )
     (
       grid.header(
         repeat: header-repeat,
         grid.cell(
-          transform(header)
+          transform(
+            header,
+          )
             + language-block-final,
           colspan: 2,
           ..header-args,
@@ -2262,7 +2490,9 @@ input_file: tests/fixtures/packages/codly.typ
           > current-annot.end
     ) {
       current-annot = none
-      _ = annotations.remove(0)
+      _ = annotations.remove(
+        0,
+      )
     }
 
     // Annotation printing
@@ -2281,7 +2511,9 @@ input_file: tests/fixtures/packages/codly.typ
               + 1
           )
       )
-      let num = annotation-format(annots)
+      let num = annotation-format(
+        annots,
+      )
       let label = if (
         "label"
           in current-annot
@@ -2303,8 +2535,12 @@ input_file: tests/fixtures/packages/codly.typ
           hide[#figure(
               kind: "codly-referencer",
               supplement: none,
-            )[#box(referenced)#box(
-                str(block-label),
+            )[#box(
+                referenced,
+              )#box(
+                str(
+                  block-label,
+                ),
               )]#current-annot.label],
         )
       } else {
@@ -2347,13 +2583,23 @@ input_file: tests/fixtures/packages/codly.typ
       skip
         != none
         and i
-          == skip.at(0)
+          == skip.at(
+            0,
+          )
     ) {
-      items.push(skip-number)
-      items.push(skip-line)
+      items.push(
+        skip-number,
+      )
+      items.push(
+        skip-line,
+      )
       // Advance the offset.
-      offset += skip.at(1)
-      _ = skips.remove(0)
+      offset += skip.at(
+        1,
+      )
+      _ = skips.remove(
+        0,
+      )
     }
 
     if not in_range(
@@ -2449,7 +2695,9 @@ input_file: tests/fixtures/packages/codly.typ
         header
           != none
       ) {
-        items.push(l)
+        items.push(
+          l,
+        )
       } else {
         items.push(
           grid(
@@ -2472,32 +2720,36 @@ input_file: tests/fixtures/packages/codly.typ
     __codly-args
       .footer
       .type_check
-  )(if "footer"
-    in extra {
-    extra.footer
-  } else {
-    state(
-      "codly-footer",
-      __codly-args
-        .footer
-        .default,
-    ).get()
-  })
+  )(
+    if "footer"
+      in extra {
+      extra.footer
+    } else {
+      state(
+        "codly-footer",
+        __codly-args
+          .footer
+          .default,
+      ).get()
+    },
+  )
   let footer-repeat = (
     __codly-args
       .footer-repeat
       .type_check
-  )(if "footer-repeat"
-    in extra {
-    extra.footer-repeat
-  } else {
-    state(
-      "codly-footer-repeat",
-      __codly-args
-        .footer-repeat
-        .default,
-    ).get()
-  })
+  )(
+    if "footer-repeat"
+      in extra {
+      extra.footer-repeat
+    } else {
+      state(
+        "codly-footer-repeat",
+        __codly-args
+          .footer-repeat
+          .default,
+      ).get()
+    },
+  )
   let footer = if (
     footer
       != none
@@ -2506,37 +2758,43 @@ input_file: tests/fixtures/packages/codly.typ
       __codly-args
         .footer-cell-args
         .type_check
-    )(if "footer-cell-args"
-      in extra {
-      extra.footer-cell-args
-    } else {
-      state(
-        "codly-footer-cell-args",
-        __codly-args
-          .footer-cell-args
-          .default,
-      ).get()
-    })
+    )(
+      if "footer-cell-args"
+        in extra {
+        extra.footer-cell-args
+      } else {
+        state(
+          "codly-footer-cell-args",
+          __codly-args
+            .footer-cell-args
+            .default,
+        ).get()
+      },
+    )
     let transform = (
       __codly-args
         .footer-transform
         .type_check
-    )(if "footer-transform"
-      in extra {
-      extra.footer-transform
-    } else {
-      state(
-        "codly-footer-transform",
-        __codly-args
-          .footer-transform
-          .default,
-      ).get()
-    })
+    )(
+      if "footer-transform"
+        in extra {
+        extra.footer-transform
+      } else {
+        state(
+          "codly-footer-transform",
+          __codly-args
+            .footer-transform
+            .default,
+        ).get()
+      },
+    )
     (
       grid.footer(
         repeat: footer-repeat,
         grid.cell(
-          transform(footer),
+          transform(
+            footer,
+          ),
           colspan: 2,
           ..footer-args,
         ),
@@ -2549,13 +2807,17 @@ input_file: tests/fixtures/packages/codly.typ
   // If the fill or zebra color is a gradient, we will draw it on a separate layer.
   let is-complex-fill = (
     (
-      type(fill)
+      type(
+        fill,
+      )
         != color
         and fill
           != none
     )
       or (
-        type(zebra-color)
+        type(
+          zebra-color,
+        )
           != color
           and zebra-color
             != none
@@ -2614,7 +2876,9 @@ input_file: tests/fixtures/packages/codly.typ
             ..header,
             ..it
               .lines
-              .map(line => hide(line)),
+              .map(line => hide(
+                line,
+              )),
             ..footer,
           ),
         )
@@ -2736,21 +3000,33 @@ input_file: tests/fixtures/packages/codly.typ
     offset
       != 0
   ) {
-    state("codly-offset").update(0)
+    state(
+      "codly-offset",
+    ).update(
+      0,
+    )
   }
 
   if (
     range
       != none
   ) {
-    state("codly-range").update(none)
+    state(
+      "codly-range",
+    ).update(
+      none,
+    )
   }
 
   if (
     ranges
       != none
   ) {
-    state("codly-ranges").update(none)
+    state(
+      "codly-ranges",
+    ).update(
+      none,
+    )
   }
 
   if (
@@ -2759,35 +3035,51 @@ input_file: tests/fixtures/packages/codly.typ
       and skips
         != ()
   ) {
-    state("codly-skips").update(())
+    state(
+      "codly-skips",
+    ).update(())
   }
 
   if has-annotations {
-    state("codly-annotations").update(())
+    state(
+      "codly-annotations",
+    ).update(())
   }
 
   if (
     header
       != ()
   ) {
-    state("codly-header").update(none)
+    state(
+      "codly-header",
+    ).update(
+      none,
+    )
   }
 
   if (
     footer
       != ()
   ) {
-    state("codly-footer").update(none)
+    state(
+      "codly-footer",
+    ).update(
+      none,
+    )
   }
 
-  let highlights = state("codly-highlights").get()
+  let highlights = state(
+    "codly-highlights",
+  ).get()
   if (
     highlights
       != none
       and highlights
         != ()
   ) {
-    state("codly-highlights").update(())
+    state(
+      "codly-highlights",
+    ).update(())
   }
 }
 
@@ -2797,11 +3089,15 @@ input_file: tests/fixtures/packages/codly.typ
   let num = heading
     .body
     .children
-    .at(0)
+    .at(
+      0,
+    )
   let lbl = heading
     .body
     .children
-    .at(1)
+    .at(
+      1,
+    )
   (
     num.body,
     label(
@@ -2832,17 +3128,19 @@ input_file: tests/fixtures/packages/codly.typ
       __codly-args
         .reference-sep
         .type_check
-    )(if "reference-sep"
-      in extra {
-      extra.reference-sep
-    } else {
-      state(
-        "codly-reference-sep",
-        __codly-args
-          .reference-sep
-          .default,
-      ).get()
-    })
+    )(
+      if "reference-sep"
+        in extra {
+        extra.reference-sep
+      } else {
+        state(
+          "codly-reference-sep",
+          __codly-args
+            .reference-sep
+            .default,
+        ).get()
+      },
+    )
     let (
       tag,
       label,
@@ -2852,7 +3150,9 @@ input_file: tests/fixtures/packages/codly.typ
     link(
       it.target,
       (
-        ref(label),
+        ref(
+          label,
+        ),
         sep,
         tag,
       ).join(),
@@ -2873,17 +3173,19 @@ input_file: tests/fixtures/packages/codly.typ
       __codly-args
         .reference-sep
         .type_check
-    )(if "reference-sep"
-      in extra {
-      extra.reference-sep
-    } else {
-      state(
-        "codly-reference-sep",
-        __codly-args
-          .reference-sep
-          .default,
-      ).get()
-    })
+    )(
+      if "reference-sep"
+        in extra {
+        extra.reference-sep
+      } else {
+        state(
+          "codly-reference-sep",
+          __codly-args
+            .reference-sep
+            .default,
+        ).get()
+      },
+    )
     let (
       num,
       label,
@@ -2893,7 +3195,9 @@ input_file: tests/fixtures/packages/codly.typ
     link(
       it.target,
       (
-        ref(label),
+        ref(
+          label,
+        ),
         sep,
         num,
       ).join(),
@@ -2912,7 +3216,9 @@ input_file: tests/fixtures/packages/codly.typ
   ) {
     let segments = str(
       it.target,
-    ).split(":")
+    ).split(
+      ":",
+    )
     assert(
       segments.len()
         > 1,
@@ -2924,45 +3230,53 @@ input_file: tests/fixtures/packages/codly.typ
           0,
           -1,
         )
-        .join(":"),
+        .join(
+          ":",
+        ),
     )
 
     let sep = (
       __codly-args
         .reference-sep
         .type_check
-    )(if "reference-sep"
-      in extra {
-      extra.reference-sep
-    } else {
-      state(
-        "codly-reference-sep",
-        __codly-args
-          .reference-sep
-          .default,
-      ).get()
-    })
+    )(
+      if "reference-sep"
+        in extra {
+        extra.reference-sep
+      } else {
+        state(
+          "codly-reference-sep",
+          __codly-args
+            .reference-sep
+            .default,
+        ).get()
+      },
+    )
 
     let reference-number-format = (
       __codly-args
         .reference-number-format
         .type_check
-    )(if "reference-number-format"
-      in extra {
-      extra.reference-number-format
-    } else {
-      state(
-        "codly-reference-number-format",
-        __codly-args
-          .reference-number-format
-          .default,
-      ).get()
-    })
+    )(
+      if "reference-number-format"
+        in extra {
+        extra.reference-number-format
+      } else {
+        state(
+          "codly-reference-number-format",
+          __codly-args
+            .reference-number-format
+            .default,
+        ).get()
+      },
+    )
 
     link(
       it.target,
       (
-        ref(lab),
+        ref(
+          lab,
+        ),
         sep,
         reference-number-format(
           it
@@ -3005,10 +3319,14 @@ input_file: tests/fixtures/packages/codly.typ
 
   // Levels chosen randomly.
   let level-highlight = 39340
-  show ref: it => __codly-ref(it)
+  show ref: it => __codly-ref(
+    it,
+  )
   show raw.where(
     block: true,
-  ): it => __codly-raw(it)
+  ): it => __codly-raw(
+    it,
+  )
 
   body
 }
@@ -3038,7 +3356,9 @@ input_file: tests/fixtures/packages/codly.typ
   nested: false,
 ) = {
   assert(
-    type(nested)
+    type(
+      nested,
+    )
       == bool,
     message: "local: nested must be a boolean",
   )
@@ -3094,11 +3414,19 @@ input_file: tests/fixtures/packages/codly.typ
       }
 
       body
-      state("codly-extra-args").update(current)
+      state(
+        "codly-extra-args",
+      ).update(
+        current,
+      )
     }
   } else {
     let extra = args.named()
-    state("codly-extra-args").update(extra)
+    state(
+      "codly-extra-args",
+    ).update(
+      extra,
+    )
     show ref: it => __codly-ref(
       it,
       extra: args,
@@ -3129,7 +3457,9 @@ input_file: tests/fixtures/packages/codly.typ
       }
     }
     body
-    state("codly-extra-args").update((:))
+    state(
+      "codly-extra-args",
+    ).update((:))
   }
 }
 
@@ -3145,8 +3475,12 @@ input_file: tests/fixtures/packages/codly.typ
       inset: 0pt,
       outset: 0pt,
     )
-      + h(0.2em),
-    color: rgb("#239DAD"),
+      + h(
+        0.2em,
+      ),
+    color: rgb(
+      "#239DAD",
+    ),
   ),
   typc: (
     name: "Typst code",
@@ -3159,7 +3493,11 @@ input_file: tests/fixtures/packages/codly.typ
       inset: 0pt,
       outset: 0pt,
     )
-      + h(0.2em),
-    color: rgb("#239DAD"),
+      + h(
+        0.2em,
+      ),
+    color: rgb(
+      "#239DAD",
+    ),
   ),
 )

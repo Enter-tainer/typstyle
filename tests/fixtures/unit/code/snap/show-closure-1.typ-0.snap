@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/show-closure-1.typ
-snapshot_kind: text
 ---
 #let project(
   title: "",
@@ -9,7 +8,9 @@ snapshot_kind: text
   show heading: it => box(
     width: 100%,
   )[
-    #v(0.50em)
+    #v(
+      0.50em,
+    )
     #set text(
       font: heading-font,
     )
@@ -17,9 +18,13 @@ snapshot_kind: text
       it.numbering
         != none
     ) {
-      counter(heading).display()
+      counter(
+        heading,
+      ).display()
     }
-    #h(0.75em)
+    #h(
+      0.75em,
+    )
     #it.body
   ]
 }

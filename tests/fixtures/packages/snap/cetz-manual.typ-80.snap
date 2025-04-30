@@ -26,11 +26,9 @@ input_file: tests/fixtures/packages/cetz-manual.typ
 
 #set terms(indent: 1em)
 #set par(justify: true)
-#set heading(
-  numbering: (..num) => if num.pos().len() < 4 {
-    numbering("1.1", ..num)
-  },
-)
+#set heading(numbering: (..num) => if num.pos().len() < 4 {
+  numbering("1.1", ..num)
+})
 #show link: set text(blue)
 
 // Outline
@@ -862,14 +860,9 @@ plot.plot(
 ==== Styling
 *Root:* `legend`
 ===== Keys
-#doc-style.show-parameter-block(
-  "orientation",
-  "direction",
-  default: ttb,
-  [
-    The direction the legend items get laid out to.
-  ],
-)
+#doc-style.show-parameter-block("orientation", "direction", default: ttb, [
+  The direction the legend items get laid out to.
+])
 #doc-style.show-parameter-block(
   "default-position",
   ("string", "coordinate"),
@@ -878,14 +871,9 @@ plot.plot(
     The default position the legend gets placed at.
   ],
 )
-#doc-style.show-parameter-block(
-  "layer",
-  "number",
-  default: 1,
-  [
-    The layer index the legend gets drawn at, see on-layer.
-  ],
-)
+#doc-style.show-parameter-block("layer", "number", default: 1, [
+  The layer index the legend gets drawn at, see on-layer.
+])
 #doc-style.show-parameter-block(
   "fill",
   "paint",
@@ -894,14 +882,9 @@ plot.plot(
     The legends frame background color.
   ],
 )
-#doc-style.show-parameter-block(
-  "stroke",
-  "stroke",
-  default: black,
-  [
-    The legends frame stroke style.
-  ],
-)
+#doc-style.show-parameter-block("stroke", "stroke", default: black, [
+  The legends frame stroke style.
+])
 #doc-style.show-parameter-block(
   "padding",
   "float",
@@ -910,30 +893,15 @@ plot.plot(
     The legends frame padding, that is the distance added between its items and its frame.
   ],
 )
-#doc-style.show-parameter-block(
-  "offset",
-  "tuple",
-  default: (0, 0),
-  [
-    An offset tuple (x and y coordinates) to add to the legends position.
-  ],
-)
-#doc-style.show-parameter-block(
-  "spacing",
-  "number",
-  default: .1,
-  [
-    The spacing between the legend position and its frame.
-  ],
-)
-#doc-style.show-parameter-block(
-  "item.spacing",
-  "number",
-  default: .05,
-  [
-    The spacing between two legend items in canvas units.
-  ],
-)
+#doc-style.show-parameter-block("offset", "tuple", default: (0, 0), [
+  An offset tuple (x and y coordinates) to add to the legends position.
+])
+#doc-style.show-parameter-block("spacing", "number", default: .1, [
+  The spacing between the legend position and its frame.
+])
+#doc-style.show-parameter-block("item.spacing", "number", default: .05, [
+  The spacing between two legend items in canvas units.
+])
 #doc-style.show-parameter-block(
   "item.preview.width",
   "number",
@@ -942,22 +910,12 @@ plot.plot(
     The width of a legend items preview picture, a small preview of the graph the legend item belongs to.
   ],
 )
-#doc-style.show-parameter-block(
-  "item.preview.height",
-  "number",
-  default: .3,
-  [
-    The height of a legend items preview picture.
-  ],
-)
-#doc-style.show-parameter-block(
-  "item.preview.margin",
-  "number",
-  default: .1,
-  [
-    Margin between the preview picture and the item label.
-  ],
-)
+#doc-style.show-parameter-block("item.preview.height", "number", default: .3, [
+  The height of a legend items preview picture.
+])
+#doc-style.show-parameter-block("item.preview.margin", "number", default: .1, [
+  Margin between the preview picture and the item label.
+])
 
 
 #doc-style.parse-show-module("/src/lib/plot/line.typ")
@@ -1112,41 +1070,35 @@ The palette library provides some predefined palettes.
 
 #let show-palette(p) = box({
   let p = p.with(stroke: true)
-  canvas(
-    length: 1em,
-    {
-      import cetz.draw: *
-      for i in range(0, p("len")) {
-        if calc.rem(i, 10) == 0 { move-to((rel: (0, -.5))) }
-        rect((), (rel: (1, .5)), name: "r", ..p(i))
-        move-to("r.south-east")
-      }
-    },
-  )
+  canvas(length: 1em, {
+    import cetz.draw: *
+    for i in range(0, p("len")) {
+      if calc.rem(i, 10) == 0 { move-to((rel: (0, -.5))) }
+      rect((), (rel: (1, .5)), name: "r", ..p(i))
+      move-to("r.south-east")
+    }
+  })
 })
 
 === List of predefined palettes
-#columns(
-  2,
-  [
-    - `gray` #show-palette(palette.gray)
-    - `red` #show-palette(palette.red)
-    - `orange` #show-palette(palette.orange)
-    - `light-green` #show-palette(palette.light-green)
-    - `dark-green` #show-palette(palette.dark-green)
-    - `turquoise` #show-palette(palette.turquoise)
-    - `cyan` #show-palette(palette.cyan)
-    - `blue` #show-palette(palette.blue)
-    - `indigo` #show-palette(palette.indigo)
-    - `purple` #show-palette(palette.purple)
-    - `magenta` #show-palette(palette.magenta)
-    - `pink` #show-palette(palette.pink)
-    - `rainbow` #show-palette(palette.rainbow)
-    - `tango-light` #show-palette(palette.tango-light)
-    - `tango` #show-palette(palette.tango)
-    - `tango-dark` #show-palette(palette.tango-dark)
-  ],
-)
+#columns(2, [
+  - `gray` #show-palette(palette.gray)
+  - `red` #show-palette(palette.red)
+  - `orange` #show-palette(palette.orange)
+  - `light-green` #show-palette(palette.light-green)
+  - `dark-green` #show-palette(palette.dark-green)
+  - `turquoise` #show-palette(palette.turquoise)
+  - `cyan` #show-palette(palette.cyan)
+  - `blue` #show-palette(palette.blue)
+  - `indigo` #show-palette(palette.indigo)
+  - `purple` #show-palette(palette.purple)
+  - `magenta` #show-palette(palette.magenta)
+  - `pink` #show-palette(palette.pink)
+  - `rainbow` #show-palette(palette.rainbow)
+  - `tango-light` #show-palette(palette.tango-light)
+  - `tango` #show-palette(palette.tango)
+  - `tango-dark` #show-palette(palette.tango-dark)
+])
 
 == Angle <angle>
 

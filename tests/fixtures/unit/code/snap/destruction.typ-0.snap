@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/destruction.typ
-snapshot_kind: text
 ---
 #let (
   n,
