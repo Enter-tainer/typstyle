@@ -46,4 +46,9 @@ impl Config {
         const CHAIN_WIDTH_RATIO: f32 = 0.6;
         (self.max_width as f32 * CHAIN_WIDTH_RATIO) as usize
     }
+
+    pub fn with_wrap_text(mut self, wrap_text: bool) -> Self {
+        self.wrap_text = wrap_text;
+        self
+    }
 }
