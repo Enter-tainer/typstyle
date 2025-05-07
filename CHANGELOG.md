@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.13.5 - [2025-05-07]
+
+- Bug fix: Typstyle previously will panic if there is only a space in math function call. Now it is fixed.
+- Bug fix: Typstyle previously will not converge if there are multiple newlines in a function call. Now it is fixed.
+
 ## v0.13.4 - [2025-04-30]
 
 - Feature: typstyle cli now enables import sorting by default. You can disable it with `--no-reorder-import-items` flag.
