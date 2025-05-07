@@ -511,7 +511,7 @@ impl<'a> ListStylist<'a> {
                             };
                             inner += body + follow + ln;
                         }
-                        Item::Linebreak(n) => inner += arena.line().repeat_n(n),
+                        Item::Linebreak(n) => inner += arena.line_().repeat_n(n),
                     }
                 }
                 if !sty.no_indent {
