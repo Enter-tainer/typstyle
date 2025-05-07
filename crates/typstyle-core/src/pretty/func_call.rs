@@ -180,14 +180,18 @@ impl<'a> PrettyPrinter<'a> {
                     }
                     !matches!(child.kind(), SyntaxKind::LeftParen | SyntaxKind::Space)
                 })
-                .unwrap_or(0);
+                .expect("invariant: args should have right paren");
             let j = children
                 .iter()
                 .rposition(|child| {
                     !matches!(child.kind(), SyntaxKind::RightParen | SyntaxKind::Space)
                 })
-                .unwrap_or(children.len().saturating_sub(1));
-            children[i..=j].iter()
+                .expect("invariant: args should have left paren");
+            if i > j {
+                children[0..0].iter()
+            } else {
+                children[i..=j].iter()
+            }
         };
 
         let mut peek_hashed_arg = false;
