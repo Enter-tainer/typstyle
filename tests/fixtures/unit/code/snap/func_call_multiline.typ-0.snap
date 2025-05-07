@@ -1,0 +1,10 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/func_call_multiline.typ
+---
+#set page(
+  paper: "a5",
+
+
+  flipped: true,
+)
