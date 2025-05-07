@@ -1,0 +1,5 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/space-in-fn-call.typ
+---
+$sin()$
