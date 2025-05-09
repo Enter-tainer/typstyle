@@ -138,7 +138,7 @@ impl<'a> PrettyPrinter<'a> {
         } else {
             self.arena.nil()
         };
-        let body = self.convert_flow_like_iter(ctx, inner_nodes.iter(), |ctx, node| {
+        let body = self.convert_flow_like_iter(ctx, inner_nodes.iter(), |ctx, node, _| {
             if let Some(math) = node.cast::<Math>() {
                 let ctx = ctx.aligned(if has_open_linebreak && has_close_space {
                     AlignMode::Inner
@@ -168,13 +168,24 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math_attach: MathAttach<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, math_attach.to_untyped(), |ctx, node| {
+        let mut peek_hashed_expr = false;
+        self.convert_flow_like(ctx, math_attach.to_untyped(), |ctx, node, state| {
+            let at_hashed_expr = peek_hashed_expr;
             if let Some(expr) = node.cast::<Expr>() {
+                peek_hashed_expr = state.at_hash;
                 FlowItem::tight(self.convert_expr(ctx, expr))
-            } else if node.kind() == SyntaxKind::Space {
-                FlowItem::none()
+            } else if node.kind() == SyntaxKind::Underscore {
+                peek_hashed_expr = false;
+                FlowItem::tight(if at_hashed_expr {
+                    self.convert_literal(" _")
+                } else {
+                    self.convert_literal("_")
+                })
+            } else if node.kind() == SyntaxKind::Hat {
+                peek_hashed_expr = false;
+                FlowItem::tight(self.convert_literal("^"))
             } else {
-                FlowItem::tight(self.convert_trivia_untyped(node))
+                FlowItem::none()
             }
         })
     }
@@ -192,7 +203,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math_frac: MathFrac<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, math_frac.to_untyped(), |ctx, node| {
+        self.convert_flow_like(ctx, math_frac.to_untyped(), |ctx, node, _| {
             if let Some(expr) = node.cast::<Expr>() {
                 FlowItem::spaced(self.convert_expr(ctx, expr))
             } else if node.kind() != SyntaxKind::Space {
@@ -208,7 +219,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         math_root: MathRoot<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, math_root.to_untyped(), |ctx, node| {
+        self.convert_flow_like(ctx, math_root.to_untyped(), |ctx, node, _| {
             if let Some(expr) = node.cast::<Expr>() {
                 FlowItem::tight(self.convert_expr(ctx, expr))
             } else if node.kind() == SyntaxKind::Space {
