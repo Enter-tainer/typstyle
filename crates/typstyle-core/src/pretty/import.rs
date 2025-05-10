@@ -36,7 +36,7 @@ impl<'a> PrettyPrinter<'a> {
             };
 
         // Convert the prefix section.
-        let prefix_doc = self.convert_flow_like_iter(ctx, prefix_part.iter(), |ctx, child| {
+        let prefix_doc = self.convert_flow_like_iter(ctx, prefix_part.iter(), |ctx, child, _| {
             match child.kind() {
                 SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(":")),
                 SyntaxKind::Star => FlowItem::spaced(self.arena.text("*")), // wildcard import
@@ -117,7 +117,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         import_item_path: ImportItemPath<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, import_item_path.to_untyped(), |_ctx, child| {
+        self.convert_flow_like(ctx, import_item_path.to_untyped(), |_ctx, child, _| {
             if child.kind() == SyntaxKind::Dot {
                 FlowItem::tight(self.arena.text("."))
             } else if let Some(ident) = child.cast() {
@@ -133,7 +133,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         import_item_renamed: RenamedImportItem<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, import_item_renamed.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, import_item_renamed.to_untyped(), |ctx, child, _| {
             if let Some(path) = child.cast() {
                 FlowItem::spaced(self.convert_import_item_path(ctx, path))
             } else if let Some(ident) = child.cast() {

@@ -11,7 +11,7 @@ use crate::ext::{BoolExt, StrExt};
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_named(&'a self, ctx: Context, named: Named<'a>) -> ArenaDoc<'a> {
         let mut seen_name = false;
-        self.convert_flow_like(ctx, named.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, named.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Colon {
                 FlowItem::tight_spaced(self.arena.text(":"))
             } else if let Some(expr) = child.cast() {
@@ -28,7 +28,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_keyed(&'a self, ctx: Context, keyed: Keyed<'a>) -> ArenaDoc<'a> {
         let mut seen_key = false;
-        self.convert_flow_like(ctx, keyed.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, keyed.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Colon {
                 FlowItem::tight_spaced(self.arena.text(":"))
             } else if let Some(expr) = child.cast() {
@@ -41,7 +41,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_spread(&'a self, ctx: Context, spread: Spread<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, spread.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, spread.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Dots {
                 FlowItem::spaced_tight(self.arena.text(".."))
             } else if let Some(expr) = child.cast() {
@@ -55,7 +55,7 @@ impl<'a> PrettyPrinter<'a> {
 
     pub(super) fn convert_unary(&'a self, ctx: Context, unary: Unary<'a>) -> ArenaDoc<'a> {
         let is_op_keyword = unary.op() == UnOp::Not;
-        self.convert_flow_like(ctx, unary.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, unary.to_untyped(), |ctx, child, _| {
             if UnOp::from_kind(child.kind()).is_some() {
                 FlowItem::spaced_tight(self.arena.text(child.text().as_str()))
             } else if let Some(expr) = child.cast() {
@@ -76,7 +76,7 @@ impl<'a> PrettyPrinter<'a> {
             return self
                 .parenthesize_if_necessary(ctx, |ctx| self.convert_binary_chain(ctx, binary));
         }
-        self.convert_flow_like(ctx, binary.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, binary.to_untyped(), |ctx, child, _| {
             if BinOp::from_kind(child.kind()).is_some() {
                 FlowItem::spaced(self.arena.text(child.text().as_str()))
             } else if let Some(expr) = child.cast() {
@@ -99,7 +99,7 @@ impl<'a> PrettyPrinter<'a> {
         } else {
             LookAhead::Params
         };
-        self.convert_flow_like(ctx, closure.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, closure.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Eq {
                 return FlowItem::spaced(self.arena.text("="));
             } else if child.kind() == SyntaxKind::Arrow {
@@ -140,7 +140,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         let_binding: LetBinding<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, let_binding.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, let_binding.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Eq {
                 FlowItem::spaced(self.arena.text("="))
             } else if let Some(pattern) = child.cast() {
@@ -157,7 +157,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         destruct_assign: DestructAssignment<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, destruct_assign.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, destruct_assign.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Eq {
                 FlowItem::spaced(self.arena.text("="))
             } else if let Some(pattern) = child.cast() {
@@ -203,7 +203,7 @@ impl<'a> PrettyPrinter<'a> {
             Body,
         }
         let mut look_ahead = LookAhead::Pattern;
-        self.convert_flow_like(ctx, for_loop.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, for_loop.to_untyped(), |ctx, child, _| {
             match look_ahead {
                 LookAhead::Pattern => {
                     if let Some(pattern) = child.cast() {
@@ -246,7 +246,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_set_rule(&'a self, ctx: Context, set_rule: SetRule<'a>) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, set_rule.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, set_rule.to_untyped(), |ctx, child, _| {
             if let Some(expr) = child.cast() {
                 // target or condition
                 FlowItem::spaced(self.convert_expr(ctx, expr))
@@ -264,7 +264,7 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         show_rule: ShowRule<'a>,
     ) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, show_rule.to_untyped(), |ctx, child| {
+        self.convert_flow_like(ctx, show_rule.to_untyped(), |ctx, child, _| {
             if child.kind() == SyntaxKind::Colon {
                 FlowItem::tight_spaced(self.arena.text(":"))
             } else if let Some(expr) = child.cast() {
@@ -281,7 +281,7 @@ impl<'a> PrettyPrinter<'a> {
         &'a self,
         ctx: Context,
         node: &'a SyntaxNode,
-        producer: impl FnMut(Context, &'a SyntaxNode) -> FlowItem<'a>,
+        producer: impl FnMut(Context, &'a SyntaxNode, &FlowState) -> FlowItem<'a>,
     ) -> ArenaDoc<'a> {
         self.convert_flow_like_iter(ctx, node.children(), producer)
     }
@@ -290,15 +290,17 @@ impl<'a> PrettyPrinter<'a> {
         &'a self,
         ctx: Context,
         children: impl Iterator<Item = &'a SyntaxNode>,
-        mut producer: impl FnMut(Context, &'a SyntaxNode) -> FlowItem<'a>,
+        mut producer: impl FnMut(Context, &'a SyntaxNode, &FlowState) -> FlowItem<'a>,
     ) -> ArenaDoc<'a> {
         let mut flow = FlowStylist::new(self);
         let mut peek_line_comment = false;
         let mut peek_hash = false;
         for child in children {
-            let at_line_comment = peek_line_comment;
+            let state = FlowState {
+                at_line_comment: peek_line_comment,
+                at_hash: peek_hash,
+            };
             peek_line_comment = false;
-            let at_hash = peek_hash;
             peek_hash = false;
             if child.kind().is_keyword()
                 && !matches!(child.kind(), SyntaxKind::None | SyntaxKind::Auto)
@@ -316,9 +318,9 @@ impl<'a> PrettyPrinter<'a> {
                 flow.push_doc(self.arena.text("#"), true, false);
                 peek_hash = true;
             } else {
-                let ctx = ctx.with_mode_if(Mode::Code, at_hash);
-                let item = producer(ctx, child); // the producer should know this linebreak
-                if at_line_comment
+                let ctx = ctx.with_mode_if(Mode::Code, state.at_hash);
+                let item = producer(ctx, child, &state); // the producer should know this linebreak
+                if state.at_line_comment
                     && child.kind() == SyntaxKind::Space
                     && child.text().has_linebreak()
                 {
@@ -334,7 +336,7 @@ impl<'a> PrettyPrinter<'a> {
 
     /// Convert nodes with only keywords, exprs (followed by space), and comments.
     pub(super) fn convert_expr_flow(&'a self, ctx: Context, node: &'a SyntaxNode) -> ArenaDoc<'a> {
-        self.convert_flow_like(ctx, node, |ctx, child| {
+        self.convert_flow_like(ctx, node, |ctx, child, _| {
             if let Some(expr) = child.cast() {
                 FlowItem::spaced(self.convert_expr(ctx, expr))
             } else {
@@ -342,6 +344,13 @@ impl<'a> PrettyPrinter<'a> {
             }
         })
     }
+}
+
+pub(super) struct FlowState {
+    /// The previous item was a line comment.
+    pub at_line_comment: bool,
+    /// The previous item was a hash.
+    pub at_hash: bool,
 }
 
 /// Returns whether a binary expression is chainable.

@@ -195,7 +195,7 @@ impl<'a> PrettyPrinter<'a> {
         };
 
         let mut peek_hashed_arg = false;
-        let inner = self.convert_flow_like_iter(ctx, children, |ctx, child| {
+        let inner = self.convert_flow_like_iter(ctx, children, |ctx, child, _| {
             let at_hashed_arg = peek_hashed_arg;
             let at_linebreak = peek_linebreak;
             peek_hashed_arg = false;
