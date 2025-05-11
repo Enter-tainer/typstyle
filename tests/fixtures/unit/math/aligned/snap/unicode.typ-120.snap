@@ -35,10 +35,10 @@ $
     α & β & γ,
     零 & 一 & 二,
     함 & 수 & ζ
-  )               & = mat(
-                      ℕ & ℤ,
-                      ℚ & ℝ
-                    )
+  ) & = mat(
+        ℕ & ℤ,
+        ℚ & ℝ
+      )
 $
 
 // Complex alignment with various Unicode symbols
