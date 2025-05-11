@@ -1,0 +1,12 @@
+/// typstyle: wrap_text
+
+#{
+  // Title row.
+  align(center)[
+    #block(text(weight: 700, 1.75em)[])
+    #v(4em, weak: true)
+    v#version #h(1.2cm) #datetime.today()
+    #block(link("link"))
+    #v(1.5em, weak: true)
+  ]
+}
