@@ -287,8 +287,8 @@ impl<'a> PrettyPrinter<'a> {
             let nodes = &line.nodes;
             let len = nodes.len();
             len > 0 && is_block_elem(nodes[0])
-                || len == 2 && nodes[0].kind() == SyntaxKind::Hash
                 || len == 1 && nodes[0].kind() != SyntaxKind::Text
+                || len == 2 && nodes[0].kind() == SyntaxKind::Hash
         }
 
         let mut doc = self.arena.nil();
@@ -323,7 +323,8 @@ impl<'a> PrettyPrinter<'a> {
             }
             if breaks == 1
                 && !nodes.last().is_some_and(|last| {
-                    last.kind() == SyntaxKind::LineComment || is_block_elem(last)
+                    is_block_elem(last)
+                        || matches!(last.kind(), SyntaxKind::LineComment | SyntaxKind::Label)
                 })
                 && !is_line_exclusive(line)
                 && !repr.lines.get(i + 1).is_some_and(is_line_exclusive)
