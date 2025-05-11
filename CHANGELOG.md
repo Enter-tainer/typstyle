@@ -1,4 +1,9 @@
 # Changelog
+## v0.13.6 - [2025-05-11]
+
+- Bug fix: #272. Previously, typstyle will remove the space between variable and underscore in math equations. $ #mysum _(i=0) $ for example, will be formatted as $ #mysum_(i=0) $. Now it is fixed.
+- Enhancement: #273. When formatting math equations with alignments and multiline cells, previous typstyle versions will introduce excessive spaces. Now it is fixed.
+- Enhancement: #280. When wrap text is enabled, previous typstyle will mess up the formatting of labels. Now it is fixed.
 
 ## v0.13.5 - [2025-05-07]
 
