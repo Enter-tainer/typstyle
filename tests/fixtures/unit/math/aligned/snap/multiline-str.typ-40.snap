@@ -20,9 +20,9 @@ $
 $
         #```rust fn``` & #```rust
                            struct
-                         ```      \
+                         ```     \
   #```rust   trait ``` & #```rust
-                         impl```  \
+                         impl``` \
 $
 
 $

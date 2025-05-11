@@ -160,14 +160,14 @@ impl<'a> PrettyPrinter<'a> {
                         }
                     };
 
-                    let cell_width = cell.width();
+                    let cell_width = cell.max_width();
                     let (padded_cell_doc, is_cur_empty) = match cell {
                         Cell::Empty => (pad(self.arena.nil(), 0), true),
                         Cell::SingleLine(line, width) => (pad(self.arena.text(line), width), false),
                         Cell::MultiLine(lines) => {
                             let padding_left = match alignment {
                                 Alignment::Left => 0,
-                                Alignment::Right => col_width - cell_width,
+                                Alignment::Right => col_width.saturating_sub(cell_width),
                             };
                             let indent = {
                                 let mut indent = col_widths_sum[j] + j + padding_left;
@@ -257,11 +257,20 @@ enum Cell {
 
 impl Cell {
     /// Return the maximum display width of this cell.
-    pub fn width(&self) -> usize {
+    pub fn max_width(&self) -> usize {
         match self {
             Cell::Empty => 0,
             Cell::SingleLine(_, width) => *width,
             Cell::MultiLine(lines) => lines.iter().map(|(_, width)| *width).max().unwrap_or(0),
+        }
+    }
+
+    /// Return the width of the last line in this cell.
+    pub fn width(&self) -> usize {
+        match self {
+            Cell::Empty => 0,
+            Cell::SingleLine(_, width) => *width,
+            Cell::MultiLine(lines) => lines.last().map(|(_, width)| *width).unwrap_or(0),
         }
     }
 }

@@ -1,0 +1,10 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/math/aligned/impression.typ
+---
+// DUMMY
+
+$
+  forall n in NN :
+  2 n & = a
+$

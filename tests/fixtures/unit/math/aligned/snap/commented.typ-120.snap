@@ -38,15 +38,15 @@ $
 $
   // Starting with a comment
   x & = y                     & // After first equation
-                                                        & = z // End of line comment
-                                                                                     \
+                                        & = z // End of line comment
+                                                \
   // Comment between lines
-    & = w /* Block comment */ &                 "where" & x > 0                      \
+    & = w /* Block comment */ & "where" & x > 0 \
   // Multiple comments
     & = v // Comment 1
       // Comment 2
-                                                                                     \
-    & = u                                                                            \ /* Nested /* comments */ here */
+                                                \
+    & = u                                       \ /* Nested /* comments */ here */
 $
 
 // Comments in matrix
@@ -65,12 +65,12 @@ $
     x & = y, // First case
     // Middle comment
     z & = w /* Second case */
-  )                           & = sum x // Right hand side
-                                                           \
+  ) & = sum x // Right hand side
+                             \
   // Line comment between rows
-                              & = product y /* Block
-                                            comment */     \
-                              & = z                        \ // Final result
+    & = product y /* Block
+                  comment */ \
+    & = z                    \ // Final result
 $
 
 // Mixed Unicode and comments
@@ -85,8 +85,8 @@ $
 $
   arrow(
     x & = y // Inside arrow
-                            \
-      & = z                  /* Still inside */
+            \
+      & = z  /* Still inside */
   )
 $
 
@@ -104,12 +104,12 @@ $
 // Line comments between alignment parts
 $
   x & = y // comment right after y
-                                   \
+        \
     & = // comment before z
       z // comment after z
-                                   \
+        \
     & = // lonely comment
-      w                            \
+      w \
 $
 
 // Comments breaking alignment parts
@@ -117,18 +117,18 @@ $
   g(x) & =
          // comment before expression
          y + 2 // after expression
-                                      \
+           \
        & =
          // comment before next line
-         z                            \ // end comment
+         z \ // end comment
 $
 
 // Comments in multi-column alignment
 $
   x & = y   & z // right side comment
-                                      \
+                \
     & = p x & q // another comment
               // comment between rows
-                                      \
-    & = r   &                       s \ // final row
+                \
+    & = r   & s \ // final row
 $
