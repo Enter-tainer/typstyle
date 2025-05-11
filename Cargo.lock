@@ -2174,7 +2174,7 @@ dependencies = [
 [[package]]
 name = "pretty"
 version = "0.12.4"
-source = "git+https://github.com/QuadnucYard/pretty.rs.git?rev=106ee15a0ea3ca4a8f501ab8235d7bbc48dfa92f#106ee15a0ea3ca4a8f501ab8235d7bbc48dfa92f"
+source = "git+https://github.com/QuadnucYard/pretty.rs.git?rev=3d1170ce33e96dd76c3c588a74b7dbd6e770d5c1#3d1170ce33e96dd76c3c588a74b7dbd6e770d5c1"
 dependencies = [
  "arrayvec 0.5.2",
  "typed-arena",
