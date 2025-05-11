@@ -3,11 +3,7 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{
-        doc_ext::{DocBuilderFlatten, DocExt},
-        style::FoldStyle,
-        ArenaDoc, Context, Mode, PrettyPrinter,
-    },
+    pretty::{style::FoldStyle, ArenaDoc, Context, Mode, PrettyPrinter},
 };
 
 pub struct ListStylist<'a> {

@@ -3,7 +3,6 @@ use smallvec::SmallVec;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
-    doc_ext::DocExt,
     layout::flow::FlowItem,
     util::{is_comment_node, is_only_one_and},
     ArenaDoc, Context, Mode, PrettyPrinter,
