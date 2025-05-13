@@ -14,7 +14,8 @@ Here's text with /* block-style comments */ mixed with *strong text* and $"math"
 don't interfere with text flow or // inline elements.
 
 Testing comments near special characters: a + b // comment after plus
-x - y /* comment after minus */ term / definition // comment after slash
+x - y /* comment after minus */
+term / definition // comment after slash
 heading = title // comment after equals
 
 A complex case mixing everything: *bold text* // comment after strong
