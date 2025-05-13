@@ -5,8 +5,33 @@ Some pieces should be exclusion except $"inline equation"$ and `raw`:
 $ "block equation" $
 #figure([Figures])
 #figure([Labeled figures]) <label>
-That's all!
+That's all! Wait, a linebreak \
+should be \ kept at the end
+\ of the line. \
+But \ / never \ = break \ + before \ - markers
+#[Never \ / Give \ = You \ + Up \
+]
 
 #let fig = (..) => []
 #fig("image1")[Caption] <label1>
 #fig("image2")[Caption] <label2>
+
+This is a code block: #{
+  // code block!
+}
+I don't want to eat the linebreak.
+A blocky node should not stick #[
+
+]
+the content after it.
+Not #if true { }
+Not #while false { }
+Not #for i in range(5) {}
+Not #context 1
+And block equations: $ eq $
+And
+also ``` block
+  raw ```
+but not ``` non-block raw ```
+End
+...
