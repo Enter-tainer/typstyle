@@ -154,11 +154,14 @@ fn check_png(
 
         // If the environment variable "TYPSTYLE_SAVE_DIFF" is set, save the differing PNGs.
         if let Some(save_path) = save_diff.as_ref() {
-            png_bf.save_png(save_path.join(format!("{}_{}.png", fix_name(before_name), i)))?;
-            png_af.save_png(save_path.join(format!("{}_{}.png", fix_name(after_name), i)))?;
+            std::fs::create_dir_all(save_path).ok();
+            let save_name_before = format!("{}_{}.png", fix_name(before_name), i);
+            let save_name_after = format!("{}_{}.png", fix_name(after_name), i);
+            png_bf.save_png(save_path.join(&save_name_before))?;
+            png_af.save_png(save_path.join(&save_name_after))?;
             sink.push(format!(
                 "The output are not consistent for page {}.\nSaved diff PNGs: `{}` and `{}`",
-                i, before_name, after_name
+                i, save_name_before, save_name_after
             ));
         } else {
             sink.push(format!("The output are not consistent for page {}.", i));
