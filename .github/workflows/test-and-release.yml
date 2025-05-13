@@ -78,11 +78,28 @@ jobs:
           python ./scripts/generate-imports.py
           typst compile output.typ
 
-      - name: Run Unit tests
+      - id: unit_tests
+        name: Run Unit tests
         continue-on-error: true
+        env:
+          TYPSTYLE_SAVE_DIFF: out
         run: cargo nextest run --workspace -E '!test([e2e])' --no-fail-fast
-      - name: Run E2E tests
+      - id: e2e_tests
+        name: Run E2E tests
+        continue-on-error: true
+        env:
+          TYPSTYLE_SAVE_DIFF: out
         run: cargo nextest run --workspace -E 'test([e2e])' --no-fail-fast
+      - name: Upload diff images
+        if: ${{ steps.unit_tests.outcome == 'failure' || steps.e2e_tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: typstyle-test-diffs
+          path: tests/out/**/*
+          retention-days: 1
+      - name: Fail if any test failed
+        if: ${{ steps.unit_tests.outcome == 'failure' || steps.e2e_tests.outcome == 'failure' }}
+        run: exit 1
 
   build:
     needs: [pre_build]
