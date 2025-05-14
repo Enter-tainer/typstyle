@@ -12,14 +12,15 @@ pub struct CliArguments {
     #[command(subcommand)]
     pub command: Option<Command>,
 
-    /// Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
+    /// List of files or directories to format [default: stdin]
     pub input: Vec<PathBuf>,
 
     /// Format the file in place
     #[arg(short, long, default_value_t = false, conflicts_with = "check")]
     pub inplace: bool,
 
-    /// Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required.
+    /// Run in 'check' mode. Exits with 0 if input is formatted correctly.
+    /// Exits with a non-zero status code if formatting is required.
     #[arg(long, default_value_t = false, global = true)]
     pub check: bool,
 
@@ -48,7 +49,7 @@ impl CliArguments {
 
 #[derive(Subcommand)]
 pub enum Command {
-    /// Format all files in-place in the given directory
+    /// (Deprecated) Format all files in-place in the given directory
     FormatAll {
         /// The directory to format. If not provided, the current directory is used
         directory: Option<PathBuf>,
@@ -66,12 +67,25 @@ pub enum Command {
 #[derive(Args)]
 pub struct StyleArgs {
     /// The column width of the output
-    #[arg(short, long, default_value_t = 80, global = true)]
-    pub column: usize,
+    #[arg(
+        short = 'l',
+        long,
+        visible_short_alias = 'c',
+        visible_alias = "column",
+        default_value_t = 80,
+        global = true
+    )]
+    pub line_width: usize,
 
     /// Spaces per level of indentation in the output
-    #[arg(short, long, default_value_t = 2, global = true)]
-    pub tab_width: usize,
+    #[arg(
+        short = 't',
+        long,
+        visible_alias = "tab-width",
+        default_value_t = 2,
+        global = true
+    )]
+    pub indent_width: usize,
 
     /// Whether not to reorder import items.
     #[arg(long, default_value_t = false, global = true)]
