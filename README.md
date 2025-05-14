@@ -40,50 +40,27 @@ Beautiful and reliable typst code formatter
 Usage: typstyle [OPTIONS] [INPUT]... [COMMAND]
 
 Commands:
-  format-all  Format all files in-place in the given directory
+  format-all  (Deprecated) Format all files in-place in the given directory
   help        Print this message or the help of the given subcommand(s)
 
 Arguments:
-  [INPUT]...  Path to the input files, if not provided, read from stdin. If multiple files are provided, they will be processed in order
+  [INPUT]...  List of files or directories to format [default: stdin]
 
 Options:
   -i, --inplace  Format the file in place
-      --check    Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required
+      --check    Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with a non-zero status code if formatting is required
   -h, --help     Print help
   -V, --version  Print version
 
 Format Configuration:
-  -c, --column <COLUMN>          The column width of the output [default: 80]
-  -t, --tab-width <TAB_WIDTH>    Spaces per level of indentation in the output [default: 2]
-      --no-reorder-import-items  Whether not to reorder import items
-      --wrap-text                Whether to wrap texts in the markup
+  -l, --line-width <LINE_WIDTH>      The column width of the output [default: 80] [aliases: column] [short aliases: c]
+  -t, --indent-width <INDENT_WIDTH>  Spaces per level of indentation in the output [default: 2] [aliases: tab-width]
+      --no-reorder-import-items      Whether not to reorder import items
+      --wrap-text                    Whether to wrap texts in the markup
 
 Debug Options:
   -a, --ast         Print the AST of the input file
   -p, --pretty-doc  Print the pretty document
-
-Log Levels:
-  -v, --verbose  Enable verbose logging
-  -q, --quiet    Print diagnostics, but nothing else
-```
-
-```txt
-Format all files in-place in the given directory
-
-Usage: typstyle format-all [OPTIONS] [DIRECTORY]
-
-Arguments:
-  [DIRECTORY]  The directory to format. If not provided, the current directory is used
-
-Options:
-      --check  Run in 'check' mode. Exits with 0 if input is formatted correctly. Exits with 1 if formatting is required
-  -h, --help   Print help
-
-Format Configuration:
-  -c, --column <COLUMN>          The column width of the output [default: 80]
-  -t, --tab-width <TAB_WIDTH>    Spaces per level of indentation in the output [default: 2]
-      --no-reorder-import-items  Whether not to reorder import items
-      --wrap-text                Whether to wrap texts in the markup
 
 Log Levels:
   -v, --verbose  Enable verbose logging

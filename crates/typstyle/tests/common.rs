@@ -79,6 +79,10 @@ impl Workspace {
         fs::read_to_string(p).unwrap()
     }
 
+    pub fn is_modified(&self, path: impl AsRef<Path>) -> bool {
+        !self.is_unmodified(path)
+    }
+
     pub fn is_unmodified(&self, path: impl AsRef<Path>) -> bool {
         let p = self.project_path().join(path.as_ref());
         if let Ok(time) = p.metadata().unwrap().modified() {

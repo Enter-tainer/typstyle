@@ -17,6 +17,7 @@ fn test_all_0() {
     Successfully formatted 2 files (0 unchanged) in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
@@ -40,6 +41,7 @@ fn test_all_1() {
     Successfully formatted 1 file (1 unchanged) in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.is_unmodified("a.typ"));
@@ -63,6 +65,7 @@ fn test_all_2() {
     Successfully formatted 0 file (2 unchanged) in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.is_unmodified("a.typ"));
@@ -84,10 +87,11 @@ fn test_all_0_check() {
     success: false
     exit_code: 1
     ----- stdout -----
-    Would reformat: [TEMP_PATH]/project/x/b.typ
+    Would reformat: x/b.typ
     1 file would be reformatted (0 already formatted), checked in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.all_unmodified());
@@ -105,10 +109,11 @@ fn test_all_1_check() {
     success: false
     exit_code: 1
     ----- stdout -----
-    Would reformat: [TEMP_PATH]/project/x/b.typ
+    Would reformat: x/b.typ
     1 file would be reformatted (1 already formatted), checked in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.all_unmodified());
@@ -129,6 +134,7 @@ fn test_all_2_check() {
     0 file would be reformatted (2 already formatted), checked in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.all_unmodified());
@@ -145,10 +151,11 @@ fn test_all_erroneous() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Successfully formatted 1 file (1 unchanged) in [DURATION]
+    Successfully formatted 1 file (2 unchanged) in [DURATION]
 
     ----- stderr -----
-    warn: Failed to format: [TEMP_PATH]/project/x/y/c.typ
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
+    warn: Failed to parse x/y/c.typ. The source is erroneous.
     ");
 
     assert!(space.is_unmodified("a.typ"));
@@ -167,11 +174,12 @@ fn test_all_erroneous_check() {
     success: false
     exit_code: 1
     ----- stdout -----
-    Would reformat: [TEMP_PATH]/project/x/b.typ
-    1 file would be reformatted (1 already formatted), checked in [DURATION]
+    Would reformat: x/b.typ
+    1 file would be reformatted (2 already formatted), checked in [DURATION]
 
     ----- stderr -----
-    warn: Failed to format: [TEMP_PATH]/project/x/y/c.typ
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
+    warn: Failed to parse x/y/c.typ. The source is erroneous.
     ");
 
     assert!(space.all_unmodified());
@@ -189,6 +197,7 @@ fn test_all_column() {
     Successfully formatted 1 file (0 unchanged) in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert_eq!(
@@ -216,5 +225,6 @@ fn test_dir_all_check() {
     1 file would be reformatted (0 already formatted), checked in [DURATION]
 
     ----- stderr -----
+    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 }

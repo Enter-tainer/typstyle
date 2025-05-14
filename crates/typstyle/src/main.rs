@@ -1,31 +1,38 @@
 mod cli;
 mod fmt;
+mod fs;
 mod logging;
 
-use std::process::{ExitCode, Termination};
+use std::{io::Write, path::PathBuf, process::ExitCode};
 
 use anyhow::Result;
 use clap::Parser;
-use fmt::{format_all, format_many, format_one, FormatStatus};
-use log::error;
+use colored::Colorize;
+use fmt::{format, format_stdin};
 
 use crate::cli::CliArguments;
 
-enum CliResults {
-    Good,
-    Bad,
+#[derive(Copy, Clone)]
+pub enum ExitStatus {
+    /// Execution was successful and there were no errors.
+    Success,
+    /// Execution was successful but there were errors.
+    Failure,
+    /// Execution failed.
+    Error,
 }
 
-impl Termination for CliResults {
-    fn report(self) -> ExitCode {
-        match self {
-            CliResults::Good => ExitCode::SUCCESS,
-            _ => ExitCode::FAILURE,
+impl From<ExitStatus> for ExitCode {
+    fn from(status: ExitStatus) -> Self {
+        match status {
+            ExitStatus::Success => ExitCode::from(0),
+            ExitStatus::Failure => ExitCode::from(1),
+            ExitStatus::Error => ExitCode::from(2),
         }
     }
 }
 
-fn main() -> CliResults {
+fn main() -> ExitCode {
     let args = CliArguments::parse();
     args.validate_input();
 
@@ -38,23 +45,29 @@ fn main() -> CliResults {
         log::LevelFilter::Info
     });
 
-    // Should put the formatter into check mode
-    let check = args.check;
     match execute(args) {
-        Ok(FormatStatus::Changed) if check => CliResults::Bad,
-        Ok(_) => CliResults::Good,
-        Err(e) => {
-            error!("{e}");
-            CliResults::Bad
+        Ok(code) => code.into(),
+        Err(err) => {
+            let mut stderr = std::io::stderr().lock();
+            for cause in err.chain() {
+                writeln!(stderr, "  {} {cause}", "Cause:".bold()).ok();
+            }
+            ExitStatus::Error.into()
         }
     }
 }
 
-fn execute(args: CliArguments) -> Result<FormatStatus> {
+fn execute(mut args: CliArguments) -> Result<ExitStatus> {
     if let Some(command) = &args.command {
         match command {
             cli::Command::FormatAll { directory } => {
-                return format_all(directory, &args);
+                log::warn!("format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.");
+                args.input
+                    .push(directory.clone().unwrap_or_else(|| PathBuf::from(".")));
+                if !args.check {
+                    args.inplace = true;
+                }
+                return format(&args);
             }
             #[cfg(feature = "completion")]
             cli::Command::Completions { shell } => {
@@ -67,14 +80,14 @@ fn execute(args: CliArguments) -> Result<FormatStatus> {
                     &mut std::io::stdout(),
                 );
 
-                return Ok(FormatStatus::Unchanged);
+                return Ok(ExitStatus::Success);
             }
         }
     }
 
     if args.input.is_empty() {
-        format_one(None, &args)
+        format_stdin(&args)
     } else {
-        format_many(&args.input, &args)
+        format(&args)
     }
 }

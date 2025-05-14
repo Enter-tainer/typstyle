@@ -31,19 +31,19 @@ impl Typstyle {
     }
 
     /// Format typst content.
-    pub fn format_content(self, content: impl Into<String>) -> Result<String, Error> {
+    pub fn format_content(&self, content: impl Into<String>) -> Result<String, Error> {
         // We should ensure that the source tree is spanned.
         self.format_source(&Source::detached(content.into()))
     }
 
     /// Format typst source.
-    pub fn format_source(self, source: &Source) -> Result<String, Error> {
+    pub fn format_source(&self, source: &Source) -> Result<String, Error> {
         self.format_source_inspect(source, |_| {})
     }
 
     /// Format typst source, and inspect the pretty document.
     pub fn format_source_inspect(
-        self,
+        &self,
         source: &Source,
         inspector: impl FnOnce(&ArenaDoc<'_>),
     ) -> Result<String, Error> {
