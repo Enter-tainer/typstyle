@@ -1,0 +1,185 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/packages/quill-gallery.typ
+---
+/// typstyle: wrap_text
+/*
+ * This test case is copied from [quill]
+ * Original source: [https://github.com/Mc-Zen/quill/blob/main/docs/guide/gallery.typ]
+ * Author: [Mc-Zen]
+ * License: [MIT]
+ *
+ * This file is used as test case only and only the import is changed from the original.
+ */
+
+#import "@preview/quill:0.7.0": *
+
+#set page(width: 18cm, height: auto, margin: 0mm)
+
+
+#let gallery = {
+  set raw(lang: "typc")
+  table(
+    align: center + horizon,
+    columns: (1fr, 1fr, 1.3fr, 1.1fr, 1fr, 1.48fr),
+    column-gutter: (0pt, 0pt, 2.5pt, 0pt, 0pt),
+    [Normal gate],
+    quantum-circuit(1, gate($H$), 1),
+    raw("gate($H$), $H$"),
+    [Round gate],
+    quantum-circuit(1, gate($X$, radius: 100%), 1),
+    raw("gate($X$, \nradius: 100%)"),
+
+    [D-shaped gate],
+    quantum-circuit(1, gate($Y$, radius: (right: 100%)), 1),
+    raw("gate($Y$, radius: \n(right: 100%))"),
+    [Meter],
+    quantum-circuit(1, meter(), 1),
+    raw("meter()"),
+
+    [Meter with \ label],
+    quantum-circuit(1, meter(label: $lr(|±〉)$), 1),
+    raw("meter(label: \n$lr(|±〉)$)"),
+    [Phase gate],
+    quantum-circuit(1, phase($α$), 1),
+    raw("phase($α$)"),
+
+    [Control],
+    quantum-circuit(1, ctrl(), 1),
+    raw("ctrl()"),
+    [Open control],
+    quantum-circuit(1, ctrl(open: true), 1),
+    raw("ctrl(open: true)"),
+
+    [Target],
+    quantum-circuit(1, targ(), 1),
+    raw("targ()"),
+    [Swap target],
+    quantum-circuit(1, swap(), 1),
+    raw("swap()"),
+
+    [Permutation \ gate],
+    quantum-circuit(1, permute(2, 0, 1), 1, [\ ], 3, [\ ], 3),
+    raw("permute(2,0,1)"),
+    [Multi-qubit \ gate],
+    quantum-circuit(1, mqgate($U$, n: 3), 1, [\ ], 3, [\ ], 3),
+    raw("mqgate($U$, n: 3)"),
+
+    [lstick],
+    quantum-circuit(lstick($|psi〉$), 2),
+    raw("lstick($|psi〉$)"),
+    [rstick],
+    quantum-circuit(2, rstick($|psi〉$)),
+    raw("rstick($|psi〉$)"),
+
+    [Multi-qubit \ lstick],
+    quantum-circuit(row-spacing: 10pt, lstick($|psi〉$, n: 2), 2, [\ ], 3),
+    raw("lstick($|psi〉$, \nn: 2)"),
+    [Multi-qubit \ rstick],
+    quantum-circuit(
+      row-spacing: 10pt,
+      2,
+      rstick($|psi〉$, n: 2, brace: "]"),
+      [\ ],
+      3,
+    ),
+    raw("rstick($|psi〉$, \nn: 2, brace: \"]\")"),
+
+    [midstick],
+    quantum-circuit(1, midstick("yeah"), 1),
+    raw("midstick(\"yeah\")"),
+    [Wire bundle],
+    quantum-circuit(1, nwire(5), 1),
+    raw("nwire(5)"),
+
+    [Controlled \ #smallcaps("z")-gate],
+    quantum-circuit(1, ctrl(1), 1, [\ ], 1, ctrl(), 1),
+    [#raw("ctrl(1)") \ + \ #raw("ctrl()")],
+    [Controlled \ #smallcaps("x")-gate],
+    quantum-circuit(1, ctrl(1), 1, [\ ], 1, targ(), 1),
+    [#raw("ctrl(1)") \ + \ #raw("targ()")],
+
+    [Swap \ gate],
+    quantum-circuit(1, swap(1), 1, [\ ], 1, swap(), 1),
+    [#raw("swap(1)") \ + \ #raw("swap()")],
+    [Controlled \ Hadamard],
+    quantum-circuit(1, mqgate($H$, target: 1), 1, [\ ], 1, ctrl(), 1),
+    [#raw("mqgate($H$,target:1)") \ + \ #raw("ctrl()")],
+
+    [Plain\ vertical\ wire],
+    quantum-circuit(1, ctrl(1, show-dot: false), 1, [\ ], 3),
+    raw("ctrl(1, show-dot: false)"),
+    [Meter to \ classical],
+    quantum-circuit(1, meter(target: 1), 1, [\ ], setwire(2), 1, ctrl(), 1),
+    [#raw("meter(target: 1)") \ + \ #raw("ctrl()")],
+
+    [Classical wire],
+    quantum-circuit(setwire(2), 3),
+    raw("setwire(2)"),
+    [Styled wire],
+    quantum-circuit(setwire(1, stroke: green), 3),
+    raw("setwire(1, stroke: green)"),
+
+    [Labels],
+    quantum-circuit(
+      scale: 100%,
+      1,
+      gate($Q$, label: (
+        (content: "b", pos: top),
+        (content: "b", pos: bottom),
+        (content: "a", pos: left + top),
+        (content: "c", pos: right + top, dy: 0pt, dx: 50%),
+      )),
+      1,
+    ),
+    [#set text(size: .6em);```typc
+      gate($Q$, label: (
+      (content: "b",pos:top),
+      (content:"b",pos:bottom),
+      ( content: "a",
+        pos: left + top ),
+      ( content: "c",
+        pos: right + top,
+        dy: 0pt, dx: 50% ),
+      ))
+      ```
+    ],
+    [Gate inputs \ and outputs],
+    quantum-circuit(
+      scale: 80%,
+      1,
+      mqgate(
+        $U$,
+        n: 3,
+        width: 5em,
+        inputs: (
+          (qubit: 0, n: 2, label: $x$),
+          (qubit: 2, label: $y$),
+        ),
+        outputs: (
+          (qubit: 0, n: 2, label: $x$),
+          (qubit: 2, label: $y ⊕ f(x)$),
+        ),
+      ),
+      1,
+      [\ ],
+      3,
+      [\ ],
+      3,
+    ),
+    [#set text(size: .6em);```typc
+      mqgate($U$, n: 3, width: 5em,
+        inputs: (
+          (qubit:0, n:2, label:$x$),
+          (qubit:2, label: $y$)
+        ),
+        outputs: (
+          (qubit:0, n:2, label:$x$),
+          (qubit:2, label:$y⊕f(x)$)
+        )
+      )```],
+  )
+}
+
+
+#rect(stroke: none, radius: 3pt, inset: (x: 6pt, y: 6pt), fill: white, gallery)
