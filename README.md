@@ -84,13 +84,13 @@ Log Levels:
 - Format multiple files in place:
 
   ```sh
-  typstyle -i file1.typ file2.typ file3.typ
+  typstyle -i file1.typ file2.typ dir/
   ```
 
-- Format all files in a directory. If the argument is not provided, it will recursively format all files in the current directory:
+- Format all files in a directory:
 
   ```sh
-  typstyle format-all dir
+  typstyle -i dir
   ```
 
 - Read from stdin and print the result to stdout:
