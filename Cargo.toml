@@ -4,7 +4,7 @@ members = ["crates/*", "tests"]
 default-members = ["crates/typstyle"]
 
 [workspace.package]
-version = "0.13.6"
+version = "0.13.7"
 rust-version = "1.83"
 edition = "2021"
 authors = ["Wenzhuo Liu"]
@@ -14,8 +14,8 @@ repository = "https://github.com/Enter-tainer/typstyle"
 homepage = "https://enter-tainer.github.io/typstyle/"
 
 [workspace.dependencies]
-typstyle-core = { path = "crates/typstyle-core", version = "0.13.6" }
-typstyle = { path = "crates/typstyle", version = "0.13.6" }
+typstyle-core = { path = "crates/typstyle-core", version = "0.13.7" }
+typstyle = { path = "crates/typstyle", version = "0.13.7" }
 typstyle-consistency = { path = "crates/typstyle-consistency" }
 
 # Used in core

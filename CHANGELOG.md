@@ -1,7 +1,16 @@
 # Changelog
+
+## v0.13.7 - [2025-05-15]
+
+- Cli: typstyle now supports formatting dirs natively. You can use `typstyle -i <dir>` to format all files in the directory. Given that, `typstyle format-all` is deprecated and will be removed in the future.
+- Cli: typstyle now uses `-l` or `--line-width` instead of `-c`/`--column` to specify the line width. The `-c`/`--column` option is deprecated and will be removed in the future.
+- Cli: typstyle now uses `--indent-width` instead of `--tab-width` to specify the indent width. The `--tab-width` option is deprecated and will be removed in the future. However, `-t` is still available.
+- Feature: when `--wrap-text` is enabled, typstyle will now keep the line breaks after backslashes in markup. Previously, it is not treated specially.
+- Feature: typstyle now keep spaces around fractions in math equations. Previously, it always added a space before and after the fraction.
+
 ## v0.13.6 - [2025-05-11]
 
-- Bug fix: #272. Previously, typstyle will remove the space between variable and underscore in math equations. $ #mysum _(i=0) $ for example, will be formatted as $ #mysum_(i=0) $. Now it is fixed.
+- Bug fix: #272. Previously, typstyle will remove the space between variable and underscore in math equations. `$ #mysum _(i=0) $` for example, will be formatted as `$ #mysum_(i=0) $`. Now it is fixed.
 - Enhancement: #273. When formatting math equations with alignments and multiline cells, previous typstyle versions will introduce excessive spaces. Now it is fixed.
 - Enhancement: #280. When wrap text is enabled, previous typstyle will mess up the formatting of labels. Now it is fixed.
 
