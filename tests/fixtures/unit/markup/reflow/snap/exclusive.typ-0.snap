@@ -60,6 +60,16 @@ markers
   Up
   \
 ]
+#(
+  [Man!\
+  ],
+  [\
+    What\
+    can\
+    I\
+    say\
+    ?],
+)
 
 #let fig = (
   ..,

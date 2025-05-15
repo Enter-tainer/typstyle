@@ -11,6 +11,7 @@ should be \ kept at the end
 But \ / never \ = break \ + before \ - markers
 #[Never \ / Give \ = You \ + Up \
 ]
+#([Man!\ ], [\ What\ can\ I\ say\ ?])
 
 #let fig = (..) => []
 #fig("image1")[Caption] <label1>

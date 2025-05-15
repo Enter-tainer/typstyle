@@ -284,14 +284,8 @@ impl<'a> PrettyPrinter<'a> {
 
         /// For space -> hard-line: \
         /// Prefers block equations exclusive to a single line.
-        fn prefer_break_before(node: &&SyntaxNode) -> bool {
+        fn prefer_exclusive(node: &&SyntaxNode) -> bool {
             is_block_equation(node)
-        }
-
-        /// For space -> soft-line: \
-        /// Prefers exclusive block equations and line breaks at the end of the line.
-        fn prefer_break_after(node: &&SyntaxNode) -> bool {
-            is_block_equation(node) || matches!(node.kind(), SyntaxKind::Linebreak)
         }
 
         /// For NOT hard-line -> soft-line: \
@@ -319,10 +313,10 @@ impl<'a> PrettyPrinter<'a> {
         }
 
         /// For NOT hard-line -> soft-line: \
-        /// Marks the line as exclusive (prevents soft breaks) when:
+        /// Keeps the line exclusive (prevents soft breaks) when:
         /// - It contains only one non-text node, or
         /// - It contains exactly two nodes where the first is a Hash, such as `#figure()`.
-        fn prefer_exclusive(line: &MarkupLine) -> bool {
+        fn preserve_exclusive(line: &MarkupLine) -> bool {
             let nodes = &line.nodes;
             let len = nodes.len();
             len == 1 && nodes[0].kind() != SyntaxKind::Text
@@ -338,8 +332,8 @@ impl<'a> PrettyPrinter<'a> {
                 doc += if node.kind() == SyntaxKind::Space {
                     if nodes.get(j + 1).is_some_and(cannot_break_before) {
                         self.arena.space()
-                    } else if nodes.get(j + 1).is_some_and(prefer_break_before)
-                        || nodes.get(j - 1).is_some_and(prefer_break_after)
+                    } else if nodes.get(j + 1).is_some_and(prefer_exclusive)
+                        || nodes.get(j - 1).is_some_and(prefer_exclusive)
                     {
                         self.arena.hardline()
                     } else {
@@ -362,8 +356,8 @@ impl<'a> PrettyPrinter<'a> {
                 && !nodes
                     .last()
                     .is_some_and(|last| should_break_after(last) || preserve_break_after(last))
-                && !prefer_exclusive(line)
-                && !prefer_exclusive(&repr.lines[i + 1])
+                && !preserve_exclusive(line)
+                && !preserve_exclusive(&repr.lines[i + 1])
             {
                 doc += self.arena.softline();
             } else if breaks > 0 {

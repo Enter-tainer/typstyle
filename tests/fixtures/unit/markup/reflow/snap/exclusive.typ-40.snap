@@ -11,13 +11,13 @@ $ "block equation" $
 #figure([Figures])
 #figure([Labeled figures]) <label>
 That's all! Wait, a linebreak \
-should be \
-kept at the end \
-of the line. \
+should be \ kept at the end \ of the
+line. \
 But \ / never \ = break \ + before \ -
 markers
 #[Never \ / Give \ = You \ + Up \
 ]
+#([Man!\ ], [\ What\ can\ I\ say\ ?])
 
 #let fig = (..) => []
 #fig("image1")[Caption] <label1>
