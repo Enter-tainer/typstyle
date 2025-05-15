@@ -20,7 +20,7 @@ Here is some normal text followed by an equation: $x^2 + y^2 = z^2$ and more tex
 This line contains *strong text* mixed with `raw code` and regular words.
 
 Let's add a complex equation:
-$ integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2 $
+$ integral_0^infinity e^(-x^2) dif x = sqrt(pi)/2 $
 surrounded by text.
 
 Testing _multiple_ `inline` $"elements"$ in a single line with various _spacing_ patterns.

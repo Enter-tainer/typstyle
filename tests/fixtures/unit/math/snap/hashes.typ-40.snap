@@ -11,12 +11,12 @@ input_file: tests/fixtures/unit/math/hashes.typ
 $#x + #y$
 $#x - #y$
 $#x * #y$
-$#x / #y$
+$#x/#y$
 $#x^#y$
 
 // 2. Functions and roots
 $abs(#x - #y)$
-$floor(#x / 2)$
+$floor(#x/2)$
 $ceil(#y / #x)$
 $√#x$
 $∛#x$
@@ -28,9 +28,9 @@ $sum_(i=#x)^#y i$
 $α_#x + β_#y$
 
 // 4. Complex expressions
-$((#x + 1) / (#y - 2))^2$
+$((#x + 1)/(#y - 2))^2$
 $sqrt(#x^2 + #y^2)$
-$#x / 2 + #y / 4$
+$#x/ 2 + #y /4$
 
 // 5. Function calls and evaluations
 $f(x) = #f(x)$
@@ -64,8 +64,8 @@ $
 // 8. Conditional expressions
 $
   cases(
-    #x / 2 "if" x < 0,
-    #y / 4 "if" x >= 0
+    #x/2 "if" x < 0,
+    #y/4 "if" x >= 0
   )
 $
 

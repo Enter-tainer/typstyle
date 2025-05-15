@@ -688,7 +688,7 @@ $ cosec x = 1/(sin x) $
 ```
 
 $
-  cosec x = 1 / (sin x)
+  cosec x = 1/(sin x)
 $
 
 = Other symbols
@@ -1198,7 +1198,7 @@ The last three here are display style.
     [`9.8 thin "m/s"^2` @tricky],
 
     [$
-        lim_(h->0) (f(x+h)-f(x)) / h
+        lim_(h->0) (f(x+h)-f(x))/h
       $],
     [
       ```
