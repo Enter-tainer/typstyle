@@ -2192,8 +2192,7 @@ dependencies = [
 [[package]]
 name = "pretty"
 version = "0.12.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac98773b7109bc75f475ab5a134c9b64b87e59d776d31098d8f346922396a477"
+source = "git+https://github.com/QuadnucYard/pretty.rs.git?rev=3d1170ce33e96dd76c3c588a74b7dbd6e770d5c1#3d1170ce33e96dd76c3c588a74b7dbd6e770d5c1"
 dependencies = [
  "arrayvec 0.5.2",
  "typed-arena",

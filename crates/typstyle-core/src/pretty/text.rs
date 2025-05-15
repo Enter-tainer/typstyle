@@ -1,7 +1,7 @@
 use pretty::{Arena, DocAllocator};
 use typst_syntax::ast::*;
 
-use super::{doc_ext::DocExt, ArenaDoc, PrettyPrinter};
+use super::{ArenaDoc, PrettyPrinter};
 use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {

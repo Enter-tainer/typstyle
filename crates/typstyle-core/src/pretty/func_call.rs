@@ -133,11 +133,7 @@ impl<'a> PrettyPrinter<'a> {
                         }
                     }
                     if is_combinable(expr) {
-                        fold_style = if arg_count == 1 && !matches!(expr, Expr::FuncCall(_)) {
-                            FoldStyle::Always
-                        } else {
-                            FoldStyle::Compact
-                        }
+                        fold_style = FoldStyle::Compact
                     }
                 }
                 fold_style

@@ -3,7 +3,7 @@ use typst_syntax::{ast::AstNode, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{doc_ext::DocExt, layout::flow::FlowStylist, ArenaDoc, Context, PrettyPrinter},
+    pretty::{layout::flow::FlowStylist, ArenaDoc, Context, PrettyPrinter},
 };
 
 #[derive(Debug)]

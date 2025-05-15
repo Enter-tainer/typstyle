@@ -3,11 +3,7 @@ use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{
-        doc_ext::{DocBuilderFlatten, DocExt},
-        style::FoldStyle,
-        ArenaDoc, Context, Mode, PrettyPrinter,
-    },
+    pretty::{style::FoldStyle, ArenaDoc, Context, Mode, PrettyPrinter},
 };
 
 pub struct ListStylist<'a> {
@@ -438,7 +434,7 @@ impl<'a> ListStylist<'a> {
                     };
                     let compact = last.clone();
                     let loose = (arena.line_() + last + sep.clone()).nest(2) + arena.line_();
-                    compact.union(loose)
+                    compact.quick_union(loose)
                 } else {
                     // NOTE: we can't pad here, since this can appear in inline chains.
                     let compact = arena.intersperse(
@@ -455,7 +451,7 @@ impl<'a> ListStylist<'a> {
                         + sep.clone()
                         + arena.line_())
                     .nest(2);
-                    compact.union(loose)
+                    compact.quick_union(loose)
                 };
                 enclose_fitted(inner)
             }

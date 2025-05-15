@@ -1,5 +1,4 @@
 pub mod context;
-pub mod doc_ext;
 pub mod style;
 
 mod code_chain;

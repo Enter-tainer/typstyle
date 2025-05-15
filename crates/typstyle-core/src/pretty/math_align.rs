@@ -3,7 +3,7 @@ use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 use unicode_width::UnicodeWidthStr;
 
-use super::{context::AlignMode, doc_ext::AllocExt, ArenaDoc, Context, PrettyPrinter};
+use super::{context::AlignMode, ArenaDoc, Context, PrettyPrinter};
 use crate::{ext::StrExt, AttrStore};
 
 impl<'a> PrettyPrinter<'a> {
