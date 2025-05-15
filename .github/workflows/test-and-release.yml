@@ -4,7 +4,7 @@ on:
     branches:
       - master
     tags:
-      - "*"
+      - "v*"
   pull_request:
     types: [opened, synchronize]
     branches:
@@ -80,26 +80,22 @@ jobs:
 
       - id: unit_tests
         name: Run Unit tests
-        continue-on-error: true
         env:
           TYPSTYLE_SAVE_DIFF: out
         run: cargo nextest run --workspace -E '!test([e2e])' --no-fail-fast
       - id: e2e_tests
         name: Run E2E tests
-        continue-on-error: true
+        if: ${{ success() || steps.unit_tests.outcome == 'failure' }}
         env:
           TYPSTYLE_SAVE_DIFF: out
         run: cargo nextest run --workspace -E 'test([e2e])' --no-fail-fast
       - name: Upload diff images
-        if: ${{ steps.unit_tests.outcome == 'failure' || steps.e2e_tests.outcome == 'failure' }}
+        if: ${{ failure() && (steps.unit_tests.outcome == 'failure' || steps.e2e_tests.outcome == 'failure') }}
         uses: actions/upload-artifact@v4
         with:
           name: typstyle-test-diffs
           path: tests/out/**/*
           retention-days: 1
-      - name: Fail if any test failed
-        if: ${{ steps.unit_tests.outcome == 'failure' || steps.e2e_tests.outcome == 'failure' }}
-        run: exit 1
 
   build:
     needs: [pre_build]
@@ -271,6 +267,7 @@ jobs:
       - name: rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Publish crate
+        if: ${{ !contains(github.ref, 'rc') }}
         run: |
           cargo publish -p typstyle-core --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
           cargo publish -p typstyle --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -279,7 +276,15 @@ jobs:
           path: artifacts
       - name: Display structure of downloaded files
         run: ls -R artifacts
-      - uses: ncipollo/release-action@v1
+      - name: Extract release notes
+        env:
+          # github.ref_name is just the tag (without the "refs/tags/" prefix)
+          VERSION: ${{ github.ref_name }}
+        run: |
+          # grab from "## v0.y.z[-suffix] – YYYY-MM-DD" until the next "## "  and drop the header
+          sed -En "/## ${VERSION}(-[[:alnum:]]+)? -/,/## /p" CHANGELOG.md | sed '1d;$d' > release_notes.md
+      - name: Create release
+        uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "artifacts/*/*"
@@ -288,4 +293,4 @@ jobs:
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
-          bodyFile: "CHANGELOG.md"
+          bodyFile: "release_notes.md"
