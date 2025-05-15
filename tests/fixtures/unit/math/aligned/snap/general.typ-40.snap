@@ -12,7 +12,7 @@ $
 $
   "text" & x^2 &sin(x)\
   vec(1, 2, 3)& integral_0^infinity & sum_(n=0)^infinity \
-  (1 / 2) & "mixed spacing"& f(x)
+  (1/2) & "mixed spacing"& f(x)
 $
 
 // Nested alignments and complex expressions
@@ -62,7 +62,7 @@ $
 // Merging short related equations
 $
   f(x) &= x^2 & g(x) &= 2x & h(x) &= sqrt(x) \
-  f'(x) &= 2x & g'(x) &= 2 & h'(x) &= 1 / (2sqrt(x))
+  f'(x) &= 2x & g'(x) &= 2 & h'(x) &= 1/(2sqrt(x))
 $
 
 // Mixed breaking and alignment patterns

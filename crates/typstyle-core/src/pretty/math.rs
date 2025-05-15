@@ -127,11 +127,7 @@ impl<'a> PrettyPrinter<'a> {
             if last.kind() == SyntaxKind::Space {
                 has_close_space = true;
                 inner_nodes = rest;
-                if last.text().has_linebreak() {
-                    self.arena.hardline()
-                } else {
-                    self.arena.space()
-                }
+                self.convert_space_untyped(last)
             } else {
                 self.arena.nil()
             }
@@ -148,11 +144,7 @@ impl<'a> PrettyPrinter<'a> {
                 FlowItem::tight(self.convert_math(ctx, math))
             } else if node.kind() == SyntaxKind::Space {
                 // We can not arbitrarily break line here, as it may become ugly.
-                FlowItem::tight(if node.text().has_linebreak() {
-                    self.arena.line()
-                } else {
-                    self.arena.space()
-                })
+                FlowItem::tight(self.convert_space_untyped(node))
             } else {
                 FlowItem::none()
             }
@@ -206,10 +198,10 @@ impl<'a> PrettyPrinter<'a> {
         self.convert_flow_like(ctx, math_frac.to_untyped(), |ctx, node, _| {
             if let Some(expr) = node.cast::<Expr>() {
                 FlowItem::spaced(self.convert_expr(ctx, expr))
-            } else if node.kind() != SyntaxKind::Space {
-                FlowItem::spaced(self.convert_trivia_untyped(node))
+            } else if let Some(space) = node.cast::<Space>() {
+                FlowItem::tight(self.convert_space(space))
             } else {
-                FlowItem::none()
+                FlowItem::tight(self.convert_trivia_untyped(node))
             }
         })
     }

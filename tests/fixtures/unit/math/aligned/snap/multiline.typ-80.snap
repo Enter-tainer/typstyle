@@ -14,10 +14,10 @@ $
 $
   f(x) & = integral_0^1
          f(t)
-         d t      \
+         d t    \
        & = sum_(n=0)^infinity
-         x^n / n! \
-       & = e^x    \
+         x^n/n! \
+       & = e^x  \
 $
 
 // Alignment points on separate lines
@@ -68,7 +68,7 @@ $
 // Mixed text and math columns
 $
   "Identity" & = & sum x_i & "where" & x_i =
-                                       1 / i +
-                                       1 / (i+1) \
-    "Result" & = &       y & "and"   &    y = pi \
+                                       1/i +
+                                       1/(i+1) \
+    "Result" & = &       y & "and"   &  y = pi \
 $

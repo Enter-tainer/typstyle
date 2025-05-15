@@ -1,5 +1,5 @@
 use pretty::{Arena, DocAllocator};
-use typst_syntax::ast::*;
+use typst_syntax::{ast::*, SyntaxNode};
 
 use super::{doc_ext::DocExt, ArenaDoc, PrettyPrinter};
 use crate::ext::StrExt;
@@ -14,8 +14,11 @@ impl<'a> PrettyPrinter<'a> {
         wrap_text(&self.arena, text.get())
     }
 
-    pub(super) fn convert_space(&'a self, space: Space<'a>) -> ArenaDoc<'a> {
-        let node = space.to_untyped();
+    pub(super) fn convert_space(&'a self, space: Space) -> ArenaDoc<'a> {
+        self.convert_space_untyped(space.to_untyped())
+    }
+
+    pub(super) fn convert_space_untyped(&'a self, node: &SyntaxNode) -> ArenaDoc<'a> {
         if node.text().has_linebreak() {
             self.arena.hardline()
         } else {
@@ -23,7 +26,7 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
-    pub(super) fn convert_parbreak(&'a self, parbreak: Parbreak<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_parbreak(&'a self, parbreak: Parbreak) -> ArenaDoc<'a> {
         let newline_count = parbreak.to_untyped().text().count_linebreaks();
         self.arena.hardline().repeat_n(newline_count)
     }

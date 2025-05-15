@@ -3,4 +3,4 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/math/multiline-inline-math.typ
 ---
 $a + b
-+d / e$
++d/e$

@@ -60,7 +60,7 @@ breaks. It also has*bold text*without proper spacing and_emphasized_content stuc
 
 $
   sum_(i=0)^n i =
-  (n(n+1)) / 2
+  (n(n+1))/2
 $
 
 #figure(

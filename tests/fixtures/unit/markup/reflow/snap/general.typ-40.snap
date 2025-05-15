@@ -33,7 +33,7 @@ with `raw code` and regular words.
 
 Let's add a complex equation:
 $
-  integral_0^infinity e^(-x^2) dif x = sqrt(pi) / 2
+  integral_0^infinity e^(-x^2) dif x = sqrt(pi)/2
 $
 surrounded by text.
 

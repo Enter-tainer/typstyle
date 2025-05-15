@@ -71,11 +71,7 @@ impl<'a> PrettyPrinter<'a> {
             } else if let Some(text) = child.cast::<Text>() {
                 doc += self.convert_text(text);
             } else if child.kind() == SyntaxKind::RawTrimmed {
-                doc += if child.text().has_linebreak() {
-                    self.arena.hardline()
-                } else {
-                    self.arena.space()
-                }
+                doc += self.convert_space_untyped(child);
             }
         }
         doc
