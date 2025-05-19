@@ -6,7 +6,7 @@ input_file: tests/fixtures/unit/math/aligned/unicode.typ
 $
   α &= β + γ &= δ \
   ε &= ζ \
-  η &= θ &= ι
+  η &= θ &= ι \
 $
 
 // Mixed Latin and Greek with operators

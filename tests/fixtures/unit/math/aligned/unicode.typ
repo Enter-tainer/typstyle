@@ -1,7 +1,7 @@
 // Non-ASCII variables and symbols
 $ α &= β + γ &= δ \
   ε &= ζ \
-  η &= θ &= ι $
+  η &= θ &= ι  \  $
 
 // Mixed Latin and Greek with operators
 $ x_α &= y_β + z_γ & "where" & α ∈ ℝ \

@@ -17,7 +17,7 @@ $
          d t    \
        & = sum_(n=0)^infinity
          x^n/n! \
-       & = e^x  \
+       & = e^x
 $
 
 // Alignment points on separate lines
@@ -39,7 +39,7 @@ $
         3) + (4 +
         5 + 6)      \
     & = sum_(i=1)^3 i +
-      sum_(i=4)^6 i \
+      sum_(i=4)^6 i
 $
 
 // Multiple columns with mixed single/multiline content
@@ -47,7 +47,7 @@ $
   x & = y + z & "where" & y = alpha +
                           beta +
                           gamma     \
-    & = w     &   "and" & z = theta \
+    & = w     &   "and" & z = theta
 $
 
 // Columns with different break patterns
@@ -56,7 +56,7 @@ $
          y_2 & = & z_1 +
                    z_2 +
                    z_3      \
-       & = w & = & "result" \
+       & = w & = & "result"
 $
 
 // Matrix-like alignment with breaks
@@ -66,7 +66,7 @@ $
                 c_13 \
   a_21 & a_22 +
          b_22 & a_23 \
-  a_31 & a_32 & a_33 \
+  a_31 & a_32 & a_33
 $
 
 // Mixed text and math columns

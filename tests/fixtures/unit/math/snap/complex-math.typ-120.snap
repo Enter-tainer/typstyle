@@ -8,5 +8,5 @@ $
                                           ]) / (omega'^2 - omega^2) dif omega' \
   Im[epsilon(omega) \/ epsilon.alt_0] = & sigma / (epsilon_0 omega) - (2 omega) / pi cal(P) integral_0^oo (omega' Re[
                                             epsilon(omega') \/ epsilon_0 - 1
-                                          ]) / (omega'^2 - omega^2) dif omega' \
+                                          ]) / (omega'^2 - omega^2) dif omega'
 $
