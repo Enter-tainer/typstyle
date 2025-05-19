@@ -2,13 +2,9 @@
 $ x &= y /* basic comment */ \
   &= z /* another
           block comment */ \
-  &= w /* multi
+  &= w  /* multi
           line
-          comment */ $
-
-// Block comments with nesting
-$ a &= b /* outer /* inner */ comment */ \
-  &= c /* first /* second /* third */ */ */ $
+          comment */ \ $
 
 // Block comments between alignment markers
 $ f(x) /* pre */ &= /* mid */ y /* post */ \

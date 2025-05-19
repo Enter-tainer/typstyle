@@ -20,10 +20,13 @@ impl<'a> PrettyPrinter<'a> {
             return None;
         }
         let ctx = ctx.aligned(AlignMode::Outer);
-        let aligned_elems = collect_aligned(math, &self.attr_store);
-        let aligned = self.render_aligned(ctx, aligned_elems)?;
+        let raw_aligned = collect_aligned(math, &self.attr_store);
+        let aligned = self.render_aligned(ctx, raw_aligned.rows)?;
 
-        let doc = self.print_aligned(aligned, ctx.align_mode == AlignMode::Outer);
+        let doc = self.print_aligned(
+            aligned,
+            ctx.align_mode == AlignMode::Outer && raw_aligned.has_trailing_linebreak,
+        );
         Some(doc)
     }
 
@@ -275,6 +278,11 @@ impl Cell {
     }
 }
 
+struct RawAligned<'a> {
+    rows: Vec<RawRow<'a>>,
+    has_trailing_linebreak: bool,
+}
+
 /// A raw row before rendering, coming from syntax nodes.
 enum RawRow<'a> {
     Cells(Vec<Vec<&'a SyntaxNode>>),
@@ -291,7 +299,7 @@ impl RawRow<'_> {
 }
 
 /// Collect math syntax nodes, split into lines/cells by align points and linebreaks.
-fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
+fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> RawAligned<'a> {
     // Helper to trim trailing space nodes from a cell
     fn trim_trailing_spaces(cell: &mut Vec<&SyntaxNode>) {
         while cell
@@ -326,14 +334,17 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
     };
 
     // First pass: split all children into lines (split at Linebreak)
-    let lines = {
+    let (lines, has_trailing_linebreak) = {
         let mut lines = flat
             .split(|n| n.kind() == SyntaxKind::Linebreak)
             .collect_vec();
-        if lines.last().is_some_and(|last| last.is_empty()) {
+        let has_trailing_linebreak = if lines.last().is_some_and(|last| last.is_empty()) {
             lines.pop();
-        }
-        lines
+            true
+        } else {
+            false
+        };
+        (lines, has_trailing_linebreak)
     };
 
     // Second pass: create rows; if a line starts with a line comment, create a Comment row.
@@ -360,5 +371,8 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> Vec<RawRow<'a>> {
         cells.push(current_cell);
         rows.push(RawRow::Cells(cells));
     }
-    rows
+    RawAligned {
+        rows,
+        has_trailing_linebreak,
+    }
 }

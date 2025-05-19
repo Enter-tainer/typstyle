@@ -1,7 +1,7 @@
 // Alignment with decorations
 $ arrow(x x &= y) \
   circle(a &= b b) \
-  hat(c &= d d d) $
+  hat(c &= d d d) \ $
 
 // Complex nested breaks
 $ mat(1,2,3; 4,5,6) & = mat(a,b; & c,d; \

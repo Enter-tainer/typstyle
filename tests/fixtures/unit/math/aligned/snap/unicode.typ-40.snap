@@ -12,7 +12,7 @@ $
 // Mixed Latin and Greek with operators
 $
   x_α & = y_β + z_γ & "where" & α ∈ ℝ \
-      & = w_δ       &   "and" & β ≥ 0 \
+      & = w_δ       &   "and" & β ≥ 0
 $
 
 // Chinese characters in equations
@@ -26,7 +26,7 @@ $
 $
   "関数" f(x) & = ア β & "かつ" & x ≥ 0 \
               & = イ γ                  \
-  "함수" g(x) & = 값   &   "및" & x ≤ 0 \
+  "함수" g(x) & = 값   &   "및" & x ≤ 0
 $
 
 // Mixed scripts in matrix
@@ -52,5 +52,5 @@ $
 $
   λ(x) & = μ_1 + ν_2 & "wenn" & x ∈ ℕ \
        & = ξ(x)      &   "或" & x ∈ ℚ \
-       & = π r²                       \
+       & = π r²
 $

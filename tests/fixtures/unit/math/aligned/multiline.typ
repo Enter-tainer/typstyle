@@ -3,7 +3,7 @@ $ x
 &= y + z \
     &= (a + b +
         c) \
-    &= w $
+    &= w \ $
 
 // Mixed indentation levels
 $ f(x) &= integral_0^1

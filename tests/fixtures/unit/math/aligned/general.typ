@@ -1,6 +1,6 @@
 $ 1 & 2  &3 \
 4&   5&6   \
-7 &8  &  9 $
+7 &8  &  9 \ $
 
 // Mixed content in cells
 $ "text" & x^2 &sin(x)\
@@ -10,7 +10,7 @@ vec(1,2,3)& integral_0^infinity & sum_(n=0)^infinity \
 // Nested alignments and complex expressions
 $ cases(1 & 2 & 3,
   4 & 5 & 6) & display(sum x) & integral_0^1 f(x) \
-vec(1&2&3,4&5&6) & cases(a&b,c&d) & display(product) $
+vec(1&2&3,4&5&6) & cases(a&b,c&d) & display(product) \ $
 
 // Really messy spacing and newlines
 $ 1&    2     &3\

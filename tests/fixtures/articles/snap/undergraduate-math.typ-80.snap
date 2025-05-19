@@ -579,7 +579,7 @@ Align equations using `&`
   [
     $
       nabla dot bold(D) & = rho \
-      nabla dot bold(B) & = 0   \
+      nabla dot bold(B) & = 0
     $
   ],
   ```

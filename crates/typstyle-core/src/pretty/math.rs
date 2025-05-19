@@ -15,6 +15,17 @@ use crate::ext::StrExt;
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_equation(&'a self, ctx: Context, equation: Equation<'a>) -> ArenaDoc<'a> {
+        fn has_trailing_linebreak(equation: Equation) -> bool {
+            (equation.to_untyped().children().nth_back(1))
+                .is_some_and(|it| it.kind() == SyntaxKind::Space)
+                && (equation.to_untyped().children().nth_back(2)).is_some_and(|it| {
+                    it.cast::<Math>().is_some_and(|math| {
+                        (math.to_untyped().children().last())
+                            .is_some_and(|it| it.kind() == SyntaxKind::Linebreak)
+                    })
+                })
+        }
+
         let ctx = ctx.with_mode(Mode::Math);
 
         let is_block = equation.block();
@@ -24,14 +35,13 @@ impl<'a> PrettyPrinter<'a> {
             if math.to_untyped().children().len() == 0 {
                 return Option::None;
             }
-            let has_trailing_linebreak = (math.exprs().last())
-                .is_some_and(|expr| matches!(expr, Expr::Linebreak(_)))
-                && (equation.to_untyped().children().nth_back(1))
-                    .is_some_and(|it| it.kind() == SyntaxKind::Space)
-                && (equation.to_untyped().children().nth_back(2))
-                    .is_some_and(|it| it.kind() == SyntaxKind::Math);
+            let ctx = if is_block {
+                ctx
+            } else {
+                ctx.aligned(AlignMode::Never)
+            };
             let body = self.convert_math(ctx, math);
-            let body = if !is_block && has_trailing_linebreak {
+            let body = if !is_block && has_trailing_linebreak(equation) {
                 body + self.arena.space()
             } else {
                 body
