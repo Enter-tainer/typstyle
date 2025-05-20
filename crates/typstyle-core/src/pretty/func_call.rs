@@ -119,20 +119,34 @@ impl<'a> PrettyPrinter<'a> {
             _ if ctx.break_suppressed => FoldStyle::Fit,
             _ => {
                 let mut fold_style = FoldStyle::Fit;
+                let mut has_initial_array = false;
+                let mut has_initial_dict = false;
                 for (i, arg) in get_parenthesized_args(args).enumerate() {
-                    let expr = match arg {
-                        Arg::Pos(p) => p,
-                        Arg::Named(n) => n.expr(),
-                        Arg::Spread(s) => s.expr(),
+                    let expr = {
+                        let mut expr = match arg {
+                            Arg::Pos(p) => p,
+                            Arg::Named(n) => n.expr(),
+                            Arg::Spread(s) => s.expr(),
+                        };
+                        while let Expr::Parenthesized(p) = expr {
+                            expr = p.expr();
+                        }
+                        expr
                     };
+
                     if i < arg_count - 1 {
+                        has_initial_array |= matches!(expr, Expr::Array(_));
+                        has_initial_dict |= matches!(expr, Expr::Dict(_));
                         if is_blocky(expr) {
                             break;
                         } else {
                             continue;
                         }
                     }
-                    if is_combinable(expr) {
+                    if is_combinable(expr)
+                        && !(has_initial_array && matches!(expr, Expr::Array(_))
+                            || has_initial_dict && matches!(expr, Expr::Dict(_)))
+                    {
                         fold_style = if arg_count == 1 && !matches!(expr, Expr::FuncCall(_)) {
                             FoldStyle::Always
                         } else {
