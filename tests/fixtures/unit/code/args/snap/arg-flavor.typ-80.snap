@@ -1,0 +1,15 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/args/arg-flavor.typ
+---
+#let my-f(arg1, arg2, args: none) = {
+  arg1 + arg2
+}
+
+#let my-f(
+  arg1,
+  arg2,
+  args: none,
+) = {
+  arg1 + arg2
+}

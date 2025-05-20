@@ -1,0 +1,9 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/args/flavor.typ
+---
+#table(
+  stroke: none,
+  [arg1],
+  [arg2]
+)

@@ -1,0 +1,958 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/args/compact-complex.typ
+---
+#let f(
+  ..args,
+) = {
+  for p in args.pos() {
+    [#p]
+    linebreak()
+  }
+  for (
+    k,
+    v,
+  ) in args.named() {
+    [#k: #v]
+    linebreak()
+  }
+}
+
+//==================================================
+// BASIC FUNCTION CALLS
+//==================================================
+
+// Simple mixed calls - last arg heavy
+#f(
+  xx: 1,
+  2,
+  3,
+  yyy: [
+    Multiple line
+    content in array
+  ],
+)
+
+#f(
+  "string",
+  aaa: (
+    1,
+    2,
+  ),
+  bbb: (
+    x: 1,
+    y: 2,
+  ),
+  {
+    let x = 1
+    let y = 2
+    (
+      x
+        + y
+    )
+  },
+)
+
+// Mixing positional and named arguments
+#f(
+  "pos1",
+  name1: [named1],
+  "pos2",
+  name2: [named2],
+  "pos3",
+)
+
+// Function calls with only named arguments
+#f(
+  last: "z",
+  first: "a",
+  middle: {
+    let x = 1
+    (
+      x
+        + 1
+    )
+  },
+)
+
+// Nested function calls with named arguments
+#f(
+  name1: block(
+    width: 100%,
+  )[Content],
+  name2: {
+    let x = 1
+    (
+      x
+        + 2
+    )
+  },
+  name3: grid(
+    columns: (
+      1fr,
+      1fr,
+    ),
+    [A],
+    [B],
+  ),
+)
+
+// Empty/sparse arguments with mixed content
+#f(
+  [],
+  (),
+  { },
+  block[],
+  grid(
+    columns: 2,
+    [],
+    [],
+  ),
+  [non-empty],
+)
+
+//==================================================
+// CONTENT BLOCKS AND MARKUP
+//==================================================
+
+// Content blocks with rich formatting
+#f(
+  true,
+  [short],
+  emph[markup],
+  [
+    First line
+    Second line with #text(blue)[colored] content
+    Third line with *emphasis*
+  ],
+)
+
+#f(
+  lorem(
+    10,
+  ),
+  text(
+    blue,
+  )[colored],
+  smallcaps[caps],
+  quote[
+    Block quote with
+    nested content including
+    #box(
+      width: 80%,
+    )[
+      constrained width content
+      that wraps naturally
+    ]
+  ],
+)
+
+// With repeated whitespace and line breaks
+#f(
+  [First with spaces],
+  [Second with
+
+    multiple
+
+    line breaks],
+  [Normal],
+)
+
+//==================================================
+// SIMILAR STRUCTURE GROUPS
+//==================================================
+
+// Similar sized arrays - all should stay on one line
+#f(
+  [short content],
+  [another content],
+  [more content],
+  [final content],
+)
+
+// Similar function calls - keep consistent
+#f(
+  circle(
+    radius: 1cm,
+  ),
+  rect(
+    width: 2cm,
+  ),
+  square(
+    size: 1cm,
+  ),
+  circle(
+    radius: 2cm,
+  ),
+)
+
+// Similar dictionary structures
+#f(
+  (
+    x: 1,
+    y: 2,
+  ),
+  (
+    a: 3,
+    b: 4,
+  ),
+  (
+    m: 5,
+    n: 6,
+  ),
+  (
+    p: 7,
+    q: 8,
+  ),
+)
+
+// Similar grid layouts
+#f(
+  grid(
+    columns: 2,
+    [A],
+    [B],
+  ),
+  grid(
+    columns: 2,
+    [C],
+    [D],
+  ),
+  grid(
+    columns: 2,
+    [E],
+    [F],
+  ),
+  grid(
+    columns: 2,
+    [G],
+    [H],
+  ),
+)
+
+// Similar code blocks
+#f(
+  {
+    let x = 1
+    (
+      x
+        + 1
+    )
+  },
+  {
+    let y = 2
+    (
+      y
+        + 2
+    )
+  },
+  {
+    let z = 3
+    (
+      z
+        + 3
+    )
+  },
+  {
+    let w = 4
+    (
+      w
+        + 4
+    )
+  },
+)
+
+// Similar markup structures
+#f(
+  text(
+    red,
+  )[colored],
+  text(
+    blue,
+  )[colored],
+  text(
+    green,
+  )[colored],
+  text(
+    purple,
+  )[colored],
+)
+
+// Similar nested function patterns
+#f(
+  f(
+    1,
+    [nested],
+    {
+      (
+        0
+          + 1
+      )
+    },
+  ),
+  f(
+    2,
+    [nested],
+    {
+      (
+        0
+          + 2
+      )
+    },
+  ),
+  f(
+    3,
+    [nested],
+    {
+      (
+        0
+          + 3
+      )
+    },
+  ),
+  f(
+    4,
+    [nested],
+    {
+      (
+        0
+          + 4
+      )
+    },
+  ),
+)
+
+// Similar tuple structures with content blocks
+#f(
+  (
+    [Block A],
+    1,
+    "first",
+  ),
+  (
+    [Block B],
+    2,
+    "second",
+  ),
+  (
+    [Block C],
+    3,
+    "third",
+  ),
+  (
+    [Block D],
+    4,
+    "fourth",
+  ),
+)
+
+//==================================================
+// NESTED STRUCTURES
+//==================================================
+
+// Nested arrays with mixed content
+#f(
+  (
+    [outer],
+    [[inner],([deepest],)],
+  ),
+  (
+    [level1],
+    (
+      [level2]
+    ),
+  ),
+  (
+    [shallow],
+  ),
+  (
+    [outer],
+    (
+      [inner1],
+      [inner2],
+      [
+        deep nested content
+        with multiple lines
+      ],
+    ),
+  ),
+)
+
+// Nested dictionaries
+#f(
+  (
+    outer: (
+      inner: (
+        deepest: 1,
+      ),
+    ),
+  ),
+  (
+    level1: (
+      level2: 2,
+    ),
+  ),
+  (
+    shallow: 3,
+  ),
+  (
+    complex: (
+      nested: (
+        dict: "value",
+        array: (
+          1,
+          2,
+          3,
+        ),
+      ),
+      blocks: [
+        Multiple line
+        content here
+      ],
+    ),
+  ),
+)
+
+// Mixed nesting with arrays, dicts, and blocks
+#f(
+  (
+    [nested array],
+    (
+      key: "dict",
+    ),
+  ),
+  (
+    (
+      with: [block content],
+    ),
+    (
+      [and array],
+    ),
+  ),
+  {
+    let x = (
+      [code],
+      (
+        with: "data",
+      ),
+    )
+    x
+  },
+  (
+    deep: [
+      Nested content with #emph[markup]
+      and (dictionary: "inside") array
+    ],
+    mixed: {
+      let data = (
+        x: 1,
+        y: 2,
+      )
+      let content = [Block content]
+      (
+        result: content,
+        data: data,
+      )
+    },
+  ),
+)
+
+//==================================================
+// ARGUMENT POSITION VARIATIONS
+//==================================================
+
+// Heavy argument in first position
+#f(
+  {
+    let complex = (
+      data: [Nested content],
+      style: (
+        color: blue,
+        size: 12pt,
+      ),
+      blocks: [Multiple #emph[formatted] lines],
+    )
+    complex.blocks
+  },
+  [simple text],
+  (
+    x: 1,
+    y: 2,
+  ),
+  "plain string",
+)
+
+// Heavy argument in second position
+#f(
+  1,
+  grid(
+    columns: (
+      1fr,
+      2fr,
+    ),
+    rows: auto,
+    [Complex cell with #box(width: 2cm)[
+        Nested content and
+        multiple lines
+      ]],
+    [Simple cell],
+
+    [Basic content],
+    text(
+      blue,
+    )[Colored],
+  ),
+  [basic array],
+  (
+    simple: "dict",
+  ),
+)
+
+// Heavy argument in third position
+#f(
+  "first",
+  (
+    x: 1,
+  ),
+  block[
+    Deep nesting example with
+    #stack(
+      dir: ttb,
+      spacing: 2em,
+      [First layer],
+      [Second with #emph[markup]],
+      box(
+        width: 80%,
+      )[
+        Constrained box content
+        spanning multiple lines
+      ],
+    )
+  ],
+  "last",
+)
+
+// Multiple heavy arguments mixed with light ones
+#f(
+  {
+    let x = grid(
+      columns: 2,
+      [A],
+      [B],
+    )
+    x
+  },
+  "light",
+  (
+    heavy: {
+      let data = (
+        1,
+        2,
+        3,
+      )
+      let text = [Complex]
+      (
+        result: text,
+        data: data,
+      )
+    },
+  ),
+  [simple],
+  block[
+    Another heavy item with
+    #box(
+      width: 3cm,
+    )[Boxed content]
+  ],
+  "end",
+)
+
+// Increasing complexity pattern
+#f(
+  "simple",
+  [slightly more complex],
+  block(
+    width: 80%,
+  )[even more complex],
+  grid(
+    columns: 3,
+    [A],
+    [B],
+    [C],
+
+    [D],
+    [E],
+    [F],
+  ),
+)
+
+// Heavy arguments with similar structures
+#f(
+  grid(
+    columns: 2,
+    [First complex grid],
+    [With content],
+  ),
+  "simple",
+  grid(
+    columns: 2,
+    [Second complex grid],
+    [More content],
+  ),
+)
+
+//==================================================
+// COMPLEX FUNCTION CALLS
+//==================================================
+
+// Complex function calls with nested structures
+#f(
+  f(
+    [A],
+    (
+      x: 1,
+    ),
+    [B],
+  ),
+  block[Content #f((width: 2cm))],
+  f(
+    (
+      dir: ltr,
+    ),
+    [1],
+    [2],
+  ),
+  grid(
+    columns: (
+      1fr,
+      2fr,
+    ),
+    rows: (
+      auto,
+      auto,
+    ),
+    [Cell 1],
+    block[Cell 2],
+
+    box(
+      width: 100%,
+    )[Cell 3],
+    stack[
+      Stacked
+      Content
+    ],
+  ),
+)
+
+// Complex layout with shapes and grids
+#f(
+  rect(
+    width: 2cm,
+  ),
+  circle(
+    radius: 1cm,
+  ),
+  square(
+    size: 1cm,
+  ),
+  [
+    Complex layout with
+    #grid(
+      columns: 2,
+      [A],
+      [B],
+
+      [C],
+      [D],
+    )
+  ],
+)
+
+// Nested function calls
+#f(
+  1,
+  f(
+    2,
+    3,
+  ),
+  f(
+    4,
+    5,
+  ),
+  f(
+    "nested",
+    "function",
+    "calls",
+    [with multiple
+      lines of content],
+  ),
+)
+
+// Mixed code and content structures
+#f(
+  {
+    let x = [content]
+    x
+  },
+  f({
+    let y = (
+      a: 1,
+    )
+    y
+  }),
+  f(
+    (
+      ax: 1,
+    ),
+    [text],
+  ),
+  {
+    let nested = f(
+      data: [Content],
+      style: (
+        size: 12pt,
+        color: blue,
+      ),
+      block: [
+        Formatted #emph[text]
+        with #strong[markup]
+      ],
+    )
+    nested
+  },
+)
+
+//==================================================
+// SPECIAL CONTENT
+//==================================================
+
+// Dictionary with multiple entries
+#f(
+  (
+    a: 1,
+  ),
+  (
+    b: 2,
+  ),
+  (
+    c: 3,
+  ),
+  (
+    very: "long",
+    dictionary: "with",
+    multiple: "entries",
+    that: "spans",
+    several: "lines",
+  ),
+)
+
+// Code blocks with loops
+#f(
+  [inline],
+  emph[markup],
+  text(
+    red,
+  )[colored],
+  {
+    let result = ""
+    for i in range(
+      5,
+    ) {
+      result += str(
+        i,
+      )
+    }
+    result
+  },
+)
+
+// Mixed alignment-sensitive content
+#f(
+  table(
+    columns: 2,
+    [A],
+    [B],
+
+    [C],
+    [D],
+  ),
+  $
+    sum_(i=0)^n x_i &= y \
+    x + y &= z
+  $,
+  align(
+    center,
+  )[
+    Centered content
+    with multiple lines
+  ],
+)
+
+// Containing comments
+#f(
+  // Comment before arg
+  {
+    // Inside code block
+    let x = 1
+    (
+      x
+        + 2
+    ) // Inline comment
+  },
+  [simple],
+  /* Block comment */
+  (
+    x: 1,
+  ),
+)
+
+// Arguments with raw strings
+#f(
+  `raw "string"`,
+  ```triple
+  backtick
+  content```,
+  "normal \"quoted\" string",
+)
+
+//==================================================
+// EXTRA PARENTHESES VARIATIONS
+//==================================================
+
+// Extra parentheses around arrays - last arg similar but without extra parens
+#f(
+  (
+    (
+      [first],
+      [array],
+      [with],
+      [parentheses],
+    )
+  ),
+  "middle",
+  (
+    [second],
+    [array],
+    [without],
+  ),
+)
+
+// Extra parentheses at different positions
+#f(
+  (
+    [normal],
+    [array],
+  ),
+  (
+    (
+      [extra],
+      [parentheses],
+      [array],
+    )
+  ),
+  (
+    [last],
+    [array],
+  ),
+)
+
+// Extra parentheses with mixed content types
+#f(
+  "string",
+  (
+    (
+      [nested],
+      [array],
+      [with],
+      [values],
+    )
+  ),
+  (
+    x: 1,
+    y: 2,
+  ),
+)
+
+// Multiple levels of extra parentheses
+#f(
+  (
+    (
+      [deeply],
+      [nested],
+    )
+  ),
+  text(
+    red,
+  )[colored],
+  (
+    [simple],
+  ),
+)
+
+// Extra parentheses in dictionaries - similar structure but different wrapping
+#f(
+  (
+    (
+      key: "value",
+    )
+  ),
+  "separator",
+  (
+    simple: "dict",
+  ),
+)
+
+// Mixed parens with similar content weight
+#f(
+  (
+    (
+      content: [Array with extra parentheses and
+        multiple lines of content],
+    )
+  ),
+  "simple string",
+  (
+    content: [Similar array without extra parentheses but
+      with multiple lines of content],
+  ),
+)
+
+// Nested structures with inconsistent parentheses
+#f(
+  (
+    (
+      (
+        "A"
+      ),
+      (
+        "B"
+      ),
+    )
+  ),
+  (
+    "C",
+  ),
+  (
+    (
+      "D"
+    ),
+    (
+      "E"
+    ),
+  ),
+)
+
+// Dictionary with extra parentheses and similar last argument
+#f(
+  (
+    (
+      key1: "value1",
+      key2: "value2",
+    )
+  ),
+  "middle",
+  (
+    key3: "value3",
+    key4: "value4",
+  ),
+)

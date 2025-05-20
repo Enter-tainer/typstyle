@@ -4016,14 +4016,16 @@ input_file: tests/fixtures/packages/touying/core.typ
       )
         + header
     )
-    set page(..(
-      self.page
-        + page-extra-args
-        + (
-          header: header,
-          footer: footer,
-        )
-    ))
+    set page(
+      ..(
+        self.page
+          + page-extra-args
+          + (
+            header: header,
+            footer: footer,
+          )
+      ),
+    )
     setting-with-auto-offset-for-heading(
       subslide-preamble(
         self,
@@ -4074,14 +4076,16 @@ input_file: tests/fixtures/packages/touying/core.typ
       )
       // update the counter in the first subslide only
       result.push({
-        set page(..(
-          self.page
-            + page-extra-args
-            + (
-              header: new-header,
-              footer: footer,
-            )
-        ))
+        set page(
+          ..(
+            self.page
+              + page-extra-args
+              + (
+                header: new-header,
+                footer: footer,
+              )
+          ),
+        )
         setting-with-auto-offset-for-heading(
           subslide-preamble(
             self,

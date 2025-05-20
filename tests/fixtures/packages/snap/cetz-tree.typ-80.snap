@@ -98,10 +98,10 @@ input_file: tests/fixtures/packages/cetz-tree.typ
         draw.content((), [?], name: "content")
       }
       if draw-node == "rect" {
-        draw.rect((rel: (-.1, .1), to: "content.top-left"), (
-          rel: (.1, -.1),
-          to: "content.bottom-right",
-        ))
+        draw.rect(
+          (rel: (-.1, .1), to: "content.top-left"),
+          (rel: (.1, -.1), to: "content.bottom-right"),
+        )
       }
     }
   }

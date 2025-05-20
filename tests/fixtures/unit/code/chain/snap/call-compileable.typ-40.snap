@@ -1,0 +1,47 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/code/chain/call-compileable.typ
+---
+#{
+  ((1, 2), 2, 3)
+    .rev()
+    .rev()
+    .at(0)
+    .rev()
+    .rev()
+    .rev()
+}
+
+#{
+  ("a": ("b": (1, 2)))
+    .a
+    .b
+    .rev()
+    .rev()
+    .rev()
+    .len()
+}
+
+
+#(
+  ((1, 2), 2, 3)
+    .rev()
+    .rev()
+    .at(0)
+    .rev()
+    .rev()
+    .rev()
+)
+
+
+#(
+  ("a": ("b": (1, 2)))
+    .a
+    .b
+    .rev()
+    .rev()
+    .rev()
+    .len()
+)
+
+// DUMMY
