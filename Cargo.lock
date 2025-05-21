@@ -3731,7 +3731,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "anstream",
  "anyhow",
@@ -3753,7 +3753,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle-consistency"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "anyhow",
  "pretty_assertions",
@@ -3767,7 +3767,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle-core"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "criterion",
  "ecow",
@@ -3785,7 +3785,7 @@ dependencies = [
 
 [[package]]
 name = "typstyle-tests"
-version = "0.13.7"
+version = "0.13.8"
 dependencies = [
  "anyhow",
  "insta",
