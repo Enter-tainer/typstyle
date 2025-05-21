@@ -1,28 +1,31 @@
-use itertools::Itertools;
 use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
-    util::{func_name, indent_func_name},
+    util::{func_name, get_parenthesized_args_untyped},
     ArenaDoc, Context,
 };
 use crate::{
-    pretty::{util::get_parenthesized_args, Mode},
+    ext::StrExt,
+    pretty::{layout::table::TableCollector, util::get_parenthesized_args, Mode},
     PrettyPrinter,
 };
 
-const BLACK_LIST: [&str; 6] = [
-    "table.cell",
-    "table.vline",
-    "table.hline",
-    "grid.cell",
-    "grid.vline",
-    "grid.hline",
-];
-
-const HEADER_FOOTER: [&str; 4] = ["table.header", "table.footer", "grid.header", "grid.footer"];
-
 impl<'a> PrettyPrinter<'a> {
+    pub(super) fn try_convert_table(
+        &'a self,
+        ctx: Context,
+        table: FuncCall<'a>,
+    ) -> Option<ArenaDoc<'a>> {
+        let columns = if is_table(table) && is_table_formattable(table) {
+            get_table_columns(table)
+        } else {
+            None
+        }?;
+        Some(self.convert_table(ctx, table, columns))
+    }
+
+    /// Handle parenthesized args of a table.
     pub(super) fn convert_table(
         &'a self,
         ctx: Context,
@@ -31,146 +34,101 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let ctx = ctx.with_mode(Mode::CodeCont);
 
-        let mut doc = self.arena.hardline();
-        for named in table.args().items().filter_map(|node| match node {
-            Arg::Named(named) => Some(named),
-            _ => None,
-        }) {
-            doc += self.convert_named(ctx, named) + "," + self.arena.hardline();
-        }
-        #[derive(Debug)]
-        struct Row<'a> {
-            cells: Vec<Arg<'a>>,
-        }
+        // Rules:
+        // - named/spread args, header/footer: occupy a line.
+        // - reflow cells if no special cells (cell, hline, vline, )
+        // - hard break at linebreaks with at least 1 empty lines
+        let can_reflow_cells = table.args().items().any(is_special_cell);
+        let mut collector =
+            TableCollector::new(&self.arena, if can_reflow_cells { 0 } else { columns });
 
-        let pos_args = table
-            .args()
-            .to_untyped()
-            .children()
-            .take_while(|node| node.kind() != SyntaxKind::RightParen)
-            .filter_map(|node| node.cast::<Arg>())
-            .filter(|node| matches!(node, Arg::Pos(_)));
-        let has_predecessor = |pos: &itertools::Position| {
-            matches!(
-                pos,
-                itertools::Position::Middle | itertools::Position::First
-            )
-        };
-        let table: Vec<Row> = {
-            let mut table = Vec::new();
-            let mut row = Row {
-                cells: Vec::with_capacity(columns),
+        for node in get_parenthesized_args_untyped(table.args()) {
+            if let Some(arg) = node.cast::<Arg>() {
+                match arg {
+                    Arg::Pos(Expr::FuncCall(func_call)) if is_header_footer(func_call) => {
+                        collector
+                            .push_row(self.convert_func_call_as_table(ctx, func_call, columns));
+                    }
+                    Arg::Pos(expr) => {
+                        collector.push_cell(self.convert_expr(ctx, expr));
+                    }
+                    Arg::Named(named) => {
+                        collector.push_row(self.convert_named(ctx, named));
+                    }
+                    Arg::Spread(spread) => {
+                        // NOTE: when spread exists, regarding it as a cell will not affect layout.
+                        collector.push_cell(self.convert_spread(ctx, spread));
+                    }
+                }
+            } else if node.kind() == SyntaxKind::Space {
+                collector.push_newline(node.text().count_linebreaks());
+            } else if node.kind() == SyntaxKind::LineComment {
+                collector.push_comment(self.convert_comment(ctx, node));
             };
-            for arg in pos_args {
-                row.cells.push(arg);
-                if row.cells.len() == columns {
-                    table.push(row);
-                    row = Row {
-                        cells: Vec::with_capacity(columns),
-                    };
-                }
-                if let Some(func_call) = arg.to_untyped().cast::<FuncCall>() {
-                    if HEADER_FOOTER.contains(&func_name(func_call).as_str()) {
-                        table.push(row);
-                        row = Row {
-                            cells: Vec::with_capacity(columns),
-                        };
-                    }
-                }
-            }
-            if !row.cells.is_empty() {
-                table.push(row);
-            }
-            table
-        };
-        for (row_pos, row) in table.into_iter().with_position() {
-            let mut row_doc = self.arena.nil();
-            for (pos, cell) in row.cells.into_iter().with_position() {
-                row_doc = row_doc
-                    + self.convert_arg(ctx, cell)
-                    + self.arena.text(",")
-                    + (if has_predecessor(&pos) {
-                        self.arena.line()
-                    } else if has_predecessor(&row_pos) {
-                        self.arena.line_()
-                    } else {
-                        self.arena.nil()
-                    });
-            }
-            doc += row_doc.group()
-                + (if has_predecessor(&row_pos) {
-                    self.arena.hardline()
-                } else {
-                    self.arena.nil()
-                });
         }
-        (doc.nest(self.config.tab_spaces as isize) + self.arena.hardline()).parens()
+        let doc = collector.collect();
+        doc.enclose(self.arena.line_(), self.arena.line_())
+            .group()
+            .nest(self.config.tab_spaces as isize)
+            .parens()
     }
 }
 
-pub fn is_table(node: FuncCall<'_>) -> bool {
-    indent_func_name(node) == Some("table") || indent_func_name(node) == Some("grid")
+pub fn is_table(func_call: FuncCall<'_>) -> bool {
+    matches!(func_name(func_call), Some("table") | Some("grid"))
 }
 
-fn is_formatable(node: FuncCall<'_>) -> bool {
-    // 1. no comments
-    // 2. no spread args
-    // 3. no named args or named args first then unnamed args
-    // 4. has at least one pos arg
-    // 5. no table/grid.vline/hline/cell
-    // 6. if table/grid.header/footer present, they should appear before/after any unnamed args
-    for node in node.args().to_untyped().children() {
-        if node.kind() == SyntaxKind::LineComment || node.kind() == SyntaxKind::BlockComment {
-            return false;
-        }
-    }
-    let mut pos_arg_index = None;
-    for (i, node) in get_parenthesized_args(node.args()).enumerate() {
-        match node {
-            Arg::Pos(_) => {
-                pos_arg_index = Some(i);
-                if let Some(func_call) = node.to_untyped().cast::<FuncCall>() {
-                    if BLACK_LIST.contains(&func_name(func_call).as_str()) {
-                        return false;
-                    }
-                }
-            }
-            Arg::Named(_) => {
-                if pos_arg_index.is_some() {
-                    return false;
-                }
-            }
-            Arg::Spread(_) => return false,
-        }
-    }
-    if pos_arg_index.is_none() {
+fn is_table_formattable(func_call: FuncCall<'_>) -> bool {
+    // 1. no block comments
+    // 2. has at least one pos arg
+    if func_call
+        .args()
+        .to_untyped()
+        .children()
+        .any(|it| matches!(it.kind(), SyntaxKind::BlockComment))
+    {
         return false;
     }
-    true
+    get_parenthesized_args(func_call.args()).any(|it| matches!(it, Arg::Pos(_)))
 }
 
-fn get_table_columns(node: FuncCall<'_>) -> Option<usize> {
-    for node in node.args().items() {
-        if let Arg::Named(name) = node {
-            if name.name().as_str() == "columns" {
-                if let Some(count) = name.expr().to_untyped().cast::<Int>() {
-                    return Some(count.get() as usize);
-                }
-                if let Some(arr) = name.expr().to_untyped().cast::<Array>() {
-                    return Some(arr.items().count());
-                }
+fn get_table_columns(func_call: FuncCall<'_>) -> Option<usize> {
+    let Some(columns_expr) = func_call.args().items().find_map(|node| {
+        if let Arg::Named(named) = node {
+            if named.name().as_str() == "columns" {
+                return Some(named.expr());
             }
         }
+        None
+    }) else {
+        return if (func_call.args().items()).any(|arg| matches!(arg, Arg::Spread(_))) {
+            None // the columns may be provided in spread args.
+        } else {
+            Some(1) // if not `columns` is provided, regard as 1.
+        };
+    };
+    match columns_expr {
+        Expr::Auto(_) => Some(1),
+        Expr::Int(int) => Some(int.get() as usize),
+        Expr::Array(array) => Some(array.items().count()),
+        _ => None,
     }
-    None
 }
 
-/// Returns the number of columns in the table if the table is formatable.
-/// Otherwise, returns None.
-pub(super) fn is_formatable_table(node: FuncCall<'_>) -> Option<usize> {
-    if is_table(node) && is_formatable(node) {
-        get_table_columns(node)
-    } else {
-        None
+fn is_header_footer(func_call: FuncCall) -> bool {
+    const HEADER_FOOTER: &[&str] = &["header", "footer"];
+
+    func_name(func_call).is_some_and(|name| HEADER_FOOTER.contains(&name))
+}
+
+fn is_special_cell(arg: Arg) -> bool {
+    const BLACK_LIST: &[&str] = &["cell", "vline", "hline"];
+
+    match arg {
+        Arg::Pos(Expr::FuncCall(func_call)) => {
+            func_name(func_call).is_some_and(|name| BLACK_LIST.contains(&name))
+        }
+        Arg::Spread(_) => true,
+        _ => false,
     }
 }

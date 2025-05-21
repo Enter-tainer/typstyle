@@ -306,7 +306,9 @@ Marks are arrow tips that can be added to the end of path based elements that su
 #figure(
   table(
     columns: 3,
-    [*Name*], [*Shorthand*], [*Shape*],
+    [*Name*],
+    [*Shorthand*],
+    [*Shape*],
     ..(
       for (
         name,
@@ -376,7 +378,7 @@ Marks are arrow tips that can be added to the end of path based elements that su
           ),
         )
       }
-    )
+    ),
   ),
   caption: [Mark symbols],
 )

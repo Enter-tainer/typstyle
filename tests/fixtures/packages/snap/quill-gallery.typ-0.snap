@@ -43,6 +43,7 @@ input_file: tests/fixtures/packages/quill-gallery.typ
       0pt,
       0pt,
     ),
+
     [Normal
       gate],
     quantum-circuit(

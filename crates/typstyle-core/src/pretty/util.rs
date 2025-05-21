@@ -1,4 +1,3 @@
-use ecow::EcoString;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 pub fn is_only_one_and<T>(
@@ -21,15 +20,12 @@ pub fn has_comment_children(node: &SyntaxNode) -> bool {
     node.children().any(is_comment_node)
 }
 
-pub(super) fn indent_func_name(node: FuncCall<'_>) -> Option<&str> {
-    node.callee()
-        .to_untyped()
-        .cast::<Ident>()
-        .map(|ident| ident.as_str())
-}
-
-pub(super) fn func_name(node: FuncCall<'_>) -> EcoString {
-    node.callee().to_untyped().clone().into_text()
+pub(super) fn func_name(node: FuncCall<'_>) -> Option<&str> {
+    match node.callee() {
+        Expr::Ident(ident) => Some(ident.as_str()),
+        Expr::FieldAccess(field_access) => Some(field_access.field().as_str()),
+        _ => None,
+    }
 }
 
 /// Like `f()`, `f(x, y)`, not `f[]`

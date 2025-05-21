@@ -40,6 +40,7 @@ input_file: tests/fixtures/packages/quill-gallery.typ
       0pt,
       0pt,
     ),
+
     [Normal gate],
     quantum-circuit(1, gate($H$), 1),
     raw("gate($H$), $H$"),
