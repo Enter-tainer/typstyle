@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.13.8 - [2025-05-21]
+
+- Bug fix: typstyle previously will break inline equations if they has alignments. Now it is fixed. It will never add paddings to align inline equations now.
+- Feature: typstyle doesn't enforce trailing backslash in math equations with alignments now.
+- Feature: Previously, typstyle will try to put the last argument of a function call in the same line as the function call when certain conditions are met. Now it is enhanced. In this version, if the last argument is an array or a dict, typstyle will only do this if it is the only array/dict argument.
+
 ## v0.13.7 - [2025-05-15]
 
 - Cli: typstyle now supports formatting dirs natively. You can use `typstyle -i <dir>` to format all files in the directory. Given that, `typstyle format-all` is deprecated and will be removed in the future.
