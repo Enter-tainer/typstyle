@@ -1,0 +1,463 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/articles/physics-experiment.typ
+---
+#set text(
+  lang: "zh",
+)
+
+#let col2 = (
+  table
+    .cell
+    .with(
+      colspan: 2,
+    )
+)
+#let unit = text
+
+#figure(
+  table(
+    align: horizon
+      + center,
+    columns: (
+      auto,
+    )
+      + (
+        auto,
+      )
+        * 10,
+    [级次 $k$], ..range(
+      -2,
+      3,
+    ).map(x => table.cell(
+      str(
+        x,
+      ),
+      colspan: 2,
+    )),
+    [谱线 / 衍射角 $theta$], ..range(
+      10,
+    ).map(x => if (
+      calc.odd(
+        x,
+      )
+    ) {
+      "右"
+    } else {
+      "左"
+    }),
+    ..(
+      "紫光",
+      "绿光",
+      "黄光1",
+      "黄光2",
+    )
+      .map(x => {
+        let blank = [#h(
+            2em,
+          )]
+        let res = (
+          (
+            x,
+          )
+            + (
+              blank,
+            )
+              * 4
+        )
+        if (
+          x
+            == "紫光"
+        ) {
+          res += (
+            (
+              table.cell(
+                rowspan: 4,
+                blank,
+              ),
+            )
+              * 2
+          )
+        }
+        res += (
+          (
+            blank,
+          )
+            * 4
+        )
+        res
+      })
+      .flatten()
+  ),
+  caption: "测量记录",
+) <record>
+
+#figure(
+  table(
+    columns: 7,
+    rows: (
+      2.5em,
+    )
+      * 3,
+    align: horizon
+      + center,
+    table.cell(
+      rowspan: 2,
+    )[],
+    table.cell(
+      colspan: 2,
+    )[黄光1],
+    table.cell(
+      colspan: 2,
+    )[黄光2],
+    table.cell(
+      colspan: 2,
+    )[紫光],
+    ..(
+      [衍射角 $phi$],
+      [波长 $lambda ("nm")$],
+    )
+      * 3,
+    $-2$,
+    $20degree 9'$,
+    $577.48$,
+    $20degree 17'$,
+    $581.14$,
+    $15degree 5'$,
+    $436.24$,
+    $-1$,
+    $9degree 54'$,
+    $576.44$,
+    $9degree 57'$,
+    $579.32$,
+    $7degree 29'$,
+    $436.66$,
+    $1$,
+    $9degree 54' 30''$,
+    $576.92$,
+    $9degree 55'$,
+    $577.40$,
+    $7degree 29'$,
+    $436.66$,
+    $2$,
+    $20degree 5' 30''$,
+    $575.88$,
+    $20degree 10' 30''$,
+    $578.17$,
+    $15degree 3' 30'$,
+    $435.53$,
+    [均值],
+    [],
+    $576.68$,
+    [],
+    $579.01$,
+    [],
+    $436.27$,
+    [标准差],
+    [],
+    $0.59$,
+    [],
+    $1.41$,
+    [],
+    $0.46$,
+  ),
+  caption: "其他三种光的衍射角及波长",
+)
+
+#figure(
+  table(
+    align: horizon
+      + center,
+    columns: (
+      auto,
+    )
+      + (
+        4.5em,
+      )
+        * 6,
+    rows: 3em,
+    [透镜焦距 $f ("mm")$], col2[], col2[共振频率 $("MHz")$], col2[],
+    [级次], ..(
+      "黄",
+      "绿",
+      "蓝",
+    )
+      .map(x => (
+        [#x $- 1$],
+        [#x $+ 1$],
+      ))
+      .flatten(),
+    [位置 $("mm")$], ..(
+      [],
+    )
+      * 6,
+    $I_k ("mm")$, ..(
+      col2[],
+    )
+      * 3,
+    [超声波的波长 $(upright(m))$], ..(
+      col2[],
+    )
+      * 3,
+    [超声波的速度 $(upright(m slash s))$], ..(
+      col2[],
+    )
+      * 3,
+  ),
+  caption: "测量记录",
+) <record>
+
+#figure(
+  table(
+    align: horizon
+      + center,
+    columns: (
+      5em,
+    )
+      + (
+        1fr,
+      )
+        * 10,
+    rows: 4em,
+    [次数], ..range(
+      1,
+      11,
+    ).map(
+      str,
+    ),
+    $Delta f (#unit("Hz"))$, ..(
+      [],
+    )
+      * 10,
+    [小车速度\ $v (unit("m/s"))$], ..(
+      [],
+    )
+      * 10,
+    [声速\ $u (unit("m/s"))$], ..(
+      [],
+    )
+      * 10,
+  ),
+  caption: "测量声速",
+) <record-sound>
+
+#figure(
+  table(
+    align: horizon
+      + center,
+    columns: (
+      2em,
+      5em,
+    )
+      + (
+        1fr,
+      )
+        * 10,
+    rows: 4em,
+    table.cell(
+      colspan: 2,
+    )[次数], ..range(
+      1,
+      11,
+    ).map(
+      str,
+    ),
+    ..(
+      $v_1$,
+      $Delta f (#unit("Hz"))$,
+      ..(
+        [],
+      )
+        * 10,
+    )
+      * 3,
+  ),
+  caption: "测量物体速度",
+) <record-objv>
+
+#figure(
+  table(
+    align: horizon
+      + center,
+    columns: (
+      4em,
+    )
+      + (
+        1fr,
+      )
+        * 7,
+    rows: 4em,
+    [频率], ..(
+      [],
+    )
+      * 3, [谐振\ 频率], ..(
+      [],
+    )
+      * 3,
+    [波形数], ..(
+      [],
+    )
+      * 7,
+    [振幅], ..(
+      [],
+    )
+      * 7,
+  ),
+  caption: "振幅随频率的变化",
+) <record-a>
+
+#figure(
+  table(
+    align: horizon
+      + center,
+    columns: (
+      4em,
+    )
+      + (
+        1fr,
+      )
+        * 7,
+    rows: 4em,
+    [功率 \ (#unit("mA"))], ..range(
+      1,
+      8,
+    )
+      .map(x => (
+        x
+          * 10
+      ))
+      .map(
+        str,
+      ),
+    [波形数], ..(
+      [],
+    )
+      * 7,
+    [振幅], ..(
+      [],
+    )
+      * 7,
+  ),
+  caption: "音叉功率与振幅的关系",
+) <record-i>
+
+#figure(
+  table(
+    columns: (
+      1fr,
+    )
+      * 8,
+    rows: (
+      auto,
+    )
+      + (
+        2em,
+      )
+        * 10,
+    align: center
+      + horizon,
+    ..(
+      [振幅 $theta$ (°)],
+      [固有周期\ $T_0$ (s)],
+    )
+      * 4,
+    ..(
+      [],
+    )
+      * 88
+  ),
+  caption: [摆轮振幅与系统固有周期数据记录],
+) <data1>
+
+#figure(
+  table(
+    columns: (
+      5em,
+      1fr,
+    )
+      * 2
+      + (
+        1fr,
+      ),
+    rows: 2.5em,
+    align: center
+      + horizon,
+    ..(
+      [序号],
+      [振幅 $theta$ (°)],
+    )
+      * 2, $ln theta_i / (theta_(i +5))$,
+    ..range(
+      1,
+      6,
+    )
+      .map(x => (
+        $theta_#x$,
+        [],
+        $theta_#(x + 5)$,
+        [],
+        [],
+      ))
+      .flatten(),
+    table.cell(
+      colspan: 4,
+    )[$ln theta_i / (theta_(i +5))$ 平均值]
+  ),
+  caption: [阻尼系数 $beta$ 数据记录],
+) <data2>
+
+#figure(
+  table(
+    columns: (
+      1fr,
+    )
+      * 7,
+    rows: (
+      auto,
+    )
+      + (
+        2.5em,
+      )
+        * 10,
+    align: center
+      + horizon,
+
+    [强迫力矩周期 $T$ (s)],
+    [振幅 $theta$ (°)],
+    [与摆轮振幅 $theta$ 对应的固有频率 $T_0$ (s)],
+    [圆频率\ $omega = (2pi)/T$],
+    [相位差 $Phi$ (°) 读取值],
+    [共振圆频率\ $omega_r = sqrt(omega_0^2 - 2 beta^2)$],
+    [$omega / omega_r$]
+  ),
+  caption: [幅频特性和相频特性测量数据记录],
+) <data3>
+
+#figure(
+  table(
+    columns: (
+      auto,
+      13em,
+      13em,
+    ),
+    rows: 2em,
+    align: horizon
+      + center,
+    [],
+    [$zeta_i ("mm")$],
+    [空间频率 $(l slash "mm")$],
+
+    [一级衍射],
+    [],
+    [],
+
+    [二级衍射],
+    [],
+    [],
+
+    [三级衍射],
+    [],
+    [],
+  ),
+  caption: "空间频率记录表",
+) <tbl-data>

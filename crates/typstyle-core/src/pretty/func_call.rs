@@ -38,6 +38,19 @@ impl<'a> PrettyPrinter<'a> {
             + self.convert_func_call_args(ctx, func_call, func_call.args())
     }
 
+    pub(super) fn convert_func_call_as_table(
+        &'a self,
+        ctx: Context,
+        func_call: FuncCall<'a>,
+        columns: usize,
+    ) -> ArenaDoc<'a> {
+        let args = func_call.args();
+        let has_parenthesized_args = has_parenthesized_args(args);
+        self.convert_expr(ctx, func_call.callee())
+            + self.convert_table(ctx, func_call, columns)
+            + self.convert_additional_args(ctx, args, has_parenthesized_args)
+    }
+
     fn convert_func_call_args(
         &'a self,
         ctx: Context,
@@ -51,8 +64,8 @@ impl<'a> PrettyPrinter<'a> {
         let mut doc = self.arena.nil();
         let has_parenthesized_args = has_parenthesized_args(args);
         if table::is_table(func_call) {
-            if let Some(cols) = table::is_formatable_table(func_call) {
-                doc += self.convert_table(ctx, func_call, cols);
+            if let Some(table) = self.try_convert_table(ctx, func_call) {
+                doc += table;
             } else if has_parenthesized_args {
                 doc += self.convert_parenthesized_args_as_list(ctx, args);
             }

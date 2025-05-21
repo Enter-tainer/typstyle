@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/grid/basic-cmt.typ
-snapshot_kind: text
 ---
 #table(columns: 2, [Name], [Age], [Hannes], [10], /* 1 */)
 #table(
@@ -20,13 +19,15 @@ snapshot_kind: text
 
 
 #table(
-  columns: (auto, 1fr, auto), // aaa
+  columns: (auto, 1fr, auto),
+  // aaa
   gutter: 3pt,
-  [Name], [Age], [Strength], // bbb
+  [Name], [Age], [Strength],
+  // bbb
   [Hannes], [36], [Grace],
 
   [Irma], [50], [Resourcefulness],
 
-
-  [Vikram], [49], [Perseverance], // ccc
+  [Vikram], [49], [Perseverance],
+  // ccc
 )

@@ -23,6 +23,7 @@ input_file: tests/fixtures/packages/quill-gallery.typ
     align: center + horizon,
     columns: (1fr, 1fr, 1.3fr, 1.1fr, 1fr, 1.48fr),
     column-gutter: (0pt, 0pt, 2.5pt, 0pt, 0pt),
+
     [Normal gate],
     quantum-circuit(1, gate($H$), 1),
     raw("gate($H$), $H$"),

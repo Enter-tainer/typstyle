@@ -5,5 +5,5 @@ input_file: tests/fixtures/unit/code/args/flavor.typ
 #table(
   stroke: none,
   [arg1],
-  [arg2]
+  [arg2],
 )
