@@ -1,0 +1,195 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/table/header-footer.typ
+---
+#table(
+  columns: 3,
+  table.header(
+    [Substance],
+    [Subcritical °C],
+    [Supercritical °C],
+
+    repeat: true,
+  ),
+  [Hydrochloric Acid], [12.0], [92.1],
+  [Sodium Myreth Sulfate],
+  [16.6],
+  [104],
+
+  [Potassium Hydroxide],
+  [24.7],
+  [114.514],
+)
+
+// Footer only with repeat first
+#table(
+  columns: 3,
+  [Ethanol], [78.2], [241.0],
+  [Methanol], [64.7], [239.5],
+  [Propanol], [97.4], [263.7],
+  table.footer(
+    repeat: true,
+    [Alcohols], [Average], [>240°C],
+  ),
+)
+
+// Simple header and footer with one row each
+#table(
+  columns: 3,
+  table.header([Name], [Age], [City]),
+  [Alice], [25], [London],
+  [Bob], [30], [Paris],
+  [Carol], [28], [Tokyo],
+  table.footer(
+    [Total], [83], [3 cities]
+  ),
+)
+
+// Multi-row header/footer without cell spans
+#table(
+  columns: 5,
+  table.header(
+    [Category A],
+    [Category B],
+    [Category C],
+    [Category D],
+    [Category E],
+
+    [Sub-A],
+    [Sub-B],
+    [Sub-C],
+    [Sub-D],
+    [Sub-E],
+
+    [Detail 1],
+    [Detail 2],
+    [Detail 3],
+    [Detail 4],
+    [Detail 5],
+
+    repeat: true,
+  ),
+  [Data 1],
+  [Data 2],
+  [Data 3],
+  [Data 4],
+  [Data 5],
+
+  [Value 1],
+  [Value 2],
+  [Value 3],
+  [Value 4],
+  [Value 5],
+
+  table.footer(
+    [Total 1],
+    [Total 2],
+    [Total 3],
+    [Total 4],
+    [Total 5],
+
+    [Sum A],
+    [Sum B],
+    [Sum C],
+    [Sum D],
+    [Sum E],
+  ),
+)
+
+// Two-row header with column spans
+#table(
+  columns: 4,
+  table.header(
+    table.cell(
+      colspan: 4,
+    )[Chemical Properties],
+    [Element],
+    [Symbol],
+    [Number],
+    [Weight],
+    repeat: true,
+  ),
+  [Hydrogen], [H], [1], [1.008],
+  [Helium], [He], [2], [4.003],
+)
+
+// Three-row header with mixed spans
+#table(
+  columns: 6,
+  table.header(
+    table.cell(
+      colspan: 6,
+    )[Laboratory Results],
+    table.cell(colspan: 2)[Sample A],
+    table.cell(colspan: 2)[Sample B],
+    table.cell(colspan: 2)[Sample C],
+    [Trial 1],
+    [Trial 2],
+    [Trial 1],
+    [Trial 2],
+    [Trial 1],
+    [Trial 2],
+  ),
+  [25.1],
+  [25.3],
+  [31.2],
+  [31.5],
+  [42.1],
+  [42.3],
+
+  [24.9],
+  [25.2],
+  [31.4],
+  [31.6],
+  [42.0],
+  [42.2],
+)
+
+// Complex header with nested content
+#table(
+  columns: 3,
+  table.header(
+    table.cell(
+      colspan: 3,
+    )[Annual Report],
+    table.cell(colspan: 3)[#text(
+        blue,
+      )[Financial Performance]],
+    [Q1], [Q2], [Q3],
+    [Revenue], [Growth], [Profit],
+  ),
+  [100M], [12%], [28M],
+  [150M], [15%], [45M],
+)
+
+// Header with mixed styling and alignment
+#table(
+  columns: 4,
+  table.header(
+    table.cell(
+      colspan: 4,
+      fill: blue.lighten(90%),
+    )[Project Timeline],
+    table.cell(
+      colspan: 2,
+      fill: blue.lighten(85%),
+    )[Phase 1],
+    table.cell(
+      colspan: 2,
+      fill: blue.lighten(85%),
+    )[Phase 2],
+    align(center)[Start],
+    align(center)[End],
+    align(center)[Start],
+    align(center)[End],
+  ),
+  [2024-01],
+  [2024-03],
+  [2024-04],
+  [2024-06],
+
+  [2024-02],
+  [2024-04],
+  [2024-05],
+  [2024-07],
+)

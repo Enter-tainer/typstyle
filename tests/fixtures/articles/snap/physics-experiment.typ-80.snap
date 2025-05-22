@@ -12,7 +12,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     align: horizon + center,
     columns: (auto,) + (auto,) * 10,
     [级次 $k$], ..range(-2, 3).map(x => table.cell(str(x), colspan: 2)),
-    [谱线 / 衍射角 $theta$], ..range(10).map(x => if (calc.odd(x)) {
+    [谱线 / 衍射角 $theta$],
+    ..range(10).map(x => if (calc.odd(x)) {
       "右"
     } else {
       "左"
@@ -27,7 +28,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
         res += (blank,) * 4
         res
       })
-      .flatten()
+      .flatten(),
   ),
   caption: "测量记录",
 ) <record>
@@ -159,7 +160,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     ..range(1, 6)
       .map(x => ($theta_#x$, [], $theta_#(x + 5)$, [], []))
       .flatten(),
-    table.cell(colspan: 4)[$ln theta_i / (theta_(i +5))$ 平均值]
+    table.cell(colspan: 4)[$ln theta_i / (theta_(i +5))$ 平均值],
   ),
   caption: [阻尼系数 $beta$ 数据记录],
 ) <data2>
@@ -176,7 +177,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     [圆频率\ $omega = (2pi)/T$],
     [相位差 $Phi$ (°) 读取值],
     [共振圆频率\ $omega_r = sqrt(omega_0^2 - 2 beta^2)$],
-    [$omega / omega_r$]
+    [$omega / omega_r$],
   ),
   caption: [幅频特性和相频特性测量数据记录],
 ) <data3>

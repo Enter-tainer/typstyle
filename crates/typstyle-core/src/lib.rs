@@ -1,5 +1,6 @@
 pub mod attr;
 pub mod ext;
+pub mod liteval;
 pub mod partial;
 pub mod pretty;
 

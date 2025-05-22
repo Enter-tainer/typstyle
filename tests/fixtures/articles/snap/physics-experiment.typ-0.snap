@@ -26,7 +26,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
         auto,
       )
         * 10,
-    [级次 $k$], ..range(
+    [级次 $k$],
+    ..range(
       -2,
       3,
     ).map(x => table.cell(
@@ -35,7 +36,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       ),
       colspan: 2,
     )),
-    [谱线 / 衍射角 $theta$], ..range(
+    [谱线 / 衍射角 $theta$],
+    ..range(
       10,
     ).map(x => if (
       calc.odd(
@@ -87,7 +89,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
         )
         res
       })
-      .flatten()
+      .flatten(),
   ),
   caption: "测量记录",
 ) <record>
@@ -176,8 +178,12 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       )
         * 6,
     rows: 3em,
-    [透镜焦距 $f ("mm")$], col2[], col2[共振频率 $("MHz")$], col2[],
-    [级次], ..(
+    [透镜焦距 $f ("mm")$],
+    col2[],
+    col2[共振频率 $("MHz")$],
+    col2[],
+    [级次],
+    ..(
       "黄",
       "绿",
       "蓝",
@@ -187,19 +193,23 @@ input_file: tests/fixtures/articles/physics-experiment.typ
         [#x $+ 1$],
       ))
       .flatten(),
-    [位置 $("mm")$], ..(
+    [位置 $("mm")$],
+    ..(
       [],
     )
       * 6,
-    $I_k ("mm")$, ..(
+    $I_k ("mm")$,
+    ..(
       col2[],
     )
       * 3,
-    [超声波的波长 $(upright(m))$], ..(
+    [超声波的波长 $(upright(m))$],
+    ..(
       col2[],
     )
       * 3,
-    [超声波的速度 $(upright(m slash s))$], ..(
+    [超声波的速度 $(upright(m slash s))$],
+    ..(
       col2[],
     )
       * 3,
@@ -219,21 +229,25 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       )
         * 10,
     rows: 4em,
-    [次数], ..range(
+    [次数],
+    ..range(
       1,
       11,
     ).map(
       str,
     ),
-    $Delta f (#unit("Hz"))$, ..(
+    $Delta f (#unit("Hz"))$,
+    ..(
       [],
     )
       * 10,
-    [小车速度\ $v (unit("m/s"))$], ..(
+    [小车速度\ $v (unit("m/s"))$],
+    ..(
       [],
     )
       * 10,
-    [声速\ $u (unit("m/s"))$], ..(
+    [声速\ $u (unit("m/s"))$],
+    ..(
       [],
     )
       * 10,
@@ -256,7 +270,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     rows: 4em,
     table.cell(
       colspan: 2,
-    )[次数], ..range(
+    )[次数],
+    ..range(
       1,
       11,
     ).map(
@@ -287,18 +302,23 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       )
         * 7,
     rows: 4em,
-    [频率], ..(
-      [],
-    )
-      * 3, [谐振\ 频率], ..(
+    [频率],
+    ..(
       [],
     )
       * 3,
-    [波形数], ..(
+    [谐振\ 频率],
+    ..(
+      [],
+    )
+      * 3,
+    [波形数],
+    ..(
       [],
     )
       * 7,
-    [振幅], ..(
+    [振幅],
+    ..(
       [],
     )
       * 7,
@@ -318,7 +338,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       )
         * 7,
     rows: 4em,
-    [功率 \ (#unit("mA"))], ..range(
+    [功率 \ (#unit("mA"))],
+    ..range(
       1,
       8,
     )
@@ -329,11 +350,13 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       .map(
         str,
       ),
-    [波形数], ..(
+    [波形数],
+    ..(
       [],
     )
       * 7,
-    [振幅], ..(
+    [振幅],
+    ..(
       [],
     )
       * 7,
@@ -386,7 +409,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       [序号],
       [振幅 $theta$ (°)],
     )
-      * 2, $ln theta_i / (theta_(i +5))$,
+      * 2,
+    $ln theta_i / (theta_(i +5))$,
     ..range(
       1,
       6,
@@ -401,7 +425,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       .flatten(),
     table.cell(
       colspan: 4,
-    )[$ln theta_i / (theta_(i +5))$ 平均值]
+    )[$ln theta_i / (theta_(i +5))$ 平均值],
   ),
   caption: [阻尼系数 $beta$ 数据记录],
 ) <data2>
@@ -428,7 +452,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     [圆频率\ $omega = (2pi)/T$],
     [相位差 $Phi$ (°) 读取值],
     [共振圆频率\ $omega_r = sqrt(omega_0^2 - 2 beta^2)$],
-    [$omega / omega_r$]
+    [$omega / omega_r$],
   ),
   caption: [幅频特性和相频特性测量数据记录],
 ) <data3>
