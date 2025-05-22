@@ -1,4 +1,3 @@
-use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
@@ -7,9 +6,10 @@ use super::{
         flow::FlowItem,
         list::{ListStyle, ListStylist},
     },
+    prelude::*,
     style::FoldStyle,
     util::is_comment_node,
-    ArenaDoc, Context, Mode, PrettyPrinter,
+    Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
 

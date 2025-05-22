@@ -1,11 +1,11 @@
 use itertools::Itertools;
-use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
     layout::chain::{iterate_deep_nodes, ChainStyle, ChainStylist},
+    prelude::*,
     util::has_comment_children,
-    ArenaDoc, Context,
+    Context,
 };
 use crate::PrettyPrinter;
 

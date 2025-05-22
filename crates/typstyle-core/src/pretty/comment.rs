@@ -1,7 +1,6 @@
-use pretty::{Arena, DocAllocator};
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
-use super::{ArenaDoc, Context, PrettyPrinter};
+use super::{prelude::*, Context, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_comment(&'a self, _ctx: Context, node: &'a SyntaxNode) -> ArenaDoc<'a> {
@@ -97,9 +96,7 @@ fn align_multiline_simple<'a>(arena: &'a Arena<'a>, text: &'a str) -> ArenaDoc<'
 
 #[cfg(test)]
 mod tests {
-    use pretty::{Arena, DocAllocator};
-
-    use crate::pretty::comment::{align_multiline, align_multiline_simple, get_follow_leading};
+    use super::*;
 
     #[test]
     fn test_align() {

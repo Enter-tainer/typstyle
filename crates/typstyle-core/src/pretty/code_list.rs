@@ -2,9 +2,10 @@ use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
     layout::list::{ListStyle, ListStylist},
+    prelude::*,
     style::FoldStyle,
     util::{has_comment_children, is_only_one_and},
-    ArenaDoc, Context, Mode, PrettyPrinter,
+    Context, Mode, PrettyPrinter,
 };
 
 impl<'a> PrettyPrinter<'a> {

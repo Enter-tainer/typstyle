@@ -1,13 +1,8 @@
-use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{
-        doc_ext::{DocBuilderFlatten, DocExt},
-        style::FoldStyle,
-        ArenaDoc, Context, Mode, PrettyPrinter,
-    },
+    pretty::{prelude::*, style::FoldStyle, Context, Mode, PrettyPrinter},
 };
 
 pub struct ListStylist<'a> {

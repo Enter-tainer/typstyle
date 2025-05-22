@@ -8,7 +8,7 @@ mod utils;
 
 pub use attr::AttrStore;
 pub use config::Config;
-use pretty::{ArenaDoc, PrettyPrinter};
+use pretty::{prelude::*, PrettyPrinter};
 use thiserror::Error;
 use typst_syntax::Source;
 

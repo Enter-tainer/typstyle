@@ -1,7 +1,6 @@
-use pretty::{Arena, DocAllocator};
 use typst_syntax::ast::*;
 
-use super::{util::has_comment_children, ArenaDoc, Context, Mode};
+use super::{prelude::*, util::has_comment_children, Context, Mode};
 use crate::PrettyPrinter;
 
 impl<'a> PrettyPrinter<'a> {

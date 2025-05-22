@@ -1,9 +1,8 @@
-use pretty::DocAllocator;
 use typst_syntax::{ast::AstNode, SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{doc_ext::DocExt, layout::flow::FlowStylist, ArenaDoc, Context, PrettyPrinter},
+    pretty::{layout::flow::FlowStylist, prelude::*, Context, PrettyPrinter},
 };
 
 #[derive(Debug)]

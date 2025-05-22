@@ -1,5 +1,5 @@
 pub mod context;
-pub mod doc_ext;
+pub mod prelude;
 pub mod style;
 
 mod code_chain;
@@ -7,6 +7,7 @@ mod code_flow;
 mod code_list;
 mod code_misc;
 mod comment;
+mod doc_ext;
 mod func_call;
 mod import;
 mod layout;
@@ -19,13 +20,11 @@ mod text;
 mod util;
 
 pub use context::{Context, Mode};
-use pretty::{Arena, DocAllocator, DocBuilder};
+use prelude::*;
 use style::FoldStyle;
 use typst_syntax::{ast::*, SyntaxNode};
 
 use crate::{AttrStore, Config};
-
-pub type ArenaDoc<'a> = DocBuilder<'a, Arena<'a>>;
 
 pub struct PrettyPrinter<'a> {
     config: Config,

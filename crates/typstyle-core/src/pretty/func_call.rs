@@ -1,4 +1,3 @@
-use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
@@ -8,10 +7,11 @@ use super::{
         list::{ListStyle, ListStylist},
         plain::PlainStylist,
     },
+    prelude::*,
     style::FoldStyle,
     table,
     util::{get_parenthesized_args, get_parenthesized_args_untyped, has_parenthesized_args},
-    ArenaDoc, Context, Mode, PrettyPrinter,
+    Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
 

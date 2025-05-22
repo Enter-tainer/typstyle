@@ -1,6 +1,6 @@
 use typst_syntax::ast::*;
 
-use super::{ArenaDoc, Context, PrettyPrinter};
+use super::{prelude::*, Context, PrettyPrinter};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_ident(&'a self, ident: Ident<'a>) -> ArenaDoc<'a> {
