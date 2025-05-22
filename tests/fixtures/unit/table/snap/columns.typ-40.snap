@@ -1,0 +1,128 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/table/columns.typ
+---
+// Missing columns
+#table(
+  [],
+  [],
+  [],
+)
+
+// Missing columns, but has spread args
+#table(
+  [], [], [],
+  ..()
+)
+
+#table(
+  [], [], [],
+  ..(columns: 2)
+)
+
+// Simple constant columns
+#table(
+  columns: auto,
+  [],
+  [],
+  [],
+)
+
+#table(
+  columns: 2,
+  [], [],
+  [],
+)
+
+#table(
+  columns: (1fr,),
+  [],
+  [],
+)
+
+#table(
+  columns: (1fr, auto),
+  [], [],
+  [], [],
+  [], [],
+)
+
+// Basic arithmetic
+#table(
+  columns: (1 + 2) * 3,
+  [], [], [], [], [], [], [], [], [],
+  [], [], [], [], [], [], [], [], [],
+  [], [], [], [],
+)
+
+// Array operations
+#table(
+  columns: (1pt, 2em) * 3,
+  [], [], [], [], [], [],
+  [], [], [], [], [], [],
+  [], [], [], [],
+)
+
+// Array concatenation
+#table(
+  columns: (1fr, 2fr)
+    + (3fr, auto, 5fr),
+  [], [], [], [], [],
+  [], [], [], [], [],
+  [], [], [], [], [],
+)
+
+// Complex array calculations
+#table(
+  columns: (auto,) * 2
+    + 2 * (auto, 4fr),
+  [], [], [], [], [], [],
+  [], [], [], [], [], [],
+  [], [], [], [], [], [],
+)
+
+#table(
+  columns: ((1fr,) * 2 + 2 * (auto,))
+    * 3,
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+)
+
+// Mixed units in arrays
+#table(
+  columns: (1fr,) * 3 + (2em,) * 2,
+  [], [], [], [], [],
+  [], [], [], [], [],
+  [], [],
+)
+
+#table(
+  columns: (1cm, 2pt)
+    + (3em * 2, 4pt)
+    + (5fr,),
+  [], [], [], [], [],
+  [], [], [], [], [],
+  [], [], [],
+)

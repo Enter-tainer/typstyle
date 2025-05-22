@@ -11,16 +11,15 @@ input_file: tests/fixtures/articles/physics-experiment.typ
   table(
     align: horizon + center,
     columns: (auto,) + (auto,) * 10,
-    [级次 $k$], ..range(
-      -2,
-      3,
-    ).map(x => table.cell(
+    [级次 $k$],
+    ..range(-2, 3).map(x => table.cell(
       str(x),
       colspan: 2,
     )),
-    [谱线 / 衍射角 $theta$], ..range(
-      10,
-    ).map(x => if (calc.odd(x)) {
+    [谱线 / 衍射角 $theta$],
+    ..range(10).map(x => if (
+      calc.odd(x)
+    ) {
       "右"
     } else {
       "左"
@@ -43,7 +42,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
         res += (blank,) * 4
         res
       })
-      .flatten()
+      .flatten(),
   ),
   caption: "测量记录",
 ) <record>
@@ -113,8 +112,12 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     align: horizon + center,
     columns: (auto,) + (4.5em,) * 6,
     rows: 3em,
-    [透镜焦距 $f ("mm")$], col2[], col2[共振频率 $("MHz")$], col2[],
-    [级次], ..("黄", "绿", "蓝")
+    [透镜焦距 $f ("mm")$],
+    col2[],
+    col2[共振频率 $("MHz")$],
+    col2[],
+    [级次],
+    ..("黄", "绿", "蓝")
       .map(x => (
         [#x $- 1$],
         [#x $+ 1$],
@@ -122,14 +125,10 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       .flatten(),
     [位置 $("mm")$], ..([],) * 6,
     $I_k ("mm")$, ..(col2[],) * 3,
-    [超声波的波长 $(upright(m))$], ..(
-      col2[],
-    )
-      * 3,
-    [超声波的速度 $(upright(m slash s))$], ..(
-      col2[],
-    )
-      * 3,
+    [超声波的波长 $(upright(m))$],
+    ..(col2[],) * 3,
+    [超声波的速度 $(upright(m slash s))$],
+    ..(col2[],) * 3,
   ),
   caption: "测量记录",
 ) <record>
@@ -140,14 +139,12 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     columns: (5em,) + (1fr,) * 10,
     rows: 4em,
     [次数], ..range(1, 11).map(str),
-    $Delta f (#unit("Hz"))$, ..([],)
-      * 10,
-    [小车速度\ $v (unit("m/s"))$], ..(
-      [],
-    )
-      * 10,
-    [声速\ $u (unit("m/s"))$], ..([],)
-      * 10,
+    $Delta f (#unit("Hz"))$,
+    ..([],) * 10,
+    [小车速度\ $v (unit("m/s"))$],
+    ..([],) * 10,
+    [声速\ $u (unit("m/s"))$],
+    ..([],) * 10,
   ),
   caption: "测量声速",
 ) <record-sound>
@@ -157,9 +154,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     align: horizon + center,
     columns: (2em, 5em) + (1fr,) * 10,
     rows: 4em,
-    table.cell(
-      colspan: 2,
-    )[次数], ..range(1, 11).map(str),
+    table.cell(colspan: 2)[次数],
+    ..range(1, 11).map(str),
     ..(
       $v_1$,
       $Delta f (#unit("Hz"))$,
@@ -175,8 +171,10 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     align: horizon + center,
     columns: (4em,) + (1fr,) * 7,
     rows: 4em,
-    [频率], ..([],)
-      * 3, [谐振\ 频率], ..([],) * 3,
+    [频率],
+    ..([],) * 3,
+    [谐振\ 频率],
+    ..([],) * 3,
     [波形数], ..([],) * 7,
     [振幅], ..([],) * 7,
   ),
@@ -188,10 +186,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     align: horizon + center,
     columns: (4em,) + (1fr,) * 7,
     rows: 4em,
-    [功率 \ (#unit("mA"))], ..range(
-      1,
-      8,
-    )
+    [功率 \ (#unit("mA"))],
+    ..range(1, 8)
       .map(x => x * 10)
       .map(str),
     [波形数], ..([],) * 7,
@@ -220,8 +216,8 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     columns: (5em, 1fr) * 2 + (1fr,),
     rows: 2.5em,
     align: center + horizon,
-    ..([序号], [振幅 $theta$ (°)])
-      * 2, $ln theta_i / (theta_(i +5))$,
+    ..([序号], [振幅 $theta$ (°)]) * 2,
+    $ln theta_i / (theta_(i +5))$,
     ..range(1, 6)
       .map(x => (
         $theta_#x$,
@@ -233,7 +229,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
       .flatten(),
     table.cell(
       colspan: 4,
-    )[$ln theta_i / (theta_(i +5))$ 平均值]
+    )[$ln theta_i / (theta_(i +5))$ 平均值],
   ),
   caption: [阻尼系数 $beta$ 数据记录],
 ) <data2>
@@ -250,7 +246,7 @@ input_file: tests/fixtures/articles/physics-experiment.typ
     [圆频率\ $omega = (2pi)/T$],
     [相位差 $Phi$ (°) 读取值],
     [共振圆频率\ $omega_r = sqrt(omega_0^2 - 2 beta^2)$],
-    [$omega / omega_r$]
+    [$omega / omega_r$],
   ),
   caption: [幅频特性和相频特性测量数据记录],
 ) <data3>

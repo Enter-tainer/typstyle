@@ -93,6 +93,8 @@ fn is_table_formattable(func_call: FuncCall<'_>) -> bool {
 }
 
 fn get_table_columns(func_call: FuncCall<'_>) -> Option<usize> {
+    use crate::liteval::{Liteval, Value};
+
     let Some(columns_expr) = func_call.args().items().find_map(|node| {
         if let Arg::Named(named) = node {
             if named.name().as_str() == "columns" {
@@ -107,10 +109,10 @@ fn get_table_columns(func_call: FuncCall<'_>) -> Option<usize> {
             Some(1) // if not `columns` is provided, regard as 1.
         };
     };
-    match columns_expr {
-        Expr::Auto(_) => Some(1),
-        Expr::Int(int) => Some(int.get() as usize),
-        Expr::Array(array) => Some(array.items().count()),
+    match columns_expr.liteval() {
+        Ok(Value::Auto) => Some(1),
+        Ok(Value::Int(i)) => Some(i as usize),
+        Ok(Value::Array(a)) => Some(a),
         _ => None,
     }
 }
