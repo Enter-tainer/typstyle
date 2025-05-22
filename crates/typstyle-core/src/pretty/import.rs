@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
@@ -8,8 +7,9 @@ use super::{
         flow::FlowItem,
         list::{ListStyle, ListStylist},
     },
+    prelude::*,
     util::is_comment_node,
-    ArenaDoc, Context, PrettyPrinter,
+    Context, PrettyPrinter,
 };
 
 impl<'a> PrettyPrinter<'a> {

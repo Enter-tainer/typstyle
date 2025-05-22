@@ -1,12 +1,11 @@
-use pretty::DocAllocator;
 use smallvec::SmallVec;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
-    doc_ext::DocExt,
     layout::flow::FlowItem,
+    prelude::*,
     util::{is_comment_node, is_only_one_and},
-    ArenaDoc, Context, Mode, PrettyPrinter,
+    Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
 

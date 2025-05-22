@@ -1,6 +1,4 @@
-use pretty::DocAllocator;
-
-use crate::pretty::{ArenaDoc, PrettyPrinter};
+use crate::pretty::{prelude::*, PrettyPrinter};
 
 /// An item in the flow. A space is added only when the item before and the item after both allow it.
 pub struct FlowItem<'a>(pub Option<FlowItemRepr<'a>>);

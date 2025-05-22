@@ -1,9 +1,9 @@
-use pretty::DocAllocator;
 use typst_syntax::{ast::*, SyntaxKind};
 
 use super::{
+    prelude::*,
     util::{func_name, get_parenthesized_args_untyped},
-    ArenaDoc, Context,
+    Context,
 };
 use crate::{
     ext::StrExt,

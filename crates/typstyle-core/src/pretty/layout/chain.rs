@@ -1,12 +1,11 @@
 use std::iter;
 
 use itertools::Itertools;
-use pretty::DocAllocator;
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use crate::{
     ext::StrExt,
-    pretty::{util::is_comment_node, ArenaDoc, Context, PrettyPrinter},
+    pretty::{prelude::*, util::is_comment_node, Context, PrettyPrinter},
 };
 
 /// Intermediate representation in chain formatting.

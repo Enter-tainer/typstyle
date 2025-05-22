@@ -1,6 +1,4 @@
-use pretty::{Arena, DocAllocator};
-
-use crate::pretty::ArenaDoc;
+use crate::pretty::prelude::*;
 
 pub struct TableCollector<'a> {
     arena: &'a Arena<'a>,
