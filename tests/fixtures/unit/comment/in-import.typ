@@ -34,7 +34,11 @@
   a)
 #import "block-short.typ":/* 0 */ (
   // 1
-  b
+  b, bb
   )
 #import "block-short.typ":/* 0 */ (   // 1
   c)
+#import "block-short.typ":/* 0 */ (   // 1
+  c // cc
+// ccc
+  )

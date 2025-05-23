@@ -6,19 +6,8 @@ input_file: tests/fixtures/unit/code/import-reorder.typ
 
 // Single import with mixed styles in random order
 #import "module.typ": (
-  a.b.c,
-  alpha,
-  beta,
-  func as renamed,
-  gamma,
-  h.i.j,
-  j.k.l as util,
-  m.n,
-  p.q as custom,
-  widget as tool,
-  x.y as short,
-  xyz,
-  z.y.x,
+  a.b.c, alpha, beta, func as renamed, gamma, h.i.j, j.k.l as util, m.n, p.q as custom, widget as tool, x.y as short,
+  xyz, z.y.x,
 )
 
 // Multiple imports from same module, should ideally be merged and reordered
