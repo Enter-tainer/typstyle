@@ -1,13 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-markup.typ
-snapshot_kind: text
 ---
-== /* 1 */ heading2 // 11
+== /* 1 */ heading2   // 11
 
-=== /* 2 */ heading3 // 22
+=== /* 2 */ heading3    // 22
 
-+ /*  */ 3 // 354
++ /*  */ 3   // 354
 
 - 5645
   // 454

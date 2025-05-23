@@ -94,7 +94,7 @@ impl<'a> PrettyPrinter<'a> {
                 let expr_doc = self.convert_expr(ctx, expr);
                 doc += expr_doc;
             } else if let Some(space) = node.cast::<Space>() {
-                doc += self.convert_space(space);
+                doc += self.convert_space(ctx, space);
             } else if node.kind() == SyntaxKind::Hash {
                 doc += self.arena.text("#");
                 peek_hash = true;
@@ -137,7 +137,7 @@ impl<'a> PrettyPrinter<'a> {
             if last.kind() == SyntaxKind::Space {
                 has_close_space = true;
                 inner_nodes = rest;
-                self.convert_space_untyped(last)
+                self.convert_space_untyped(ctx, last)
             } else {
                 self.arena.nil()
             }
@@ -154,7 +154,7 @@ impl<'a> PrettyPrinter<'a> {
                 FlowItem::tight(self.convert_math(ctx, math))
             } else if node.kind() == SyntaxKind::Space {
                 // We can not arbitrarily break line here, as it may become ugly.
-                FlowItem::tight(self.convert_space_untyped(node))
+                FlowItem::tight(self.convert_space_untyped(ctx, node))
             } else {
                 FlowItem::none()
             }
@@ -209,7 +209,7 @@ impl<'a> PrettyPrinter<'a> {
             if let Some(expr) = node.cast::<Expr>() {
                 FlowItem::spaced(self.convert_expr(ctx, expr))
             } else if let Some(space) = node.cast::<Space>() {
-                FlowItem::tight(self.convert_space(space))
+                FlowItem::tight(self.convert_space(ctx, space))
             } else {
                 FlowItem::tight(self.convert_trivia_untyped(node))
             }

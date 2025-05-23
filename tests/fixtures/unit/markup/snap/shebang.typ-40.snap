@@ -1,7 +1,6 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/shebang.typ
-snapshot_kind: text
 ---
 #!typst compile
-We use a shebang
+We  use  a  shebang

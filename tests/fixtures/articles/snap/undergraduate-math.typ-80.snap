@@ -265,7 +265,7 @@ Comment on an expression as here (there is also `overbrace(..)`).
 
 = Dots
 Use low dots in a list ${0, 1, 2, ...}$, entered as `{0, 1, 2, ...}`.
-Use centered dots in a sum or product $1 + dots.h.c + 100$, entered as `1 + dots.h.c + 100`.
+Use centered dots in a sum or product $1 + dots.h.c + 100$, entered as  `1 + dots.h.c + 100`.
 You can also get vertical dots `dots.v`, diagonal dots `dots.down` and anti-diagonal dots `dots.up`.
 
 = Roman names

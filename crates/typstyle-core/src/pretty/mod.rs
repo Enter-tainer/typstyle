@@ -100,7 +100,7 @@ impl<'a> PrettyPrinter<'a> {
     fn convert_expr_impl(&'a self, ctx: Context, expr: Expr<'a>) -> ArenaDoc<'a> {
         match expr {
             Expr::Text(t) => self.convert_text(t),
-            Expr::Space(s) => self.convert_space(s),
+            Expr::Space(s) => self.convert_space(ctx, s),
             Expr::Linebreak(b) => self.convert_trivia(b),
             Expr::Parbreak(b) => self.convert_parbreak(b),
             Expr::Escape(e) => self.convert_trivia(e),
