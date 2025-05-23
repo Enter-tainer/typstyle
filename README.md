@@ -53,10 +53,10 @@ Options:
   -V, --version  Print version
 
 Format Configuration:
-  -l, --line-width <LINE_WIDTH>      The column width of the output [default: 80] [aliases: column] [short aliases: c]
-  -t, --indent-width <INDENT_WIDTH>  Spaces per level of indentation in the output [default: 2] [aliases: tab-width]
-      --no-reorder-import-items      Whether not to reorder import items
-      --wrap-text                    Whether to wrap texts in the markup
+  -l, --line-width <LINE_WIDTH>      Maximum width of each line [default: 80] [aliases: column] [short aliases: c]
+  -t, --indent-width <INDENT_WIDTH>  Number of spaces per indentation level [default: 2] [aliases: tab-width]
+      --no-reorder-import-items      Disable alphabetical reordering of import items
+      --wrap-text                    Wrap text in markup to fit within the line width. Implies `--collapse-spaces`
 
 Debug Options:
   -a, --ast         Print the AST of the input file

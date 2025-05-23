@@ -9,9 +9,9 @@ input_file: tests/fixtures/unit/mixed/complex.typ
   param4: "string",
 ) = { }
 
-= Poorly Formatted * Heading* with _ emphasis _
+= Poorly    Formatted    * Heading* with   _ emphasis _
 
-This paragraph has excessive spacing and random
+This paragraph has    excessive      spacing and random
 #text(font: "Comic Sans MS", weight: "bold", size: 12pt)[inserted function] line
 breaks. It also has*bold text*without proper spacing and_emphasized_content stuck together.
 
@@ -30,10 +30,10 @@ breaks. It also has*bold text*without proper spacing and_emphasized_content stuc
 )[Third *nested* content #align(center)[with aligned
     content]]
 
-- First list item with bad spacing
+- First   list item with      bad spacing
   #stack(dir: ltr, spacing: 1em)[stacked
     content] in the middle of a list
-  - Nested item with
+  - Nested item  with
   code: `let x =
   5`
 - Second item with equation: $x^2 +
@@ -41,13 +41,13 @@ breaks. It also has*bold text*without proper spacing and_emphasized_content stuc
   #underline(stroke: 2pt + blue)[ underlined text ]
 
 #box(width: 80%)[
-  Content in a box that's poorly indented
-  with random spacing
+  Content in a box that's  poorly indented
+  with random    spacing
   #place(dx: 20pt, dy: -5pt)[*placed* content
   ]
 ]
 
-== Code Block with Poor Spacing
+== Code Block with    Poor Spacing
 
 $
   sum_(i=0)^n i =
@@ -79,8 +79,8 @@ $
 
 #table(
   columns: (1fr, 2fr),
-  [ * Header 1 *], [*Header 2*],
-  [Cell 1],
+  [ * Header 1 *], [*Header    2*],
+  [Cell   1],
   [
     Cell with
     #text(style: "italic", fill: green)[styled]
@@ -89,7 +89,7 @@ $
 
 #lorem(40) +
 #[This content is *oddly* _mixed_ with various
-  syntactic elements] +
+  syntactic  elements] +
 #v(1cm) +
 #pad(x: 2em, top: 5pt, bottom: 8pt)[Padded content with
   #box(width: 50pt, height: auto)"image.jpg"]

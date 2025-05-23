@@ -66,7 +66,7 @@ pub enum Command {
 
 #[derive(Args)]
 pub struct StyleArgs {
-    /// The column width of the output
+    /// Maximum width of each line.
     #[arg(
         short = 'l',
         long,
@@ -77,7 +77,7 @@ pub struct StyleArgs {
     )]
     pub line_width: usize,
 
-    /// Spaces per level of indentation in the output
+    /// Number of spaces per indentation level.
     #[arg(
         short = 't',
         long,
@@ -87,11 +87,11 @@ pub struct StyleArgs {
     )]
     pub indent_width: usize,
 
-    /// Whether not to reorder import items.
+    /// Disable alphabetical reordering of import items.
     #[arg(long, default_value_t = false, global = true)]
     pub no_reorder_import_items: bool,
 
-    /// Whether to wrap texts in the markup.
+    /// Wrap text in markup to fit within the line width. Implies `--collapse-spaces`.
     #[arg(long, default_value_t = false, global = true)]
     pub wrap_text: bool,
 }

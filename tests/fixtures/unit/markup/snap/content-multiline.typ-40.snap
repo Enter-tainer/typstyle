@@ -4,8 +4,10 @@ input_file: tests/fixtures/unit/markup/content-multiline.typ
 ---
 #[]
 #[ ]
-#[ ]
-#[ ]
+#[
+]
+#[
+]
 #[
 
 ]

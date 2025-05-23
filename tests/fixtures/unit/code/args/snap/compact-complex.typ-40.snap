@@ -107,7 +107,7 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 
 // With repeated whitespace and line breaks
 #f(
-  [First with spaces],
+  [First    with    spaces],
   [Second with
 
     multiple

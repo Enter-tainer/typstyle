@@ -1,18 +1,13 @@
 ---
 source: tests/src/unit.rs
-input_file: tests/fixtures/unit/markup/reflow/linebreak.typ
+input_file: tests/fixtures/unit/markup/linebreak.typ
 ---
-/// typstyle: wrap_text
-
 #[]a
-#[ ]
-b
-#[ ]
-bb
+#[ ] b
+#[   ] bb
 c#[
 ]
-d
-#[
+d #[
 
 ]
 e

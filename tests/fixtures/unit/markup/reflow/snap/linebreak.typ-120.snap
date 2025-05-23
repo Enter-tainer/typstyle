@@ -4,7 +4,8 @@ input_file: tests/fixtures/unit/markup/reflow/linebreak.typ
 ---
 /// typstyle: wrap_text
 
-#[]a #[ ] b c#[ ]
+#[]a #[ ] b #[ ] bb c#[
+]
 d #[
 
 ]

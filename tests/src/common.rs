@@ -86,7 +86,10 @@ fn parse_directives(content: &str) -> Result<Options, Failed> {
                 options.relax_convergence = value.and_then(|v| v.parse().ok()).unwrap_or(1)
             }
             "reorder_import_items" => config.reorder_import_items = value != Some("false"),
-            "wrap_text" => config.wrap_text = value != Some("false"),
+            "wrap_text" => {
+                config.wrap_text = value != Some("false");
+                config.collapse_markup_spaces |= config.wrap_text;
+            }
             _ => return Err(format!("unknown directive: {key}").into()),
         }
         Ok(())

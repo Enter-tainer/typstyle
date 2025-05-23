@@ -2,10 +2,7 @@ use smallvec::SmallVec;
 use typst_syntax::{ast::*, SyntaxKind, SyntaxNode};
 
 use super::{
-    layout::flow::FlowItem,
-    prelude::*,
-    util::{is_comment_node, is_only_one_and},
-    Context, Mode, PrettyPrinter,
+    layout::flow::FlowItem, prelude::*, util::is_comment_node, Context, Mode, PrettyPrinter,
 };
 use crate::ext::StrExt;
 
@@ -55,7 +52,7 @@ impl<'a> PrettyPrinter<'a> {
         body.enclose("_", "_")
     }
 
-    pub(super) fn convert_raw(&'a self, _ctx: Context, raw: Raw<'a>) -> ArenaDoc<'a> {
+    pub(super) fn convert_raw(&'a self, ctx: Context, raw: Raw<'a>) -> ArenaDoc<'a> {
         // no format multiline single backtick raw block
         if !raw.block() && raw.lines().nth(1).is_some() {
             return self.convert_verbatim(raw);
@@ -70,7 +67,7 @@ impl<'a> PrettyPrinter<'a> {
             } else if let Some(text) = child.cast::<Text>() {
                 doc += self.convert_text(text);
             } else if child.kind() == SyntaxKind::RawTrimmed {
-                doc += self.convert_space_untyped(child);
+                doc += self.convert_space_untyped(ctx, child);
             }
         }
         doc
@@ -187,10 +184,12 @@ impl<'a> PrettyPrinter<'a> {
     ) -> ArenaDoc<'a> {
         let ctx = ctx.with_mode(Mode::Markup);
 
-        if is_only_one_and(markup.to_untyped().children(), |node| {
-            node.kind() == SyntaxKind::Space
-        }) {
-            return self.arena.space();
+        // If the markup only contains one space, simply convert it.
+        let children = markup.to_untyped().children().as_slice();
+        if children.len() == 1 {
+            if let Some(space) = children[0].cast::<Space>() {
+                return self.convert_space(ctx, space);
+            }
         }
 
         let repr = collect_markup_repr(markup);
@@ -249,7 +248,7 @@ impl<'a> PrettyPrinter<'a> {
         {
             for node in nodes.iter() {
                 doc += if node.kind() == SyntaxKind::Space {
-                    self.arena.space()
+                    self.convert_space_untyped(ctx, node)
                 } else if let Some(text) = node.cast::<Text>() {
                     self.convert_text(text)
                 } else if let Some(expr) = node.cast::<Expr>() {

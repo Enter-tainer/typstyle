@@ -54,7 +54,7 @@ fn test_reorder_import_items() {
 fn test_wrap_text() {
     let space = Workspace::new();
 
-    let stdin = "lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    let stdin = "lorem  ipsum   dolor sit amet, consectetur   adipiscing elit.";
 
     typstyle_cmd_snapshot!(space.cli().args(["-c=20", "--wrap-text"]).pass_stdin(stdin), @r"
     success: true

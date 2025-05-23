@@ -1,26 +1,24 @@
-/// typstyle: wrap_text
-
 #[]a
-#[ ] b
-#[   ] bb
+ #[ ] b
+   #[   ] bb
 c#[
 ]
-d #[
+  d #[
 
 ]
-e
+ e
 #[
 
 
 ]
-f
+  f
 
 #[
   1
 
 ]
 
-g
+ g
 #[
 
   2
