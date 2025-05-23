@@ -12,8 +12,7 @@ input_file: tests/fixtures/packages/codly.typ
  */
 
 #import "args.typ": (
-  __codly-args,
-  __codly-load,
+  __codly-args, __codly-load,
   __codly-save,
 )
 

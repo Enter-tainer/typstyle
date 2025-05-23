@@ -7,6 +7,7 @@ use crate::{
 
 pub struct ListStylist<'a> {
     printer: &'a PrettyPrinter<'a>,
+
     can_attach: bool,
     free_comments: Vec<ArenaDoc<'a>>,
     peek_hash: bool,
@@ -14,6 +15,7 @@ pub struct ListStylist<'a> {
     real_item_count: usize,
     has_comment: bool,
     has_line_comment: bool,
+
     fold_style: FoldStyle,
     disallow_front_comment: bool,
     disallow_comment_detach: bool,
@@ -56,6 +58,8 @@ pub struct ListStyle {
     pub omit_delim_empty: bool,
     /// Whether not to indent the items.
     pub no_indent: bool,
+    /// Whether use soft linebreaks to wrap items.
+    pub soft_break: bool,
 }
 
 impl Default for ListStyle {
@@ -71,6 +75,7 @@ impl Default for ListStyle {
             omit_delim_flat: false,
             omit_delim_empty: false,
             no_indent: false,
+            soft_break: false,
         }
     }
 }
@@ -79,6 +84,7 @@ impl<'a> ListStylist<'a> {
     pub fn new(printer: &'a PrettyPrinter<'a>) -> Self {
         Self {
             printer,
+
             can_attach: false,
             free_comments: Default::default(),
             peek_hash: false,
@@ -86,6 +92,7 @@ impl<'a> ListStylist<'a> {
             real_item_count: 0,
             has_comment: false,
             has_line_comment: false,
+
             fold_style: FoldStyle::Fit,
             disallow_front_comment: false,
             disallow_comment_detach: false,
@@ -455,6 +462,13 @@ impl<'a> ListStylist<'a> {
                 enclose_fitted(inner)
             }
             FoldStyle::Fit | FoldStyle::Compact => {
+                let ln = if sty.soft_break && !self.has_line_comment {
+                    arena.softline()
+                } else {
+                    arena.line()
+                };
+                let ln_last = arena.line_();
+
                 let mut inner = if sty.tight_delim {
                     arena.nil()
                 } else {
@@ -498,11 +512,11 @@ impl<'a> ListStylist<'a> {
                                 follow
                             };
                             let ln = if !is_last_real {
-                                arena.line()
+                                ln.clone()
                             } else if sty.tight_delim {
                                 arena.nil()
                             } else {
-                                arena.line_()
+                                ln_last.clone()
                             };
                             inner += body + follow + ln;
                         }

@@ -6,19 +6,8 @@ input_file: tests/fixtures/unit/code/import-reorder.typ
 
 // Single import with mixed styles in random order
 #import "module.typ": (
-  a.b.c,
-  alpha,
-  beta,
-  func as renamed,
-  gamma,
-  h.i.j,
-  j.k.l as util,
-  m.n,
-  p.q as custom,
-  widget as tool,
-  x.y as short,
-  xyz,
-  z.y.x,
+  a.b.c, alpha, beta, func as renamed, gamma, h.i.j, j.k.l as util, m.n,
+  p.q as custom, widget as tool, x.y as short, xyz, z.y.x,
 )
 
 // Multiple imports from same module, should ideally be merged and reordered
@@ -29,11 +18,8 @@ input_file: tests/fixtures/unit/code/import-reorder.typ
 
 // Imports with special names and deep nesting
 #import "special.typ": (
-  _hidden,
-  _private.func as _f,
-  a.b.c.d.e.f,
-  very.deep.nested.module.function as fn,
-  x-y-z as x_y_z,
+  _hidden, _private.func as _f, a.b.c.d.e.f,
+  very.deep.nested.module.function as fn, x-y-z as x_y_z,
 )
 
 // Conflicting names that should be preserved

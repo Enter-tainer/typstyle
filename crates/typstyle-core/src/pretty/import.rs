@@ -108,6 +108,7 @@ impl<'a> PrettyPrinter<'a> {
             .print_doc(ListStyle {
                 omit_delim_flat: true,
                 omit_delim_empty: true,
+                soft_break: true,
                 ..Default::default()
             })
     }

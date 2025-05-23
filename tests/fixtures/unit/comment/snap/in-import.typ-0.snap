@@ -72,8 +72,14 @@ input_file: tests/fixtures/unit/comment/in-import.typ
 #import "block-short.typ": /* 0 */ (
   // 1
   b,
+  bb,
 )
 #import "block-short.typ": /* 0 */ (
   // 1
   c,
+)
+#import "block-short.typ": /* 0 */ (
+  // 1
+  c, // cc
+  // ccc
 )

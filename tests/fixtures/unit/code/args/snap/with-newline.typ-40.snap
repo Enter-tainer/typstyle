@@ -3,9 +3,7 @@ source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/args/with-newline.typ
 ---
 #import "@preview/fletcher:0.5.7" as fletcher: (
-  diagram,
-  edge,
-  node,
+  diagram, edge, node,
 )
 #set page(
   width: auto,
