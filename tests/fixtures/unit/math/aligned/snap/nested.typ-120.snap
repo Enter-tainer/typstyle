@@ -23,7 +23,7 @@ $
 $
   cases(
     x & text("case 1") & = alpha \
-      &                &  = beta , \
+      &                &  = beta, \
     y & text("case 2") & = gamma \
     & & = delta
   )
@@ -50,10 +50,10 @@ $
 $
   cases(
     x & = alpha &  = beta \
-      & = gamma & = delta ,
+      & = gamma & = delta,
     y & = epsilon \
       & = zeta    \
-      & = eta     ,
+      & = eta,
     z & = theta &   = iota \
       & = kappa & = lambda \
       & = mu
@@ -64,12 +64,12 @@ $
 $
   cases(
     "Case 1:" & = sum x_n     \
-              & = product y_n ,
+              & = product y_n,
     "Case 2: " & = integral_0^1 f(t) \
-               & = g(x)              ,
+               & = g(x),
     "Case 3:  " & = cases(
                     a & = b \
-                      & = c ,
+                      & = c,
                     d & = e \
                       & = f
                   )
@@ -118,7 +118,7 @@ $
   a + lr(
     size: #1cm, (
              b + & c mid(|) \
-      mid(|) d + & e         )
+      mid(|) d + & e )
   ) + f
 $
 
@@ -126,6 +126,16 @@ $
   a + lr(
     size: #1cm, (
              b + & c mid(|) \
-      mid(|) d + & e         )
+      mid(|) d + & e )
   ) + f
+$
+
+$
+  sin(
+             b
+             + & c
+                 mid(|) \
+    mid(|) d + & e
+                 * f
+  )
 $
