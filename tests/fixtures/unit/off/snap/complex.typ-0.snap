@@ -1,0 +1,113 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/off/complex.typ
+---
+// DUMMY
+
+#let complex_structure = (
+  // Arrays with multiple ugly sections
+  arrays: (
+    /* @typstyle off */
+    4-   3,
+    5
+      + 8,
+    6
+      * 2
+      / 3,
+    7,
+    8,
+    /* @typstyle off */
+    .. (16   -9,  ),
+    11
+      * 1,
+    12
+      / 1,
+  ),
+  // Dictionary with inline off directives
+  dict: (
+    name: "Alice",
+    /* @typstyle off */
+    city:"Paris"+""+"",
+    age: 25,
+    /* @typstyle off */
+    id:123*1,
+    status: "active"
+      + "",
+  ),
+  // Destructuring patterns with off
+  patterns: {
+    let (
+      first,
+      /* @typstyle off */
+      ..   rest,
+      last,
+    ) = (
+      1,
+      2,
+      3,
+    )
+  },
+  // Code blocks with mid-line off directives
+  code: {
+    let x = 1
+    /* @typstyle off */
+    let y=2
+    let z = 3
+
+    // Function definition with off mid-parameter list
+    let my_func(
+      param2,
+      /* @typstyle off */
+      param3: 1*4 +     2,
+      param4: none,
+    ) = {
+      // Text styling with off between attributes
+      text(
+        size: 12pt,
+        /* @typstyle off */
+        weight: "bold",
+        fill: red,
+      )[Styled text]
+    }
+
+    // Show rule with off in unexpected places
+    show heading: it => [
+      #set text(
+        blue,
+      ); /* @typstyle off */ #set text(size:14pt,weight:"bold")
+      #it.body; /* @typstyle off */ #h(  5pt )#text(
+        red,
+      )[*x*]
+    ]
+
+    my_func
+  },
+  // Complex content with lists and alignment
+  content: [
+    // List with multiple ugly sections
+    - Normal item 1
+    - Normal item 2
+      /* @typstyle off */ - #{"Ugly"   +"item" +  "3"}
+      /* @typstyle off */ #{"Another" +  "ugly"+   "item"   +"4"}
+    - Normal item 5
+
+    // List with off after dashes
+    - Normal item 1
+    - Normal item 2; /* @typstyle off */ - #{
+        [Ugly]
+        [item]
+        [3]
+      }
+    - Normal item 4; /* @typstyle off */ #{[Another]   ;[ugly]  ; [item];   [5]}
+    - Normal item 6
+
+    // Complex nesting with off at various depths
+    #align(
+      center,
+      /* @typstyle off */
+      box(width:100%,height:50pt, /* @typstyle off */ fill:blue,stroke:red)[
+        Nested content with /* @typstyle off */ #stack(dir:ttb,spacing:5pt, [A], [B])
+      ],
+    )
+  ],
+)
