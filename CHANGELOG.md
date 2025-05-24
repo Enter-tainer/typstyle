@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.13.9 - [2025-05-24]
+
+- Feature: typstyle now evaluates simple constant expressions for table columns. This enhancement allows for better column count calculation in tables. For example, if you have a table with a column count defined as `2 + 2`, typstyle will now correctly interpret this as 4 columns.
+
+- Feature: typstyle now formats tables in most cases. This major enhancement provides better support for complex table structures, including tables with headers, footers, and various column configurations.
+
+- Feature: typstyle now uses soft wrapping for import items. Import statements with long lists of items will now wrap more compact. This aligns with rustfmt's approach to formatting long import lists.
+
+- Feature: typstyle no longer collapses consecutive spaces in markup by default. This change preserves intentional spacing in markup content, maintaining the author's formatting intentions.
+
 ## v0.13.8 - [2025-05-21]
 
 - Bug fix: typstyle previously will break inline equations if they has alignments. Now it is fixed. It will never add paddings to align inline equations now.
