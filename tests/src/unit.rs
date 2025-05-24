@@ -56,7 +56,8 @@ pub fn collect_tests() -> Result<Vec<Trial>, Box<dyn Error>> {
             let name = path
                 .strip_prefix(env::current_dir()?)?
                 .display()
-                .to_string();
+                .to_string()
+                .replace('\\', "/");
 
             let is_no_snap = path
                 .file_stem()

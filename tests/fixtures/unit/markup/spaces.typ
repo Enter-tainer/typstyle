@@ -3,11 +3,11 @@ Text with  two spaces between words.
 
     Text with   three   spaces   between   words.     // line comment
 
-*Bold*  with  two  spaces and _italic_   with   three   spaces.
+ *Bold*  with  two  spaces and _italic_   with   three   spaces.
 
 `Code`    with    four    spaces and #smallcaps[Small Caps]  mixed.
 
-#strike[Strikethrough]   and   #super[superscript]  and  #sub[subscript]   combined.
+#strike[Strikethrough]   and   #super[superscript  ]  and  #sub[subscript]   combined.
 
 // Mixed content with spaces
 Link  to  #link("url")[example]    and    #text(red)[colored]   text   together.
@@ -24,7 +24,7 @@ Emoji  😀  with  spaces  🎉  and  Unicode:  α  β  γ   characters.
 // Nested markup and line breaks
 This is #emph[emphasized  text  with  spaces] and #box[boxed   content] together.
 
-Nested #strong[*bold*  inside  strong] with spaces  \
+Nested #strong[ *  bold  *  inside  strong] with spaces  \
   and  line  breaks  \
    across   multiple   lines.
 
@@ -32,8 +32,7 @@ Nested #strong[*bold*  inside  strong] with spaces  \
 - Item  with  spaces and nested    item    together
 + Numbered   list   with   1. Deep    nested    content
 
-#quote[
-  Quoted  text  with  spaces
+#quote[     Quoted  text  with  spaces
      and   multiple   lines
 ]
 
@@ -49,8 +48,8 @@ Nested #strong[*bold*  inside  strong] with spaces  \
 
 #table(
   columns: 2,
-  [Cell  with  spaces], [Another   cell   with   spaces],
-  [More    content], [Even     more     spaced     content]
+  [     Cell  with  spaces], [Another   cell   with   spaces    ],
+  [More    content], [    Even     more     spaced     content     ]
 )
 
 Here's `inline  code  with  spaces` and code blocks:
