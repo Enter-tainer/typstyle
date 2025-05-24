@@ -149,18 +149,25 @@ impl AttrStore {
                 SyntaxKind::LineComment | SyntaxKind::BlockComment => {
                     commented = true;
                     // @typstyle off affects the whole next block
-                    if child.text().contains("@typstyle off") {
-                        disable_next = true;
-                    }
+                    disable_next = child.text().contains("@typstyle off");
                 }
                 SyntaxKind::Space | SyntaxKind::Hash => {}
+                SyntaxKind::Code | SyntaxKind::Math if disable_next => {
+                    // no format nodes with @typstyle off
+                    self.disable_first_nontrivial_child(child);
+                    disable_next = false;
+                }
                 _ if disable_next => {
                     // no format nodes with @typstyle off
-                    self.attrs_mut_of(child).is_format_disabled = true;
+                    if !child.kind().is_trivia() {
+                        self.attrs_mut_of(child).is_format_disabled = true;
+                    }
                     disable_next = false;
                 }
                 _ => {
-                    self.compute_no_format_impl(child);
+                    if !child.kind().is_trivia() {
+                        self.compute_no_format_impl(child);
+                    }
                 }
             }
         }
@@ -169,20 +176,29 @@ impl AttrStore {
         }
     }
 
+    fn disable_first_nontrivial_child(&mut self, node: &SyntaxNode) {
+        node.children()
+            .find(|it| !matches!(it.kind(), SyntaxKind::Space | SyntaxKind::Hash))
+            .inspect(|it| self.attrs_mut_of(it).is_format_disabled = true);
+    }
+
     fn compute_math_align_point(&mut self, root: &SyntaxNode) {
         self.compute_math_align_point_impl(root);
     }
 
     fn compute_math_align_point_impl(&mut self, node: &SyntaxNode) -> bool {
-        if node.kind() == SyntaxKind::MathAlignPoint {
+        let node_kind = node.kind();
+        if node_kind == SyntaxKind::MathAlignPoint {
             return true;
+        }
+        if node_kind.is_trivia() {
+            return false;
         }
         let mut has_math_align_point = false;
         for child in node.children() {
             has_math_align_point |= self.compute_math_align_point_impl(child);
         }
-        if has_math_align_point
-            && matches!(node.kind(), SyntaxKind::Math | SyntaxKind::MathDelimited)
+        if has_math_align_point && matches!(node_kind, SyntaxKind::Math | SyntaxKind::MathDelimited)
         {
             self.attrs_mut_of(node).has_math_align_point = true;
             true

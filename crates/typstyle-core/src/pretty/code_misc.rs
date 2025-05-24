@@ -12,6 +12,9 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         array_item: ArrayItem<'a>,
     ) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_disabled(array_item.to_untyped()) {
+            return res;
+        }
         match array_item {
             ArrayItem::Pos(p) => self.convert_expr(ctx, p),
             ArrayItem::Spread(s) => self.convert_spread(ctx, s),
@@ -23,6 +26,9 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         dict_item: DictItem<'a>,
     ) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_disabled(dict_item.to_untyped()) {
+            return res;
+        }
         match dict_item {
             DictItem::Named(n) => self.convert_named(ctx, n),
             DictItem::Keyed(k) => self.convert_keyed(ctx, k),
@@ -31,6 +37,9 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     pub(super) fn convert_param(&'a self, ctx: Context, param: Param<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_disabled(param.to_untyped()) {
+            return res;
+        }
         match param {
             Param::Pos(p) => self.convert_pattern(ctx, p),
             Param::Named(n) => self.convert_named(ctx, n),
@@ -55,6 +64,9 @@ impl<'a> PrettyPrinter<'a> {
         ctx: Context,
         destructuring_item: DestructuringItem<'a>,
     ) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_disabled(destructuring_item.to_untyped()) {
+            return res;
+        }
         match destructuring_item {
             DestructuringItem::Spread(s) => self.convert_spread(ctx, s),
             DestructuringItem::Named(n) => self.convert_named(ctx, n),
