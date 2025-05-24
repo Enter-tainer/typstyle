@@ -22,10 +22,7 @@ impl<'a> PrettyPrinter<'a> {
         let raw_aligned = collect_aligned(math, &self.attr_store);
         let aligned = self.render_aligned(ctx, raw_aligned.rows)?;
 
-        let doc = self.print_aligned(
-            aligned,
-            ctx.align_mode == AlignMode::Outer && raw_aligned.has_trailing_linebreak,
-        );
+        let doc = self.print_aligned(aligned, raw_aligned.has_trailing_backslash);
         Some(doc)
     }
 
@@ -115,7 +112,7 @@ impl<'a> PrettyPrinter<'a> {
     }
 
     /// Combine aligned cells together, inserting '&', spaces, and linebreaks.
-    fn print_aligned(&'a self, aligned: Aligned<'a>, add_trailing_linebreak: bool) -> ArenaDoc<'a> {
+    fn print_aligned(&'a self, aligned: Aligned<'a>, add_trailing_backslash: bool) -> ArenaDoc<'a> {
         let rows = aligned.rows;
         let col_widths = aligned.col_widths;
         let num_rows = rows.len();
@@ -138,15 +135,19 @@ impl<'a> PrettyPrinter<'a> {
         (self.arena).concat(rows.into_iter().enumerate().map(|(i, row)| match row {
             Row::Comment(cmt) => {
                 // Emit a full‑line comment followed by a hard linebreak
+                // NOTE: this should not be the last row.
                 self.arena.text(cmt) + self.arena.hardline()
             }
             Row::Cells(cells) => {
                 let mut row_doc = self.arena.nil();
 
                 // For each cell: pad to column width and insert separators
+                let is_last_row = i + 1 == num_rows;
+                let needs_backslash = !is_last_row || add_trailing_backslash;
                 let num_cells = cells.len();
                 let mut is_prev_empty = false;
                 for (j, cell) in cells.into_iter().enumerate() {
+                    let is_last_cell_in_row = j + 1 == num_cells;
                     let alignment = if j % 2 == 1 || num_cols == 1 {
                         Alignment::Left
                     } else {
@@ -154,12 +155,11 @@ impl<'a> PrettyPrinter<'a> {
                     };
                     let col_width = col_widths[j];
 
-                    let pad = |cell_doc: ArenaDoc<'a>, width: usize| {
-                        let pad_spaces = self.arena.spaces(col_width - width);
-                        match alignment {
-                            Alignment::Left => cell_doc + pad_spaces,
-                            Alignment::Right => pad_spaces + cell_doc,
-                        }
+                    let need_pad_right = !is_last_cell_in_row || needs_backslash;
+                    let pad = |cell_doc: ArenaDoc<'a>, width: usize| match alignment {
+                        Alignment::Left if !need_pad_right => cell_doc,
+                        Alignment::Left => cell_doc + self.arena.spaces(col_width - width),
+                        Alignment::Right => self.arena.spaces(col_width - width) + cell_doc,
                     };
 
                     let cell_width = cell.max_width();
@@ -179,8 +179,11 @@ impl<'a> PrettyPrinter<'a> {
                                 indent
                             };
 
-                            let trailing_padding =
-                                col_width - padding_left - lines[lines.len() - 1].1;
+                            let trailing_padding = if need_pad_right {
+                                col_width - padding_left - lines[lines.len() - 1].1
+                            } else {
+                                0 // do not pad the last cell
+                            };
                             let doc = self.arena.spaces(padding_left)
                                 + self.arena.intersperse(
                                     lines.into_iter().map(|(line, _)| line),
@@ -211,22 +214,19 @@ impl<'a> PrettyPrinter<'a> {
                 }
 
                 // If row has fewer cells than columns, add trailing spaces
-                if num_cells < num_cols {
+                // Do not add trailing spaces when no trailing backslash.
+                let is_last_row = i + 1 == num_rows;
+                if num_cells < num_cols && needs_backslash {
                     let mut padding = grid_width - num_cells - col_widths_sum[num_cells];
                     if !is_prev_empty {
                         padding += 1;
                     }
                     row_doc += self.arena.spaces(padding);
                 }
-                // Append trailing backslashes and linebreaks when multiple rows
-                if num_rows > 1 {
-                    row_doc += if add_trailing_linebreak || i + 1 != num_rows {
-                        self.arena.text(" \\")
-                    } else {
-                        self.arena.text(" ")
-                    };
+                if needs_backslash {
+                    row_doc += self.arena.text(" \\");
                 }
-                if i + 1 != num_rows {
+                if !is_last_row {
                     row_doc += self.arena.hardline();
                 }
                 row_doc
@@ -279,7 +279,7 @@ impl Cell {
 
 struct RawAligned<'a> {
     rows: Vec<RawRow<'a>>,
-    has_trailing_linebreak: bool,
+    has_trailing_backslash: bool,
 }
 
 /// A raw row before rendering, coming from syntax nodes.
@@ -333,7 +333,7 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> RawAligned<'a> {
     };
 
     // First pass: split all children into lines (split at Linebreak)
-    let (lines, has_trailing_linebreak) = {
+    let (lines, has_trailing_backslash) = {
         let mut lines = flat
             .split(|n| n.kind() == SyntaxKind::Linebreak)
             .collect_vec();
@@ -372,6 +372,6 @@ fn collect_aligned<'a>(math: Math<'a>, attrs: &AttrStore) -> RawAligned<'a> {
     }
     RawAligned {
         rows,
-        has_trailing_linebreak,
+        has_trailing_backslash,
     }
 }

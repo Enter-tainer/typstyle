@@ -27,7 +27,7 @@ $
 $
   m & = n /**/  \
     & = p /* */ \
-    & = q        /*    */
+    & = q /*    */
 $
 
 // Comments mixed with aligned equations
@@ -66,7 +66,7 @@ $
   // Line comment between rows
     & = product y /* Block
                   comment */ \
-    & = z                     // Final result
+    & = z // Final result
 $
 
 // Mixed Unicode and comments
@@ -74,7 +74,7 @@ $
   α & = β // Greek variables
                                       \
     & = γ /* Mixed شرح explanation */ \
-    & = θ                              // 说明
+    & = θ // 说明
 $
 
 // Comments with decorators
@@ -82,7 +82,7 @@ $
   arrow(
     x & = y // Inside arrow
             \
-      & = z  /* Still inside */
+      & = z /* Still inside */
   )
 $
 
@@ -116,7 +116,7 @@ $
            \
        & =
          // comment before next line
-         z  // end comment
+         z // end comment
 $
 
 // Comments in multi-column alignment
@@ -126,5 +126,5 @@ $
     & = p x & q // another comment
               // comment between rows
                 \
-    & = r   & s  // final row
+    & = r   & s // final row
 $
