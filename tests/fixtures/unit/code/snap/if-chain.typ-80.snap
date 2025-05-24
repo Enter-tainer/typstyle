@@ -1,13 +1,12 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/if-chain.typ
-snapshot_kind: text
 ---
 #if a < b { true } else if c < d { (false,) } else if 1 + 2 == 3 {
   (true, false)
 } else { none }
 
-#if a < b { true } else if c < d [ false ] else if 1 + 2 == 3 [*strong*] else {
+#if a < b { true } else if c < d [  false ] else if 1 + 2 == 3 [*strong*] else {
   none
 }
 
@@ -19,7 +18,7 @@ snapshot_kind: text
 
 #if a < b {
   true
-} else if c < d [ false ] else if 1 + 2 == 3 [
+} else if c < d [  false ] else if 1 + 2 == 3 [
   *strong*] else { none }
 
 #{
@@ -27,9 +26,9 @@ snapshot_kind: text
     (true, false)
   } else { none }
 
-  if a < b { true } else if c < d [ false ] else if 1 + 2 == 3 [*strong*] else {
-    none
-  }
+  if a < b { true } else if c < d [  false ] else if (
+    1 + 2 == 3
+  ) [*strong*] else { none }
 
   if a < b { true } else if c < d [
     false
@@ -39,14 +38,14 @@ snapshot_kind: text
 
   if a < b {
     true
-  } else if c < d [ false ] else if 1 + 2 == 3 [
+  } else if c < d [  false ] else if 1 + 2 == 3 [
     *strong*] else { none }
 }
 
 #if a < b {
   true
   false
-} else if c < d [ false ] else if 1 + 2 == 3 [*strong*] else {
+} else if c < d [  false ] else if 1 + 2 == 3 [*strong*] else {
   a = 3
   none
 }

@@ -10,9 +10,9 @@ Right space:*bold *
 Both spaces: * bold *
 
 // Multiple spacing variations
-Too many spaces:  * bold *
+Too many spaces:  *  bold  *
 Tab spacing:	* bold *
-Mixed spacing: * bold*   *bold * * bold *
+Mixed spacing: * bold*   *bold * *  bold  *
 
 // Line breaks with strong elements
 Line

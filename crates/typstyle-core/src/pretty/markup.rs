@@ -222,14 +222,20 @@ impl<'a> PrettyPrinter<'a> {
                         self.arena.line_()
                     }
                 }
-                Boundary::SpaceOrBreak | Boundary::WeakSpaceOrBreak => {
+                Boundary::SpaceOrBreak(n) | Boundary::WeakSpaceOrBreak(n) => {
                     if is_symmetric && !ctx.break_suppressed || !prefer_tight {
-                        self.arena.line()
+                        if self.config.wrap_text {
+                            self.arena.line()
+                        } else {
+                            self.arena.hardline().flat_alt(self.arena.spaces(n))
+                        }
                     } else if scope.can_trim() {
                         // the space can be safely eaten
                         self.arena.nil()
-                    } else {
+                    } else if self.config.wrap_text {
                         self.arena.space()
+                    } else {
+                        self.arena.spaces(n)
                     }
                 }
                 Boundary::Break | Boundary::WeakBreak => self.arena.hardline(),
@@ -387,27 +393,27 @@ enum Boundary {
     /// Can add a space or linebreak when multiline.
     NilOrBreak,
     /// Can turn to a linebreak.
-    SpaceOrBreak,
+    SpaceOrBreak(usize),
     /// Always breaks.
     Break,
     /// Can turn to a linebreak if not in document scope.
-    WeakSpaceOrBreak,
+    WeakSpaceOrBreak(usize),
     /// Always breaks if not in document scope.
     WeakBreak,
 }
 
 impl Boundary {
-    fn from_space(space: &str) -> Self {
+    pub fn from_space(space: &str) -> Self {
         if space.has_linebreak() {
             Self::Break
         } else {
-            Self::SpaceOrBreak
+            Self::SpaceOrBreak(space.len())
         }
     }
 
-    fn strip_space(self) -> Self {
+    pub fn strip_space(self) -> Self {
         match self {
-            Self::SpaceOrBreak => Self::NilOrBreak,
+            Self::SpaceOrBreak(_) => Self::NilOrBreak,
             _ => self,
         }
     }
@@ -487,7 +493,7 @@ fn collect_markup_repr(markup: Markup<'_>) -> MarkupRepr {
                     repr.start_bound = Boundary::NilOrBreak;
                 }
                 Some(it) if it.kind() == SyntaxKind::Space => {
-                    repr.start_bound = Boundary::WeakSpaceOrBreak;
+                    repr.start_bound = Boundary::WeakSpaceOrBreak(1);
                 }
                 None if !first_line.nodes.is_empty() => repr.start_bound = Boundary::WeakBreak,
                 _ => {}
@@ -501,7 +507,7 @@ fn collect_markup_repr(markup: Markup<'_>) -> MarkupRepr {
                     repr.end_bound = Boundary::NilOrBreak;
                 }
                 Some(it) if it.kind() == SyntaxKind::Space => {
-                    repr.end_bound = Boundary::WeakSpaceOrBreak;
+                    repr.end_bound = Boundary::WeakSpaceOrBreak(1);
                 }
                 None if !last_line.nodes.is_empty() => repr.end_bound = Boundary::WeakBreak,
                 _ => {}
