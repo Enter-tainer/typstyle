@@ -13,12 +13,6 @@
       "sizes": "32x32",
       "type": "image/svg+xml",
       "purpose": "any maskable"
-    },
-    {
-      "src": "/apple-touch-icon.svg",
-      "sizes": "180x180",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
     }
   ],
   "categories": ["developer", "productivity", "utilities"],

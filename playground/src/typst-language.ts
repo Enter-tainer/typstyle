@@ -1,4 +1,4 @@
-import { type Monaco } from "@monaco-editor/react";
+import type { Monaco } from "@monaco-editor/react";
 
 // Typst language definition for Monaco Editor
 export const registerTypstLanguage = (monaco: Monaco) => {

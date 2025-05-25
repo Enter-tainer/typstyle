@@ -30,10 +30,18 @@ playground/
 │   └── apple-touch-icon.png     # Apple touch icon
 ├── src/
 │   ├── App.tsx                  # Main application component
-│   ├── index.scss               # Global styles with CSS custom properties
+│   ├── index.scss               # Main stylesheet that imports all modular CSS
 │   ├── main.tsx                 # React app entry point
 │   ├── typst-language.ts        # Monaco Editor Typst language definition
-│   └── vite-env.d.ts           # Vite environment types
+│   ├── vite-env.d.ts           # Vite environment types
+│   └── styles/                 # Modular SCSS files for better organization
+│       ├── _reset.scss         # CSS reset and base HTML styles
+│       ├── _themes.scss        # CSS custom properties for theming
+│       ├── _base.scss          # Base app styles, header, and layout
+│       ├── _components.scss    # Glass panels, buttons, and UI components
+│       ├── _forms.scss         # Form inputs, checkboxes, and labels
+│       ├── _layouts.scss       # Responsive layout styles (wide/middle/thin)
+│       └── _monaco.scss        # Monaco Editor specific styles
 ├── package.json                 # Project dependencies and scripts
 ├── tailwind.config.mjs          # TailwindCSS configuration
 ├── vite.config.ts              # Vite build configuration
@@ -75,6 +83,42 @@ The playground features a comprehensive theming system:
 - **CSS Custom Properties**: All theming managed through CSS variables
 - **Automatic Monaco Editor Integration**: Themes automatically applied to code editors
 
+## 🏗️ Architecture & Recent Improvements
+
+### Modular CSS Structure
+
+The project uses a well-organized modular CSS architecture:
+
+- **`src/styles/_reset.scss`**: CSS reset and base HTML element styles
+- **`src/styles/_themes.scss`**: CSS custom properties for theming (light/dark modes)
+- **`src/styles/_base.scss`**: Base application styles, header, and layout foundations
+- **`src/styles/_components.scss`**: Glass panels, buttons, and UI component styles
+- **`src/styles/_forms.scss`**: Form inputs, checkboxes, labels, and form controls
+- **`src/styles/_layouts.scss`**: Responsive layout styles for wide/middle/thin breakpoints
+- **`src/styles/_monaco.scss`**: Monaco Editor specific styling and customizations
+
+### Unified Editor Architecture
+
+The playground now features a unified editor system with a single `UnifiedEditor` component that handles both code editing and output display:
+
+- **Single Source of Truth**: One `UnifiedEditor` component replaces multiple editor implementations
+- **Configuration-Based Behavior**: Editor behavior (readonly, language, features) controlled via props
+- **Consistent Styling**: All editors share the same Monaco Editor options and theming
+- **Reduced Code Duplication**: Eliminated repetitive editor configuration across components
+
+**Editor Configurations by Use Case:**
+
+- **Source Code Editor**: `typst` language, editable, line numbers, folding, word wrap
+- **Formatted Output**: `typst` language, readonly, no line numbers, no folding
+- **AST/IR Output**: `json` language, readonly, no line numbers, folding enabled
+
+### Editor State Management
+
+- **Shared Editor Instances**: Single Monaco Editor instances shared across responsive layouts
+- **State Preservation**: Cursor position, scroll state, and undo history persist across layout changes
+- **Centralized Management**: `EditorManager` component handles editor lifecycle and configuration
+- **Responsive Design**: Seamless editor experience across wide (3-column), middle (2-column), and thin (tabbed) layouts
+
 ## 🔧 Format Options
 
 Customize the formatting behavior:
@@ -92,6 +136,13 @@ Customize the formatting behavior:
 - [ ] Export functionality for formatted code
 - [ ] File import/export capabilities
 - [ ] Keyboard shortcuts for common actions
+
+## ✅ Recent Improvements
+
+- ✅ **Modular CSS Architecture**: Split monolithic CSS into organized SCSS modules for better maintainability
+- ✅ **Responsive Layout System**: Three responsive breakpoints (wide/middle/thin) with optimized layouts
+- ✅ **Editor State Persistence**: Monaco editors preserve cursor position, scroll state, and undo history across layout changes
+- ✅ **Enhanced Monaco Integration**: Full Monaco Editor integration for all output views with proper syntax highlighting
 
 ## 📄 License
 
