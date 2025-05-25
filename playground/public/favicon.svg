@@ -1,0 +1,31 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2e7d32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1b5e20;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7b1fa2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9c27b0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded background -->
+  <rect width="32" height="32" rx="8" fill="url(#bg)" />
+  
+  <!-- Modern "T" for Typstyle -->
+  <!-- Top horizontal bar -->
+  <rect x="6" y="7" width="20" height="3" rx="1.5" fill="white" />
+  
+  <!-- Vertical bar -->
+  <rect x="14.5" y="7" width="3" height="18" rx="1.5" fill="white" />
+  
+  <!-- Accent decoration - stylized formatting symbol -->
+  <circle cx="24" cy="24" r="3" fill="url(#accent)" />
+  <rect x="22.5" y="22.5" width="3" height="3" rx="0.5" fill="white" opacity="0.9" />
+  
+  <!-- Small accent dots for "style" concept -->
+  <circle cx="8" cy="24" r="1" fill="#4caf50" />
+  <circle cx="11" cy="26" r="1" fill="#66bb6a" />
+</svg>
