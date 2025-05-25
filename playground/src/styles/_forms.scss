@@ -1,0 +1,116 @@
+/* Format labels and inputs */
+.format-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--format-label);
+  margin-bottom: 0.125rem;
+}
+
+.format-input {
+  padding: 0.375rem 0.5rem;
+  background: var(--format-input-bg);
+  border: 1px solid var(--format-input-border);
+  border-radius: 0.375rem;
+  color: var(--format-input-text);
+  font-size: 0.75rem;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-soft);
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15), var(--shadow-medium);
+  }
+
+  &:hover {
+    border-color: var(--text-primary);
+  }
+}
+
+/* Select dropdown specific styles */
+select.format-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+  padding-right: 2rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15), var(--shadow-medium);
+  }
+}
+
+select.format-input option {
+  background: var(--format-input-bg);
+  color: var(--format-input-text);
+}
+
+/* Checkbox styles */
+input[type="checkbox"],
+.format-checkbox {
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease; /* Smooth transition for color changes */
+  border-radius: 0.25rem;
+  border: 2px solid var(--format-input-border);
+  background: var(--format-input-bg);
+  position: relative;
+  flex-shrink: 0;
+
+  &:checked {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+  }
+
+  &:focus {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+  }
+
+  /* Light mode specific styling */
+  [data-theme="light"] & {
+    border-color: #c5e1a5;
+    background: rgba(232, 245, 232, 0.9);
+
+    &:checked {
+      background: #4caf50;
+      border-color: #4caf50;
+    }
+
+    &:hover {
+      border-color: #4caf50;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+    }
+  }
+
+  /* Dark mode specific styling */
+  [data-theme="dark"] & {
+    // Use theme variables for consistency with the dark theme
+    border-color: var(--format-input-border);
+    background: var(--format-input-bg);
+
+    &:checked {
+      background: var(--text-primary); // Use Primary Purple (theme variable) for checked state background
+      border-color: var(--text-primary); // Use Primary Purple (theme variable) for checked state border
+    }
+
+    &:checked::before {
+      color: var(--bg-gradient-from); // Text color for checkmark, ensures contrast with Primary Purple background
+    }
+
+    &:hover {
+      border-color: var(--text-primary); // Primary Purple (theme variable) on hover for border
+      box-shadow: 0 0 0 2px rgba(163, 147, 199, 0.2); // Lighter shadow with Primary Purple base (hex: #a393c7)
+    }
+  }
+}

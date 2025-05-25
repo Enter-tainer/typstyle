@@ -1,7 +1,7 @@
 {
   "name": "typstyle-playground",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Interactive playground for the Typstyle formatter for Typst documents",
   "type": "module",
   "homepage": "https://github.com/enter-tainer/typstyle",
@@ -23,32 +23,39 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "dev:wasm": "wasm-pack build ../crates/typstyle-wasm --dev --out-dir ../../playground/typstyle-wasm",
+    "build:wasm": "wasm-pack build ../crates/typstyle-wasm --out-dir ../../playground/typstyle-wasm",
     "lint": "eslint .",
+    "lint:biome": "bunx @biomejs/biome lint ./src",
+    "format:biome": "bunx @biomejs/biome format --write ./src",
+    "check:biome": "bunx @biomejs/biome check --write ./src",
     "preview": "vite preview"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "monaco-editor": "^0.52.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "typstyle-wasm": "file:typstyle-wasm"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@eslint/js": "^9.25.0",
     "@tailwindcss/vite": "^4.1.7",
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
-    "autoprefixer": "^10.4.21",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "postcss": "^8.5.3",
     "sass": "^1.89.0",
     "tailwindcss": "^4.1.7",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-top-level-await": "^1.5.0",
+    "vite-plugin-wasm": "^3.4.1"
   }
 }
