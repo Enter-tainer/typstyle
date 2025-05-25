@@ -1,0 +1,409 @@
+@import "tailwindcss";
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* CSS Custom Properties for Theme Management */
+:root {
+  /* Light theme colors */
+  --bg-gradient-from: #e8f5e8;
+  --bg-gradient-via: #c8e6c9;
+  --bg-gradient-to: #a5d6a7;
+
+  --header-text: #2e7d32;
+  --header-subtitle: #4caf50;
+  --text-primary: #2e7d32;
+  --text-secondary: #4caf50;
+
+  --glass-bg: rgba(232, 245, 232, 0.85);
+  --glass-border: rgba(200, 230, 201, 0.9);
+
+  --panel-header-bg: rgba(200, 230, 201, 0.95);
+  --panel-header-text: #2e7d32;
+
+  --editor-bg: rgba(232, 245, 232, 0.6);
+  --editor-border: rgba(200, 230, 201, 0.8);
+
+  --format-label: #2e7d32;
+  --format-input-bg: rgba(232, 245, 232, 0.9);
+  --format-input-border: rgba(200, 230, 201, 0.8);
+  --format-input-text: #2e7d32;
+
+  --tab-button-text: #4caf50;
+  --tab-button-border: transparent;
+  --tab-active-text: #7b1fa2;
+  --tab-active-border: #7b1fa2;
+
+  --theme-toggle-bg: rgba(232, 245, 232, 0.9);
+  --theme-toggle-text: #4caf50;
+  --theme-toggle-hover-bg: rgba(200, 230, 201, 1);
+}
+
+[data-theme="dark"] {
+  /* Dark theme colors */
+  --bg-gradient-from: #1a1a2e;
+  --bg-gradient-via: #16213e;
+  --bg-gradient-to: #0f3460;
+
+  --header-text: #a8e6cf;
+  --header-subtitle: #7fcdcd;
+  --text-primary: #a8e6cf;
+  --text-secondary: #7fcdcd;
+
+  --glass-bg: rgba(22, 33, 62, 0.85);
+  --glass-border: rgba(26, 26, 46, 0.9);
+
+  --panel-header-bg: rgba(22, 33, 62, 0.95);
+  --panel-header-text: #a8e6cf;
+
+  --editor-bg: rgba(26, 26, 46, 0.4);
+  --editor-border: rgba(22, 33, 62, 0.8);
+
+  --format-label: #a8e6cf;
+  --format-input-bg: rgba(22, 33, 62, 0.9);
+  --format-input-border: rgba(26, 26, 46, 0.8);
+  --format-input-text: #a8e6cf;
+
+  --tab-button-text: #7fcdcd;
+  --tab-button-border: transparent;
+  --tab-active-text: #d4a5ff;
+  --tab-active-border: #d4a5ff;
+
+  --theme-toggle-bg: rgba(22, 33, 62, 0.9);
+  --theme-toggle-text: #7fcdcd;
+  --theme-toggle-hover-bg: rgba(26, 26, 46, 1);
+}
+
+/* Base app styles */
+.app-bg {
+  background: linear-gradient(135deg, var(--bg-gradient-from), var(--bg-gradient-via), var(--bg-gradient-to));
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  padding: 1rem 1.5rem 0.75rem 1.5rem;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--header-text);
+  margin: 0;
+}
+
+.header-subtitle {
+  font-size: 0.875rem;
+  color: var(--header-subtitle);
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* GitHub link styles */
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background: var(--theme-toggle-bg);
+  color: var(--theme-toggle-text);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.github-link:hover {
+  background: var(--theme-toggle-hover-bg);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+}
+
+/* Glass panel styles */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Format options panel */
+.format-options {
+  margin: 0 1.5rem 1.5rem 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.option-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+/* Panel headers */
+.panel-header {
+  padding: 0.75rem 1rem;
+  background: var(--panel-header-bg);
+  color: var(--panel-header-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Editor containers */
+.editor-container {
+  background: var(--editor-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--editor-border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  padding: 0.5rem;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Monaco Editor specific styles */
+.monaco-editor {
+  background: transparent !important;
+}
+
+.monaco-editor .monaco-editor-background {
+  background: transparent !important;
+}
+
+.monaco-editor .margin {
+  background: transparent !important;
+}
+
+.monaco-editor .inputarea.ime-input {
+  background: transparent !important;
+}
+
+/* Make Monaco editor container semi-transparent */
+.monaco-editor .overflow-guard {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .monaco-editor .overflow-guard {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Format labels and inputs */
+.format-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--format-label);
+}
+
+.format-input {
+  padding: 0.5rem 0.75rem;
+  background: var(--format-input-bg);
+  border: 1px solid var(--format-input-border);
+  border-radius: 0.375rem;
+  color: var(--format-input-text);
+  font-size: 0.875rem;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.format-input:focus {
+  outline: none;
+  border-color: rgb(16 185 129);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Tab buttons */
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  color: var(--tab-button-text);
+  border-bottom: 2px solid var(--tab-button-border);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+}
+
+.tab-button:hover {
+  color: var(--tab-active-text);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.tab-button.active {
+  color: var(--tab-active-text);
+  border-bottom-color: var(--tab-active-border);
+}
+
+.tab-button:first-child {
+  border-top-left-radius: 0.75rem;
+}
+
+.tab-button:last-child {
+  border-top-right-radius: 0.75rem;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background: var(--theme-toggle-bg);
+  color: var(--theme-toggle-text);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--theme-toggle-hover-bg);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-toggle:active {
+  transform: translateY(0);
+}
+
+/* Checkbox styles */
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: rgb(16 185 129);
+  cursor: pointer;
+}
+
+/* Monaco Editor wrapper enhancement */
+.monaco-editor .margin,
+.monaco-editor-background,
+.monaco-editor .inputarea.ime-input {
+  background: transparent !important;
+}
+
+/* Monaco Editor specific styles */
+.monaco-editor {
+  height: 100% !important;
+}
+
+.monaco-editor .monaco-editor-background {
+  background: transparent !important;
+}
+
+/* Main layout structure */
+.main-content {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  padding-bottom: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.editor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.output-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.tabs-container {
+  border-bottom: none;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  flex-shrink: 0;
+}
+
+.tabs-content {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .editor-panel,
+  .output-panel {
+    width: 100%;
+  }
+
+  .options-grid {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .option-group,
+  .checkbox-group {
+    justify-content: space-between;
+  }
+}
