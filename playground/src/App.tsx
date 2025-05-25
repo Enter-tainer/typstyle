@@ -209,9 +209,6 @@ function App() {
       <div className="app-header">
         <div>
           <h1 className="header-title">Typstyle Playground</h1>
-          <p className="header-subtitle">
-            Interactive formatter for Typst documents
-          </p>
         </div>
 
         <div className="header-actions">
