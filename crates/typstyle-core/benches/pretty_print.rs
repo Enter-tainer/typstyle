@@ -7,7 +7,8 @@ use typstyle_core::Typstyle;
 fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
     fn pretty_print_source(source: Source) -> String {
         Typstyle::default()
-            .format_source(&source)
+            .format_source(source)
+            .render()
             .expect("expect errorless")
     }
 

@@ -113,7 +113,7 @@ fn check_snapshot(path: &Path, width: usize) -> Result<(), Failed> {
             insta::assert_snapshot!(snap_name, "");
         } else {
             cfg.max_width = width;
-            let mut formatted = Typstyle::new(cfg).format_source(&source).unwrap();
+            let mut formatted = Typstyle::new(cfg).format_source(source).render().unwrap();
             if formatted.starts_with('\n') {
                 formatted.insert_str(0, "// DUMMY\n");
             }
@@ -135,7 +135,8 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
     }
 
     cfg.max_width = width;
-    let mut first_pass = Typstyle::new(cfg.clone()).format_source(&source)?;
+    let t = Typstyle::new(cfg);
+    let mut first_pass = t.format_source(source).render()?;
     for i in 0..=opt.relax_convergence {
         let new_source = Source::detached(&first_pass);
         if new_source.root().erroneous() {
@@ -145,7 +146,7 @@ fn check_convergence(path: &Path, width: usize) -> Result<(), Failed> {
                 new_source.root().errors()
             )
         }
-        let second_pass = Typstyle::new(cfg.clone()).format_source(&new_source)?;
+        let second_pass = t.format_source(new_source).render()?;
         if first_pass == second_pass {
             return Ok(());
         }
@@ -176,6 +177,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
     }
 
     cfg.max_width = width;
+    let t = Typstyle::new(cfg);
 
     let mut err_sink = ErrorSink::new(format!("consistency {}", path.display()));
 
@@ -188,7 +190,7 @@ fn check_output_consistency(path: &Path, width: usize) -> Result<(), Failed> {
         name: format!("{}char", width),
         sources: harness.format(
             &base_world,
-            |source| Ok(Typstyle::new(cfg.clone()).format_source(&source).unwrap()),
+            |source| Ok(t.format_source(source).render()?),
             &mut err_sink,
         )?,
     };

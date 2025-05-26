@@ -41,6 +41,10 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
+    pub fn config(&self) -> &Config {
+        &self.config
+    }
+
     fn get_fold_style(&self, ctx: Context, node: impl AstNode<'a>) -> FoldStyle {
         self.get_fold_style_untyped(ctx, node.to_untyped())
     }
