@@ -186,12 +186,9 @@ fn make_formatter(config: Config) -> impl Fn(Source) -> anyhow::Result<String> {
         if source.root().erroneous() {
             bail!("the file has syntax errors: {:?}", source.root().errors());
         }
-        let first_pass = Typstyle::new(config.clone())
-            .format_source(&source)
-            .context("first pass")?;
-        let second_pass = Typstyle::new(config.clone())
-            .format_content(&first_pass)
-            .context("second pass")?;
+        let t = Typstyle::new(config.clone());
+        let first_pass = t.format_source(source).render().context("first pass")?;
+        let second_pass = t.format_text(&first_pass).render().context("second pass")?;
         if first_pass != second_pass {
             bail!(
                 "the formatting does not converge:\n{}",

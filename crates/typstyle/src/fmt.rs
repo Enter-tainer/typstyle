@@ -153,17 +153,17 @@ fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<FormatResu
                     info!("Would reformat: {}", fs::relativize_path(path));
                 }
             } else {
-                print!("{}", res);
+                print!("{res}");
             }
         }
         FormatResult::Unchanged => {
             if use_stdout {
-                print!("{}", unformatted);
+                print!("{unformatted}");
             }
         }
         FormatResult::Erroneous => {
             if use_stdout {
-                print!("{}", unformatted); // still prints the original content to enable piping
+                print!("{unformatted}"); // still prints the original content to enable piping
             }
             if let Some(path) = input {
                 warn!(
@@ -188,17 +188,20 @@ fn format_debug(content: &str, args: &CliArguments) -> FormatResult {
     let source = Source::detached(content);
     let root = source.root();
     if args.debug.ast {
-        println!("{:#?}", root);
+        println!("{root:#?}");
     }
 
     let config = args.style.to_config();
-    let res = match Typstyle::new(config).format_source_inspect(&source, |doc| {
-        if args.debug.pretty_doc {
-            println!("{:#?}", doc);
+    let t = Typstyle::new(config);
+    let f = t.format_source(source);
+    if args.debug.pretty_doc {
+        match f.render_ir() {
+            Ok(ir) => println!("{}", ir),
+            Err(e) => error!("Failed to render IR: {e}"),
         }
-    }) {
-        Ok(res) => res,
-        Err(_) => return FormatResult::Erroneous,
+    }
+    let Ok(res) = f.render() else {
+        return FormatResult::Erroneous;
     };
 
     // Compare `res` with `content` to perform CI checks

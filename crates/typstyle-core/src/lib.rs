@@ -17,49 +17,71 @@ use typst_syntax::Source;
 pub enum Error {
     #[error("The document has syntax errors")]
     SyntaxError,
+    #[error("An error occurred while rendering the document")]
+    RenderError,
 }
 
-/// Entry point for pretty printing a typst document.
+/// Main struct for Typst formatting.
 #[derive(Debug, Clone, Default)]
 pub struct Typstyle {
     config: Config,
 }
 
 impl Typstyle {
-    /// Create Typstyle formatter with config.
+    /// Creates a new `Typstyle` with the given style configuration.
     pub fn new(config: Config) -> Self {
         Self { config }
     }
 
-    /// Format typst content.
-    pub fn format_content(&self, content: impl Into<String>) -> Result<String, Error> {
+    /// Prepares a text string for formatting.
+    pub fn format_text(&self, text: impl Into<String>) -> Formatter {
         // We should ensure that the source tree is spanned.
-        self.format_source(&Source::detached(content.into()))
+        self.format_source(Source::detached(text.into()))
     }
 
-    /// Format typst source.
-    pub fn format_source(&self, source: &Source) -> Result<String, Error> {
-        self.format_source_inspect(source, |_| {})
+    /// Prepares a source for formatting.
+    pub fn format_source(&self, source: Source) -> Formatter {
+        Formatter::new(self.config.clone(), source)
+    }
+}
+
+/// Handles the formatting of a specific Typst source.
+pub struct Formatter<'a> {
+    source: Source,
+    printer: PrettyPrinter<'a>,
+}
+
+impl<'a> Formatter<'a> {
+    fn new(config: Config, source: Source) -> Self {
+        let attr_store = AttrStore::new(source.root());
+        let printer = PrettyPrinter::new(config, attr_store);
+        Self { source, printer }
     }
 
-    /// Format typst source, and inspect the pretty document.
-    pub fn format_source_inspect(
-        &self,
-        source: &Source,
-        inspector: impl FnOnce(&ArenaDoc<'_>),
-    ) -> Result<String, Error> {
-        let root = source.root();
+    /// Renders the document's pretty IR.
+    pub fn render_ir(&'a self) -> Result<String, Error> {
+        let doc = self.build_doc()?;
+        Ok(format!("{doc:#?}"))
+    }
+
+    /// Renders the formatted document to a string.
+    pub fn render(&'a self) -> Result<String, Error> {
+        let doc = self.build_doc()?;
+        let mut buf = String::new();
+        doc.render_fmt(self.printer.config().max_width, &mut buf)
+            .map_err(|_| Error::RenderError)?;
+        let result = utils::strip_trailing_whitespace(&buf);
+        Ok(result)
+    }
+
+    fn build_doc(&'a self) -> Result<ArenaDoc<'a>, Error> {
+        let root = self.source.root();
         if root.erroneous() {
             return Err(Error::SyntaxError);
         }
-        let attr_store = AttrStore::new(root);
-        let printer = PrettyPrinter::new(self.config.clone(), attr_store);
         let markup = root.cast().unwrap();
-        let doc = printer.convert_markup(Default::default(), markup);
-        inspector(&doc);
-        let result = doc.pretty(self.config.max_width).to_string();
-        let result = utils::strip_trailing_whitespace(&result);
-        Ok(result)
+        let doc = self.printer.convert_markup(Default::default(), markup);
+        Ok(doc)
     }
 }
 
@@ -68,8 +90,9 @@ impl Typstyle {
 /// It returns the original string if the source is erroneous.
 pub fn format_with_width(content: &str, width: usize) -> String {
     let config = Config::new().with_width(width);
-    Typstyle::new(config)
-        .format_content(content)
+    let t = Typstyle::new(config);
+    t.format_text(content)
+        .render()
         .unwrap_or_else(|_| content.to_string())
 }
 

@@ -37,9 +37,10 @@ impl AttrStore {
     /// Creates a new `AttrStore` by computing formatting-related attributes
     /// for all descendants of the given syntax node.
     pub fn new(node: &SyntaxNode) -> AttrStore {
-        let mut store = AttrStore {
-            attr_map: Default::default(),
-        };
+        if node.erroneous() {
+            return Default::default(); // No attributes for erroneous nodes
+        }
+        let mut store = AttrStore::default();
         store.compute_no_format(node);
         store.compute_multiline(node);
         store.compute_math_align_point(node);
