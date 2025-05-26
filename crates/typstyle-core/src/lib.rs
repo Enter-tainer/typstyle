@@ -84,23 +84,3 @@ impl<'a> Formatter<'a> {
         Ok(doc)
     }
 }
-
-/// Format typst content by Typstyle configured with given max_width.
-///
-/// It returns the original string if the source is erroneous.
-pub fn format_with_width(content: &str, width: usize) -> String {
-    let config = Config::new().with_width(width);
-    let t = Typstyle::new(config);
-    t.format_text(content)
-        .render()
-        .unwrap_or_else(|_| content.to_string())
-}
-
-#[cfg(all(target_arch = "wasm32", feature = "wasm"))]
-use wasm_bindgen::prelude::*;
-
-#[cfg(all(target_arch = "wasm32", feature = "wasm"))]
-#[wasm_bindgen]
-pub fn pretty_print_wasm(content: &str, width: usize) -> String {
-    format_with_width(content, width)
-}

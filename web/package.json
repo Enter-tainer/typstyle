@@ -16,7 +16,7 @@
     "vite-plugin-wasm": "^3.3.0"
   },
   "dependencies": {
-    "typstyle-core": "file:../crates/typstyle-core/pkg",
+    "typstyle-core": "file:../crates/typstyle-wasm/pkg",
     "vanjs-core": "^1.5.2"
   }
 }
