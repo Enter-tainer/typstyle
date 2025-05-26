@@ -1,30 +1,15 @@
 [project]
-name = "typstyle"
+name = "typstyle-docs"
 version = "0.1.0"
-description = "Add your description here"
+description = "Documentation for Typstyle"
 authors = [{ name = "mgt", email = "mgt@oi-wiki.org" }]
 dependencies = []
 readme = "README.md"
 requires-python = ">= 3.8"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.rye]
-managed = true
-dev-dependencies = [
-    "mkdocs-material[imaging]>=9.5.26",
-    "markdown-exec[ansi]>=1.8.3",
-    "mkdocs-meta-descriptions-plugin>=3.0.0",
+[dependency-groups]
+dev = [
+  "mkdocs-material[imaging]>=9.5.26",
+  "markdown-exec[ansi]>=1.8.3",
+  "mkdocs-meta-descriptions-plugin>=3.0.0",
 ]
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/typstyle"]
-
-[tool.rye.scripts]
-docs-serve = "mkdocs serve"
-docs-build = "mkdocs build"
