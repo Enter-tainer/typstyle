@@ -1,0 +1,30 @@
+[package]
+name = "typstyle-wasm"
+publish = false
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "WebAssembly bindings for Typstyle"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+bench = false
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+typstyle-core = { workspace = true, features = ["serde"] }
+typst-syntax.workspace = true
+
+console_error_panic_hook = { workspace = true, optional = true }
+js-sys.workspace = true
+serde-wasm-bindgen.workspace = true
+wasm-bindgen.workspace = true
+
+[build-dependencies]
+syn.workspace = true

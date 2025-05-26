@@ -45,17 +45,10 @@ jobs:
 
       - name: Build wasm
         run: |
-          cd crates/typstyle-core
+          cd crates/typstyle-wasm
           wasm-pack build --features wasm
           cp ../../README.md pkg
           cp ../../LICENSE pkg
-      - name: Publish to npm
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          cd crates/typstyle-core/pkg
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build demo
         run: |

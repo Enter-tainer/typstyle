@@ -11,7 +11,6 @@ repository.workspace = true
 rust-version.workspace = true
 
 [lib]
-crate-type = ["cdylib", "lib"]
 bench = false
 
 [[bench]]
@@ -29,7 +28,6 @@ serde = { workspace = true, optional = true }
 smallvec.workspace = true
 thiserror.workspace = true
 unicode-width.workspace = true
-wasm-bindgen = { workspace = true, optional = true }
 
 [dev-dependencies]
 insta.workspace = true
@@ -37,4 +35,3 @@ criterion.workspace = true
 
 [features]
 serde = ["dep:serde"]
-wasm = ["wasm-bindgen"]
