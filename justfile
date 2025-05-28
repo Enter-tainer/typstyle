@@ -14,3 +14,6 @@ generate-cli-help:
 
 dev-docs: build-plugin generate-cli-help
     shiroa serve docs -w . --mode static-html
+
+build-docs: build-plugin generate-cli-help
+    shiroa build docs -w . --mode static-html
