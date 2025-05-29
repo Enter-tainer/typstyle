@@ -51,28 +51,77 @@
   --shadow-soft: 0 2px 8px rgba(46, 125, 50, 0.08);
   --shadow-medium: 0 4px 16px rgba(46, 125, 50, 0.12);
   --shadow-strong: 0 8px 32px rgba(46, 125, 50, 0.16);
+
+  /* Form Control Colors - Light Theme */
+  --form-input-bg: rgba(232, 245, 232, 0.9);
+  --form-input-border: rgba(200, 230, 201, 0.8);
+  --form-input-text: #2e7d32;
+  --form-option-hover-bg: rgba(139, 195, 74, 0.2);
+  --form-option-hover-text: #2e7d32;
+
+  --form-checkbox-checked-bg: #388e3c;
+
+  --scrollbar-track-bg: rgba(232, 245, 232, 0.3);
+  --scrollbar-thumb-bg: rgba(139, 195, 74, 0.6);
+  --scrollbar-thumb-border: rgba(139, 195, 74, 0.3);
+  --scrollbar-thumb-hover-bg: rgba(139, 195, 74, 0.8);
+
+  /* Form Control Colors - Dark Theme */
+  --form-input-bg-dark: rgba(57, 47, 90, 0.7);
+  --form-input-border-dark: rgba(74, 63, 106, 0.8);
+  --form-input-text-dark: #f3e5f5;
+  --form-option-hover-bg-dark: rgba(163, 147, 199, 0.3);
+  --form-option-hover-text-dark: #f3e5f5;
+
+  --form-checkbox-checked-bg-dark: #a393c7;
+
+  --scrollbar-track-bg-dark: rgba(57, 47, 90, 0.3);
+  --scrollbar-thumb-bg-dark: rgba(163, 147, 199, 0.6);
+  --scrollbar-thumb-border-dark: rgba(163, 147, 199, 0.3);
+  --scrollbar-thumb-hover-bg-dark: rgba(163, 147, 199, 0.8);
 }
 
 /* Light theme (default) */
 :root {
-  --header-text: #2e7d32; /* lightTheme.header-text */
-  --text-primary: #388e3c; /* lightTheme.text-primary */
-  --text-secondary: #7e57c2; /* lightTheme.text-secondary */
+  --header-text: #2e7d32;
+  --text-primary: #388e3c;
+  --text-secondary: #7e57c2;
 
   --shadow-soft: 0 2px 8px rgba(46, 125, 50, 0.08);
   --shadow-medium: 0 4px 16px rgba(46, 125, 50, 0.12);
   --shadow-strong: 0 8px 32px rgba(46, 125, 50, 0.16);
-}
 
-/* Dark theme variant */
-@variant dark {
-  :root {
-    --header-text: #c5b8e3; /* darkTheme.header-text */
-    --text-primary: #a393c7; /* darkTheme.text-primary */
-    --text-secondary: #8dbf8b; /* darkTheme.text-secondary */
+  /* Form control colors (light theme) */
+  --form-input-bg-active: rgba(232, 245, 232, 0.9);
+  --form-input-border-active: rgba(200, 230, 201, 0.8);
+  --form-input-text-active: #2e7d32;
+  --form-option-hover-bg-active: rgba(139, 195, 74, 0.2);
+  --form-option-hover-text-active: #2e7d32;
+  --form-checkbox-checked-bg-active: #388e3c;
+  --scrollbar-track-bg-active: rgba(232, 245, 232, 0.3);
+  --scrollbar-thumb-bg-active: rgba(139, 195, 74, 0.6);
+  --scrollbar-thumb-border-active: rgba(139, 195, 74, 0.3);
+  --scrollbar-thumb-hover-bg-active: rgba(139, 195, 74, 0.8);
+
+  @variant dark {
+    --header-text: #c5b8e3;
+    --text-primary: #a393c7;
+    --text-secondary: #8dbf8b;
 
     --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+    /* Form control colors (dark theme) */
+    --form-input-bg-active: rgba(57, 47, 90, 0.7);
+    --form-input-border-active: rgba(74, 63, 106, 0.8);
+    --form-input-text-active: #f3e5f5;
+    --form-option-hover-bg-active: rgba(163, 147, 199, 0.3);
+    --form-option-hover-text-active: #f3e5f5;
+    --form-checkbox-checked-bg-active: #a393c7;
+    --scrollbar-track-bg-active: rgba(57, 47, 90, 0.3);
+    --scrollbar-thumb-bg-active: rgba(163, 147, 199, 0.6);
+    --scrollbar-thumb-border-active: rgba(163, 147, 199, 0.3);
+    --scrollbar-thumb-hover-bg-active: rgba(163, 147, 199, 0.8);
   }
 }

@@ -1,108 +1,106 @@
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center font-medium text-sm;
-    @apply px-3 py-2;
-    @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
-    @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-lg shadow-soft;
-    @apply transition-all duration-200 ease-in-out;
-    @apply cursor-pointer;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
-    @apply hover:bg-koishi-green-100 dark:hover:bg-koishi-purple-800 hover:shadow-medium;
-    @apply active:scale-95;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  }
+.btn {
+  @apply inline-flex items-center justify-center font-medium text-sm;
+  @apply px-3 py-2;
+  @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
+  @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-lg shadow-soft;
+  @apply transition-all duration-200 ease-in-out;
+  @apply cursor-pointer;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+  @apply hover:bg-koishi-green-100 dark:hover:bg-koishi-purple-800 hover:shadow-medium;
+  @apply active:scale-95;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+}
 
-  .btn-icon {
-    @apply flex items-center justify-center p-3;
-    @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
-    @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl backdrop-blur-md;
-    @apply transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)];
-    @apply cursor-pointer relative;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
-    @apply hover:bg-koishi-green-100 dark:hover:bg-koishi-purple-800 hover:shadow-medium;
-    @apply active:scale-95;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  }
+.btn-icon {
+  @apply flex items-center justify-center p-3;
+  @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
+  @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl backdrop-blur-md;
+  @apply transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)];
+  @apply cursor-pointer relative;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+  @apply hover:bg-koishi-green-100 dark:hover:bg-koishi-purple-800 hover:shadow-medium;
+  @apply active:scale-95;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+}
 
-  .panel {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
+.panel {
+  @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            rounded-xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
            flex flex-col h-full min-h-0;
-  }
+}
 
-  .panel-header {
-    @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
+.panel-header {
+  @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
            text-sm font-semibold backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            border-b-0 flex-shrink-0 relative overflow-hidden;
-  }
+}
 
-  .panel-content {
-    @apply flex-1 overflow-hidden flex flex-col;
-  }
+.panel-content {
+  @apply flex-1 overflow-hidden flex flex-col;
+}
 
-  .tabs {
-    @apply flex flex-col h-full overflow-hidden rounded-xl;
-  }
+.tabs {
+  @apply flex flex-col h-full overflow-hidden rounded-xl;
+}
 
-  .tabs-nav {
-    @apply flex-shrink-0 flex;
-  }
+.tabs-nav {
+  @apply flex-shrink-0 flex;
+}
 
-  .tab {
-    @apply flex-1 py-2 px-4 text-sm font-semibold transition-all duration-300
+.tab {
+  @apply flex-1 py-2 px-4 text-sm font-semibold transition-all duration-300
            cursor-pointer text-center relative border-b-2 bg-transparent;
-    @apply text-koishi-green-500 border-b-transparent;
-    @apply hover:text-koishi-purple-700 hover:bg-koishi-green-50/10 hover:shadow-soft;
-    @apply dark:text-koishi-purple-300;
-    @apply dark:hover:text-koishi-green-300 dark:hover:bg-koishi-green-300/10;
-  }
+  @apply text-koishi-green-500 border-b-transparent;
+  @apply hover:text-koishi-purple-700 hover:bg-koishi-green-50/10 hover:shadow-soft;
+  @apply dark:text-koishi-purple-300;
+  @apply dark:hover:text-koishi-green-300 dark:hover:bg-koishi-green-300/10;
+}
 
-  .tab.active {
-    @apply text-koishi-purple-700 border-b-koishi-purple-700
+.tab.active {
+  @apply text-koishi-purple-700 border-b-koishi-purple-700
            bg-koishi-green-50/5 shadow-medium;
-    @apply dark:text-koishi-green-300 dark:border-b-koishi-green-300
+  @apply dark:text-koishi-green-300 dark:border-b-koishi-green-300
            dark:bg-koishi-green-300/5;
-  }
+}
 
-  .tabs-panel {
-    @apply flex-1 overflow-hidden;
-  }
+.tabs-panel {
+  @apply flex-1 overflow-hidden;
+}
 
-  /* Glass Effect Utilities */
-  .glass {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)];
-  }
+/* Glass Effect Utilities */
+.glass {
+  @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)];
+}
 
-  .glass-panel {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl shadow-medium;
-  }
+.glass-panel {
+  @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl shadow-medium;
+}
 
-  /* Panel Variants */
-  .panel-compact {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
+/* Panel Variants */
+.panel-compact {
+  @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            rounded-xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
            flex flex-col h-full min-h-0 p-4;
-  }
+}
 
-  .panel-with-header {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
+.panel-with-header {
+  @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            rounded-xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
            flex flex-col h-full min-h-0;
-  }
+}
 
-  .panel-with-header .panel-header {
-    @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
+.panel-with-header .panel-header {
+  @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
            text-sm font-semibold backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            border-b-0 rounded-t-2xl flex-shrink-0 relative overflow-hidden;
-  }
+}
 
-  .panel-with-header .panel-content {
-    @apply flex-1 overflow-hidden flex flex-col;
-  }
+.panel-with-header .panel-content {
+  @apply flex-1 overflow-hidden flex flex-col;
 }
