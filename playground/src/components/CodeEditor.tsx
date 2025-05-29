@@ -2,7 +2,7 @@ import MonacoEditor from "@monaco-editor/react";
 import type { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useRef } from "react";
-import type { ThemeType } from "../types";
+import { useTheme } from "../contexts";
 
 /**
  * CodeEditor - A configurable Monaco Editor wrapper for the Typstyle Playground
@@ -10,50 +10,12 @@ import type { ThemeType } from "../types";
  * This component serves as the base editor implementation across the application.
  * The `indentSize` prop now controls indentation: a positive value sets a fixed indent
  * size (using spaces), while 0 or a negative value enables auto-detection of indentation.
- *
- * @example Source Code Editor (auto indentation)
- * <CodeEditor
- *   language="typst"
- *   readOnly={false}
- *   showLineNumbers={true}
- *   enableFolding={true}
- *   enableWordWrap={true}
- *   indentSize={0} // 0 or non-positive for auto-detection
- *   onChange={handleChange}
- *   onMount={handleMount}
- *   theme={currentTheme}
- * />
- *
- * @example Formatted Output (readonly, fixed indent)
- * <CodeEditor
- *   language="typst"
- *   readOnly={true}
- *   showLineNumbers={false}
- *   enableFolding={false}
- *   enableWordWrap={false}
- *   indentSize={2} // Example: fixed indentation of 2 spaces
- *   theme={currentTheme}
- *   value={formattedCode}
- * />
- *
- * @example JSON Output (AST/IR, fixed indent)
- * <CodeEditor
- *   language="json"
- *   readOnly={true}
- *   showLineNumbers={false}
- *   enableFolding={true}
- *   enableWordWrap={false}
- *   indentSize={4} // Fixed indentation of 4 spaces
- *   theme={currentTheme}
- *   value={jsonString}
- * />
  */
 
 export interface CodeEditorProps {
   value: string;
   onChange?: (value: string | undefined) => void;
   onMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void;
-  theme: ThemeType;
   indentSize: number; // Positive for fixed indent, 0 or negative for auto-detect
   language?: string;
   readOnly?: boolean;
@@ -69,7 +31,6 @@ export function CodeEditor({
   value,
   onChange,
   onMount,
-  theme,
   indentSize,
   language = "typst",
   readOnly = false,
@@ -80,6 +41,7 @@ export function CodeEditor({
   height = "100%",
   rulers,
 }: CodeEditorProps) {
+  const { theme } = useTheme();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const applyIndentationSettings = useCallback(() => {
@@ -110,7 +72,7 @@ export function CodeEditor({
       applyIndentationSettings(); // Apply initial settings
       onMount?.(editor, monaco);
     },
-    [onMount, applyIndentationSettings],
+    [onMount, applyIndentationSettings]
   );
 
   useEffect(() => {
@@ -143,9 +105,10 @@ export function CodeEditor({
   return (
     <div
       className={`
-        h-full
-      bg-[var(--editor-bg)] rounded-b-2xl shadow-[var(--shadow-medium)]
-      flex-1 overflow-hidden flex flex-col relative transition-all duration-300 ease-in-out
+        h-full flex-1 overflow-hidden flex flex-col relative
+        bg-[rgba(232,245,232,0.6)] dark:bg-[rgba(42,31,74,0.6)]
+        rounded-b-2xl shadow-medium
+        transition-all duration-300 ease-in-out
     `}
     >
       <MonacoEditor

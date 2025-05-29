@@ -1,4 +1,3 @@
-import { useTheme } from "../contexts";
 import { CodeEditor } from "./CodeEditor";
 
 export interface OutputEditorProps {
@@ -14,12 +13,10 @@ export function OutputEditor({
   indentSize = 2,
   lineLengthGuide,
 }: OutputEditorProps) {
-  const { theme } = useTheme();
   return (
     <div className="h-full">
       <CodeEditor
         value={content}
-        theme={theme}
         indentSize={indentSize}
         language={language}
         readOnly={true}

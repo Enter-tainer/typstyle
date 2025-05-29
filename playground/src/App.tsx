@@ -83,7 +83,13 @@ function App() {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-[var(--bg-gradient-from)] via-[var(--bg-gradient-via)] to-[var(--bg-gradient-to)]">
+    <div
+      className="
+        h-screen flex flex-col
+       bg-gradient-to-br from-koishi-green-50 via-koishi-green-100 to-koishi-green-200
+       dark:from-koishi-purple-900 dark:via-koishi-purple-800 dark:to-koishi-purple-700
+      "
+    >
       <Header onSampleSelect={handleSampleSelect} />
 
       <MainLayout

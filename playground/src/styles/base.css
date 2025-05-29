@@ -1,0 +1,80 @@
+@layer base {
+  label {
+    /* Light theme default */
+    --local-format-label-text-color: var(--text-primary);
+    @apply block text-[0.7rem] font-semibold text-[var(--local-format-label-text-color)] mb-[0.125rem];
+    /* Dark theme handled by var(--text-primary) automatically */
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    /* Light theme defaults */
+    --local-format-input-bg-color: rgba(232, 245, 232, 0.9);
+    --local-format-input-border-color: rgba(200, 230, 201, 0.8);
+    --local-format-input-text-color: var(--header-text);
+
+    @apply w-full p-[0.375rem_0.5rem] bg-[var(--local-format-input-bg-color)] border border-[var(--local-format-input-border-color)] rounded-[0.375rem] text-[var(--local-format-input-text-color)] text-xs;
+    @apply focus:border-[var(--text-primary)] focus:outline-2 focus:outline-offset-2 focus:outline-[var(--text-primary)];
+    @apply hover:border-[var(--text-primary)];
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      outline 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-soft);
+
+    @variant dark {
+      --local-format-input-bg-color: rgba(57, 47, 90, 0.7);
+      --local-format-input-border-color: rgba(74, 63, 106, 0.8);
+      --local-format-input-text-color: #f3e5f5; /* Specific dark theme text color */
+    }
+  }
+
+  select {
+    @apply cursor-pointer appearance-none pr-8;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+  }
+
+  select option {
+    background: var(--local-format-input-bg-color);
+    color: var(--local-format-input-text-color);
+  }
+
+  input[type="checkbox"] {
+    /* Light theme defaults */
+    --local-checkbox-border-color: var(--local-format-input-border-color);
+    --local-checkbox-bg-color: var(--local-format-input-bg-color);
+    --local-checkbox-checked-bg-color: var(--text-primary);
+    --local-checkbox-checked-border-color: var(--text-primary);
+    --local-checkbox-hover-border-color: var(--text-primary);
+    --local-checkbox-hover-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15); /* Greenish shadow for light theme */
+
+    @apply cursor-pointer rounded border-2 border-[var(--local-checkbox-border-color)] bg-[var(--local-checkbox-bg-color)] relative shrink-0;
+    @apply checked:bg-[var(--local-checkbox-checked-bg-color)] checked:border-[var(--local-checkbox-checked-border-color)];
+    @apply focus:outline-2 focus:outline-[var(--text-primary)] focus:outline-offset-2;
+    @apply hover:border-[var(--local-checkbox-hover-border-color)] hover:shadow-[var(--local-checkbox-hover-shadow)];
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    width: 1em;
+    height: 1em;
+
+    @variant dark {
+      /* Dark theme overrides for checkbox variables */
+      /* These will correctly use the dark versions of the global/input variables they reference */
+      --local-checkbox-border-color: var(--local-format-input-border-color);
+      --local-checkbox-bg-color: var(--local-format-input-bg-color);
+      --local-checkbox-checked-bg-color: var(--text-primary);
+      --local-checkbox-checked-border-color: var(--text-primary);
+      --local-checkbox-hover-border-color: var(--text-primary);
+      --local-checkbox-hover-shadow: 0 0 0 2px rgba(163, 147, 199, 0.2); /* Purplish shadow for dark theme */
+    }
+  }
+}

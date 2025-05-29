@@ -60,7 +60,7 @@ export function Tabs({
 
   // Internal state management
   const [internalActiveTab, setInternalActiveTab] = useState<string>(
-    defaultActiveTab || tabs[0]?.id || ""
+    defaultActiveTab || tabs[0]?.id || "",
   );
 
   // Determine if we're using external or internal state management
@@ -88,35 +88,42 @@ export function Tabs({
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
 
   return (
-    <div className={`flex flex-col h-full overflow-hidden ${className}`}>
+    <div className={`tabs-container ${className}`}>
       {/* Tab Headers */}
-      <div className="flex-shrink-0 flex">
-        {" "}
-        {tabs.map((tab, index) => (
-          <button
-            type="button"
-            key={tab.id}
-            onClick={() => handleTabChange(tab.id)}
-            className={`
-              flex-1 py-2 px-4 text-sm font-semibold transition-all duration-300
-              cursor-pointer text-center relative border-b-2 bg-transparent
-              ${
-                activeTab === tab.id
-                  ? "text-[var(--tab-active-text)] border-b-[var(--tab-active-border)] bg-[rgba(76,175,80,0.05)] shadow-[var(--shadow-medium)]"
-                  : "text-[var(--tab-button-text)] border-b-[var(--tab-button-border)] hover:text-[var(--tab-active-text)] hover:bg-[rgba(76,175,80,0.08)] hover:shadow-[var(--shadow-soft)]"
-              }
-              ${index === 0 ? "rounded-tl-2xl" : ""}
-              ${index === tabs.length - 1 ? "rounded-tr-2xl" : ""}
-              ${tabClassName}
-            `}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="tabs-header-list">
+        {tabs.map((tab, index) => {
+          const buttonStateClasses = [];
+          if (activeTab === tab.id) {
+            buttonStateClasses.push("active");
+          }
+          if (index === 0) {
+            buttonStateClasses.push("first");
+          }
+          if (index === tabs.length - 1) {
+            buttonStateClasses.push("last");
+          }
+
+          const buttonClasses = `tab-button ${buttonStateClasses.join(
+            " ",
+          )} ${tabClassName}`;
+
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              className={buttonClasses.trim()}
+              onClick={() => handleTabChange(tab.id)}
+              aria-selected={activeTab === tab.id}
+              role="tab"
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Content */}
-      <div className={`flex-1 overflow-hidden ${contentClassName}`}>
+      <div className={`tabs-content ${contentClassName}`}>
         {activeTabContent}
       </div>
     </div>
