@@ -96,12 +96,6 @@ export function Tabs({
           if (activeTab === tab.id) {
             buttonStateClasses.push("active");
           }
-          if (index === 0) {
-            buttonStateClasses.push("first");
-          }
-          if (index === tabs.length - 1) {
-            buttonStateClasses.push("last");
-          }
 
           const buttonClasses = `tab-button ${buttonStateClasses.join(
             " ",
