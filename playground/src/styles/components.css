@@ -3,7 +3,7 @@
     @apply inline-flex items-center justify-center font-medium text-sm;
     @apply px-3 py-2;
     @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
-    @apply border border-[var(--glass-border)] rounded-lg shadow-soft;
+    @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-lg shadow-soft;
     @apply transition-all duration-200 ease-in-out;
     @apply cursor-pointer;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
@@ -15,7 +15,7 @@
   .btn-icon {
     @apply flex items-center justify-center p-3;
     @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
-    @apply border border-[var(--glass-border)] rounded-xl backdrop-blur-md;
+    @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl backdrop-blur-md;
     @apply transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)];
     @apply cursor-pointer relative;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
@@ -25,7 +25,7 @@
   }
 
   .panel {
-    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)]
+    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            rounded-2xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
@@ -33,8 +33,8 @@
   }
 
   .panel-header {
-    @apply px-5 py-2 bg-[var(--panel-header-bg)] text-[var(--panel-header-text)]
-           text-sm font-semibold backdrop-blur-md border border-[var(--glass-border)]
+    @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
+           text-sm font-semibold backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            border-b-0 rounded-t-2xl flex-shrink-0 relative overflow-hidden;
   }
 
@@ -55,22 +55,16 @@
            cursor-pointer text-center relative border-b-2 bg-transparent;
     @apply text-koishi-green-500 border-b-transparent;
     @apply hover:text-koishi-purple-700 hover:bg-koishi-green-50/10 hover:shadow-soft;
-    @apply first:rounded-tl-2xl last:rounded-tr-2xl
-
-    @variant dark {
-      @apply text-koishi-purple-300;
-      @apply hover:text-koishi-green-300 hover:bg-koishi-green-300/10;
-    }
+    @apply first:rounded-tl-2xl last:rounded-tr-2xl;
+    @apply dark:text-koishi-purple-300;
+    @apply dark:hover:text-koishi-green-300 dark:hover:bg-koishi-green-300/10;
   }
 
   .tab-button.active {
     @apply text-koishi-purple-700 border-b-koishi-purple-700
            bg-koishi-green-50/5 shadow-medium;
-
-    @variant dark {
-      @apply text-koishi-green-300 border-b-koishi-green-300
-             bg-koishi-green-300/5;
-    }
+    @apply dark:text-koishi-green-300 dark:border-b-koishi-green-300
+           dark:bg-koishi-green-300/5;
   }
 
   .tabs-content {
@@ -79,70 +73,16 @@
 
   /* Glass Effect Utilities */
   .glass {
-    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)];
+    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)];
   }
 
   .glass-panel {
-    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)] rounded-2xl shadow-medium;
-  }
-
-  /* Button Variants */
-  .btn-primary {
-    @apply inline-flex items-center justify-center font-medium text-sm;
-    @apply px-3 py-2;
-    @apply bg-koishi-purple-500 text-white border border-koishi-purple-600;
-    @apply rounded-lg shadow-soft;
-    @apply transition-all duration-200 ease-in-out;
-    @apply cursor-pointer;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
-    @apply hover:bg-koishi-purple-600 dark:hover:bg-koishi-purple-400 hover:shadow-medium;
-    @apply active:scale-95;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center font-medium text-sm;
-    @apply px-3 py-2;
-    @apply bg-koishi-green-100 text-koishi-green-800 border border-koishi-green-200;
-    @apply rounded-lg shadow-soft;
-    @apply transition-all duration-200 ease-in-out;
-    @apply cursor-pointer;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
-    @apply hover:bg-koishi-green-200 dark:bg-koishi-green-800 dark:text-koishi-green-100;
-    @apply dark:border-koishi-green-700 dark:hover:bg-koishi-green-700 hover:shadow-medium;
-    @apply active:scale-95;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  }
-
-  .btn-ghost {
-    @apply inline-flex items-center justify-center font-medium text-sm;
-    @apply px-3 py-2;
-    @apply bg-transparent border border-transparent text-[var(--text-primary)];
-    @apply rounded-lg shadow-soft;
-    @apply transition-all duration-200 ease-in-out;
-    @apply cursor-pointer;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
-    @apply hover:bg-koishi-green-50 dark:hover:bg-koishi-purple-900/50 hover:shadow-medium;
-    @apply active:scale-95;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  }
-
-  /* Text Utilities */
-  .text-primary {
-    @apply text-[var(--text-primary)];
-  }
-
-  .text-secondary {
-    @apply text-[var(--text-secondary)];
-  }
-
-  .text-header {
-    @apply text-[var(--header-text)];
+    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-2xl shadow-medium;
   }
 
   /* Panel Variants */
   .panel-compact {
-    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)]
+    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            rounded-2xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
@@ -150,7 +90,7 @@
   }
 
   .panel-with-header {
-    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)]
+    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            rounded-2xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
@@ -158,8 +98,8 @@
   }
 
   .panel-with-header .panel-header {
-    @apply px-5 py-2 bg-[var(--panel-header-bg)] text-[var(--panel-header-text)]
-           text-sm font-semibold backdrop-blur-md border border-[var(--glass-border)]
+    @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
+           text-sm font-semibold backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
            border-b-0 rounded-t-2xl flex-shrink-0 relative overflow-hidden;
   }
 
