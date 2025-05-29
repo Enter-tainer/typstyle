@@ -47,41 +47,32 @@
   --color-koishi-gold-800: #ff8f00;
   --color-koishi-gold-900: #ff6f00;
 
-  /* Custom Shadow Variables */
+  /* Shadow System */
   --shadow-soft: 0 2px 8px rgba(46, 125, 50, 0.08);
   --shadow-medium: 0 4px 16px rgba(46, 125, 50, 0.12);
   --shadow-strong: 0 8px 32px rgba(46, 125, 50, 0.16);
 }
 
-/* Dark mode shadow overrides */
-@variant dark {
-  :root {
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
-    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
-  }
-}
-
+/* Light theme (default) */
 :root {
   --header-text: #2e7d32; /* lightTheme.header-text */
   --text-primary: #388e3c; /* lightTheme.text-primary */
   --text-secondary: #7e57c2; /* lightTheme.text-secondary */
 
-  --glass-bg: rgba(232, 245, 232, 0.85); /* Light Greenish Glass */
-  --glass-border: rgba(200, 230, 201, 0.9);
+  --shadow-soft: 0 2px 8px rgba(46, 125, 50, 0.08);
+  --shadow-medium: 0 4px 16px rgba(46, 125, 50, 0.12);
+  --shadow-strong: 0 8px 32px rgba(46, 125, 50, 0.16);
+}
 
-  --panel-header-bg: #a5d6a7; /* lightTheme.panel-header-bg */
-  --panel-header-text: #1b5e20; /* lightTheme.panel-header-text */
-
-  @variant dark {
+/* Dark theme variant */
+@variant dark {
+  :root {
     --header-text: #c5b8e3; /* darkTheme.header-text */
     --text-primary: #a393c7; /* darkTheme.text-primary */
     --text-secondary: #8dbf8b; /* darkTheme.text-secondary */
 
-    --glass-bg: rgba(57, 47, 90, 0.85); /* Deep Purple Glass */
-    --glass-border: rgba(74, 63, 106, 0.9);
-
-    --panel-header-bg: #5c4b8c; /* darkTheme.panel-header-bg */
-    --panel-header-text: #f3e5f5; /* koishi.purple.50 */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
   }
 }
