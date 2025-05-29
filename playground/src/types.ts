@@ -2,13 +2,7 @@
 
 export type ThemeType = "light" | "dark";
 
-export const ScreenSize = {
-  Wide: "wide",
-  Medium: "medium",
-  Thin: "thin",
-} as const;
-
-export type ScreenSizeType = (typeof ScreenSize)[keyof typeof ScreenSize];
+export type ScreenSizeType = "wide" | "medium" | "thin";
 
 export interface FormatOptions {
   maxLineLength: number;

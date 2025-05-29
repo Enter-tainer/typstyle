@@ -7,6 +7,7 @@ export { OutputEditor } from "./OutputEditor";
 export { SourceCodeContent } from "./SourceCodeContent";
 export { Panel } from "./Panel";
 export { Tabs, Tab } from "./Tabs";
+export { MainLayout } from "./MainLayout";
 export type { PanelProps } from "./Panel";
 export type { TabItem, TabsProps, TabProps } from "./Tabs";
 export type { CodeEditorProps } from "./CodeEditor";

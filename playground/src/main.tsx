@@ -1,14 +1,16 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 import "./styles/index.scss";
-import App from "./App.tsx";
+const App = lazy(() => import("./App"));
 import { ThemeProvider } from "./contexts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </Suspense>
   </StrictMode>,
 );
