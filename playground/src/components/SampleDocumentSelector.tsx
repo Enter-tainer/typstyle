@@ -14,14 +14,12 @@ export function SampleDocumentSelector({
   onSampleSelect,
   className = "",
 }: SampleDocumentSelectorProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedSample, setSelectedSample] = useState<SampleDocumentKey | "">(
-    "",
+    ""
   );
   const [error, setError] = useState<string | null>(null);
 
   const loadSampleDocument = async (sampleKey: SampleDocumentKey) => {
-    setIsLoading(true);
     setError(null);
     try {
       const content = await getSampleFileContent(sampleKey);
@@ -33,8 +31,6 @@ export function SampleDocumentSelector({
       setError(errorMessage);
       const fallback = getFallbackContent(sampleKey, errorMessage);
       onSampleSelect(fallback);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -54,11 +50,7 @@ export function SampleDocumentSelector({
         <select
           value={selectedSample}
           onChange={handleSampleChange}
-          disabled={isLoading}
-          className="
-            w-48
-            disabled:opacity-50 disabled:cursor-not-allowed
-          "
+          className="w-48"
           title={
             selectedSample && selectedSample in SAMPLE_DOCUMENTS
               ? SAMPLE_DOCUMENTS[selectedSample].description
@@ -82,7 +74,6 @@ export function SampleDocumentSelector({
             setError(null);
             onSampleSelect("");
           }}
-          disabled={isLoading}
           className="btn w-8 h-8 p-0"
           title="Clear document and start fresh"
         >
