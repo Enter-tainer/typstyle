@@ -1,53 +1,31 @@
 @layer components {
   .btn {
-    /* Light theme defaults */
-    --local-btn-bg-color: #f1f8e9;
-    --local-btn-text-color: var(--text-primary);
-    --local-btn-hover-bg-color: #c8e6c9;
-    /* Using --local-tab-active-border-color for focus ring, ensure it's defined before .btn or define a specific btn focus color */
-
     @apply inline-flex items-center justify-center font-medium text-sm;
     @apply px-3 py-2;
-    @apply bg-[var(--local-btn-bg-color)] text-[var(--local-btn-text-color)];
+    @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
     @apply border border-[var(--glass-border)] rounded-lg shadow-soft;
     @apply transition-all duration-200 ease-in-out;
     @apply cursor-pointer;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--local-tab-active-border-color)] focus-visible:ring-offset-2;
-    @apply hover:bg-[var(--local-btn-hover-bg-color)] hover:shadow-medium;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+    @apply hover:bg-koishi-green-100 dark:hover:bg-koishi-purple-800 hover:shadow-medium;
     @apply active:scale-95;
     @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-
-    @variant dark {
-      --local-btn-bg-color: #2a1f4a;
-      /* --local-btn-text-color uses var(--text-primary) which is themed */
-      --local-btn-hover-bg-color: #392f5a;
-    }
   }
 
   .btn-icon {
-    --local-btn-icon-bg-color: var(--local-btn-bg-color);
-    --local-btn-icon-text-color: var(--local-btn-text-color);
-    --local-btn-icon-hover-bg-color: var(--local-btn-hover-bg-color);
-
     @apply flex items-center justify-center p-3;
-    @apply bg-[var(--local-btn-icon-bg-color)] text-[var(--local-btn-icon-text-color)];
+    @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
     @apply border border-[var(--glass-border)] rounded-xl backdrop-blur-md;
     @apply transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)];
     @apply cursor-pointer relative;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--local-tab-active-border-color)] focus-visible:ring-offset-2;
-    @apply hover:bg-[var(--local-btn-icon-hover-bg-color)] hover:shadow-medium;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+    @apply hover:bg-koishi-green-100 dark:hover:bg-koishi-purple-800 hover:shadow-medium;
     @apply active:scale-95;
     @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-
-    /* Dark variant inherits from .btn's dark variables due to var() fallbacks */
-    @variant dark {
-      --local-btn-icon-bg-color: var(--local-btn-bg-color);
-      --local-btn-icon-hover-bg-color: var(--local-btn-hover-bg-color);
-    }
   }
 
   .panel {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[var(--glass-border)]
+    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)]
            rounded-2xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
@@ -55,7 +33,7 @@
   }
 
   .panel-header {
-    @apply px-5 py-2 bg-[panel-header-bg] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-koishi-purple-50
+    @apply px-5 py-2 bg-[var(--panel-header-bg)] text-[var(--panel-header-text)]
            text-sm font-semibold backdrop-blur-md border border-[var(--glass-border)]
            border-b-0 rounded-t-2xl flex-shrink-0 relative overflow-hidden;
   }
@@ -73,70 +51,119 @@
   }
 
   .tab-button {
-    /* Light theme defaults */
-    --local-tab-button-text-color: #4caf50;
-    --local-tab-button-border-color: transparent;
-    --local-tab-active-text-color: #5e35b1;
-    --local-tab-active-border-color: #5e35b1;
-    --local-tab-hover-bg-color: rgba(76, 175, 80, 0.08);
-    --local-tab-active-bg-color: rgba(76, 175, 80, 0.05);
-
     @apply flex-1 py-2 px-4 text-sm font-semibold transition-all duration-300
            cursor-pointer text-center relative border-b-2 bg-transparent;
-    @apply text-[var(--local-tab-button-text-color)] border-b-[var(--local-tab-button-border-color)];
+    @apply text-koishi-green-500 border-b-transparent;
+    @apply hover:text-koishi-purple-700 hover:bg-koishi-green-50/10 hover:shadow-soft;
+    @apply first:rounded-tl-2xl last:rounded-tr-2xl
 
     @variant dark {
-      --local-tab-button-text-color: #9382b7;
-      /* --local-tab-button-border-color remains transparent */
-      --local-tab-active-text-color: #9dc99b;
-      --local-tab-active-border-color: #9dc99b;
-      --local-tab-hover-bg-color: rgba(157, 201, 155, 0.08);
-      --local-tab-active-bg-color: rgba(157, 201, 155, 0.05);
+      @apply text-koishi-purple-300;
+      @apply hover:text-koishi-green-300 hover:bg-koishi-green-300/10;
     }
   }
 
-  .tab-button:hover {
-    @apply text-[var(--local-tab-active-text-color)] bg-[var(--local-tab-hover-bg-color)] shadow-soft;
-  }
-
   .tab-button.active {
-    @apply text-[var(--local-tab-active-text-color)] border-b-[var(--local-tab-active-border-color)]
-           bg-[var(--local-tab-active-bg-color)] shadow-medium;
-  }
+    @apply text-koishi-purple-700 border-b-koishi-purple-700
+           bg-koishi-green-50/5 shadow-medium;
 
-  .tab-button.first {
-    @apply rounded-tl-2xl;
-  }
-
-  .tab-button.last {
-    @apply rounded-tr-2xl;
+    @variant dark {
+      @apply text-koishi-green-300 border-b-koishi-green-300
+             bg-koishi-green-300/5;
+    }
   }
 
   .tabs-content {
     @apply flex-1 overflow-hidden;
   }
-}
 
-@utility shadow-soft {
-  --shadow-soft: 0 2px 8px rgba(46, 125, 50, 0.08);
-  @apply shadow-(--shadow-soft);
-  @variant dark {
-    --shadow-soft: 0 2px 8px 0 2px 8px rgba(0, 0, 0, 0.3);
+  /* Glass Effect Utilities */
+  .glass {
+    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)];
   }
-}
 
-@utility shadow-medium {
-  --shadow-medium: 0 4px 16px rgba(46, 125, 50, 0.12);
-  @apply shadow-(--shadow-medium);
-  @variant dark {
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+  .glass-panel {
+    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)] rounded-2xl shadow-medium;
   }
-}
 
-@utility shadow-strong {
-  --shadow-strong: 0 8px 32px rgba(46, 125, 50, 0.16);
-  @apply shadow-(--shadow-strong);
-  @variant dark {
-    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
+  /* Button Variants */
+  .btn-primary {
+    @apply inline-flex items-center justify-center font-medium text-sm;
+    @apply px-3 py-2;
+    @apply bg-koishi-purple-500 text-white border border-koishi-purple-600;
+    @apply rounded-lg shadow-soft;
+    @apply transition-all duration-200 ease-in-out;
+    @apply cursor-pointer;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+    @apply hover:bg-koishi-purple-600 dark:hover:bg-koishi-purple-400 hover:shadow-medium;
+    @apply active:scale-95;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-medium text-sm;
+    @apply px-3 py-2;
+    @apply bg-koishi-green-100 text-koishi-green-800 border border-koishi-green-200;
+    @apply rounded-lg shadow-soft;
+    @apply transition-all duration-200 ease-in-out;
+    @apply cursor-pointer;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+    @apply hover:bg-koishi-green-200 dark:bg-koishi-green-800 dark:text-koishi-green-100;
+    @apply dark:border-koishi-green-700 dark:hover:bg-koishi-green-700 hover:shadow-medium;
+    @apply active:scale-95;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center font-medium text-sm;
+    @apply px-3 py-2;
+    @apply bg-transparent border border-transparent text-[var(--text-primary)];
+    @apply rounded-lg shadow-soft;
+    @apply transition-all duration-200 ease-in-out;
+    @apply cursor-pointer;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-koishi-purple-500 focus-visible:ring-offset-2;
+    @apply hover:bg-koishi-green-50 dark:hover:bg-koishi-purple-900/50 hover:shadow-medium;
+    @apply active:scale-95;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+
+  /* Text Utilities */
+  .text-primary {
+    @apply text-[var(--text-primary)];
+  }
+
+  .text-secondary {
+    @apply text-[var(--text-secondary)];
+  }
+
+  .text-header {
+    @apply text-[var(--header-text)];
+  }
+
+  /* Panel Variants */
+  .panel-compact {
+    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)]
+           rounded-2xl shadow-medium relative overflow-hidden
+           transition-all duration-300 ease-in-out
+           hover:shadow-strong
+           flex flex-col h-full min-h-0 p-4;
+  }
+
+  .panel-with-header {
+    @apply bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--glass-border)]
+           rounded-2xl shadow-medium relative overflow-hidden
+           transition-all duration-300 ease-in-out
+           hover:shadow-strong
+           flex flex-col h-full min-h-0;
+  }
+
+  .panel-with-header .panel-header {
+    @apply px-5 py-2 bg-[var(--panel-header-bg)] text-[var(--panel-header-text)]
+           text-sm font-semibold backdrop-blur-md border border-[var(--glass-border)]
+           border-b-0 rounded-t-2xl flex-shrink-0 relative overflow-hidden;
+  }
+
+  .panel-with-header .panel-content {
+    @apply flex-1 overflow-hidden flex flex-col;
   }
 }
