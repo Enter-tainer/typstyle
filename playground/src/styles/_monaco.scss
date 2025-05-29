@@ -1,7 +1,6 @@
 /* Monaco Editor specific styles */
 .monaco-editor {
   background: transparent !important;
-  transition: all 0.3s ease;
   height: 100% !important;
 
   .monaco-editor-background {
@@ -17,13 +16,7 @@
   }
 
   .overflow-guard {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-radius: 0.5rem;
-    backdrop-filter: blur(8px);
-
-    [data-theme="dark"] & {
-      background: rgba(0, 0, 0, 0.25) !important;
-    }
+    background: none !important;
   }
 
   .margin-view-overlays .line-numbers {
@@ -40,7 +33,6 @@
 
   .cursor {
     background: var(--text-primary) !important;
-    width: 2px !important;
   }
 }
 
