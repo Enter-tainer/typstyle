@@ -6,29 +6,6 @@ import {
   useState,
 } from "react";
 
-/**
- * Tabs component with support for both array-based and declarative JSX syntax
- *
- * @example Array-based syntax (original)
- * <Tabs
- *   defaultActiveTab="tab1"
- *   tabs={[
- *     { id: "tab1", label: "Tab 1", content: <div>Content 1</div> },
- *     { id: "tab2", label: "Tab 2", content: <div>Content 2</div> }
- *   ]}
- * />
- *
- * @example Declarative JSX syntax (new)
- * <Tabs defaultActiveTab="tab1">
- *   <Tab id="tab1" label="Tab 1">
- *     <div>Content 1</div>
- *   </Tab>
- *   <Tab id="tab2" label="Tab 2">
- *     <div>Content 2</div>
- *   </Tab>
- * </Tabs>
- */
-
 export interface TabItem {
   id: string;
   label: string;
@@ -42,7 +19,6 @@ export interface TabProps {
 }
 
 export interface TabsProps {
-  tabs?: TabItem[];
   children?: ReactNode;
   activeTab?: string;
   onTabChange?: (tabId: string) => void;
@@ -59,7 +35,6 @@ export function Tab({ children }: TabProps) {
 }
 
 export function Tabs({
-  tabs: propTabs,
   children,
   activeTab: externalActiveTab,
   onTabChange: externalOnTabChange,
@@ -68,28 +43,24 @@ export function Tabs({
   tabClassName = "",
   contentClassName = "",
 }: TabsProps) {
-  // Extract tabs from children if using declarative JSX syntax
-  const extractedTabs: TabItem[] =
-    propTabs ||
-    (children
-      ? (Children.map(children, (child) => {
-          if (isValidElement(child) && child.type === Tab) {
-            const tabProps = child.props as TabProps;
-            return {
-              id: tabProps.id,
-              label: tabProps.label,
-              content: tabProps.children,
-            };
-          }
-          return null;
-        })?.filter(Boolean) as TabItem[])
-      : []);
-
-  const tabs = extractedTabs;
+  // Extract tabs from children using declarative JSX syntax
+  const tabs: TabItem[] = children
+    ? (Children.map(children, (child) => {
+        if (isValidElement(child) && child.type === Tab) {
+          const tabProps = child.props as TabProps;
+          return {
+            id: tabProps.id,
+            label: tabProps.label,
+            content: tabProps.children,
+          };
+        }
+        return null;
+      })?.filter(Boolean) as TabItem[])
+    : [];
 
   // Internal state management
   const [internalActiveTab, setInternalActiveTab] = useState<string>(
-    defaultActiveTab || tabs[0]?.id || "",
+    defaultActiveTab || tabs[0]?.id || ""
   );
 
   // Determine if we're using external or internal state management
