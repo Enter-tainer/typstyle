@@ -1,6 +1,6 @@
-import { DarkMode, GitHub, LightMode } from "@mui/icons-material";
 import { useTheme } from "../contexts";
 import { SampleDocumentSelector } from "./SampleDocumentSelector";
+import { GitHubIcon, LightModeIcon, DarkModeIcon } from "./Icons";
 
 interface HeaderProps {
   onSampleSelect: (content: string) => void;
@@ -25,26 +25,26 @@ export function Header({ onSampleSelect }: HeaderProps) {
         />
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* GitHub Repo Link */}
         <a
           href="https://github.com/enter-tainer/typstyle"
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-icon no-underline hover:no-underline"
+          className="btn-icon size-8 no-underline hover:no-underline"
           title="View Typstyle on GitHub"
         >
-          <GitHub />
+          <GitHubIcon />
         </a>
 
         {/* Theme Toggle */}
         <button
           type="button"
           onClick={toggleTheme}
-          className="btn-icon"
+          className="btn-icon size-8"
           title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
-          {theme === "light" ? <LightMode /> : <DarkMode />}
+          {theme === "light" ? <LightModeIcon /> : <DarkModeIcon />}
         </button>
       </div>
     </div>
