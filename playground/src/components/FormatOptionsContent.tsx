@@ -17,30 +17,14 @@ export function FormatOptionsContent({
     <div className="p-2 overflow-y-auto flex-1">
       {/* Reset Button */}
       <div className="mb-3 pb-3 border-b border-[var(--glass-border)]">
-        <button
-          type="button"
-          onClick={handleReset}
-          className="
-            w-full px-3 py-2 text-sm font-medium
-            bg-[var(--theme-toggle-bg)] text-[var(--theme-toggle-text)]
-            border border-[var(--glass-border)]
-            rounded-lg shadow-[var(--shadow-soft)]
-            hover:bg-[var(--theme-toggle-hover-bg)] hover:shadow-[var(--shadow-medium)]
-            active:scale-95
-            disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-            transition-all duration-200
-            focus:outline-none focus:ring-2 focus:ring-[var(--tab-active-border)] focus:ring-offset-2
-          "
-        >
+        <button type="button" onClick={handleReset} className="btn w-full">
           🔄 Reset to Defaults
         </button>
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
         <div className="flex items-center justify-between w-full min-w-[200px] gap-2">
-          <label htmlFor="lineLength" className="format-label">
-            Line Length:
-          </label>
+          <label htmlFor="lineLength">Line Length:</label>
           <div className="flex gap-1 flex-shrink-0">
             <select
               id="lineLength"
@@ -58,7 +42,7 @@ export function FormatOptionsContent({
                   }));
                 }
               }}
-              className="format-input w-14"
+              className="w-14"
             >
               <option value={40}>40</option>
               <option value={60}>60</option>
@@ -78,14 +62,12 @@ export function FormatOptionsContent({
                   maxLineLength: Number.parseInt(e.target.value),
                 }))
               }
-              className="format-input w-14"
+              className="w-14"
             />
           </div>
         </div>{" "}
         <div className="flex items-center justify-between w-full min-w-[200px] gap-2">
-          <label htmlFor="indentSize" className="format-label">
-            Indent:
-          </label>
+          <label htmlFor="indentSize">Indent:</label>
           <div className="flex gap-1 flex-shrink-0">
             <select
               id="indentSize"
@@ -103,7 +85,7 @@ export function FormatOptionsContent({
                   }));
                 }
               }}
-              className="format-input w-14"
+              className="w-14"
             >
               <option value={2}>2</option>
               <option value={4}>4</option>
@@ -121,14 +103,12 @@ export function FormatOptionsContent({
                   indentSize: Number.parseInt(e.target.value),
                 }))
               }
-              className="format-input w-14"
+              className="w-14"
             />
           </div>
         </div>{" "}
         <div className="flex items-center justify-between w-full min-w-[200px] gap-2">
-          <label htmlFor="collapseMarkupSpaces" className="format-label">
-            Collapse Markup Spaces:
-          </label>
+          <label htmlFor="collapseMarkupSpaces">Collapse Markup Spaces:</label>
           <input
             id="collapseMarkupSpaces"
             type="checkbox"
@@ -139,13 +119,10 @@ export function FormatOptionsContent({
                 collapseMarkupSpaces: e.target.checked,
               }))
             }
-            className="format-checkbox"
           />
         </div>
         <div className="flex items-center justify-between w-full min-w-[200px] gap-2">
-          <label htmlFor="reorderImportItems" className="format-label">
-            Reorder Import Items:
-          </label>
+          <label htmlFor="reorderImportItems">Reorder Import Items:</label>
           <input
             id="reorderImportItems"
             type="checkbox"
@@ -156,13 +133,10 @@ export function FormatOptionsContent({
                 reorderImportItems: e.target.checked,
               }))
             }
-            className="format-checkbox"
           />
         </div>
         <div className="flex items-center justify-between w-full min-w-[200px] gap-2">
-          <label htmlFor="wrapText" className="format-label">
-            Wrap Text:
-          </label>
+          <label htmlFor="wrapText">Wrap Text:</label>
           <input
             id="wrapText"
             type="checkbox"
@@ -173,7 +147,6 @@ export function FormatOptionsContent({
                 wrapText: e.target.checked,
               }))
             }
-            className="format-checkbox"
           />
         </div>
       </div>

@@ -56,7 +56,6 @@ export function SampleDocumentSelector({
           onChange={handleSampleChange}
           disabled={isLoading}
           className="
-            format-input
             w-48
             disabled:opacity-50 disabled:cursor-not-allowed
           "
@@ -84,16 +83,7 @@ export function SampleDocumentSelector({
             onSampleSelect("");
           }}
           disabled={isLoading}
-          className="
-              text-sm
-              w-8 h-8 flex items-center justify-center
-              bg-[var(--theme-toggle-bg)] text-[var(--theme-toggle-text)]
-              border border-[var(--glass-border)]
-              rounded-lg
-              hover:bg-[var(--theme-toggle-hover-bg)]
-              disabled:opacity-50 disabled:cursor-not-allowed
-              transition-colors duration-200
-            "
+          className="btn w-8 h-8 p-0"
           title="Clear document and start fresh"
         >
           🗑️
