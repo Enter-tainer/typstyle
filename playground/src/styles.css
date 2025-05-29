@@ -1,1 +1,91 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@layer components {
+  label {
+    @apply block text-[0.7rem] font-semibold text-[var(--format-label)] mb-[0.125rem];
+    /* text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); */
+    /* letter-spacing: 0.025em; */
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    @apply w-full p-[0.375rem_0.5rem] bg-[var(--format-input-bg)] border border-[var(--format-input-border)] rounded-[0.375rem] text-[var(--format-input-text)] text-xs;
+    @apply focus:border-[var(--text-primary)] focus:outline-2 focus:outline-offset-2 focus:outline-[var(--text-primary)];
+    @apply hover:border-[var(--text-primary)];
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      outline 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-soft);
+  }
+
+  select {
+    @apply cursor-pointer appearance-none pr-8;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+  }
+
+  select option {
+    background: var(--format-input-bg);
+    color: var(--format-input-text);
+  }
+
+  input[type="checkbox"] {
+    @apply cursor-pointer rounded border-2 border-[var(--format-input-border)] bg-[var(--format-input-bg)] relative shrink-0;
+    @apply checked:bg-[var(--text-primary)] checked:border-[var(--text-primary)];
+    @apply focus:outline-2 focus:outline-[var(--text-primary)] focus:outline-offset-2;
+    @apply hover:border-[var(--text-primary)];
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    width: 1em;
+    height: 1em;
+
+    @variant dark {
+      @apply border-solid border-[#c5e1a5] bg-[rgba(232,245,232,0.9)];
+      @apply checked:border-solid checked:bg-[#4caf50] checked:border-[#4caf50];
+      @apply hover:border-solid hover:border-[#4caf50] hover:shadow-[0_0_0_2px_rgba(76,175,80,0.15)];
+    }
+
+    @variant dark {
+      @apply border-[var(--format-input-border)] bg-[var(--format-input-bg)];
+      @apply checked:bg-[var(--text-primary)] checked:border-[var(--text-primary)];
+      @apply hover:border-[var(--text-primary)] hover:shadow-[0_0_0_2px_rgba(163,147,199,0.2)];
+    }
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center font-medium text-sm;
+    @apply px-3 py-2;
+    @apply bg-[var(--theme-toggle-bg)] text-[var(--theme-toggle-text)];
+    @apply border border-[var(--glass-border)] rounded-lg shadow-[var(--shadow-soft)];
+    @apply transition-all duration-200 ease-in-out;
+    @apply cursor-pointer;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tab-active-border)] focus-visible:ring-offset-2;
+    @apply hover:bg-[var(--theme-toggle-hover-bg)] hover:shadow-[var(--shadow-medium)];
+    @apply active:scale-95;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+
+  .btn-icon {
+    @apply flex items-center justify-center p-3; /* Specific padding */
+    @apply bg-[var(--theme-toggle-bg)] text-[var(--theme-toggle-text)];
+    @apply border border-[var(--glass-border)] rounded-xl backdrop-blur-md; /* Specific rounding and backdrop */
+    @apply transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]; /* Specific transition */
+    @apply cursor-pointer relative;
+    /* Common states from .btn, but adjusted for .btn-icon specifics where needed */
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tab-active-border)] focus-visible:ring-offset-2;
+    @apply hover:bg-[var(--theme-toggle-hover-bg)] hover:shadow-[var(--shadow-medium)];
+    @apply active:scale-95;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+}
