@@ -36,10 +36,9 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: just,wasm-pack
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          registry-url: "https://registry.npmjs.org"
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
       - uses: Swatinem/rust-cache@v2
       - name: Download & install shiroa
         run: |
@@ -47,23 +46,19 @@ jobs:
       - name: Build Book
         run: just build-docs-gh
 
-      - name: Build wasm
+      - name: Build playground
+        working-directory: playground
         run: |
-          cd crates/typstyle-wasm
-          wasm-pack build
-      - name: Build demo
-        run: |
-          cd web
-          yarn
-          yarn build
+          bun build:wasm
+          bun install
+          # Assumes vite.config.ts has base: '/<repo>/playground/'
+          bun run build --outDir dist
 
       - name: Assemble deployment artifact
         run: |
           mkdir -p github-pages
           cp -r docs/dist/* github-pages/
-
-          mkdir github-pages/demo
-          cp web/dist/index.html github-pages/demo/
+          cp -r playground/dist github-pages/playground
 
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
