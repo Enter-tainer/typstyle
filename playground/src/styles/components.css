@@ -12,7 +12,7 @@
 }
 
 .btn-icon {
-  @apply flex items-center justify-center p-3;
+  @apply flex items-center justify-center;
   @apply bg-koishi-green-50 dark:bg-koishi-purple-900 text-[var(--text-primary)];
   @apply border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl backdrop-blur-md;
   @apply transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)];
