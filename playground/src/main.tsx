@@ -1,9 +1,10 @@
 import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-import "./styles.css";
-import "./styles/index.scss";
-const App = lazy(() => import("./App"));
 import { ThemeProvider } from "./contexts";
+import "./styles/index.css";
+import "./styles/_monaco.scss";
+
+const App = lazy(() => import("./App"));
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -17,5 +18,5 @@ createRoot(rootElement).render(
         <App />
       </ThemeProvider>
     </Suspense>
-  </StrictMode>
+  </StrictMode>,
 );

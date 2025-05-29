@@ -1,6 +1,5 @@
 import type { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
-import { useTheme } from "../contexts";
 import type { FormatOptions } from "../types";
 import { CodeEditor } from "./CodeEditor";
 
@@ -18,13 +17,11 @@ export function SourceEditor({
   onMount,
   lineLengthGuide,
 }: SourceEditorProps) {
-  const { theme } = useTheme();
   return (
     <CodeEditor
       value={sourceCode}
       onChange={onChange}
       onMount={onMount}
-      theme={theme}
       indentSize={0}
       language="typst"
       readOnly={false}

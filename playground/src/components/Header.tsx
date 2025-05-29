@@ -1,6 +1,6 @@
+import { DarkMode, GitHub, LightMode } from "@mui/icons-material";
 import { useTheme } from "../contexts";
 import { SampleDocumentSelector } from "./SampleDocumentSelector";
-import { GitHub, DarkMode, LightMode } from "@mui/icons-material";
 
 interface HeaderProps {
   onSampleSelect: (content: string) => void;
@@ -12,11 +12,11 @@ export function Header({ onSampleSelect }: HeaderProps) {
     <div
       className="
       px-4 py-2 backdrop-blur-md flex items-center justify-between flex-shrink-0
-      border-b border-[var(--glass-border)] shadow-[var(--shadow-soft)] relative
+      border-b border-[rgba(200, 230, 201, 0.9)] dark:border-[rgba(74, 63, 106, 0.9)] shadow-soft relative
     "
     >
       <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-bold text-[var(--header-text)] m-0 drop-shadow-sm">
+        <h1 className="text-2xl font-bold text-[#2e7d32] dark:text-[#c5b8e3] m-0 drop-shadow-sm">
           Typstyle Playground
         </h1>
         <SampleDocumentSelector
