@@ -26,7 +26,7 @@
 
   .panel {
     @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
-           rounded-2xl shadow-medium relative overflow-hidden
+           rounded-xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
            flex flex-col h-full min-h-0;
@@ -35,39 +35,38 @@
   .panel-header {
     @apply px-5 py-2 bg-[#a5d6a7] dark:bg-[#5c4b8c] text-[#1b5e20] dark:text-[#f3e5f5]
            text-sm font-semibold backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
-           border-b-0 rounded-t-2xl flex-shrink-0 relative overflow-hidden;
+           border-b-0 flex-shrink-0 relative overflow-hidden;
   }
 
   .panel-content {
     @apply flex-1 overflow-hidden flex flex-col;
   }
 
-  .tabs-container {
-    @apply flex flex-col h-full overflow-hidden;
+  .tabs {
+    @apply flex flex-col h-full overflow-hidden rounded-xl;
   }
 
-  .tabs-header-list {
+  .tabs-nav {
     @apply flex-shrink-0 flex;
   }
 
-  .tab-button {
+  .tab {
     @apply flex-1 py-2 px-4 text-sm font-semibold transition-all duration-300
            cursor-pointer text-center relative border-b-2 bg-transparent;
     @apply text-koishi-green-500 border-b-transparent;
     @apply hover:text-koishi-purple-700 hover:bg-koishi-green-50/10 hover:shadow-soft;
-    @apply first:rounded-tl-2xl last:rounded-tr-2xl;
     @apply dark:text-koishi-purple-300;
     @apply dark:hover:text-koishi-green-300 dark:hover:bg-koishi-green-300/10;
   }
 
-  .tab-button.active {
+  .tab.active {
     @apply text-koishi-purple-700 border-b-koishi-purple-700
            bg-koishi-green-50/5 shadow-medium;
     @apply dark:text-koishi-green-300 dark:border-b-koishi-green-300
            dark:bg-koishi-green-300/5;
   }
 
-  .tabs-content {
+  .tabs-panel {
     @apply flex-1 overflow-hidden;
   }
 
@@ -77,13 +76,13 @@
   }
 
   .glass-panel {
-    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-2xl shadow-medium;
+    @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)] rounded-xl shadow-medium;
   }
 
   /* Panel Variants */
   .panel-compact {
     @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
-           rounded-2xl shadow-medium relative overflow-hidden
+           rounded-xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
            flex flex-col h-full min-h-0 p-4;
@@ -91,7 +90,7 @@
 
   .panel-with-header {
     @apply bg-[rgba(232,245,232,0.85)] dark:bg-[rgba(57,47,90,0.85)] backdrop-blur-md border border-[rgba(200,230,201,0.9)] dark:border-[rgba(74,63,106,0.9)]
-           rounded-2xl shadow-medium relative overflow-hidden
+           rounded-xl shadow-medium relative overflow-hidden
            transition-all duration-300 ease-in-out
            hover:shadow-strong
            flex flex-col h-full min-h-0;

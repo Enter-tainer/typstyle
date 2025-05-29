@@ -88,26 +88,22 @@ export function Tabs({
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
 
   return (
-    <div className={`tabs-container ${className}`}>
+    <div className={`tabs ${className}`}>
       {/* Tab Headers */}
-      <div className="tabs-header-list">
-        {tabs.map((tab, index) => {
-          const buttonStateClasses = [];
-          if (activeTab === tab.id) {
-            buttonStateClasses.push("active");
-          }
-
-          const buttonClasses = `tab-button ${buttonStateClasses.join(
-            " ",
-          )} ${tabClassName}`;
+      <div className="tabs-nav">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          const buttonClasses = ["tab", isActive && "active", tabClassName]
+            .filter(Boolean)
+            .join(" ");
 
           return (
             <button
               key={tab.id}
               type="button"
-              className={buttonClasses.trim()}
+              className={buttonClasses}
               onClick={() => handleTabChange(tab.id)}
-              aria-selected={activeTab === tab.id}
+              aria-selected={isActive}
               role="tab"
             >
               {tab.label}
@@ -117,7 +113,7 @@ export function Tabs({
       </div>
 
       {/* Tab Content */}
-      <div className={`tabs-content ${contentClassName}`}>
+      <div className={`tabs-panel ${contentClassName}`.trim()}>
         {activeTabContent}
       </div>
     </div>

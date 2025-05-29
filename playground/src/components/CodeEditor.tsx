@@ -107,7 +107,6 @@ export function CodeEditor({
       className={`
         h-full flex-1 overflow-hidden flex flex-col relative
         bg-[rgba(232,245,232,0.6)] dark:bg-[rgba(42,31,74,0.6)]
-        rounded-b-2xl shadow-medium
         transition-all duration-300 ease-in-out
     `}
     >
