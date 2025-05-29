@@ -1,0 +1,47 @@
+# [light]
+# # A light theme inspired by Komeiji Koishi
+# color-scheme = "light"
+# main-color = "#A3D9A5" # soft green (Koishi’s hair)
+# dash-color = "#F292B5" # pastel pink accent
+# code-theme = ""
+
+[koish-dark]
+# A dark theme inspired by Komeiji Koishi
+color-scheme = "dark"
+main-color = "#375B36" # deep moss green
+dash-color = "#A75263" # muted rose accent
+code-theme = "tokyo-night.tmTheme"
+
+[light]
+color-scheme = "light"
+main-color = "#000"
+dash-color = "#20609f"
+# main-color = "#A3D9A5" # soft green (Koishi’s hair)
+# dash-color = "#F292B5" # pastel pink accent
+code-theme = ""
+
+[rust]
+color-scheme = "light"
+main-color = "#262625"
+dash-color = "#2b79a2"
+code-theme = ""
+
+[coal]
+color-scheme = "dark"
+# main-color = "#98a3ad"
+# dash-color = "#2b79a2"
+main-color = "#375B36" # deep moss green
+dash-color = "#A75263" # muted rose accent
+code-theme = "tokyo-night.tmTheme"
+
+[navy]
+color-scheme = "dark"
+main-color = "#bcbdd0"
+dash-color = "#2b79a2"
+code-theme = "tokyo-night.tmTheme"
+
+[ayu]
+color-scheme = "dark"
+main-color = "#c5c5c5"
+dash-color = "#0096cf"
+code-theme = "tokyo-night.tmTheme"
