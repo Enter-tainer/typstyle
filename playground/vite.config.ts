@@ -8,7 +8,12 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: "/typstyle/playground/",
 
-  plugins: [react(), tailwindcss(), wasm(), toplevelAwait()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    wasm(),
+    toplevelAwait(), // required by wasm
+  ],
 
   build: {
     rollupOptions: {
@@ -29,12 +34,13 @@ export default defineConfig({
           }
 
           // Group all application source code and public resources together
-          if (id.includes("/src/") || id.includes("?url")) {
+          if (id.includes("/src/")) {
             return "app";
           }
+          // NOTE: If we pack some scripts together, it may raise loading error in production.
 
-          // Default chunk for everything else
-          return "vendor";
+          // // Default chunk for everything else
+          // return "vendor";
         },
       },
     },
