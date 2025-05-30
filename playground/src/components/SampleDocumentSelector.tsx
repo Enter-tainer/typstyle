@@ -15,7 +15,7 @@ export function SampleDocumentSelector({
   className = "",
 }: SampleDocumentSelectorProps) {
   const [selectedSample, setSelectedSample] = useState<SampleDocumentKey | "">(
-    ""
+    "",
   );
   const [error, setError] = useState<string | null>(null);
 

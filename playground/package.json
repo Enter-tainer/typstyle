@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "monaco-themes": "^0.4.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "typstyle-wasm": "file:typstyle-wasm"

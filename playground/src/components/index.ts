@@ -4,7 +4,6 @@ export { SampleDocumentSelector } from "./SampleDocumentSelector";
 export { CodeEditor } from "./CodeEditor";
 export { SourceEditor } from "./SourceEditor";
 export { OutputEditor } from "./OutputEditor";
-export { SourceCodeContent } from "./SourceCodeContent";
 export { Panel } from "./Panel";
 export { Tabs, Tab } from "./Tabs";
 export { MainLayout } from "./MainLayout";

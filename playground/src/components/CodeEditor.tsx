@@ -1,8 +1,9 @@
 import MonacoEditor from "@monaco-editor/react";
 import type { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTheme } from "../contexts";
+import { getEditorTheme } from "../utils/monacoThemes";
 
 /**
  * CodeEditor - A configurable Monaco Editor wrapper for the Typstyle Playground
@@ -23,7 +24,6 @@ export interface CodeEditorProps {
   enableFolding?: boolean;
   enableWordWrap?: boolean;
   enableMinimap?: boolean;
-  height?: string;
   rulers?: number[];
 }
 
@@ -38,11 +38,12 @@ export function CodeEditor({
   enableFolding = true,
   enableWordWrap = true,
   enableMinimap = false,
-  height = "100%",
   rulers,
 }: CodeEditorProps) {
   const { theme } = useTheme();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+  const editorTheme = useMemo(() => getEditorTheme(theme), [theme]);
 
   const applyIndentationSettings = useCallback(() => {
     if (editorRef.current) {
@@ -79,8 +80,6 @@ export function CodeEditor({
     applyIndentationSettings();
   }, [applyIndentationSettings]);
 
-  const editorTheme = theme === "light" ? "light" : "vs-dark";
-
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
     readOnly,
     minimap: { enabled: enableMinimap },
@@ -111,7 +110,6 @@ export function CodeEditor({
     `}
     >
       <MonacoEditor
-        height={height}
         language={language}
         value={value}
         theme={editorTheme}
