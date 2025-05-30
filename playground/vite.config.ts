@@ -21,6 +21,9 @@ export default defineConfig({
           if (id.includes("monaco-themes")) {
             return "monaco-themes";
           }
+          if (id.includes("react-dom")) {
+            return "react-dom";
+          }
           if (id.includes("react")) {
             return "react";
           }

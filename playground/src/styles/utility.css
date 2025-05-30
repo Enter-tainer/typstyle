@@ -1,0 +1,23 @@
+@utility shadow-soft {
+  --shadow-soft: 0 2px 8px rgba(46, 125, 50, 0.08);
+  @apply shadow-[(--shadow-soft)];
+  @variant dark {
+    --shadow-soft: 0 2px 8px 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@utility shadow-medium {
+  --shadow-medium: 0 4px 16px rgba(46, 125, 50, 0.12);
+  @apply shadow-(--shadow-medium);
+  @variant dark {
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@utility shadow-strong {
+  --shadow-strong: 0 8px 32px rgba(46, 125, 50, 0.16);
+  @apply shadow-(--shadow-strong);
+  @variant dark {
+    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
