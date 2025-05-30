@@ -73,12 +73,10 @@ export function CodeEditor({
       applyIndentationSettings(); // Apply initial settings
       onMount?.(editor, monaco);
     },
-    [onMount, applyIndentationSettings],
+    [onMount, applyIndentationSettings]
   );
 
-  useEffect(() => {
-    applyIndentationSettings();
-  }, [applyIndentationSettings]);
+  useEffect(() => applyIndentationSettings(), [applyIndentationSettings]);
 
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
     readOnly,
