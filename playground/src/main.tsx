@@ -1,22 +1,16 @@
-import { StrictMode, Suspense, lazy } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "./contexts";
 import "./styles/index.css";
-import "./styles/_monaco.scss";
+import App from "./App";
+import { initMonaco } from "./utils/monacoThemes";
 
-const App = lazy(() => import("./App"));
+await initMonaco();
 
-const rootElement = document.getElementById("root");
-if (!rootElement) {
-  throw new Error("Could not find root element");
-}
-
-createRoot(rootElement).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Suspense fallback={<div>Loading...</div>}>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </Suspense>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </StrictMode>,
 );

@@ -7,20 +7,13 @@ import {
   SourceEditor,
 } from "./components";
 import { DEFAULT_FORMAT_OPTIONS } from "./constants";
-import { useTheme } from "./contexts";
-import {
-  useInitialSample,
-  useMonacoEditor,
-  useScreenSize,
-  useTypstFormatter,
-} from "./hooks";
+import { useInitialSample, useScreenSize, useTypstFormatter } from "./hooks";
 
 function App() {
   const [sourceCode, setSourceCode] = useState("");
   // Load initial sample document
   useInitialSample({ setSourceCode });
   const [formatOptions, setFormatOptions] = useState(DEFAULT_FORMAT_OPTIONS);
-  const { theme } = useTheme();
 
   // Custom hooks
   const screenSize = useScreenSize();
@@ -28,8 +21,6 @@ function App() {
     sourceCode,
     formatOptions,
   );
-  const { handleEditorDidMount } = useMonacoEditor(theme);
-
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
       setSourceCode(value);
@@ -48,11 +39,9 @@ function App() {
   );
   const sourcePanel = (
     <SourceEditor
-      key="persistent-source-editor"
-      sourceCode={sourceCode}
+      key="source-editor"
+      value={sourceCode}
       onChange={handleEditorChange}
-      onMount={handleEditorDidMount}
-      formatOptions={formatOptions}
       lineLengthGuide={formatOptions.maxLineLength}
     />
   );
