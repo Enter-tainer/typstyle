@@ -14,7 +14,7 @@ copyright: 'Copyright &copy; 2023 - 2024 Typstyle Contributors'
 
 # Contents
 nav:
-  - WebApp: demo/index.html
+  - Playground: playground/index.html
   - User Guide:
     - Introduction: index.md
     - Explanation:

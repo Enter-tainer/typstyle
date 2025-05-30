@@ -1,0 +1,86 @@
+@theme {
+  /* Koishi Green Palette */
+  --color-koishi-green-50: #f1f8e9;
+  --color-koishi-green-100: #dcedc8;
+  --color-koishi-green-200: #c5e1a5;
+  --color-koishi-green-300: #aed581;
+  --color-koishi-green-400: #9ccc65;
+  --color-koishi-green-500: #8bc34a;
+  --color-koishi-green-600: #7cb342;
+  --color-koishi-green-700: #689f38;
+  --color-koishi-green-800: #558b2f;
+  --color-koishi-green-900: #33691e;
+
+  /* Koishi Purple Palette */
+  --color-koishi-purple-50: #f3e5f5;
+  --color-koishi-purple-100: #e1bee7;
+  --color-koishi-purple-200: #ce93d8;
+  --color-koishi-purple-300: #ba68c8;
+  --color-koishi-purple-400: #ab47bc;
+  --color-koishi-purple-500: #9c27b0;
+  --color-koishi-purple-600: #8e24aa;
+  --color-koishi-purple-700: #7b1fa2;
+  --color-koishi-purple-800: #6a1b9a;
+  --color-koishi-purple-900: #4a148c;
+
+  /* Koishi Pink Palette */
+  --color-koishi-pink-50: #fce4ec;
+  --color-koishi-pink-100: #f8bbd9;
+  --color-koishi-pink-200: #f48fb1;
+  --color-koishi-pink-300: #f06292;
+  --color-koishi-pink-400: #ec407a;
+  --color-koishi-pink-500: #e91e63;
+  --color-koishi-pink-600: #d81b60;
+  --color-koishi-pink-700: #c2185b;
+  --color-koishi-pink-800: #ad1457;
+  --color-koishi-pink-900: #880e4f;
+
+  /* Koishi Gold Palette */
+  --color-koishi-gold-50: #fff8e1;
+  --color-koishi-gold-100: #ffecb3;
+  --color-koishi-gold-200: #ffe082;
+  --color-koishi-gold-300: #ffd54f;
+  --color-koishi-gold-400: #ffca28;
+  --color-koishi-gold-500: #ffc107;
+  --color-koishi-gold-600: #ffb300;
+  --color-koishi-gold-700: #ffa000;
+  --color-koishi-gold-800: #ff8f00;
+  --color-koishi-gold-900: #ff6f00;
+}
+
+/* Light theme (default) */
+:root {
+  --header-text: #2e7d32;
+  --text-primary: #388e3c;
+  --text-secondary: #7e57c2;
+
+  /* Form control colors (light theme) */
+  --form-input-bg-active: rgba(232, 245, 232, 0.9);
+  --form-input-border-active: rgba(200, 230, 201, 0.8);
+  --form-input-text-active: #2e7d32;
+  --form-option-hover-bg-active: rgba(139, 195, 74, 0.2);
+  --form-option-hover-text-active: #2e7d32;
+  --form-checkbox-checked-bg-active: #388e3c;
+  --scrollbar-track-bg-active: rgba(232, 245, 232, 0.3);
+  --scrollbar-thumb-bg-active: rgba(139, 195, 74, 0.6);
+  --scrollbar-thumb-border-active: rgba(139, 195, 74, 0.3);
+  --scrollbar-thumb-hover-bg-active: rgba(139, 195, 74, 0.8);
+
+  @variant dark {
+    --header-text: #c5b8e3;
+    --text-primary: #a393c7;
+    --text-secondary: #8dbf8b;
+
+    /* Form control colors (dark theme) */
+    --form-input-bg-active: rgba(57, 47, 90, 0.7);
+    --form-input-border-active: rgba(74, 63, 106, 0.8);
+    --form-input-text-active: #f3e5f5;
+    --form-option-hover-bg-active: rgba(163, 147, 199, 0.3);
+    --form-option-hover-text-active: #f3e5f5;
+    --form-checkbox-checked-bg-active: #a393c7;
+    --scrollbar-track-bg-active: rgba(57, 47, 90, 0.3);
+    --scrollbar-thumb-bg-active: rgba(163, 147, 199, 0.6);
+    --scrollbar-thumb-border-active: rgba(163, 147, 199, 0.3);
+    --scrollbar-thumb-hover-bg-active: rgba(163, 147, 199, 0.8);
+  }
+}
