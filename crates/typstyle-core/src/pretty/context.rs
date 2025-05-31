@@ -7,7 +7,12 @@ pub struct Context {
 
 impl Context {
     pub fn with_mode(self, mode: Mode) -> Self {
-        Self { mode, ..self }
+        // We should never enter CodeCont mode when in math.
+        if matches!((self.mode, mode), (Mode::Math, Mode::CodeCont)) {
+            self
+        } else {
+            Self { mode, ..self }
+        }
     }
 
     pub fn with_mode_if(self, mode: Mode, cond: bool) -> Self {
