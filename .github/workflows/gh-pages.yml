@@ -5,12 +5,14 @@ on:
       - master
     tags:
       - "*"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "crates/typstyle-wasm/**"
+      - ".github/workflows/gh-pages.yml"
   workflow_dispatch:
-
-permissions:
-  pages: write
-  id-token: write
-  contents: read
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -20,33 +22,31 @@ concurrency:
 
 jobs:
   build-gh-pages:
+    name: Build Docs & Playground and Prepare Artifact
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with: { submodules: recursive }
-      - uses: rui314/setup-mold@v1
-      - uses: dtolnay/rust-toolchain@stable
-        with: { targets: wasm32-unknown-unknown }
-      - uses: jetli/wasm-pack-action@v0.4.0
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          version: "v0.12.1"
+          target: wasm32-unknown-unknown
+      - name: Install wasm-pack
+        uses: taiki-e/install-action@wasm-pack
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Install the latest version of rye
         uses: eifinger/setup-rye@v4
         with:
           enable-cache: true
-          cache-prefix: 'typstyle-rye'
+          cache-prefix: "typstyle-rye"
 
       - name: Build wasm
         run: |
           cd crates/typstyle-wasm
-          wasm-pack build --features wasm
+          wasm-pack build
           cp ../../README.md pkg
           cp ../../LICENSE pkg
 
@@ -60,13 +60,28 @@ jobs:
           rye sync
           rye run docs-build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
+      - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload `/github-pages` sub directory
+          # This path will be the root of what 'actions/deploy-pages' deploys
           path: "site"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-gh-pages
+    # Deploy on push to master, or manual workflow dispatch
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
