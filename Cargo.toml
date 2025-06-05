@@ -34,6 +34,7 @@ unicode-width = "0.1" # use the same version as in pretty
 # Used in WASM
 console_error_panic_hook = "0.1.7"
 js-sys = "0.3.77"
+serde_json = "1.0"
 serde-wasm-bindgen = "0.6.5"
 syn = { version = "2.0", default-features = false }
 wasm-bindgen = "0.2.100"

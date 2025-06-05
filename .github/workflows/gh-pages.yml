@@ -4,13 +4,20 @@ on:
     branches:
       - master
     tags:
-      - "*"
+      - "v*"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "playground/**"
+      - "docs/**"
+      - "crates/typstyle-core/**"
+      - "crates/typstyle-wasm/**"
+      - ".github/workflows/gh-pages.yml"
   workflow_dispatch:
 
 permissions:
-  pages: write
-  id-token: write
-  contents: read
+  contents: write # Needed for checkout and potentially other steps
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -20,53 +27,51 @@ concurrency:
 
 jobs:
   build-gh-pages:
+    name: Build docs & demo
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: wasm32-unknown-unknown
+      - name: Install tools
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just,wasm-pack
+      - uses: Swatinem/rust-cache@v2
+      - name: Download & install shiroa
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Myriad-Dreamin/shiroa/releases/download/v0.3.1-rc2/shiroa-installer.sh | sh
+      - name: Build Book
+        run: just build-docs
+
+      - name: Assemble deployment artifact
+        run: |
+          mkdir -p github-pages
+          cp -r docs/dist/* github-pages/
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./github-pages"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-gh-pages
+    # Deploy on push to master, or manual workflow dispatch
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-        with: { submodules: recursive }
-      - uses: rui314/setup-mold@v1
-      - uses: dtolnay/rust-toolchain@stable
-        with: { targets: wasm32-unknown-unknown }
-      - uses: jetli/wasm-pack-action@v0.4.0
-        with:
-          version: "v0.12.1"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          registry-url: 'https://registry.npmjs.org'
-      - name: Install the latest version of rye
-        uses: eifinger/setup-rye@v4
-        with:
-          enable-cache: true
-          cache-prefix: 'typstyle-rye'
-
-      - name: Build wasm
-        run: |
-          cd crates/typstyle-wasm
-          wasm-pack build --features wasm
-          cp ../../README.md pkg
-          cp ../../LICENSE pkg
-
-      - name: Build demo
-        run: |
-          cd web
-          yarn
-          yarn build --outDir ../docs/demo
-      - name: Build docs site
-        run: |
-          rye sync
-          rye run docs-build
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload `/github-pages` sub directory
-          path: "site"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
