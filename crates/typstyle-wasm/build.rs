@@ -28,7 +28,7 @@ fn main() {
         String::new() // Default to empty if Config struct is not found
     };
 
-    let ts_interface = format!("export interface Config {{\n{}}}", ts_interface_fields);
+    let ts_interface = format!("export interface Config {{\n{ts_interface_fields}}}");
 
     let out_dir = env::var_os("OUT_DIR")
         .expect("OUT_DIR environment variable not set. This script should be run by Cargo.");
@@ -77,7 +77,7 @@ fn generate_ts_fields_for_config_struct(config_struct: &ItemStruct) -> String {
                 (&field.ident, rust_type_to_ts_type(&field.ty))
             {
                 ts_fields_string.push_str(&field_doc_comments);
-                ts_fields_string.push_str(&format!("    {}: {},\n", field_ident, ts_type));
+                ts_fields_string.push_str(&format!("    {field_ident}: {ts_type},\n"));
             } else {
                 eprintln!(
                     "cargo:warning=Could not map type for field {:?} in Config struct. It will be omitted from the TypeScript interface.",
@@ -129,7 +129,7 @@ fn extract_doc_comments(attrs: &[Attribute]) -> String {
     } else {
         let mut comment = "    /**\n".to_string();
         for line in doc_lines {
-            comment.push_str(&format!("     * {}\n", line));
+            comment.push_str(&format!("     * {line}\n"));
         }
         comment.push_str("     */\n");
         comment
