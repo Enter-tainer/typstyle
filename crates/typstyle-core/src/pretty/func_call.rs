@@ -97,78 +97,13 @@ impl<'a> PrettyPrinter<'a> {
                 .children()
                 .take_while(|it| it.kind() != SyntaxKind::RightParen)
         };
-        let arg_count = get_children()
-            .filter(|it| SyntaxNode::is::<Arg>(it))
-            .count(); // should exclude args in brackets
-
-        // if there is only one blocky arg, and it's the last one, we can use compact style
-        let is_blocky = |expr| {
-            matches!(
-                expr,
-                Expr::Code(_)
-                    | Expr::Conditional(_)
-                    | Expr::While(_)
-                    | Expr::For(_)
-                    | Expr::Contextual(_)
-                    | Expr::Closure(_)
-            )
-        };
-        // if there is only one arg, and it's combinable, we can use compact style
-        let is_combinable = |arg| {
-            is_blocky(arg)
-                || matches!(
-                    arg,
-                    Expr::FuncCall(_)
-                        | Expr::Parenthesized(_)
-                        | Expr::Content(_)
-                        | Expr::Array(_)
-                        | Expr::Dict(_)
-                )
-        };
+        let arg_count = get_parenthesized_args(args).count();
 
         let fold_style = match self.get_fold_style(ctx, args) {
             FoldStyle::Always => FoldStyle::Always,
             _ if ctx.break_suppressed && arg_count == 1 => FoldStyle::Always,
             _ if ctx.break_suppressed => FoldStyle::Fit,
-            _ => {
-                let mut fold_style = FoldStyle::Fit;
-                let mut has_initial_array = false;
-                let mut has_initial_dict = false;
-                for (i, arg) in get_parenthesized_args(args).enumerate() {
-                    let expr = {
-                        let mut expr = match arg {
-                            Arg::Pos(p) => p,
-                            Arg::Named(n) => n.expr(),
-                            Arg::Spread(s) => s.expr(),
-                        };
-                        while let Expr::Parenthesized(p) = expr {
-                            expr = p.expr();
-                        }
-                        expr
-                    };
-
-                    if i < arg_count - 1 {
-                        has_initial_array |= matches!(expr, Expr::Array(_));
-                        has_initial_dict |= matches!(expr, Expr::Dict(_));
-                        if is_blocky(expr) {
-                            break;
-                        } else {
-                            continue;
-                        }
-                    }
-                    if is_combinable(expr)
-                        && !(has_initial_array && matches!(expr, Expr::Array(_))
-                            || has_initial_dict && matches!(expr, Expr::Dict(_)))
-                    {
-                        fold_style = if arg_count == 1 && !matches!(expr, Expr::FuncCall(_)) {
-                            FoldStyle::Always
-                        } else {
-                            FoldStyle::Compact
-                        }
-                    }
-                }
-                fold_style
-            }
+            fold_style => suggest_fold_style_for_args(args, arg_count).unwrap_or(fold_style),
         };
 
         ListStylist::new(self)
@@ -308,4 +243,87 @@ fn is_ends_with_hashed_expr(mut children: std::slice::Iter<'_, SyntaxNode>) -> b
         && children
             .next_back()
             .is_some_and(|it| it.kind() == SyntaxKind::Hash)
+}
+
+/// Determines whether to apply a compact or always‐fold style to
+/// parenthesized function‐call arguments based on their shape.
+///
+/// Rules:
+/// 1. If there's exactly one “blocky” argument (loops, conditionals, closures, etc.)
+///    and it’s the only argument, fold it always (`FoldStyle::Always`).
+/// 2. Otherwise, if all preceding args are simple (no blocks) and the last
+///    is “combinable” (nested calls, arrays, dicts, parenthesized groups),
+///    use compact folding (`FoldStyle::Compact`).
+/// 3. Otherwise, fall back to the default (`None`).
+fn suggest_fold_style_for_args(args: Args, count: usize) -> Option<FoldStyle> {
+    // Identify block‐like expressions that deserve their own lines.
+    let is_blocky = |expr: Expr<'_>| {
+        matches!(
+            expr,
+            Expr::Code(_)
+                | Expr::Conditional(_)
+                | Expr::While(_)
+                | Expr::For(_)
+                | Expr::Contextual(_)
+                | Expr::Closure(_)
+        )
+    };
+
+    // Identify simple expressions we can “smoosh” on one line.
+    let is_combinable = |expr: Expr<'_>| {
+        is_blocky(expr)
+            || matches!(
+                expr,
+                Expr::FuncCall(_)
+                    | Expr::Parenthesized(_)
+                    | Expr::Content(_)
+                    | Expr::Array(_)
+                    | Expr::Dict(_)
+            )
+    };
+
+    // Track if we’ve already seen an array/dict before the last arg.
+    let mut seen_array = false;
+    let mut seen_dict = false;
+
+    for (i, arg) in get_parenthesized_args(args).enumerate() {
+        // Unwrap any nested parentheses to get the core expression.
+        let mut expr = match arg {
+            Arg::Pos(p) => p,
+            Arg::Named(n) => n.expr(),
+            Arg::Spread(s) => s.expr(),
+        };
+        while let Expr::Parenthesized(inner) = expr {
+            expr = inner.expr();
+        }
+
+        // If this isn’t the last arg, record any arrays/dicts and bail out
+        // early if we hit another block.
+        if i < count - 1 {
+            seen_array |= matches!(expr, Expr::Array(_));
+            seen_dict |= matches!(expr, Expr::Dict(_));
+            if is_blocky(expr) {
+                break;
+            }
+            continue;
+        }
+
+        // On the last argument: fold if it’s combinable and not a repeat
+        // of an earlier array/dict.
+        if is_combinable(expr)
+            && !(seen_array && matches!(expr, Expr::Array(_))
+                || seen_dict && matches!(expr, Expr::Dict(_)))
+        {
+            return Some(if count == 1 && !matches!(expr, Expr::FuncCall(_)) {
+                // A single non‐call arg → always fold.
+                FoldStyle::Always
+            } else {
+                // Otherwise, compact fold.
+                FoldStyle::Compact
+            });
+        }
+    }
+
+    // No special rule matched.
+    None
 }

@@ -6,7 +6,10 @@ input_file: tests/fixtures/typstfmt/124-block-comment.typ
   // do something
 )
 
-#test(a: "test test test test test", b: "test test test test test")[
+#test(
+  a: "test test test test test",
+  b: "test test test test test",
+)[
   /* test */
   test test test test test test test test test test test test test test test test test test test test test test test test
 ][

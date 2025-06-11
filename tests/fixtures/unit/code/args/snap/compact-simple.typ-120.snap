@@ -45,6 +45,8 @@ input_file: tests/fixtures/unit/code/args/compact-simple.typ
 #{ let c = 1 + 2 * 3 == 4 + 5 and 6 < 7 }
 #let c = 1 + 2 * 3 == 4 + 5 and 6 < 7
 
-#str("Unsupported content type " + str(type(content)) + "! " + "Provide your own `draw-node` implementation.")
+#str(
+  "Unsupported content type " + str(type(content)) + "! " + "Provide your own `draw-node` implementation.",
+)
 
 #((1, 2), 2, 3).rev().rev().at(0).rev().rev().rev()

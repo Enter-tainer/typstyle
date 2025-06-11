@@ -601,7 +601,11 @@ input_file: tests/fixtures/packages/touying/utils.typ
       // Provide a sensible initial width, which will define initial scale parameters.
       // Note this is different from the post-scale width, which is a limiting factor
       // on the allowable scaling ratio
-      let boxed-content = _limit-content-width(width: prescale-width, body, container-size)
+      let boxed-content = _limit-content-width(
+        width: prescale-width,
+        body,
+        container-size,
+      )
 
       // post-scaling width
       let mutable-width = width
@@ -653,7 +657,12 @@ input_file: tests/fixtures/packages/touying/utils.typ
     if (content-width != 0pt and ((shrink and (width < content-width)) or (grow and (width > content-width)))) {
       let ratio = width / content-width * 100%
       // The first box keeps content from prematurely wrapping
-      let scaled = scale(box(content, width: content-width), origin: top + left, x: ratio, y: ratio)
+      let scaled = scale(
+        box(content, width: content-width),
+        origin: top + left,
+        x: ratio,
+        y: ratio,
+      )
       // The second box lets typst know the post-scaled dimensions, since `scale`
       // doesn't update layout information
       box(scaled, width: width, height: content-size.height * ratio)
@@ -733,7 +742,14 @@ input_file: tests/fixtures/packages/touying/utils.typ
 ///
 /// Example: `config-methods(cover: utils.semi-transparent-cover)`
 #let semi-transparent-cover(self: none, constructor: rgb, alpha: 85%, body) = {
-  cover-with-rect(fill: update-alpha(constructor: constructor, self.page.fill, alpha), body)
+  cover-with-rect(
+    fill: update-alpha(
+      constructor: constructor,
+      self.page.fill,
+      alpha,
+    ),
+    body,
+  )
 }
 
 

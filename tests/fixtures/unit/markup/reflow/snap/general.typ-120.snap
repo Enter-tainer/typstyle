@@ -71,8 +71,10 @@ Technical terms like ```ts Array<T>``` mixed with *important notes* and $sum_(i=
     Multi-line block content with nested #strong[formatting] and extra spaces
   ]
 
-/ Functions with parameters: Definition using #text(weight: "bold", size: 12pt)[Formatted text with spaces] and
-  $"equations"$
+/ Functions with parameters: Definition using #text(
+    weight: "bold",
+    size: 12pt,
+  )[Formatted text with spaces] and $"equations"$
 
 = Heading with *mixed* `formatting` and $"math"$ elements
 Text between headings.

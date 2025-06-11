@@ -42,9 +42,9 @@ breaks. It also has*bold text*without proper spacing and_emphasized_content stuc
   5`
 - Second item with equation: $x^2 +
   y^2 = z^2$
-  #underline(stroke: 2pt + blue)[
-    underlined text
-  ]
+  #underline(
+    stroke: 2pt + blue,
+  )[ underlined text ]
 
 #box(width: 80%)[
   Content in a box that's  poorly indented
@@ -82,13 +82,17 @@ $
   )
   #circle(
     radius: 15pt,
-    fill: red.darken(20%),
+    fill: red.darken(
+      20%,
+    ),
   )
 ]
 
 / Term: Definition with
   weird formatting
-  #h(1em) #strike[struck text]
+  #h(
+    1em,
+  ) #strike[struck text]
 / Another term: Definition with extra spaces
   #block(width: 50%, inset: (
     left: 2em,
