@@ -519,7 +519,10 @@ input_file: tests/fixtures/packages/tablex.typ
 //
 // page-size: equivalent to 100%
 #let convert-ratio-type-to-pt(len, page-size) = {
-  assert(is-purely-pt-len(page-size), message: "'page-size' should be a purely pt length")
+  assert(
+    is-purely-pt-len(page-size),
+    message: "'page-size' should be a purely pt length",
+  )
 
   if page-size == none {
     panic("Cannot convert ratio to pt ('page-size' not specified).")
@@ -537,7 +540,10 @@ input_file: tests/fixtures/packages/tablex.typ
 // frac-amount: amount of 'fr' specified
 // frac-total: total space shared by fractions
 #let convert-fraction-type-to-pt(len, frac-amount, frac-total) = {
-  assert(is-purely-pt-len(frac-total), message: "'frac-total' should be a purely pt length")
+  assert(
+    is-purely-pt-len(frac-total),
+    message: "'frac-total' should be a purely pt length",
+  )
 
   if frac-amount == none {
     panic("Cannot convert fraction to pt ('frac-amount' not specified).")
@@ -1405,7 +1411,13 @@ input_file: tests/fixtures/packages/tablex.typ
           // simulate wrapping this cell in the final box,
           // but with unlimited width and height available
           // so we can measure its width.
-          let cell-box = make-cell-box(pcell, width: auto, height: auto, inset: cell_inset, align_default: auto)
+          let cell-box = make-cell-box(
+            pcell,
+            width: auto,
+            height: auto,
+            inset: cell_inset,
+            align_default: auto,
+          )
 
           let width = measure(cell-box, styles).width // + 2*cell_inset // the box already considers inset
 
@@ -1555,14 +1567,22 @@ input_file: tests/fixtures/packages/tablex.typ
 
     let remaining_size = available_size - total_auto_size
     if remaining_size >= 0pt {
-      let frac_res = determine-frac-tracks(columns, remaining: remaining_size, gutter: col-gutter)
+      let frac_res = determine-frac-tracks(
+        columns,
+        remaining: remaining_size,
+        gutter: col-gutter,
+      )
 
       columns = frac_res.tracks
       fixed-size-gutter = frac_res.gutter
     } else {
       // don't shrink on width 'auto'
       if page_width != 0pt {
-        columns = fit-auto-columns(available: available_size, auto-cols: auto_sizes, columns: columns)
+        columns = fit-auto-columns(
+          available: available_size,
+          auto-cols: auto_sizes,
+          columns: columns,
+        )
       }
 
       columns = columns.map(c => {
@@ -1638,7 +1658,13 @@ input_file: tests/fixtures/packages/tablex.typ
           // take extra inset as extra width or height on 'auto'
           let cell_inset = default-if-auto(pcell.inset, inset)
 
-          let cell-box = make-cell-box(pcell, width: width, height: auto, inset: cell_inset, align_default: align)
+          let cell-box = make-cell-box(
+            pcell,
+            width: width,
+            height: auto,
+            inset: cell_inset,
+            align_default: align,
+          )
 
           // measure the cell's actual height,
           // with its calculated width
@@ -2359,7 +2385,12 @@ input_file: tests/fixtures/packages/tablex.typ
           }
 
           // place the cell!
-          place(top + left, dx: dx, dy: height-between(start: first_y, end: y) + added_header_height, cell_box.box)
+          place(
+            top + left,
+            dx: dx,
+            dy: height-between(start: first_y, end: y) + added_header_height,
+            cell_box.box,
+          )
 
           // let box_h = measure(cell_box.box, styles).height
           // tallest_box_h = calc.max(tallest_box_h, box_h)
@@ -3117,7 +3148,13 @@ input_file: tests/fixtures/packages/tablex.typ
     let row_len = rows.len()
 
     // generate cell matrix and other things
-    let grid_info = generate-grid(items, x_limit: col_len, y_limit: row_len, map-cells: map-cells, fit-spans: fit-spans)
+    let grid_info = generate-grid(
+      items,
+      x_limit: col_len,
+      y_limit: row_len,
+      map-cells: map-cells,
+      fit-spans: fit-spans,
+    )
 
     let table_grid = grid_info.grid
     let hlines = grid_info.hlines

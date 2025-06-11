@@ -88,7 +88,10 @@ input_file: tests/fixtures/packages/cetz-tree.typ
         draw.content((), [?], name: "content")
       }
       if draw-node == "rect" {
-        draw.rect((rel: (-.1, .1), to: "content.top-left"), (rel: (.1, -.1), to: "content.bottom-right"))
+        draw.rect(
+          (rel: (-.1, .1), to: "content.top-left"),
+          (rel: (.1, -.1), to: "content.bottom-right"),
+        )
       }
     }
   }
@@ -124,7 +127,11 @@ input_file: tests/fixtures/packages/cetz-tree.typ
         let child = node.children.at(i)
         let (child-min-x, child-max-x) = (none, none)
 
-        (child, child-min-x, child-max-x) = layout-node(child, shift-x, ctx)
+        (child, child-min-x, child-max-x) = layout-node(
+          child,
+          shift-x,
+          ctx,
+        )
         node.children.at(i) = child
 
         left = util.min(child.x, left)

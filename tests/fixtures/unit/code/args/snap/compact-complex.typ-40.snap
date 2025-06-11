@@ -587,7 +587,11 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 )
 
 // Nested structures with inconsistent parentheses
-#f(("A", "B"), ("C",), ("D", "E"))
+#f(
+  ("A", "B"),
+  ("C",),
+  ("D", "E"),
+)
 
 // Dictionary with extra parentheses and similar last argument
 #f(

@@ -42,7 +42,11 @@ input_file: tests/fixtures/unit/off/complex.typ
       param4: none,
     ) = {
       // Text styling with off between attributes
-      text(size: 12pt, /* @typstyle off */ weight: "bold", fill: red)[Styled text]
+      text(
+        size: 12pt,
+        /* @typstyle off */ weight: "bold",
+        fill: red,
+      )[Styled text]
     }
 
     // Show rule with off in unexpected places

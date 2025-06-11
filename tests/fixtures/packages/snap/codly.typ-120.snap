@@ -546,7 +546,13 @@ input_file: tests/fixtures/packages/codly.typ
           let col = collection.join()
           let height-col = measure(col).height
           let height-tag = measure(tag).height
-          let max-height = calc.max(height-col, height-tag) + 2 * highlight-inset
+          let max-height = (
+            calc.max(
+              height-col,
+              height-tag,
+            )
+              + 2 * highlight-inset
+          )
           let hl-box = box(
             radius: (
               top-right: 0pt,
@@ -576,7 +582,10 @@ input_file: tests/fixtures/packages/codly.typ
             tag + label,
           )
 
-          children.push([#hl-box#h(0pt, weak: true)#tag-box<codly-highlight>])
+          children.push([#hl-box#h(
+              0pt,
+              weak: true,
+            )#tag-box<codly-highlight>])
         }
         collection = none
       }
@@ -1088,7 +1097,12 @@ input_file: tests/fixtures/packages/codly.typ
   }
 
   // Push the line and the language block in a grid for alignment
-  let language-block-final = place(right + horizon, dx: lang-outset.x, dy: lang-outset.y, language-block)
+  let language-block-final = place(
+    right + horizon,
+    dx: lang-outset.x,
+    dy: lang-outset.y,
+    language-block,
+  )
   let lb = measure(language-block)
 
   let header = if header != none {
@@ -1156,7 +1170,11 @@ input_file: tests/fixtures/packages/codly.typ
       }
 
       (
-        grid.cell(rowspan: current-annot.end - current-annot.start + 1, align: left + horizon, annot-content + extra),
+        grid.cell(
+          rowspan: current-annot.end - current-annot.start + 1,
+          align: left + horizon,
+          annot-content + extra,
+        ),
       )
     } else if current-annot != none or not has-annotations {
       ()
@@ -1179,7 +1197,12 @@ input_file: tests/fixtures/packages/codly.typ
     }
 
     // Always push the formatted line number
-    let l = [#raw.line(line.number + offset, line.count, line.text, line.body)<codly-highlighted>]
+    let l = [#raw.line(
+        line.number + offset,
+        line.count,
+        line.text,
+        line.body,
+      )<codly-highlighted>]
 
     // Must be done before the smart indentation code.
     // Otherwise it results in two paragraphs.
@@ -1524,12 +1547,24 @@ input_file: tests/fixtures/packages/codly.typ
 #let typst-icon = (
   typ: (
     name: "Typst",
-    icon: box(image("typst-small.png", height: 0.8em), baseline: 0.1em, inset: 0pt, outset: 0pt) + h(0.2em),
+    icon: box(
+      image("typst-small.png", height: 0.8em),
+      baseline: 0.1em,
+      inset: 0pt,
+      outset: 0pt,
+    )
+      + h(0.2em),
     color: rgb("#239DAD"),
   ),
   typc: (
     name: "Typst code",
-    icon: box(image("typst-small.png", height: 0.8em), baseline: 0.1em, inset: 0pt, outset: 0pt) + h(0.2em),
+    icon: box(
+      image("typst-small.png", height: 0.8em),
+      baseline: 0.1em,
+      inset: 0pt,
+      outset: 0pt,
+    )
+      + h(0.2em),
     color: rgb("#239DAD"),
   ),
 )
