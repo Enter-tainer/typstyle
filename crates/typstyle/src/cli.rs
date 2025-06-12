@@ -49,11 +49,6 @@ impl CliArguments {
 
 #[derive(Subcommand)]
 pub enum Command {
-    /// (Deprecated) Format all files in-place in the given directory
-    FormatAll {
-        /// The directory to format. If not provided, the current directory is used
-        directory: Option<PathBuf>,
-    },
     #[cfg(feature = "completion")]
     /// Generate shell completions for the given shell to stdout
     #[command(hide = true)]

@@ -274,7 +274,7 @@ fn test_cwd() {
     space.write_tracked("b.typ", "#let b  =  1\n");
     space.write_tracked("d/c.typ", "#let c  =  2\n");
 
-    typstyle_cmd_snapshot!(space.cli().args(["."]), @r"
+    typstyle_cmd_snapshot!(space.cli().args(["./d/.."]), @r"
     success: true
     exit_code: 0
     ----- stdout -----

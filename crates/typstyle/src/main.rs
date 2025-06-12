@@ -3,7 +3,7 @@ mod fmt;
 mod fs;
 mod logging;
 
-use std::{io::Write, path::PathBuf, process::ExitCode};
+use std::{io::Write, process::ExitCode};
 
 use anyhow::Result;
 use clap::Parser;
@@ -57,19 +57,10 @@ fn main() -> ExitCode {
     }
 }
 
-fn execute(mut args: CliArguments) -> Result<ExitStatus> {
+fn execute(args: CliArguments) -> Result<ExitStatus> {
+    #[cfg(feature = "completion")]
     if let Some(command) = &args.command {
         match command {
-            cli::Command::FormatAll { directory } => {
-                log::warn!("format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.");
-                args.input
-                    .push(directory.clone().unwrap_or_else(|| PathBuf::from(".")));
-                if !args.check {
-                    args.inplace = true;
-                }
-                return format(&args);
-            }
-            #[cfg(feature = "completion")]
             cli::Command::Completions { shell } => {
                 use clap::CommandFactory;
 
