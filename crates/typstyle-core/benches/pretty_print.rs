@@ -2,20 +2,19 @@ use std::fs;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use typst_syntax::Source;
-use typstyle_core::Typstyle;
+use typstyle_core::{Config, Typstyle};
 
-fn bench_pretty(c: &mut Criterion, id: &str, path: &str) {
-    fn pretty_print_source(source: Source) -> String {
-        Typstyle::default()
-            .format_source(source)
-            .render()
-            .expect("expect errorless")
-    }
+fn bench_pretty(c: &mut Criterion, id: &str, path: &str, config: Config) {
+    let content = fs::read_to_string(path).unwrap();
+    let source = Source::detached(content);
+    let t = Typstyle::new(config);
 
     c.bench_function(id, |b| {
-        let content = fs::read_to_string(path).unwrap();
-        let source = Source::detached(content);
-        b.iter(|| pretty_print_source(source.clone()))
+        b.iter(|| {
+            t.format_source(source.clone())
+                .render()
+                .expect("expect errorless")
+        })
     });
 }
 
@@ -30,6 +29,7 @@ const TEST_ASSETS: &[(&str, &str)] = &[
     ("packages/tablex", "tablex"),
     ("packages/touying/core", "touying-core"),
     ("packages/touying/utils", "touying-utils"),
+    ("unit/code/perf-nest", "deep-nested-args"),
 ];
 
 fn benchmark_pretty(c: &mut Criterion) {
@@ -38,6 +38,11 @@ fn benchmark_pretty(c: &mut Criterion) {
             c,
             &format!("pretty-{name}"),
             &format!("../../tests/fixtures/{path}.typ"),
+            if *name == "deep-nested-args" {
+                Config::new().with_width(10) // special config
+            } else {
+                Config::new()
+            },
         );
     }
 }
