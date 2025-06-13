@@ -189,14 +189,16 @@ input_file: tests/fixtures/packages/codly.typ
   position,
   length,
 ) = {
-  state("codly-skips", ()).update(skips => {
-    if skips == none {
-      skips = ()
-    }
+  state("codly-skips", ()).update(
+    skips => {
+      if skips == none {
+        skips = ()
+      }
 
-    skips.push((position, length))
-    skips
-  })
+      skips.push((position, length))
+      skips
+    },
+  )
 }
 
 
@@ -414,9 +416,9 @@ input_file: tests/fixtures/packages/codly.typ
   }
 
   // Filter the highlights to only keep the relevant ones.
-  let highlights = highlights.filter(x => (
-    x.line == (it.number - 1)
-  ))
+  let highlights = highlights.filter(
+    x => x.line == (it.number - 1),
+  )
   let highlighted = it.body
 
   // Smart indentation code.
@@ -746,7 +748,9 @@ input_file: tests/fixtures/packages/codly.typ
             baseline: highlight-inset,
             collection.join() + label,
           )
-          children.push([#content<codly-highlight>])
+          children.push(
+            [#content<codly-highlight>],
+          )
         } else {
           let col = collection.join()
           let height-col = measure(
@@ -2068,9 +2072,9 @@ input_file: tests/fixtures/packages/codly.typ
   }
 
   if has-annotations {
-    state(
-      "codly-annotations",
-    ).update(())
+    state("codly-annotations").update(
+      (),
+    )
   }
 
   if header != () {
@@ -2286,7 +2290,10 @@ input_file: tests/fixtures/packages/codly.typ
         "codly-extra-args",
         (:),
       ).get()
-      state("codly-extra-args", (:)).update(old => {
+      state(
+        "codly-extra-args",
+        (:),
+      ).update(old => {
         old + extra
       })
 
@@ -2355,9 +2362,9 @@ input_file: tests/fixtures/packages/codly.typ
       }
     }
     body
-    state(
-      "codly-extra-args",
-    ).update((:))
+    state("codly-extra-args").update(
+      (:),
+    )
   }
 }
 

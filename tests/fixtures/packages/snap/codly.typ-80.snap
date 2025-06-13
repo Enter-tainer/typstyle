@@ -1028,13 +1028,13 @@ input_file: tests/fixtures/packages/codly.typ
       } else {
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
       })
-      let padding = __codly-inset((
-        __codly-args.lang-inset.type_check
-      )(if "lang-inset" in extra {
-        extra.lang-inset
-      } else {
-        state("codly-lang-inset", __codly-args.lang-inset.default).get()
-      }))
+      let padding = __codly-inset((__codly-args.lang-inset.type_check)(
+        if "lang-inset" in extra {
+          extra.lang-inset
+        } else {
+          state("codly-lang-inset", __codly-args.lang-inset.default).get()
+        },
+      ))
 
       let lang-stroke = (
         __codly-args.lang-stroke.type_check
@@ -1092,13 +1092,13 @@ input_file: tests/fixtures/packages/codly.typ
         state("codly-lang-radius", __codly-args.lang-radius.default).get()
       })
 
-      let padding = __codly-inset((
-        __codly-args.lang-inset.type_check
-      )(if "lang-inset" in extra {
-        extra.lang-inset
-      } else {
-        state("codly-lang-inset", __codly-args.lang-inset.default).get()
-      }))
+      let padding = __codly-inset((__codly-args.lang-inset.type_check)(
+        if "lang-inset" in extra {
+          extra.lang-inset
+        } else {
+          state("codly-lang-inset", __codly-args.lang-inset.default).get()
+        },
+      ))
 
       let lang-stroke = (
         __codly-args.lang-stroke.type_check
