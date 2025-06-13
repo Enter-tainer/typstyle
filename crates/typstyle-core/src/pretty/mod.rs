@@ -24,7 +24,7 @@ use prelude::*;
 use style::FoldStyle;
 use typst_syntax::{ast::*, SyntaxNode};
 
-use crate::{AttrStore, Config};
+use crate::{ext::StrExt, AttrStore, Config};
 
 pub struct PrettyPrinter<'a> {
     config: Config,
@@ -81,7 +81,17 @@ impl<'a> PrettyPrinter<'a> {
 
     /// For inner or lead nodes.
     fn convert_verbatim_untyped(&'a self, node: &'a SyntaxNode) -> ArenaDoc<'a> {
-        self.arena.text(node.clone().into_text().to_string())
+        let text = node.clone().into_text();
+        if !text.has_linebreak() {
+            return self.arena.text(text.to_string());
+        }
+        // When the text spans multiple lines, we should split it to ensure proper fitting.
+        let doc = self.arena.intersperse(
+            node.clone().into_text().lines().map(str::to_string),
+            self.arena.hardline(),
+        );
+        self.arena
+            .nesting(move |l| doc.clone().nest(-(l as isize)).into_doc())
     }
 
     /// For leaf only.

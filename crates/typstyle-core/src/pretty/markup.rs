@@ -282,8 +282,11 @@ impl<'a> PrettyPrinter<'a> {
     fn convert_markup_body_reflow(&'a self, ctx: Context, repr: &MarkupRepr<'a>) -> ArenaDoc<'a> {
         /// For NOT space -> soft-line: \
         /// Ensure they are not misinterpreted as markup markers after reflow.
+        ///
+        /// Besides, reflowing labels to the next line is not desired.
         fn cannot_break_before(node: &&SyntaxNode) -> bool {
             matches!(node.text().as_str(), "=" | "+" | "-" | "/")
+                || matches!(node.kind(), SyntaxKind::Label)
         }
 
         /// For space -> hard-line: \
