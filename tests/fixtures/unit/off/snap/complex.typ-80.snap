@@ -44,7 +44,7 @@ input_file: tests/fixtures/unit/off/complex.typ
       // Text styling with off between attributes
       text(
         size: 12pt,
-        /* @typstyle off */ weight: "bold",
+        /* @typstyle off */ weight:"bold",
         fill: red,
       )[Styled text]
     }

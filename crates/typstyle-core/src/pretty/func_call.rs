@@ -228,14 +228,6 @@ impl<'a> PrettyPrinter<'a> {
         self.arena
             .concat(args.map(|arg| self.convert_content_block(ctx, arg)))
     }
-
-    pub(super) fn convert_arg(&'a self, ctx: Context, arg: Arg<'a>) -> ArenaDoc<'a> {
-        match arg {
-            Arg::Pos(p) => self.convert_expr(ctx, p),
-            Arg::Named(n) => self.convert_named(ctx, n),
-            Arg::Spread(s) => self.convert_spread(ctx, s),
-        }
-    }
 }
 
 fn is_ends_with_hashed_expr(mut children: std::slice::Iter<'_, SyntaxNode>) -> bool {

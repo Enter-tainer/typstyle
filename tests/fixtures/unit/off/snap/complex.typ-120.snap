@@ -44,7 +44,7 @@ input_file: tests/fixtures/unit/off/complex.typ
       // Text styling with off between attributes
       text(
         size: 12pt,
-        /* @typstyle off */ weight: "bold",
+        /* @typstyle off */ weight:"bold",
         fill: red,
       )[Styled text]
     }
@@ -79,8 +79,7 @@ input_file: tests/fixtures/unit/off/complex.typ
     // Complex nesting with off at various depths
     #align(
       center,
-      /* @typstyle off */
-      box(width:100%,height:50pt, /* @typstyle off */ fill:blue,stroke:red)[
+      /* @typstyle off */ box(width:100%,height:50pt, /* @typstyle off */ fill:blue,stroke:red)[
         Nested content with /* @typstyle off */ #stack(dir:ttb,spacing:5pt, [A], [B])
       ],
     )
