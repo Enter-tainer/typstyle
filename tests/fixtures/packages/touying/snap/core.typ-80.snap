@@ -2031,9 +2031,9 @@ input_file: tests/fixtures/packages/touying/core.typ
           utils.saved-default-frozen-states.update(
             self.default-frozen-states.map(s => s.get()),
           )
-          utils.saved-frozen-counters.update(
-            self.frozen-counters.map(s => s.get()),
-          )
+          utils.saved-frozen-counters.update(self.frozen-counters.map(
+            s => s.get(),
+          ))
           utils.saved-default-frozen-counters.update(
             self.default-frozen-counters.map(s => s.get()),
           )

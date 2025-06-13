@@ -306,13 +306,7 @@ fn suggest_fold_style_for_args(args: Args, count: usize) -> Option<FoldStyle> {
             && !(seen_array && matches!(expr, Expr::Array(_))
                 || seen_dict && matches!(expr, Expr::Dict(_)))
         {
-            return Some(if count == 1 && !matches!(expr, Expr::FuncCall(_)) {
-                // A single non‐call arg → always fold.
-                FoldStyle::Always
-            } else {
-                // Otherwise, compact fold.
-                FoldStyle::Compact
-            });
+            return Some(FoldStyle::Compact);
         }
     }
 

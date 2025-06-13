@@ -94,7 +94,11 @@ input_file: tests/fixtures/unit/table/complex.typ
   rows: auto,
   gutter: 5pt,
   align(center + horizon)[First],
-  grid.cell(colspan: 2, fill: rgb("eee"), [Long content that spans two columns]),
+  grid.cell(
+    colspan: 2,
+    fill: rgb("eee"),
+    [Long content that spans two columns],
+  ),
   grid.cell(rowspan: 2)[
     #align(right)[Side content] \
     With multiple lines
