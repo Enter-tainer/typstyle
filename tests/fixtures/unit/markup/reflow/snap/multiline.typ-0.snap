@@ -1,0 +1,119 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/reflow/multiline.typ
+---
+/// typstyle: wrap_text
+
+This
+is
+a
+paragraph
+with
+a
+multiline
+string
+#"This is a multiline
+string that spans
+multiple lines"
+and
+continues
+after.
+
+Here
+is
+text
+with
+`inline code`
+and
+then
+a
+multiline
+raw
+block:
+// @typstyle off
+```rust
+fn main() {
+    println!("Hello, world!");
+    let x = 42;
+}
+```
+More
+text
+follows.
+
+A
+paragraph
+containing
+/* @typstyle off */
+```python
+def complex_function(param1, param2, param3):
+    """
+    This is a complex function with multiple parameters
+    and a long docstring that explains what it does
+    """
+    return None
+```
+embedded
+code
+and
+more
+text
+that
+should
+wrap
+properly
+around
+the
+multiline
+content.
+
+#[
+  Text
+  before
+  `
+Raw
+    with multiple
+  lines here
+`
+  Text
+  after
+  on
+  same
+  line.
+]
+
+#{
+  [
+    Mixed
+    content:
+    `inline`
+    then
+    `
+     multiline raw
+block here
+   `
+    then
+    more
+    `inline code`
+    and
+    regular
+    text.
+  ]
+}
+
+// @typstyle off
+#figure(
+  [stihesathis t tieh asthestah stieh e hasthiestah isteah stieh ast ieh astiheast],
+) <label>
+
+Lorem
+ipsum
+dolor
+sit
+amet
+/* @typstyle off */#figure(
+  [stihesathis t tieh asthestah stieh e hasthiestah isteah stieh ast ieh astiheast],
+)
+consectetur
+adipiscing
+elit

@@ -88,7 +88,7 @@ fn test_stdin_inplace() {
     ----- stderr -----
     error: cannot perform in-place formatting without at least one file being presented
 
-    Usage: typstyle [OPTIONS] [INPUT]... [COMMAND]
+    Usage: typstyle [OPTIONS] [INPUT]...
 
     For more information, try '--help'.
     ");

@@ -1,6 +1,6 @@
 ---
 source: tests/src/unit.rs
-input_file: tests/fixtures/unit/math/fn-comma.typ
+input_file: tests/fixtures/unit/math/args-sep.typ
 ---
 $
   sin(x)

@@ -54,3 +54,12 @@ fn parse_config(config: JsValue) -> Result<Config, Error> {
 fn into_error<E: std::fmt::Display>(err: E) -> Error {
     Error::new(&err.to_string())
 }
+
+#[wasm_bindgen]
+pub fn pretty_print_wasm(content: &str, width: usize) -> String {
+    let config = Config::new().with_width(width);
+    let t = Typstyle::new(config);
+    t.format_text(content)
+        .render()
+        .unwrap_or_else(|_| content.to_string())
+}

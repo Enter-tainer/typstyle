@@ -80,7 +80,9 @@ input_file: tests/fixtures/articles/undergraduate-math.typ
 #set par(justify: true)
 
 // Run-in sections, like LaTeX \paragraph
-#show heading.where(level: 1): it => text(
+#show heading.where(
+  level: 1,
+): it => text(
   size: normalsize,
   weight: "bold",
   fill: headcolor,

@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - master
-    tags:
-      - "v*"
   pull_request:
     branches:
       - master
@@ -16,9 +14,6 @@ on:
       - ".github/workflows/gh-pages.yml"
   workflow_dispatch:
 
-permissions:
-  contents: write # Needed for checkout and potentially other steps
-
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
@@ -27,7 +22,7 @@ concurrency:
 
 jobs:
   build-gh-pages:
-    name: Build docs & demo
+    name: Build Docs & Playground and Prepare Artifact
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

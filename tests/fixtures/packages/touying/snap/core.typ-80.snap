@@ -47,7 +47,10 @@ input_file: tests/fixtures/packages/touying/core.typ
 /// Example: `#show: appendix`
 ///
 /// - `body` (content): The content of the appendix.
-#let appendix(body) = touying-set-config((appendix: true), body)
+#let appendix(body) = touying-set-config(
+  (appendix: true),
+  body,
+)
 
 
 /// Recall a slide by its label
@@ -338,7 +341,10 @@ input_file: tests/fixtures/packages/touying/core.typ
       let last-heading-depth = _get-last-heading-depth(current-headings)
       current-slide = utils.trim(current-slide)
       if (
-        _get-slide-fn(self + (headings: current-headings), default: none)
+        _get-slide-fn(
+          self + (headings: current-headings),
+          default: none,
+        )
           != none
           or child.depth <= last-heading-depth
           or current-slide != ()
@@ -1229,7 +1235,10 @@ input_file: tests/fixtures/packages/touying/core.typ
     }
     cover-arr = ()
   }
-  result-arr.push((reducer.reduce)(..reducer.kwargs, result))
+  result-arr.push((reducer.reduce)(
+    ..reducer.kwargs,
+    result,
+  ))
   max-repetitions = calc.max(max-repetitions, repetitions)
   return (result-arr, max-repetitions)
 }
@@ -1863,9 +1872,17 @@ input_file: tests/fixtures/packages/touying/core.typ
       0pt
     }
     if self.show-notes-on-second-screen == bottom {
-      footer += place(left + bottom, dx: -margin-left, show-notes)
+      footer += place(
+        left + bottom,
+        dx: -margin-left,
+        show-notes,
+      )
     } else if self.show-notes-on-second-screen == right {
-      footer += place(left + bottom, dx: page-width - margin-left, show-notes)
+      footer += place(
+        left + bottom,
+        dx: page-width - margin-left,
+        show-notes,
+      )
     }
   }
   (header, footer)

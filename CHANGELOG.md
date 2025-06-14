@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.13.10 - [2025-06-05]
+
+- Bug fix: Fixed unexpected semicolon to comma conversion in nested math arguments. Previously, typstyle would incorrectly convert semicolons to commas in complex nested mathematical expressions like `$mat(mat(1; 2); mat(3; 4))$`.
+
+- Refactor: Extracted WASM features into a separate `typstyle-wasm` crate. This improves the modular architecture by separating WebAssembly-specific functionality from the core library.
+
+- API Enhancement: Added rendering IR functionality to the formatter. The `Formatter` now provides a `render_ir()` method that allows developers to inspect the pretty-printing intermediate representation, which can be useful for debugging and understanding the formatting process.
+
 ## v0.13.9 - [2025-05-25]
 
 - Feature: typstyle now evaluates simple constant expressions for table columns. This enhancement allows for better column count calculation in tables. For example, if you have a table with a column count defined as `((1fr,) * 2 + 2 * (auto,)) * 3`, typstyle will now correctly interpret this as 12 columns.

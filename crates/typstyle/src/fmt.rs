@@ -196,7 +196,7 @@ fn format_debug(content: &str, args: &CliArguments) -> FormatResult {
     let f = t.format_source(source);
     if args.debug.pretty_doc {
         match f.render_ir() {
-            Ok(ir) => println!("{}", ir),
+            Ok(ir) => println!("{ir}"),
             Err(e) => error!("Failed to render IR: {e}"),
         }
     }

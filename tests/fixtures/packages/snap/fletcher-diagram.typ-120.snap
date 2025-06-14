@@ -443,7 +443,12 @@ input_file: tests/fixtures/packages/fletcher-diagram.typ
   node-defocus: 0.2,
   label-sep: 0.4em,
   label-size: 1em,
-  label-wrapper: edge => box([#edge.label], inset: .2em, radius: .2em, fill: edge.label-fill),
+  label-wrapper: edge => box(
+    [#edge.label],
+    inset: .2em,
+    radius: .2em,
+    fill: edge.label-fill,
+  ),
   mark-scale: 100%,
   crossing-fill: white,
   crossing-thickness: 5,

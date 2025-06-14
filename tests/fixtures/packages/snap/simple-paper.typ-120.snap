@@ -42,7 +42,9 @@ input_file: tests/fixtures/packages/simple-paper.typ
     #it.body
   ]
 
-  show heading.where(level: 1): it => box(width: 100%)[
+  show heading.where(
+    level: 1,
+  ): it => box(width: 100%)[
     #v(0.5em)
     #set align(center)
     #set heading(numbering: "一")
@@ -88,7 +90,11 @@ input_file: tests/fixtures/packages/simple-paper.typ
   show strong: set text(font: strong-font)
   show emph: set text(font: emph-font)
   show ref: set text(red)
-  show raw.where(block: true): block.with(width: 100%, fill: luma(240), inset: 10pt)
+  show raw.where(block: true): block.with(
+    width: 100%,
+    fill: luma(240),
+    inset: 10pt,
+  )
 
   show raw: set text(font: (raw-font, hei), size: 10pt)
   show link: underline
@@ -122,5 +128,8 @@ input_file: tests/fixtures/packages/simple-paper.typ
 
 #let solution(body) = {
   set enum(numbering: "(1)")
-  block(inset: 8pt, width: 100%)[*解答.* #h(0.75em) #body]
+  block(
+    inset: 8pt,
+    width: 100%,
+  )[*解答.* #h(0.75em) #body]
 }

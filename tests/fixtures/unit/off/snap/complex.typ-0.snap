@@ -65,7 +65,7 @@ input_file: tests/fixtures/unit/off/complex.typ
       text(
         size: 12pt,
         /* @typstyle off */
-        weight: "bold",
+        weight:"bold",
         fill: red,
       )[Styled text]
     }

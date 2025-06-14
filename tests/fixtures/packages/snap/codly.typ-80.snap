@@ -555,7 +555,11 @@ input_file: tests/fixtures/packages/codly.typ
           let height-col = measure(col).height
           let height-tag = measure(tag).height
           let max-height = (
-            calc.max(height-col, height-tag) + 2 * highlight-inset
+            calc.max(
+              height-col,
+              height-tag,
+            )
+              + 2 * highlight-inset
           )
           let hl-box = box(
             radius: (
@@ -586,7 +590,10 @@ input_file: tests/fixtures/packages/codly.typ
             tag + label,
           )
 
-          children.push([#hl-box#h(0pt, weak: true)#tag-box<codly-highlight>])
+          children.push([#hl-box#h(
+              0pt,
+              weak: true,
+            )#tag-box<codly-highlight>])
         }
         collection = none
       }

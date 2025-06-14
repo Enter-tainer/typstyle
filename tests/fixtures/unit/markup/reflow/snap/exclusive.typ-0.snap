@@ -22,8 +22,7 @@ $
 $
 #figure([Figures])
 #figure([Labeled
-  figures])
-<label>
+  figures]) <label>
 That's
 all!
 Wait,
@@ -76,12 +75,10 @@ markers
 ) => []
 #fig(
   "image1",
-)[Caption]
-<label1>
+)[Caption] <label1>
 #fig(
   "image2",
-)[Caption]
-<label2>
+)[Caption] <label2>
 
 This
 is

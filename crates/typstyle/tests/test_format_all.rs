@@ -10,14 +10,13 @@ fn test_all_0() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
     Successfully formatted 2 files (0 unchanged) in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert_eq!(space.read_string("a.typ"), "#let a = 0\n");
@@ -34,14 +33,13 @@ fn test_all_1() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
     Successfully formatted 1 file (1 unchanged) in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.is_unmodified("a.typ"));
@@ -58,14 +56,13 @@ fn test_all_2() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
     Successfully formatted 0 file (2 unchanged) in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert!(space.is_unmodified("a.typ"));
@@ -83,15 +80,17 @@ fn test_all_0_check() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "--check", "-v"]), @r"
     success: false
-    exit_code: 1
+    exit_code: 2
     ----- stdout -----
-    Would reformat: x/b.typ
-    1 file would be reformatted (0 already formatted), checked in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
+    error: the argument '--inplace' cannot be used with '--check'
+
+    Usage: typstyle --inplace --verbose <INPUT>...
+
+    For more information, try '--help'.
     ");
 
     assert!(space.all_unmodified());
@@ -105,15 +104,17 @@ fn test_all_1_check() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "--check", "-v"]), @r"
     success: false
-    exit_code: 1
+    exit_code: 2
     ----- stdout -----
-    Would reformat: x/b.typ
-    1 file would be reformatted (1 already formatted), checked in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
+    error: the argument '--inplace' cannot be used with '--check'
+
+    Usage: typstyle --inplace --verbose <INPUT>...
+
+    For more information, try '--help'.
     ");
 
     assert!(space.all_unmodified());
@@ -127,14 +128,17 @@ fn test_all_2_check() {
     space.write_tracked("x/y/.c.typ", "#let c  =  2");
     space.write_tracked("x/.z/d.typ", "#let d  =  3");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
-    success: true
-    exit_code: 0
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "--check", "-v"]), @r"
+    success: false
+    exit_code: 2
     ----- stdout -----
-    0 file would be reformatted (2 already formatted), checked in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
+    error: the argument '--inplace' cannot be used with '--check'
+
+    Usage: typstyle --inplace --verbose <INPUT>...
+
+    For more information, try '--help'.
     ");
 
     assert!(space.all_unmodified());
@@ -147,14 +151,13 @@ fn test_all_erroneous() {
     space.write_tracked("x/b.typ", "#let b  =  1");
     space.write_tracked("x/y/c.typ", "#let c  =  2; #");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
     Successfully formatted 1 file (2 unchanged) in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     warn: Failed to parse x/y/c.typ. The source is erroneous.
     ");
 
@@ -170,16 +173,17 @@ fn test_all_erroneous_check() {
     space.write_tracked("x/b.typ", "#let b  =  1");
     space.write_tracked("x/y/c.typ", "#let c  =  2; #");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "--check", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "--check", "-v"]), @r"
     success: false
-    exit_code: 1
+    exit_code: 2
     ----- stdout -----
-    Would reformat: x/b.typ
-    1 file would be reformatted (2 already formatted), checked in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
-    warn: Failed to parse x/y/c.typ. The source is erroneous.
+    error: the argument '--inplace' cannot be used with '--check'
+
+    Usage: typstyle --inplace --verbose <INPUT>...
+
+    For more information, try '--help'.
     ");
 
     assert!(space.all_unmodified());
@@ -190,14 +194,13 @@ fn test_all_column() {
     let space = Workspace::new();
     space.write("a.typ", "#let a  =  (1 + 2)");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "-c=0", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "-c=0", "-v"]), @r"
     success: true
     exit_code: 0
     ----- stdout -----
     Successfully formatted 1 file (0 unchanged) in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
     ");
 
     assert_eq!(
@@ -217,14 +220,16 @@ fn test_dir_all_check() {
     space.write("x/b.typ", "#let b  =  1");
     space.write("x/y/.c.typ", "#let c  =  2");
 
-    typstyle_cmd_snapshot!(space.cli().args(["format-all", "x", "--check", "-v"]), @r"
+    typstyle_cmd_snapshot!(space.cli().args([".", "-i", "x", "--check", "-v"]), @r"
     success: false
-    exit_code: 1
+    exit_code: 2
     ----- stdout -----
-    Would reformat: x/b.typ
-    1 file would be reformatted (0 already formatted), checked in [DURATION]
 
     ----- stderr -----
-    warn: format-all is deprecated and will be removed in a future version. Please directly use `typstyle <dir> -i` instead.
+    error: the argument '--inplace' cannot be used with '--check'
+
+    Usage: typstyle --inplace --verbose <INPUT>...
+
+    For more information, try '--help'.
     ");
 }

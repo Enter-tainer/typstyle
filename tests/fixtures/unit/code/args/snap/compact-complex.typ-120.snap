@@ -30,7 +30,13 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 })
 
 // Mixing positional and named arguments
-#f("pos1", name1: [named1], "pos2", name2: [named2], "pos3")
+#f(
+  "pos1",
+  name1: [named1],
+  "pos2",
+  name2: [named2],
+  "pos3",
+)
 
 // Function calls with only named arguments
 #f(last: "z", first: "a", middle: {
@@ -155,7 +161,12 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 #f(f(1, [nested], { 0 + 1 }), f(2, [nested], { 0 + 2 }), f(3, [nested], { 0 + 3 }), f(4, [nested], { 0 + 4 }))
 
 // Similar tuple structures with content blocks
-#f(([Block A], 1, "first"), ([Block B], 2, "second"), ([Block C], 3, "third"), ([Block D], 4, "fourth"))
+#f(
+  ([Block A], 1, "first"),
+  ([Block B], 2, "second"),
+  ([Block C], 3, "third"),
+  ([Block D], 4, "fourth"),
+)
 
 //==================================================
 // NESTED STRUCTURES
@@ -472,7 +483,11 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 )
 
 // Nested structures with inconsistent parentheses
-#f(("A", "B"), ("C",), ("D", "E"))
+#f(
+  ("A", "B"),
+  ("C",),
+  ("D", "E"),
+)
 
 // Dictionary with extra parentheses and similar last argument
 #f(

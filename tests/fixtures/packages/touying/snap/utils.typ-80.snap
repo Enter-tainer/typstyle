@@ -852,7 +852,11 @@ input_file: tests/fixtures/packages/touying/utils.typ
 /// Example: `config-methods(cover: utils.semi-transparent-cover)`
 #let semi-transparent-cover(self: none, constructor: rgb, alpha: 85%, body) = {
   cover-with-rect(
-    fill: update-alpha(constructor: constructor, self.page.fill, alpha),
+    fill: update-alpha(
+      constructor: constructor,
+      self.page.fill,
+      alpha,
+    ),
     body,
   )
 }

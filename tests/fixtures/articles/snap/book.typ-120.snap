@@ -48,7 +48,9 @@ input_file: tests/fixtures/articles/book.typ
   ],
 )
 
-#build-meta(dest-dir: "../dist")
+#build-meta(
+  dest-dir: "../dist",
+)
 
 #get-book-meta()
 

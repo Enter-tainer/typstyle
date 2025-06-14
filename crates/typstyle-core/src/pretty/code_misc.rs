@@ -36,6 +36,17 @@ impl<'a> PrettyPrinter<'a> {
         }
     }
 
+    pub(super) fn convert_arg(&'a self, ctx: Context, arg: Arg<'a>) -> ArenaDoc<'a> {
+        if let Some(res) = self.check_disabled(arg.to_untyped()) {
+            return res;
+        }
+        match arg {
+            Arg::Pos(p) => self.convert_expr(ctx, p),
+            Arg::Named(n) => self.convert_named(ctx, n),
+            Arg::Spread(s) => self.convert_spread(ctx, s),
+        }
+    }
+
     pub(super) fn convert_param(&'a self, ctx: Context, param: Param<'a>) -> ArenaDoc<'a> {
         if let Some(res) = self.check_disabled(param.to_untyped()) {
             return res;

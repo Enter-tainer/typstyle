@@ -183,4 +183,10 @@ input_file: tests/fixtures/packages/quill-gallery.typ
 }
 
 
-#rect(stroke: none, radius: 3pt, inset: (x: 6pt, y: 6pt), fill: white, gallery)
+#rect(
+  stroke: none,
+  radius: 3pt,
+  inset: (x: 6pt, y: 6pt),
+  fill: white,
+  gallery,
+)
