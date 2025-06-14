@@ -1,11 +1,10 @@
 // This is important for shiroa to produce a responsive layout
 // and multiple targets.
-#import "../deps.typ": shiroa, zebraw
+#import "../deps.typ": hypraw, shiroa
 #import shiroa: (
   get-page-width, is-html-target, is-pdf-target, is-web-target, plain-text, shiroa-sys-target, target, templates,
 )
 #import templates: *
-#import zebraw: zebraw, zebraw-init
 #import "components/mod.typ": *
 
 // Metadata
@@ -124,56 +123,23 @@
     it
   }
 
-  /// HTML code block supported by zebraw.
-  show: if is-dark-theme {
-    zebraw-init.with(
-      // should vary by theme
-      background-color: if code-extra-colors.bg != none {
-        (code-extra-colors.bg, code-extra-colors.bg)
-      },
-      highlight-color: rgb("#3d59a1"),
-      comment-color: rgb("#394b70"),
-      lang-color: rgb("#3d59a1"),
-      lang: false,
-      numbering: false,
-      inset: (top: 0em, bottom: 0em, left: 0.3em, right: 0.3em),
-    )
-  } else {
-    zebraw-init.with(lang: false, numbering: false, inset: (top: 0em, bottom: 0em, left: 0.3em, right: 0.3em))
-  }
-
   // code block setting
   set raw(theme: theme-style.code-theme) if theme-style.code-theme.len() > 0
   show raw: set text(font: code-font)
-  show raw.where(block: true): it => context if shiroa-sys-target() == "paged" {
-    rect(width: 100%, inset: (x: 4pt, y: 5pt), radius: 4pt, fill: code-extra-colors.bg)[
-      #set text(fill: code-extra-colors.fg) if code-extra-colors.fg != none
-      #set par(justify: false)
-      // #place(right, text(luma(110), it.lang))
-      #it
-    ]
-  } else {
-    set text(fill: code-extra-colors.fg) if code-extra-colors.fg != none
-    set par(justify: false)
-    zebraw(
-      block-width: 100%,
-      // line-width: 100%,
-      wrap: false,
-      it,
-    )
-  }
-
-  show: render-examples
+  show raw.where(block: true): set block(width: 100%)
+  show: hypraw.hypraw
 
   // Put your custom CSS here.
   context if shiroa-sys-target() == "html" {
     html.elem("style", read("styles.css"))
+    html.elem("style", read("hypraw.css"))
   }
 
   // Main body.
-  set par(justify: true)
-
-  body
+  {
+    set par(justify: true)
+    body
+  }
 }
 
 #let part-style = heading

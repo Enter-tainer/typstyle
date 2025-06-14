@@ -21,5 +21,5 @@
 ])
 
 // re-export page template
-#import "./templates/page.typ": project
+#import "./templates/page.typ": project, render-examples
 #let book-page = project
