@@ -16,7 +16,7 @@ use typstyle_core::{Config, Typstyle};
 use walkdir::{DirEntry, WalkDir};
 
 use crate::{
-    cli::{CliArguments, StyleArgs},
+    cli::{CliArguments, DebugArgs, StyleArgs},
     fs, ExitStatus,
 };
 
@@ -51,7 +51,9 @@ impl StyleArgs {
 }
 
 pub fn format_stdin(args: &CliArguments) -> Result<ExitStatus> {
-    format_one(None, args).map(|res| match res {
+    let typstyle = Typstyle::new(args.style.to_config());
+
+    format_one(None, &typstyle, args).map(|res| match res {
         FormatResult::Formatted(_) if args.check => ExitStatus::Failure,
         _ => ExitStatus::Success,
     })
@@ -73,9 +75,11 @@ pub fn format(args: &CliArguments) -> Result<ExitStatus> {
         return Ok(ExitStatus::Success);
     }
 
+    let typstyle = Typstyle::new(args.style.to_config());
+
     let start_time = Instant::now();
     for file in paths {
-        let res = format_one(Some(&file), args).unwrap_or_else(|e| {
+        let res = format_one(Some(&file), &typstyle, args).unwrap_or_else(|e| {
             error!("{e}");
             summary.error_count += 1;
             FormatResult::Erroneous
@@ -138,11 +142,15 @@ pub fn format(args: &CliArguments) -> Result<ExitStatus> {
 /// - `Ok(FormatStatus::Changed)` if the file was reformatted.
 /// - `Ok(FormatStatus::Unchanged)` if the file was unchanged or contained errors.
 /// - `Err` if reading from or writing to the file fails.
-fn format_one(input: Option<&PathBuf>, args: &CliArguments) -> Result<FormatResult> {
+fn format_one(
+    input: Option<&PathBuf>,
+    typstyle: &Typstyle,
+    args: &CliArguments,
+) -> Result<FormatResult> {
     let use_stdout = !args.inplace && !args.check;
     let unformatted = get_input(input)?;
 
-    let res = format_debug(&unformatted, args);
+    let res = format_debug(&unformatted, typstyle, &args.debug);
     match &res {
         FormatResult::Formatted(res) => {
             if args.inplace {
@@ -184,17 +192,16 @@ enum FormatResult {
     Erroneous,
 }
 
-fn format_debug(content: &str, args: &CliArguments) -> FormatResult {
+fn format_debug(content: &str, typstyle: &Typstyle, args: &DebugArgs) -> FormatResult {
     let source = Source::detached(content);
     let root = source.root();
-    if args.debug.ast {
+    if args.ast {
         println!("{root:#?}");
     }
 
-    let config = args.style.to_config();
-    let t = Typstyle::new(config);
-    let f = t.format_source(source);
-    if args.debug.pretty_doc {
+    let start_time = Instant::now();
+    let f = typstyle.format_source(source);
+    if args.pretty_doc {
         match f.render_ir() {
             Ok(ir) => println!("{ir}"),
             Err(e) => error!("Failed to render IR: {e}"),
@@ -203,6 +210,10 @@ fn format_debug(content: &str, args: &CliArguments) -> FormatResult {
     let Ok(res) = f.render() else {
         return FormatResult::Erroneous;
     };
+
+    if args.timing {
+        println!("Formatting completed in {:?}", start_time.elapsed());
+    }
 
     // Compare `res` with `content` to perform CI checks
     if res != content {

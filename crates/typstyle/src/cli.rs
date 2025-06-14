@@ -100,6 +100,10 @@ pub struct DebugArgs {
     /// Print the pretty document
     #[arg(short, long, default_value_t = false)]
     pub pretty_doc: bool,
+
+    /// Show elapsed time taken by the formatter
+    #[arg(long, default_value_t = false)]
+    pub timing: bool,
 }
 
 #[derive(Args)]
