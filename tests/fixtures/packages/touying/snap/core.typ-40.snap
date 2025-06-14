@@ -2452,9 +2452,10 @@ input_file: tests/fixtures/packages/touying/core.typ
     type(margin) == length
       or type(margin) == relative
   ) {
-    return it => pad(x: -margin, cell(
-      it,
-    ))
+    return it => pad(
+      x: -margin,
+      cell(it),
+    )
   }
   let pad-args = (:)
   if "x" in margin {
@@ -2496,9 +2497,10 @@ input_file: tests/fixtures/packages/touying/core.typ
   } else {
     595.28pt
   }
-  it => pad(bottom: page-height, cell(
-    it,
-  ))
+  it => pad(
+    bottom: page-height,
+    cell(it),
+  )
 }
 
 // get page extra args for show-notes-on-second-screen

@@ -455,18 +455,13 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 //==================================================
 
 // Dictionary with multiple entries
-#f(
-  (a: 1),
-  (b: 2),
-  (c: 3),
-  (
-    very: "long",
-    dictionary: "with",
-    multiple: "entries",
-    that: "spans",
-    several: "lines",
-  ),
-)
+#f((a: 1), (b: 2), (c: 3), (
+  very: "long",
+  dictionary: "with",
+  multiple: "entries",
+  that: "spans",
+  several: "lines",
+))
 
 // Code blocks with loops
 #f(

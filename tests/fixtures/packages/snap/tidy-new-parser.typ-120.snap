@@ -127,11 +127,26 @@ input_file: tests/fixtures/packages/tidy-new-parser.typ
   )
 }
 
-#assert.eq(parse-description-and-types(("asd",)), (description: "asd", types: none))
-#assert.eq(parse-description-and-types(("->int",)), (description: "", types: ("int",)))
-#assert.eq(parse-description-and-types((" -> int",)), (description: "", types: ("int",)))
-#assert.eq(parse-description-and-types(("abcdefg -> int",)), (description: "abcdefg", types: ("int",)))
-#assert.eq(parse-description-and-types(("abcdefg", "-> int")), (description: "abcdefg", types: ("int",)))
+#assert.eq(
+  parse-description-and-types(("asd",)),
+  (description: "asd", types: none),
+)
+#assert.eq(
+  parse-description-and-types(("->int",)),
+  (description: "", types: ("int",)),
+)
+#assert.eq(
+  parse-description-and-types((" -> int",)),
+  (description: "", types: ("int",)),
+)
+#assert.eq(
+  parse-description-and-types(("abcdefg -> int",)),
+  (description: "abcdefg", types: ("int",)),
+)
+#assert.eq(
+  parse-description-and-types(("abcdefg", "-> int")),
+  (description: "abcdefg", types: ("int",)),
+)
 
 
 

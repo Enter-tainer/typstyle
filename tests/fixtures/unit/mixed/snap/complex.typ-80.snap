@@ -71,10 +71,17 @@ $
   ],
   supplement: none,
 )[
-  #rect(width: 100pt, height: 50pt, fill: blue.lighten(30%))
-  #circle(radius: 15pt, fill: red.darken(
-    20%,
-  ))
+  #rect(
+    width: 100pt,
+    height: 50pt,
+    fill: blue.lighten(30%),
+  )
+  #circle(
+    radius: 15pt,
+    fill: red.darken(
+      20%,
+    ),
+  )
 ]
 
 / Term: Definition with

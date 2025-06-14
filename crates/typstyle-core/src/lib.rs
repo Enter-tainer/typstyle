@@ -4,6 +4,7 @@ pub mod liteval;
 pub mod partial;
 pub mod pretty;
 
+pub mod cmplx;
 mod config;
 pub mod prettyless;
 mod utils;
