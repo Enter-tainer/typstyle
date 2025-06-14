@@ -2,6 +2,8 @@
 
 #show: book-page.with(title: "Escape Hatch")
 
+#show: render-examples
+
 = Escape Hatch
 
 Sometimes you may want to preserve specific formatting that differs from typstyle's default style, or typstyle may not handle certain cases optimally. The escape hatch feature allows you to selectively disable formatting for particular code sections using special comments.

@@ -133,7 +133,7 @@
   }
 }
 
-#let render-examples(body) = {
-  show raw.where(lang: "typst"): example
+#let render-examples(body, lang: "typst") = {
+  show raw.where(lang: lang): example
   body
 }

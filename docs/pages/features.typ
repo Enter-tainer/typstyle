@@ -2,6 +2,8 @@
 
 #show: book-page.with(title: "Formatting Features")
 
+#show: render-examples
+
 = Formatting Features
 
 typstyle follows a consistent set of formatting rules to ensure your Typst code is readable, maintainable, and follows established conventions. This page documents the default formatting styles applied by typstyle.
