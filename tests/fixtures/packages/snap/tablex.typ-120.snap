@@ -3144,7 +3144,11 @@ input_file: tests/fixtures/packages/tablex.typ
       page-height: page_height,
     )
 
-    let validated_cols_rows = validate-cols-rows(columns, rows, items: items.filter(is-tablex-cell))
+    let validated_cols_rows = validate-cols-rows(
+      columns,
+      rows,
+      items: items.filter(is-tablex-cell),
+    )
 
     let columns = validated_cols_rows.columns
     let rows = validated_cols_rows.rows

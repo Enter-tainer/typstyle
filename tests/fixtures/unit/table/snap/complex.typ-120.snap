@@ -78,7 +78,10 @@ input_file: tests/fixtures/unit/table/complex.typ
     #table(
       columns: 2,
       [A1], [B1],
-      [A2], table.cell(fill: blue.lighten(80%))[B2],
+      [A2],
+      table.cell(
+        fill: blue.lighten(80%),
+      )[B2],
     )
   ],
   [Side],
@@ -181,7 +184,9 @@ input_file: tests/fixtures/unit/table/complex.typ
 #table(
   columns: (auto, 1fr, auto),
   inset: (x: 12pt, y: 6pt),
-  fill: gradient.linear(..color.map.rainbow.slice(0, 3)),
+  fill: gradient.linear(
+    ..color.map.rainbow.slice(0, 3),
+  ),
   stroke: (
     thickness: 0.5pt,
     dash: "dotted",

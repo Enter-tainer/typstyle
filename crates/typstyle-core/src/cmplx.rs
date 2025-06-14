@@ -2,6 +2,9 @@ use typst_syntax::ast::{self, AstNode, Expr};
 
 use crate::ext::StrExt;
 
+pub const SIMPLE_ENOUGH: u32 = 3;
+pub const COMPLEX_ENOUGH: u32 = 100;
+
 pub trait SumComplexity {
     fn sum_complexity(self) -> u32;
 }
@@ -32,12 +35,12 @@ impl Complexity for Expr<'_> {
             Expr::Text(text) => text.complexity(),
             Expr::Space(space) => {
                 if space.to_untyped().text().has_linebreak() {
-                    10
+                    100
                 } else {
                     0
                 }
             }
-            Expr::Parbreak(_) => 20,
+            Expr::Parbreak(_) => 100,
             Expr::Strong(strong) => 1 + strong.body().complexity(),
             Expr::Emph(emph) => 1 + emph.body().complexity(),
             Expr::Raw(raw) => 2 + raw.lines().sum_complexity(),
@@ -54,9 +57,10 @@ impl Complexity for Expr<'_> {
             Expr::Equation(equation) => 2 + equation.body().exprs().sum_complexity(),
             Expr::Math(math) => 1 + math.exprs().sum_complexity(),
 
+            Expr::Ident(ident) => ident.get().len().div_ceil(20) as u32,
             Expr::Str(str) => str.get().complexity(),
 
-            Expr::Code(code_block) => 2 + code_block.body().exprs().sum_complexity(),
+            Expr::Code(code_block) => 3 + code_block.body().exprs().sum_complexity(),
             Expr::Content(content_block) => 2 + content_block.body().exprs().sum_complexity(),
             Expr::Parenthesized(parenthesized) => parenthesized.expr().complexity(),
             Expr::Array(array) => {
@@ -90,14 +94,14 @@ impl Complexity for Expr<'_> {
 
             // As for our usage, statements cannot appear in args,
             // so we can directly give them a large complexity.
-            Expr::Let(_) => 10,
-            Expr::DestructAssign(_) => 10,
-            Expr::Set(_) => 10,
-            Expr::Show(_) => 10,
+            Expr::Let(_) => 100,
+            Expr::DestructAssign(_) => 100,
+            Expr::Set(_) => 100,
+            Expr::Show(_) => 100,
 
-            Expr::Contextual(contextual) => 2 + contextual.body().complexity(),
+            Expr::Contextual(contextual) => 5 + contextual.body().complexity(),
             Expr::Conditional(conditional) => {
-                4 + conditional.condition().complexity()
+                5 + conditional.condition().complexity()
                     + conditional.if_body().complexity()
                     + conditional
                         .else_body()
@@ -112,7 +116,7 @@ impl Complexity for Expr<'_> {
                     + for_loop.iterable().complexity()
                     + for_loop.body().complexity()
             }
-            Expr::Import(_) | Expr::Include(_) => 10,
+            Expr::Import(_) | Expr::Include(_) => 100,
 
             _ => 1,
         }

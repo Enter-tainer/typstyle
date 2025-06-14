@@ -77,10 +77,9 @@ Note that draw functions are imported inside the scope of the `canvas` block. Th
     and it.text.ends-with(">")
 ) {
   set text(1.2em)
-  doc-style.show-type(it.text.slice(
-    1,
-    -1,
-  ))
+  doc-style.show-type(
+    it.text.slice(1, -1),
+  )
 } else {
   it
 }

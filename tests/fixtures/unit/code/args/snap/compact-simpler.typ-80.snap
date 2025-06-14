@@ -15,9 +15,17 @@ input_file: tests/fixtures/unit/code/args/compact-simpler.typ
 
 // Test cases with no blocky args and last arg as simple function call
 
-#f(a: true, b: false, circle(radius: 1cm))
+#f(
+  a: true,
+  b: false,
+  circle(radius: 1cm),
+)
 
-#f("first", second: 42, rect(width: 2cm))
+#f(
+  "first",
+  second: 42,
+  rect(width: 2cm),
+)
 
 #f(
   text(emph[xx]),

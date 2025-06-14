@@ -604,10 +604,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
         ))
       }
 
-      Δphase += vector-len(vector.sub(
-        from,
-        to,
-      ))
+      Δphase += vector-len(
+        vector.sub(from, to),
+      )
     } else {
       // rounded corners
 
@@ -641,10 +640,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
           ),
         )
 
-        Δphase += vector-len(vector.sub(
-          from,
-          to,
-        ))
+        Δphase += vector-len(
+          vector.sub(from, to),
+        )
 
         for d in edge.extrude {
           if delta != 0deg {
@@ -773,10 +771,9 @@ input_file: tests/fixtures/packages/fletcher-draw.typ
       .map(point => {
         // funky disagreement between coordinate systems??
         point.at(1) *= -1
-        vector-2d(vector.scale(
-          point,
-          1cm,
-        ))
+        vector-2d(
+          vector.scale(point, 1cm),
+        )
       })
       .sorted(key: point => vector-len(
         vector.sub(point, target),

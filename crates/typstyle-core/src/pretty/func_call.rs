@@ -13,7 +13,10 @@ use super::{
     util::{get_parenthesized_args, get_parenthesized_args_untyped, has_parenthesized_args},
     Context, Mode, PrettyPrinter,
 };
-use crate::{cmplx::Complexity, ext::StrExt};
+use crate::{
+    cmplx::{self, Complexity},
+    ext::StrExt,
+};
 
 impl<'a> PrettyPrinter<'a> {
     pub(super) fn convert_func_call(
@@ -292,12 +295,27 @@ fn suggest_fold_style_for_args(args: Args, count: usize) -> Option<FoldStyle> {
                 break;
             }
             max_complexity = max_complexity.max(expr.complexity() + base_complexity);
+            if max_complexity >= cmplx::COMPLEX_ENOUGH {
+                break;
+            }
             continue;
         }
 
         // On the last argument: fold if it’s combinable and complex enough.
-        if is_combinable(expr) && expr.complexity() >= 2 * (max_complexity + base_complexity) {
-            return Some(FoldStyle::Compact);
+        if is_combinable(expr)
+            && expr
+                .to_untyped()
+                .cast::<FuncCall>()
+                .is_none_or(|func_call| {
+                    let callee = func_call.callee();
+                    !matches!(callee, Expr::FieldAccess(_))
+                        || func_call.args().complexity() >= 2 * callee.complexity()
+                })
+        {
+            let c = expr.complexity();
+            if c > cmplx::SIMPLE_ENOUGH && (c + base_complexity) > 2 * max_complexity {
+                return Some(FoldStyle::Compact);
+            }
         }
     }
 
