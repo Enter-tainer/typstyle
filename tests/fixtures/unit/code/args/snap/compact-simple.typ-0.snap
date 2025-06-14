@@ -65,8 +65,8 @@ input_file: tests/fixtures/unit/code/args/compact-simple.typ
     111111
       + 2222222,
   )
-  f({ })
-  f({ })
+  f({})
+  f({})
   f(context {
     1
   })

@@ -61,7 +61,7 @@ input_file: tests/fixtures/unit/code/args/compact-complex.typ
 #f(
   [],
   (),
-  { },
+  {},
   block[],
   grid(
     columns: 2,

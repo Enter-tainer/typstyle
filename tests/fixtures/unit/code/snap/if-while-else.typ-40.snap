@@ -1,8 +1,7 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/if-while-else.typ
-snapshot_kind: text
 ---
-#if if true { } == while false { } {
+#if if true {} == while false {} {
   true
-} else { }
+} else {}

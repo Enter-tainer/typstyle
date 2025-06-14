@@ -1,15 +1,14 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/code/block-short.typ
-snapshot_kind: text
 ---
-#let o = { }
+#let o = {}
 
-#let o = { }
+#let o = {}
 
-#let o = { }
+#let o = {}
 
-#let o = { }
+#let o = {}
 
 #let o = {
   true

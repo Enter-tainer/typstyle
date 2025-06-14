@@ -5,9 +5,9 @@ input_file: tests/fixtures/unit/code/args/last-arg.typ
 #let fun = (..args) => args
 #let (aaaaaaaa, bbbbbbbbbb) = (1, 2)
 
-#fun(aaaaaaaa, bbbbbbbbbb, () => { })
+#fun(aaaaaaaa, bbbbbbbbbb, () => {})
 
-#fun(aaaaaaaa, bbbbbbbbbb, () => { })
+#fun(aaaaaaaa, bbbbbbbbbb, () => {})
 
 #fun(aaaaaaaa, bbbbbbbbbb, () => {
   // something
