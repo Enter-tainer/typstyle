@@ -1,0 +1,10 @@
+[package]
+name = "typstyle-embedded"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["QuadnucYard", "Wenzhuo Liu"]
+description = "Embedded Typstyle for Typst"
+homepage = "https://enter-tainer.github.io/typstyle"
+repository = "https://github.com/Enter-tainer/typstyle"
+keywords = ["typstyle", "formatter"]
+compiler = "0.13.0"

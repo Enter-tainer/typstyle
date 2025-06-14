@@ -1,0 +1,3 @@
+[submodule "docs/packages/hypraw"]
+	path = docs/packages/hypraw
+	url = git@github.com:QuadnucYard/typst-hypraw.git
