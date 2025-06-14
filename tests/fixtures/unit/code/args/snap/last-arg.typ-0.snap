@@ -18,13 +18,13 @@ input_file: tests/fixtures/unit/code/args/last-arg.typ
 #fun(
   aaaaaaaa,
   bbbbbbbbbb,
-  () => { },
+  () => {},
 )
 
 #fun(
   aaaaaaaa,
   bbbbbbbbbb,
-  () => { },
+  () => {},
 )
 
 #fun(

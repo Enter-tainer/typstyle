@@ -1,19 +1,18 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-for.typ
-snapshot_kind: text
 ---
 #{
   for /* test */ i in (
     "123"
-  ) { }
+  ) {}
   for i /* test */ in (
     "123"
-  ) { }
+  ) {}
   for i in /* test */ (
     "123"
-  ) { }
+  ) {}
   for i in (
     "123"
-  ) /* test */ { }
+  ) /* test */ {}
 }

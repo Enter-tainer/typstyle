@@ -117,7 +117,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
   ) {
     draw-edge = (
       ..,
-    ) => { }
+    ) => {}
   }
 
   if (

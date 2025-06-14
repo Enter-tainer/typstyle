@@ -26,9 +26,9 @@ This is a code block: #{
 I don't want to eat the linebreak. A blocky node should not stick #[
 
 ]
-the content after it. Not #if true { }
-Not #while false { }
-Not #for i in range(5) { }
+the content after it. Not #if true {}
+Not #while false {}
+Not #for i in range(5) {}
 Not #context 1
 And block equations:
 $ eq $

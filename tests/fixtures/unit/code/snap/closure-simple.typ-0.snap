@@ -49,11 +49,11 @@ input_file: tests/fixtures/unit/code/closure-simple.typ
       .ends-with(
         ">",
       )
-) { }
+) {}
 
 #let show-palette(
   p,
-) = box({ })
+) = box({})
 
 #a.map((
   (

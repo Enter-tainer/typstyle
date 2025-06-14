@@ -71,7 +71,7 @@ input_file: tests/fixtures/packages/cetz-tree.typ
       */
     }
   } else if draw-edge == none {
-    draw-edge = (..) => { }
+    draw-edge = (..) => {}
   }
 
   if draw-node == auto or draw-node in ("rect",) {

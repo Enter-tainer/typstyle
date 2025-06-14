@@ -12,6 +12,6 @@ input_file: tests/fixtures/unit/code/args/spread.typ
   spread: 1,
   name: none,
   ..style,
-) = { }
+) = {}
 
 #let f = (..) => 1

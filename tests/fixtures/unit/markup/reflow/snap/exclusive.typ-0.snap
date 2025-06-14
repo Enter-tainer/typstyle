@@ -109,13 +109,13 @@ content
 after
 it.
 Not
-#if true { }
+#if true {}
 Not
-#while false { }
+#while false {}
 Not
 #for i in range(
   5,
-) { }
+) {}
 Not
 #context 1
 And

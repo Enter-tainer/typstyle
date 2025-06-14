@@ -1,14 +1,13 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/markup/content-nest.typ
-snapshot_kind: text
 ---
 #[#[ ]abc]
 #[ #[ ]abc]
 #[abc#[ ]]
 #[abc#[ ] ]
 
-#[#{ }abc]
-#[ #{ }abc]
-#[abc#{ }]
-#[abc#{ } ]
+#[#{}abc]
+#[ #{}abc]
+#[abc#{}]
+#[abc#{} ]

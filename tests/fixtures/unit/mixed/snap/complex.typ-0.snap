@@ -7,7 +7,7 @@ input_file: tests/fixtures/unit/mixed/complex.typ
   param2,
   param3: 5,
   param4: "string",
-) = { }
+) = {}
 
 = Poorly    Formatted    * Heading* with   _ emphasis _
 

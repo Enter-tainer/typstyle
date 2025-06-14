@@ -309,8 +309,6 @@ impl<'a> ListStylist<'a> {
         if self.items.is_empty() {
             return if sty.omit_delim_empty {
                 arena.nil()
-            } else if sty.add_delim_space {
-                arena.text(delim.0) + arena.space() + delim.1
             } else {
                 arena.text(delim.0) + delim.1
             };

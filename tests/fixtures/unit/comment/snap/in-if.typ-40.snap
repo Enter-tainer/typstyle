@@ -1,18 +1,17 @@
 ---
 source: tests/src/unit.rs
 input_file: tests/fixtures/unit/comment/in-if.typ
-snapshot_kind: text
 ---
 #{
-  if /*(condition)*/ true { }
+  if /*(condition)*/ true {}
 
-  if true /*(condition)*/ { }
+  if true /*(condition)*/ {}
 
   if true {
     /*  111
     222   */
   } // (condition)
-  else { }
+  else {}
 
-  if true { } else /*(condition)*/ { }
+  if true {} else /*(condition)*/ {}
 }

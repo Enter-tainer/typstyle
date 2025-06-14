@@ -30,7 +30,7 @@ input_file: tests/fixtures/unit/code/args/simple.typ
   (),
 ))
 
-#f({ })
+#f({})
 #f(
   `xx
 `,
