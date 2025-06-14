@@ -57,6 +57,7 @@ Format Configuration:
 Debug Options:
   -a, --ast         Print the AST of the input file
   -p, --pretty-doc  Print the pretty document
+      --timing      Show elapsed time taken by the formatter
 
 Log Levels:
   -v, --verbose  Enable verbose logging
