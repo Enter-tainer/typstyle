@@ -4,7 +4,9 @@ pub mod liteval;
 pub mod partial;
 pub mod pretty;
 
+pub mod cmplx;
 mod config;
+pub mod prettyless;
 mod utils;
 
 pub use attr::AttrStore;
@@ -68,7 +70,7 @@ impl<'a> Formatter<'a> {
     pub fn render(&'a self) -> Result<String, Error> {
         let doc = self.build_doc()?;
         let mut buf = String::new();
-        doc.render_fmt(self.printer.config().max_width, &mut buf)
+        doc.renderless_fmt(self.printer.config().max_width, &mut buf)
             .map_err(|_| Error::RenderError)?;
         let result = utils::strip_trailing_whitespace(&buf);
         Ok(result)
