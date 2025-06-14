@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.13.11 - [2025-06-14]
+
+- Feature(CLI): (breaking) Removed deprecated `format-all` command from CLI. This command was previously deprecated and has now been completely removed. Users should use `typstyle <dir> -i` instead.
+
+- Feature(CLI): Added `--timing` option to CLI for displaying elapsed time during formatting operations. Users can now monitor the performance of formatting operations with this new debug flag.
+
+- Feature: Empty code blocks no longer get extra spaces added.
+  For example, `#{}` will now be formatted as `#{}` instead of `#{ }`. This aligns with the behavior of most code formatters.
+
+- Enhancement: Labels are no longer reflowed to the next line with text wrapping enabled.
+
+- Bug fix: Texts spanning multiple lines, such as strings, inline raws, or syntax nodes marked `typstyle off` are correctly layouted according to their line widths.
+
+- Bug fix: When the last arg of func call is not combinable, the flavor is respect.
+
 ## v0.13.10 - [2025-06-05]
 
 - Bug fix: Fixed unexpected semicolon to comma conversion in nested math arguments. Previously, typstyle would incorrectly convert semicolons to commas in complex nested mathematical expressions like `$mat(mat(1; 2); mat(3; 4))$`.
