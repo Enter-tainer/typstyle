@@ -1641,9 +1641,9 @@ input_file: tests/fixtures/packages/tablex.typ
     )
       != 0
   ) {
-    grid.items.push(new_empty_cell(
-      grid,
-    ))
+    grid.items.push(
+      new_empty_cell(grid),
+    )
   }
 
   (
@@ -4176,12 +4176,16 @@ input_file: tests/fixtures/packages/tablex.typ
     line
   }
   (
-    hlines: hlines.map(parse-func.with(
-      page-size: page-width,
-    )),
-    vlines: vlines.map(parse-func.with(
-      page-size: page-height,
-    )),
+    hlines: hlines.map(
+      parse-func.with(
+        page-size: page-width,
+      ),
+    ),
+    vlines: vlines.map(
+      parse-func.with(
+        page-size: page-height,
+      ),
+    ),
   )
 }
 

@@ -15,13 +15,17 @@ input_file: tests/fixtures/unit/code/args/compact-simpler.typ
 
 // Test cases with no blocky args and last arg as simple function call
 
-#f(a: true, b: false, circle(
-  radius: 1cm,
-))
+#f(
+  a: true,
+  b: false,
+  circle(radius: 1cm),
+)
 
-#f("first", second: 42, rect(
-  width: 2cm,
-))
+#f(
+  "first",
+  second: 42,
+  rect(width: 2cm),
+)
 
 #f(
   text(emph[xx]),
@@ -29,9 +33,11 @@ input_file: tests/fixtures/unit/code/args/compact-simpler.typ
   circle(),
 )
 
-#f(1, emph(text([])), rect(
-  radius: 1000pt,
-))
+#f(
+  1,
+  emph(text([])),
+  rect(radius: 1000pt),
+)
 
 #f("string", 1, text("content", blue))
 
@@ -40,14 +46,17 @@ input_file: tests/fixtures/unit/code/args/compact-simpler.typ
   height: 2cm,
 ))
 
-#f(circle(), rect(), text([], fill: (
-  () => red
-)()))
+#f(circle(), rect(), text(
+  [],
+  fill: (() => red)(),
+))
 
 #f(1, "two", three: 4, (x: 5), text(
   stroke: 1pt,
 )[])
 
-#f([content], (a: 1, b: 2), circle(
-  fill: red,
-))
+#f(
+  [content],
+  (a: 1, b: 2),
+  circle(fill: red),
+)
