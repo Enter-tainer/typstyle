@@ -3,24 +3,25 @@ import type { editor } from "monaco-editor";
 import type { ThemeType } from "../types";
 import { registerTypstLanguage } from "../typst-language";
 
-const DEFAULT_LIGHT_THEME = "xcode-default";
-const DEFAULT_DARK_THEME = "dracula";
+const DEFAULT_LIGHT_THEME = "typstyle-light";
+const DEFAULT_DARK_THEME = "typstyle-dark";
+
+const fetchTheme = async (url: string) =>
+  (await (await fetch(url)).json()).data as editor.IStandaloneThemeData;
 
 export const initMonaco = async () => {
-  const [monaco, xcodeTheme, draculaTheme] = await Promise.all([
+  const [monaco, lightTheme, darkTheme] = await Promise.all([
     loader.init(),
-    import("monaco-themes/themes/Xcode_default.json"),
-    import("monaco-themes/themes/Dracula.json"),
+    fetchTheme(
+      "https://cdn.jsdelivr.net/npm/@react-monaco/assets/assets/themes/atom-one-light.json",
+    ),
+    fetchTheme(
+      "https://cdn.jsdelivr.net/npm/@react-monaco/assets/assets/themes/csb-default.json",
+    ),
   ]);
-  registerTypstLanguage(monaco);
-  monaco.editor.defineTheme(
-    DEFAULT_LIGHT_THEME,
-    xcodeTheme.default as editor.IStandaloneThemeData,
-  );
-  monaco.editor.defineTheme(
-    DEFAULT_DARK_THEME,
-    draculaTheme.default as editor.IStandaloneThemeData,
-  );
+  await registerTypstLanguage(monaco);
+  monaco.editor.defineTheme(DEFAULT_LIGHT_THEME, lightTheme);
+  monaco.editor.defineTheme(DEFAULT_DARK_THEME, darkTheme);
 };
 
 export const getEditorTheme = (theme: ThemeType): string =>
