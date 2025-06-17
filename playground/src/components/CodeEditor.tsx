@@ -3,7 +3,7 @@ import type { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTheme } from "../contexts";
-import { getEditorTheme } from "../utils/monacoThemes";
+import { getEditorTheme } from "../utils/monaco-setup";
 
 /**
  * CodeEditor - A configurable Monaco Editor wrapper for the Typstyle Playground

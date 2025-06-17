@@ -1,9 +1,9 @@
-import type { Monaco } from "@monaco-editor/react";
+import type { Monaco } from "@monaco-editor/loader";
 import type { languages } from "monaco-editor";
 import * as oniguruma from "vscode-oniguruma";
 import * as vsctm from "vscode-textmate";
 import languageConfiguration from "./assets/language-configuration.json";
-import { wireTmGrammar } from "./monaco-editor-textmate";
+import { wireTmGrammar } from "./monaco";
 
 const vscodeOnigurumaLib = (async () => {
   const response = await fetch(
