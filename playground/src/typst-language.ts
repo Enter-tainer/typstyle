@@ -25,13 +25,10 @@ const registry = new vsctm.Registry({
   onigLib: vscodeOnigurumaLib,
   loadGrammar: async (scopeName) => {
     if (scopeName === "source.typst") {
-      const url = (await import("/typst.tmLanguage.json?url")).default;
+      const url = new URL("/typst.tmLanguage.json", import.meta.url);
       const data = await fetch(url);
-
-      console.log(data, import.meta.url);
       const text = await data.text();
-      console.log(text);
-      return vsctm.parseRawGrammar(text, url);
+      return vsctm.parseRawGrammar(text, url.toString());
     }
     console.log(`Unknown scope name: ${scopeName}`);
   },
