@@ -91,20 +91,20 @@
   let config-info = format-config-changes(config-changes)
 
   if is-html-target() {
-    html.elem("div", attrs: ("class": "example-container"))[
-      #html.elem("div", attrs: ("class": "example-header"))[
+    html.elem("div", attrs: ("class": "example"))[
+      #html.elem("div", attrs: ("class": "example__header"))[
         Example
         #if config-info != none [
-          #html.elem("span", attrs: ("class": "config-info"))[#config-info]
+          #html.elem("span", attrs: ("class": "example__config"))[#config-info]
         ]
       ]
-      #html.elem("div", attrs: ("class": "comparison-layout"))[
-        #html.elem("div", attrs: ("class": "example-before"))[
-          #html.elem("div", attrs: ("class": "example-label"))[Before]
+      #html.elem("div", attrs: ("class": "example__content"))[
+        #html.elem("div", attrs: ("class": "example__panel example__panel--before"))[
+          #html.elem("div", attrs: ("class": "example__label"))[Before]
           #left
         ]
-        #html.elem("div", attrs: ("class": "example-after"))[
-          #html.elem("div", attrs: ("class": "example-label"))[After]
+        #html.elem("div", attrs: ("class": "example__panel example__panel--after"))[
+          #html.elem("div", attrs: ("class": "example__label"))[After]
           #right
         ]
       ]
@@ -112,22 +112,22 @@
   } else {
     block(fill: rgb("#f8f9fa"), stroke: 0.5pt + rgb("#dee2e6"), radius: 4pt, inset: 0.8em, width: 100%)[
       #text(weight: "bold", size: 1.1em)[
-      Example
-      #if config-info != none [
-        #text(size: 0.9em, fill: rgb("#6c757d"))[ (#config-info)]
-      ]
+        Example
+        #if config-info != none [
+          #text(size: 0.9em, fill: rgb("#6c757d"))[ (#config-info)]
+        ]
       ]
       #grid(
-      columns: 2,
-      column-gutter: 1em,
-      [
-        #text(weight: "bold", size: 0.9em)[Before]
-        #left
-      ],
-      [
-        #text(weight: "bold", size: 0.9em)[After]
-        #right
-      ],
+        columns: 2,
+        column-gutter: 1em,
+        [
+          #text(weight: "bold", size: 0.9em)[Before]
+          #left
+        ],
+        [
+          #text(weight: "bold", size: 0.9em)[After]
+          #right
+        ],
       )
     ]
   }

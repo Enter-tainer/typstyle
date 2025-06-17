@@ -1,0 +1,35 @@
+@layer components, utilities;
+
+/* override existing styles, which are defined outside layers */
+
+:root {
+  --content-max-width: 1200px;
+}
+
+:root.coal,
+:root.navy,
+:root.ayu {
+  color-scheme: dark;
+}
+
+.content {
+  padding: 0 2em 50px 2em;
+}
+
+@layer components {
+  .inline-equation {
+    display: inline-block;
+    width: fit-content;
+  }
+  .block-equation {
+    display: grid;
+    place-items: center;
+    overflow-x: auto;
+  }
+}
+
+@layer utilities {
+  .underline {
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,93 @@
+@layer theme, components;
+
+@layer theme {
+  :root {
+    /* Example component tokens */
+    --example-bg: light-dark(#ffffff, #1a1a1a);
+    --example-bg-secondary: light-dark(#f8f9fa, #2d2d2d);
+    --example-border: light-dark(#dee2e6, #404040);
+    --example-text: light-dark(#212529, #ffffff);
+    --example-text-secondary: light-dark(#495057, #e0e0e0);
+    --example-text-muted: light-dark(#6c757d, #a0a0a0);
+
+    /* Example config badge tokens */
+    --example-config-bg: light-dark(#f8f9fa, #2d2d2d);
+    --example-config-border: light-dark(#ced4da, #555555);
+    --example-config-text: light-dark(#495057, #adb5bd);
+  }
+}
+
+@layer components {
+  /* Example component */
+  .example {
+    border: 2px solid var(--example-border);
+    border-radius: 8px;
+    padding: 0.5em;
+    margin: 1em 0;
+    color: var(--example-text);
+    container-type: inline-size;
+
+    pre {
+      margin-block: 0.2em;
+    }
+  }
+
+  .example__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+    color: var(--example-text-secondary);
+  }
+
+  .example__config {
+    display: inline-block;
+    background: var(--example-config-bg);
+    color: var(--example-config-text);
+    font-size: 0.6em;
+    font-weight: 400;
+    font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+      monospace;
+    padding: 0.25em 0.5em;
+    border: 1px solid var(--example-config-border);
+    border-radius: 4px;
+    margin-left: 0.5em;
+    white-space: nowrap;
+  }
+
+  .example__content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1em;
+    align-items: stretch;
+  }
+
+  .example__panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .example__label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--example-text-muted);
+    margin-bottom: 0.25em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  @container (max-width: 40em) {
+    .example__content {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .example__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}

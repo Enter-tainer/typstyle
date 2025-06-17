@@ -131,8 +131,9 @@
 
   // Put your custom CSS here.
   context if shiroa-sys-target() == "html" {
-    html.elem("style", read("styles.css"))
-    html.elem("style", read("hypraw.css"))
+    html.elem("style", read("styles/base.css"))
+    html.elem("style", read("styles/example.css"))
+    html.elem("style", read("styles/hypraw.css"))
   }
 
   // Main body.
