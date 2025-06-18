@@ -13,7 +13,7 @@ export interface TabItem {
 }
 
 export interface TabProps {
-  key: string;
+  tid: string;
   label: string;
   children: ReactNode;
 }
@@ -49,7 +49,7 @@ export function Tabs({
         if (isValidElement(child) && child.type === Tab) {
           const tabProps = child.props as TabProps;
           return {
-            key: tabProps.key,
+            key: tabProps.tid,
             label: tabProps.label,
             content: tabProps.children,
           };
@@ -60,7 +60,7 @@ export function Tabs({
 
   // Internal state management
   const [internalActiveTab, setInternalActiveTab] = useState<string>(
-    defaultActiveTab || tabs[0]?.key || "",
+    defaultActiveTab || tabs[0]?.key || ""
   );
 
   // Determine if we're using external or internal state management
@@ -88,8 +88,8 @@ export function Tabs({
   const activeTabContent = tabs.find((tab) => tab.key === activeTab)?.content;
 
   return (
-    <div className={className}>
-      <div className={`tabs tabs-border`}>
+    <div className={`flex flex-col h-full min-h-0 ${className}`}>
+      <div className="tabs tabs-border flex-shrink-0">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           const buttonClasses = ["tab", isActive && "active", tabClassName]
@@ -97,24 +97,23 @@ export function Tabs({
             .join(" ");
 
           return (
-            <>
-              <button
-                role="tab"
-                type="button"
-                className={buttonClasses}
-                aria-selected={isActive}
-                onClick={() => handleTabChange(tab.key)}
-              >
-                {" "}
-                {tab.label}
-              </button>
-            </>
+            <button
+              key={tab.key}
+              role="tab"
+              type="button"
+              className={buttonClasses}
+              aria-selected={isActive}
+              onClick={() => handleTabChange(tab.key)}
+            >
+              {tab.label}
+            </button>
           );
-        })}{" "}
-        {/* Tab Content */}
+        })}
       </div>
-      {/* Tab Content */}
-      <div className={`h-full ${contentClassName}`}>{activeTabContent}</div>
+      {/* Tab Content - This must be flex-1 and have min-h-0 for proper shrinking */}
+      <div className={`flex-1 min-h-0 overflow-hidden ${contentClassName}`}>
+        {activeTabContent}
+      </div>
     </div>
   );
 }

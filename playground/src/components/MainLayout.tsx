@@ -27,20 +27,17 @@ export function MainLayout({
           <Panel header="Settings" className="flex-none w-[280px]">
             {optionsPanel}
           </Panel>
-          <Panel header="Source" className="flex-1">
+          <Panel header="Source" className="flex-1 min-w-0">
             {sourcePanel}
           </Panel>
-          <Tabs
-            defaultActiveTab="formatted"
-            className="card bg-base-200 flex-1"
-          >
-            <Tab key="formatted" label="Formatted">
+          <Tabs defaultActiveTab="formatted" className="flex-1 min-w-0">
+            <Tab tid="formatted" label="Formatted">
               {formattedPanel}
             </Tab>
-            <Tab key="ast" label="AST">
+            <Tab tid="ast" label="AST">
               {astPanel}
             </Tab>
-            <Tab key="ir" label="Pretty IR">
+            <Tab tid="ir" label="Pretty IR">
               {irPanel}
             </Tab>
           </Tabs>
@@ -49,20 +46,20 @@ export function MainLayout({
 
       {/* Thin Layout: 1 Column (Full Width) */}
       {screenSize === "thin" && (
-        <Tabs defaultActiveTab="source" className="card bg-base-200 flex-1">
-          <Tab key="options" label="Settings">
+        <Tabs defaultActiveTab="source" className="flex-1 min-w-0">
+          <Tab tid="options" label="Settings">
             {optionsPanel}
           </Tab>
-          <Tab key="source" label="Source">
+          <Tab tid="source" label="Source">
             {sourcePanel}
           </Tab>
-          <Tab key="formatted" label="Formatted">
+          <Tab tid="formatted" label="Formatted">
             {formattedPanel}
           </Tab>
-          <Tab key="ast" label="AST">
+          <Tab tid="ast" label="AST">
             {astPanel}
           </Tab>
-          <Tab key="ir" label="Pretty IR">
+          <Tab tid="ir" label="Pretty IR">
             {irPanel}
           </Tab>
         </Tabs>
