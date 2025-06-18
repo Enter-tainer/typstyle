@@ -116,7 +116,7 @@ const TMToMonacoToken = (
         const token = scope.slice(0, i);
         if (
           // @ts-ignore
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+          // biome-ignore lint/complexity/useLiteralKeys: explanation
           editor["_themeService"]._theme._tokenTheme._match(
             `${token}.${scopeName}`,
           )._foreground > 1
@@ -125,7 +125,7 @@ const TMToMonacoToken = (
         }
         if (
           // @ts-ignore
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+          // biome-ignore lint/complexity/useLiteralKeys: explanation
           editor["_themeService"]._theme._tokenTheme._match(token)._foreground >
           1
         ) {

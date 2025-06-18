@@ -1,6 +1,6 @@
-import type { FormatOptions } from "@/types";
 import { useEffect, useState } from "react";
 import * as typstyle from "typstyle-wasm";
+import type { FormatOptions } from "@/types";
 
 export function useTypstFormatter(
   sourceCode: string,

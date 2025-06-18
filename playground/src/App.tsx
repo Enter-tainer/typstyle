@@ -1,5 +1,5 @@
-import Playground from "./Playground";
 import { ThemeProvider } from "./contexts";
+import Playground from "./Playground";
 
 function App() {
   return (

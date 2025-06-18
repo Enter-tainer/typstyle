@@ -15,6 +15,7 @@
   },
   "linter": {
     "enabled": true,
+    "includes": ["!src/styles/*.css"],
     "rules": {
       "recommended": true,
       "a11y": {

@@ -1,8 +1,8 @@
-import { getEditorTheme } from "@/config/monaco";
-import { useTheme } from "@/hooks";
-import type { Monaco, editor } from "@/monaco/types";
 import MonacoEditor from "@monaco-editor/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { getEditorTheme } from "@/config/monaco";
+import { useTheme } from "@/hooks";
+import type { editor, Monaco } from "@/monaco/types";
 
 /**
  * CodeEditor - A configurable Monaco Editor wrapper for the Typstyle Playground

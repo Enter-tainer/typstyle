@@ -7,13 +7,13 @@ import {
 } from "react";
 
 export interface TabItem {
-  id: string;
+  key: string;
   label: string;
   content: ReactNode;
 }
 
 export interface TabProps {
-  id: string;
+  key: string;
   label: string;
   children: ReactNode;
 }
@@ -49,7 +49,7 @@ export function Tabs({
         if (isValidElement(child) && child.type === Tab) {
           const tabProps = child.props as TabProps;
           return {
-            id: tabProps.id,
+            key: tabProps.key,
             label: tabProps.label,
             content: tabProps.children,
           };
@@ -60,7 +60,7 @@ export function Tabs({
 
   // Internal state management
   const [internalActiveTab, setInternalActiveTab] = useState<string>(
-    defaultActiveTab || tabs[0]?.id || "",
+    defaultActiveTab || tabs[0]?.key || "",
   );
 
   // Determine if we're using external or internal state management
@@ -85,13 +85,13 @@ export function Tabs({
     }
   }, [externalActiveTab, isControlled]);
 
-  const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
+  const activeTabContent = tabs.find((tab) => tab.key === activeTab)?.content;
 
   return (
     <div className={className}>
       <div className={`tabs tabs-border`}>
         {tabs.map((tab) => {
-          const isActive = activeTab === tab.id;
+          const isActive = activeTab === tab.key;
           const buttonClasses = ["tab", isActive && "active", tabClassName]
             .filter(Boolean)
             .join(" ");
@@ -103,7 +103,7 @@ export function Tabs({
                 type="button"
                 className={buttonClasses}
                 aria-selected={isActive}
-                onClick={() => handleTabChange(tab.id)}
+                onClick={() => handleTabChange(tab.key)}
               >
                 {" "}
                 {tab.label}
