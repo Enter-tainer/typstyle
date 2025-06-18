@@ -1,4 +1,4 @@
-import { useTheme } from "../contexts";
+import { useTheme } from "@/hooks";
 import { SampleDocumentSelector } from "./forms/SampleDocumentSelector";
 import { DarkModeIcon, GitHubIcon, LightModeIcon } from "./ui/Icons";
 

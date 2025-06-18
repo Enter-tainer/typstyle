@@ -14,16 +14,14 @@ export function OutputEditor({
   lineLengthGuide,
 }: OutputEditorProps) {
   return (
-    <div className="h-full">
-      <CodeEditor
-        value={content}
-        indentSize={indentSize}
-        language={language}
-        readOnly={true}
-        options={{
-          rulers: lineLengthGuide ? [lineLengthGuide] : [],
-        }}
-      />
-    </div>
+    <CodeEditor
+      value={content}
+      indentSize={indentSize}
+      language={language}
+      readOnly={true}
+      options={{
+        rulers: lineLengthGuide ? [lineLengthGuide] : [],
+      }}
+    />
   );
 }

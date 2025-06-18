@@ -1,4 +1,4 @@
-import { SAMPLE_DOCUMENTS, type SampleDocumentKey } from "../constants";
+import { SAMPLE_DOCUMENTS, type SampleDocumentKey } from "@/constants";
 
 export const fetchSampleDocument = async (
   filePath: string,

@@ -3,7 +3,7 @@ import { SAMPLE_DOCUMENTS, type SampleDocumentKey } from "../../constants";
 import {
   getFallbackContent,
   getSampleFileContent,
-} from "../../utils/sampleLoader";
+} from "../../utils/sample-loader";
 
 interface SampleDocumentSelectorProps {
   onSampleSelect: (content: string) => void;

@@ -1,3 +1,4 @@
-export { useTypstFormatter } from "./useTypstFormatter";
-export { useScreenSize } from "./useScreenSize";
-export { useInitialSample } from "./useInitialSample";
+export { useTypstFormatter } from "./use-typst-formatter";
+export { useScreenSize } from "./use-screen-size";
+export { useInitialSample } from "./use-initial-sample";
+export { useTheme } from "./use-theme";

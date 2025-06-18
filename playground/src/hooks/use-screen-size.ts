@@ -1,5 +1,5 @@
+import type { ScreenSizeType } from "@/types";
 import { useLayoutEffect, useState } from "react";
-import type { ScreenSizeType } from "../types";
 
 // Constants for breakpoints (could be moved to constants/index.ts)
 const BREAKPOINTS = {

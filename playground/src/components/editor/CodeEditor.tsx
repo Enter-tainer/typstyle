@@ -1,5 +1,5 @@
 import { getEditorTheme } from "@/config/monaco";
-import { useTheme } from "@/contexts";
+import { useTheme } from "@/hooks";
 import type { Monaco, editor } from "@/monaco/types";
 import MonacoEditor from "@monaco-editor/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";

@@ -1,5 +1,5 @@
+import type { ScreenSizeType } from "@/types";
 import type React from "react";
-import type { ScreenSizeType } from "../types";
 import { Panel, Tab, Tabs } from "./ui";
 
 interface MainLayoutProps {

@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import type { SampleDocumentKey } from "../constants";
+import type { SampleDocumentKey } from "@/constants";
 import {
   getFallbackContent,
   getSampleFileContent,
-} from "../utils/sampleLoader";
+} from "@/utils/sample-loader";
+import { useEffect } from "react";
 
 interface UseInitialSampleProps {
   setSourceCode: (code: string) => void;
