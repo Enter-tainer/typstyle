@@ -10,7 +10,11 @@ export const registerTheme = async (
   name: string,
   url: string,
 ): Promise<void> => {
-  monaco.editor.defineTheme(name, await fetchTheme(url));
+  try {
+    monaco.editor.defineTheme(name, await fetchTheme(url));
+  } catch (err) {
+    console.error(`Failed to register monaco theme ${name} from ${url}:`, err);
+  }
 };
 
 export const registerThemes = async (

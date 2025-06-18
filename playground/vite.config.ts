@@ -39,15 +39,9 @@ export default defineConfig({
           if (id.includes("react")) {
             return "react";
           }
-
-          // Group all application source code and public resources together
-          if (id.includes("/src/")) {
-            return "app";
+          if (id.includes("node_modules")) {
+            return "vendor";
           }
-          // NOTE: If we pack some scripts together, it may raise loading error in production.
-
-          // // Default chunk for everything else
-          // return "vendor";
         },
       },
     },
