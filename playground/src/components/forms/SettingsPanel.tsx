@@ -1,5 +1,5 @@
-import { DEFAULT_FORMAT_OPTIONS } from "../constants";
-import type { FormatOptions } from "../types";
+import { DEFAULT_FORMAT_OPTIONS } from "../../constants";
+import type { FormatOptions } from "../../types";
 
 interface FormatOptionsContentProps {
   formatOptions: FormatOptions;

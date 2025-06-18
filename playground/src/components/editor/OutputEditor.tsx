@@ -2,15 +2,15 @@ import { CodeEditor } from "./CodeEditor";
 
 export interface OutputEditorProps {
   content: string;
-  language?: string;
-  indentSize?: number;
+  language: string;
+  indentSize: number;
   lineLengthGuide?: number;
 }
 
 export function OutputEditor({
   content,
-  language = "typst",
-  indentSize = 2,
+  language,
+  indentSize,
   lineLengthGuide,
 }: OutputEditorProps) {
   return (
@@ -20,11 +20,9 @@ export function OutputEditor({
         indentSize={indentSize}
         language={language}
         readOnly={true}
-        showLineNumbers={false}
-        enableFolding={language === "json"}
-        enableWordWrap={false}
-        enableMinimap={false}
-        rulers={lineLengthGuide ? [lineLengthGuide] : []}
+        options={{
+          rulers: lineLengthGuide ? [lineLengthGuide] : [],
+        }}
       />
     </div>
   );

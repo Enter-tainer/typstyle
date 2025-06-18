@@ -1,11 +1,10 @@
 import { useState } from "react";
-import {
-  FormatOptionsContent,
-  Header,
-  MainLayout,
-  OutputEditor,
-  SourceEditor,
-} from "./components";
+
+import { Header } from "./components/Header";
+import { MainLayout } from "./components/MainLayout";
+import { OutputEditor } from "./components/editor/OutputEditor";
+import { SourceEditor } from "./components/editor/SourceEditor";
+import { FormatOptionsContent } from "./components/forms/SettingsPanel";
 import { DEFAULT_FORMAT_OPTIONS } from "./constants";
 import { useInitialSample, useScreenSize, useTypstFormatter } from "./hooks";
 

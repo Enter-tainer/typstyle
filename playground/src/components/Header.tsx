@@ -1,6 +1,6 @@
 import { useTheme } from "../contexts";
-import { DarkModeIcon, GitHubIcon, LightModeIcon } from "./Icons";
-import { SampleDocumentSelector } from "./SampleDocumentSelector";
+import { SampleDocumentSelector } from "./forms/SampleDocumentSelector";
+import { DarkModeIcon, GitHubIcon, LightModeIcon } from "./ui/Icons";
 
 interface HeaderProps {
   onSampleSelect: (content: string) => void;

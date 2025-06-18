@@ -2,7 +2,7 @@
 
 export type ThemeType = "light" | "dark";
 
-export type ScreenSizeType = "wide" | "medium" | "thin";
+export type ScreenSizeType = "wide" | "thin";
 
 export interface FormatOptions {
   maxLineLength: number;

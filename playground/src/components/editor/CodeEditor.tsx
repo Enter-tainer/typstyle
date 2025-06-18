@@ -14,30 +14,24 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 export interface CodeEditorProps {
   value: string;
+  language: string;
+  indentSize: number; // Positive for fixed indent, 0 or negative for auto-detect
+  readOnly?: boolean;
+  rulers?: number[];
+  options?: editor.IStandaloneEditorConstructionOptions;
   onChange?: (value: string | undefined) => void;
   onMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void;
-  indentSize: number; // Positive for fixed indent, 0 or negative for auto-detect
-  language?: string;
-  readOnly?: boolean;
-  showLineNumbers?: boolean;
-  enableFolding?: boolean;
-  enableWordWrap?: boolean;
-  enableMinimap?: boolean;
-  rulers?: number[];
 }
 
 export function CodeEditor({
   value,
+  language,
+  indentSize,
+  readOnly = false,
+  rulers,
+  options = {},
   onChange,
   onMount,
-  indentSize,
-  language = "typst",
-  readOnly = false,
-  showLineNumbers = true,
-  enableFolding = true,
-  enableWordWrap = true,
-  enableMinimap = false,
-  rulers,
 }: CodeEditorProps) {
   const { theme } = useTheme();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -79,31 +73,22 @@ export function CodeEditor({
 
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
     readOnly,
-    minimap: { enabled: enableMinimap },
-    scrollBeyondLastLine: false,
     fontSize: 14,
     fontFamily: "Monaco, Menlo, Ubuntu Mono, monospace",
     automaticLayout: true,
     padding: { top: 8, bottom: 8 },
     // tabSize, detectIndentation, and insertSpaces are now handled by applyIndentationSettings
-    wordWrap: enableWordWrap ? "on" : "off",
-    lineNumbers: showLineNumbers ? "on" : "off",
-    folding: enableFolding,
     renderLineHighlight: readOnly ? "none" : "gutter",
     smoothScrolling: true,
     autoIndent: readOnly ? "none" : "full",
-    scrollbar: {
-      vertical: "auto",
-      horizontal: "auto",
-    },
     ...(rulers && rulers.length > 0 && { rulers }),
+    ...options,
   };
   return (
     <div
       className={`
         h-full flex-1 overflow-hidden flex flex-col relative
         bg-[rgba(232,245,232,0.6)] dark:bg-[rgba(42,31,74,0.6)]
-        transition-all duration-300 ease-in-out
     `}
     >
       <MonacoEditor

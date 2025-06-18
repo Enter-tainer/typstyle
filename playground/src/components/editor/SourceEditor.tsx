@@ -14,15 +14,15 @@ export function SourceEditor({
   return (
     <CodeEditor
       value={value}
-      onChange={onChange}
-      indentSize={0}
       language="typst"
+      indentSize={0}
       readOnly={false}
-      showLineNumbers={true}
-      enableFolding={true}
-      enableWordWrap={true}
-      enableMinimap={false}
-      rulers={lineLengthGuide ? [lineLengthGuide] : []}
+      options={{
+        wordWrap: "on",
+        minimap: { enabled: true },
+        rulers: lineLengthGuide ? [lineLengthGuide] : [],
+      }}
+      onChange={onChange}
     />
   );
 }

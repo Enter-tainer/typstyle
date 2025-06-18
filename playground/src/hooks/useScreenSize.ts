@@ -1,25 +1,40 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import type { ScreenSizeType } from "../types";
 
+// Constants for breakpoints (could be moved to constants/index.ts)
+const BREAKPOINTS = {
+  WIDE: 1200,
+} as const;
+
+function getScreenSize(width: number): ScreenSizeType {
+  if (width >= BREAKPOINTS.WIDE) return "wide";
+  return "thin";
+}
+
 export function useScreenSize(): ScreenSizeType {
+  // Initialize with current window size (SSR-safe)
   const [screenSize, setScreenSize] = useState<ScreenSizeType>(() => {
-    const width = window.innerWidth;
-    if (width >= 1200) return "wide";
-    if (width >= 768) return "medium";
-    return "thin";
+    // Check if we're in browser environment
+    if (typeof window === "undefined") return "wide"; // Default for SSR
+    return getScreenSize(window.innerWidth);
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // Early return if not in browser
+    if (typeof window === "undefined") return;
+
     const updateScreenSize = () => {
-      const width = window.innerWidth;
-      if (width >= 1200) setScreenSize("wide");
-      else if (width >= 768) setScreenSize("medium");
-      else setScreenSize("thin");
+      const newSize = getScreenSize(window.innerWidth);
+      setScreenSize((prevSize) => (prevSize === newSize ? prevSize : newSize));
     };
 
-    updateScreenSize(); // initial check
+    // Set initial size
+    updateScreenSize();
+
+    // Add resize listener
     window.addEventListener("resize", updateScreenSize);
 
+    // Cleanup
     return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
 
