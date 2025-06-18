@@ -1,3 +1,91 @@
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+
+  /* Light theme colors using koishi palette */
+  --color-base-100: oklch(97% 0.01 120); /* Very light green-tinted background */
+  --color-base-200: oklch(95% 0.02 120); /* Slightly darker for cards */
+  --color-base-300: oklch(92% 0.03 120); /* Even darker for borders */
+  --color-base-content: oklch(50% 0.12 110); /* Dark green text */
+
+  --color-primary: oklch(65% 0.12 140); /* Green primary */
+  --color-primary-content: oklch(25% 0.06 140);
+
+  --color-secondary: oklch(55% 0.15 290); /* Purple secondary */
+  --color-secondary-content: oklch(96% 0.02 290);
+
+  --color-accent: oklch(75% 0.08 140); /* Light green accent */
+  --color-accent-content: oklch(30% 0.05 140);
+
+  --color-neutral: oklch(45% 0.08 290); /* Purple neutral */
+  --color-neutral-content: oklch(96% 0.02 290);
+
+  --color-info: oklch(65% 0.16 220);
+  --color-info-content: oklch(25% 0.08 220);
+  --color-success: oklch(65% 0.12 140);
+  --color-success-content: oklch(25% 0.06 140);
+  --color-warning: oklch(75% 0.15 60);
+  --color-warning-content: oklch(25% 0.08 60);
+  --color-error: oklch(65% 0.18 20);
+  --color-error-content: oklch(95% 0.02 20);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+  --divider-m: 0.5rem;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: false;
+  color-scheme: "dark";
+
+  /* Dark theme colors using koishi palette */
+  --color-base-100: oklch(25% 0.02 290); /* Dark purple background */
+  --color-base-200: oklch(30% 0.03 290); /* Slightly lighter for cards */
+  --color-base-300: oklch(35% 0.04 290); /* Even lighter for borders */
+  --color-base-content: oklch(80% 0.06 320); /* Light purple text */
+
+  --color-primary: oklch(75% 0.12 290); /* Light purple primary */
+  --color-primary-content: oklch(25% 0.02 290);
+
+  --color-secondary: oklch(75% 0.08 140); /* Light green secondary */
+  --color-secondary-content: oklch(25% 0.06 140);
+
+  --color-accent: oklch(55% 0.15 290); /* Medium purple accent */
+  --color-accent-content: oklch(96% 0.02 290);
+
+  --color-neutral: oklch(20% 0.02 290); /* Darker purple neutral */
+  --color-neutral-content: oklch(96% 0.02 290);
+
+  --color-info: oklch(70% 0.16 220);
+  --color-info-content: oklch(25% 0.08 220);
+  --color-success: oklch(75% 0.08 140);
+  --color-success-content: oklch(25% 0.06 140);
+  --color-warning: oklch(80% 0.15 60);
+  --color-warning-content: oklch(25% 0.08 60);
+  --color-error: oklch(70% 0.18 20);
+  --color-error-content: oklch(95% 0.02 20);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+  --divider-m: 0.5rem;
+}
+
 @theme {
   /* Koishi Green Palette */
   --color-koishi-green-50: #f1f8e9;
@@ -50,10 +138,6 @@
 
 /* Light theme (default) */
 :root {
-  --header-text: #2e7d32;
-  --text-primary: #388e3c;
-  --text-secondary: #7e57c2;
-
   /* Form control colors (light theme) */
   --form-input-bg-active: rgba(232, 245, 232, 0.9);
   --form-input-border-active: rgba(200, 230, 201, 0.8);
@@ -67,10 +151,6 @@
   --scrollbar-thumb-hover-bg-active: rgba(139, 195, 74, 0.8);
 
   @variant dark {
-    --header-text: #c5b8e3;
-    --text-primary: #a393c7;
-    --text-secondary: #8dbf8b;
-
     /* Form control colors (dark theme) */
     --form-input-bg-active: rgba(57, 47, 90, 0.7);
     --form-input-border-active: rgba(74, 63, 106, 0.8);

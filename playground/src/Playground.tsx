@@ -1,9 +1,8 @@
 import { useState } from "react";
-
+import { OutputEditor, SourceEditor } from "./components/editor";
+import { SettingsPanel } from "./components/forms/SettingsPanel";
 import { Header } from "./components/Header";
 import { MainLayout } from "./components/MainLayout";
-import { OutputEditor, SourceEditor } from "./components/editor";
-import { FormatOptionsContent } from "./components/forms/SettingsPanel";
 import { DEFAULT_FORMAT_OPTIONS } from "./constants";
 import { useInitialSample, useScreenSize, useTypstFormatter } from "./hooks";
 
@@ -30,7 +29,7 @@ function Playground() {
   };
 
   const optionsPanel = (
-    <FormatOptionsContent
+    <SettingsPanel
       formatOptions={formatOptions}
       setFormatOptions={setFormatOptions}
     />

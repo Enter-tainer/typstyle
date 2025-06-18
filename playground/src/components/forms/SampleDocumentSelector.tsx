@@ -50,7 +50,7 @@ export function SampleDocumentSelector({
         <select
           value={selectedSample}
           onChange={handleSampleChange}
-          className="w-48"
+          className="select select-sm select-primary w-64"
           title={
             selectedSample && selectedSample in SAMPLE_DOCUMENTS
               ? SAMPLE_DOCUMENTS[selectedSample].description
@@ -74,7 +74,7 @@ export function SampleDocumentSelector({
             setError(null);
             onSampleSelect("");
           }}
-          className="btn w-8 h-8 p-0"
+          className="btn btn-square btn-sm"
           title="Clear document and start fresh"
         >
           🗑️
@@ -82,7 +82,7 @@ export function SampleDocumentSelector({
 
         {/* Error message moved here, to the right of the button */}
         {error && (
-          <div className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-500 dark:border-red-800 dark:bg-red-950/20">
+          <div className="alert alert-error alert-outline text-xs p-2">
             ⚠️ {error}
           </div>
         )}

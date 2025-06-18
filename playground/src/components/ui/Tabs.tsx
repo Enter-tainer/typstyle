@@ -1,7 +1,7 @@
 import {
   Children,
-  type ReactNode,
   isValidElement,
+  type ReactNode,
   useEffect,
   useState,
 } from "react";
@@ -88,9 +88,8 @@ export function Tabs({
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
 
   return (
-    <div className={`tabs ${className}`}>
-      {/* Tab Headers */}
-      <div className="tabs-nav">
+    <div className={className}>
+      <div className={`tabs tabs-border`}>
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const buttonClasses = ["tab", isActive && "active", tabClassName]
@@ -98,24 +97,24 @@ export function Tabs({
             .join(" ");
 
           return (
-            <button
-              key={tab.id}
-              type="button"
-              className={buttonClasses}
-              onClick={() => handleTabChange(tab.id)}
-              aria-selected={isActive}
-              role="tab"
-            >
-              {tab.label}
-            </button>
+            <>
+              <button
+                role="tab"
+                type="button"
+                className={buttonClasses}
+                aria-selected={isActive}
+                onClick={() => handleTabChange(tab.id)}
+              >
+                {" "}
+                {tab.label}
+              </button>
+            </>
           );
-        })}
+        })}{" "}
+        {/* Tab Content */}
       </div>
-
       {/* Tab Content */}
-      <div className={`tabs-panel ${contentClassName}`.trim()}>
-        {activeTabContent}
-      </div>
+      <div className={`h-full ${contentClassName}`}>{activeTabContent}</div>
     </div>
   );
 }

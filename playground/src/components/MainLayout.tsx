@@ -1,5 +1,5 @@
-import type { ScreenSizeType } from "@/types";
 import type React from "react";
+import type { ScreenSizeType } from "@/types";
 import { Panel, Tab, Tabs } from "./ui";
 
 interface MainLayoutProps {
@@ -20,16 +20,20 @@ export function MainLayout({
   irPanel,
 }: MainLayoutProps) {
   return (
-    <div className="flex overflow-hidden min-h-0 h-full p-4 gap-2">
+    <div className="flex overflow-hidden min-h-0 h-full p-3 gap-2">
+      {/* Wide Layout: 3 Columns */}
       {screenSize === "wide" && (
         <>
-          <Panel header="Settings" className="flex-none w-[240px]">
+          <Panel header="Settings" className="flex-none w-[280px]">
             {optionsPanel}
           </Panel>
           <Panel header="Source" className="flex-1">
             {sourcePanel}
           </Panel>
-          <Tabs defaultActiveTab="formatted" className="flex-1">
+          <Tabs
+            defaultActiveTab="formatted"
+            className="card bg-base-200 flex-1"
+          >
             <Tab id="formatted" label="Formatted">
               {formattedPanel}
             </Tab>
@@ -45,7 +49,7 @@ export function MainLayout({
 
       {/* Thin Layout: 1 Column (Full Width) */}
       {screenSize === "thin" && (
-        <Tabs defaultActiveTab="source" className="flex-1">
+        <Tabs defaultActiveTab="source" className="card bg-base-200 flex-1">
           <Tab id="options" label="Settings">
             {optionsPanel}
           </Tab>

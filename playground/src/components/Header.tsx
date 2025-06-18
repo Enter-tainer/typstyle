@@ -9,29 +9,27 @@ interface HeaderProps {
 export function Header({ onSampleSelect }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   return (
-    <div
-      className="
-      px-4 py-2 backdrop-blur-md flex items-center justify-between flex-shrink-0
-      border-b border-[rgba(200, 230, 201, 0.9)] dark:border-[rgba(74, 63, 106, 0.9)] shadow-soft relative
-    "
-    >
-      <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-bold text-[#2e7d32] dark:text-[#c5b8e3] m-0 drop-shadow-sm">
+    <div className="navbar bg-base-100 shadow-sm">
+      <div className="flex-none">
+        <h1 className="text-2xl font-bold text-primary m-2 drop-shadow-sm">
           Typstyle Playground
         </h1>
+      </div>
+
+      <div className="flex-1 ml-4">
         <SampleDocumentSelector
           onSampleSelect={onSampleSelect}
           className="min-w-[200px] max-w-[300px]"
         />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex-none">
         {/* GitHub Repo Link */}
         <a
           href="https://github.com/enter-tainer/typstyle"
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-icon size-8 no-underline hover:no-underline"
+          className="btn btn-ghost btn-circle btn-sm"
           title="View Typstyle on GitHub"
         >
           <GitHubIcon />
@@ -41,7 +39,7 @@ export function Header({ onSampleSelect }: HeaderProps) {
         <button
           type="button"
           onClick={toggleTheme}
-          className="btn-icon size-8"
+          className="btn btn-ghost btn-circle btn-sm"
           title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
           {theme === "light" ? <LightModeIcon /> : <DarkModeIcon />}
