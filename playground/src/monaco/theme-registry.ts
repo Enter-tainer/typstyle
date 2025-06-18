@@ -1,7 +1,6 @@
 // Generic theme registration utilities for Monaco Editor
 
-import type { Monaco } from "@monaco-editor/loader";
-import type { editor } from "monaco-editor";
+import type { Monaco, editor } from "./types";
 
 const fetchTheme = async (url: string): Promise<editor.IStandaloneThemeData> =>
   (await (await fetch(url)).json()).data;

@@ -1,8 +1,8 @@
 // Playground-specific Monaco setup
 
-import { initMonacoLoader, registerThemes } from "../monaco";
-import type { ThemeType } from "../types";
-import { registerTypstLanguage } from "../typst-language";
+import { initMonacoLoader, registerThemes } from "@/monaco";
+import type { ThemeType } from "@/types";
+import { registerTypstLanguage } from "./typst-language";
 
 const DEFAULT_LIGHT_THEME = "play-light";
 const DEFAULT_DARK_THEME = "play-dark";
