@@ -1,0 +1,93 @@
+@layer components {
+  .callout {
+    margin: 1em 0;
+    padding: 1em;
+    border-left: 4px solid;
+    border-radius: 4px;
+    background: var(--callout-bg);
+    border-color: var(--callout-border);
+    color: var(--callout-text);
+  }
+
+  .callout-title {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .callout-content {
+    margin: 0;
+  }
+
+  /* Note callout */
+  .callout-note {
+    --callout-bg: #e7f3ff;
+    --callout-border: #0969da;
+    --callout-text: #0969da;
+  }
+
+  /* Important callout */
+  .callout-important {
+    --callout-bg: #fff8e7;
+    --callout-border: #bf8700;
+    --callout-text: #bf8700;
+  }
+
+  /* Warning callout */
+  .callout-warning {
+    --callout-bg: #fff1e7;
+    --callout-border: #cf6679;
+    --callout-text: #cf6679;
+  }
+
+  /* Tip callout */
+  .callout-tip {
+    --callout-bg: #e7f9e7;
+    --callout-border: #1a7f37;
+    --callout-text: #1a7f37;
+  }
+
+  /* Caution callout */
+  .callout-caution {
+    --callout-bg: #fdf2e9;
+    --callout-border: #d1242f;
+    --callout-text: #d1242f;
+  }
+
+  /* Dark theme support */
+  :root.coal,
+  :root.navy,
+  :root.ayu {
+    .callout-note {
+      --callout-bg: rgba(31, 111, 235, 0.1);
+      --callout-border: #1f6feb;
+      --callout-text: #58a6ff;
+    }
+
+    .callout-important {
+      --callout-bg: rgba(251, 133, 0, 0.1);
+      --callout-border: #fb8500;
+      --callout-text: #ffb84d;
+    }
+
+    .callout-warning {
+      --callout-bg: rgba(248, 81, 73, 0.1);
+      --callout-border: #f85149;
+      --callout-text: #ff7b72;
+    }
+
+    .callout-tip {
+      --callout-bg: rgba(63, 185, 80, 0.1);
+      --callout-border: #3fb950;
+      --callout-text: #56d364;
+    }
+
+    .callout-caution {
+      --callout-bg: rgba(218, 54, 51, 0.1);
+      --callout-border: #da3633;
+      --callout-text: #f85149;
+    }
+  }
+}

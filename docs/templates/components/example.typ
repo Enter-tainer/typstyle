@@ -99,11 +99,11 @@
         ]
       ]
       #html.elem("div", attrs: ("class": "example__content"))[
-        #html.elem("div", attrs: ("class": "example__panel example__panel--before"))[
+        #html.elem("div", attrs: ("class": "example__panel"))[
           #html.elem("div", attrs: ("class": "example__label"))[Before]
           #left
         ]
-        #html.elem("div", attrs: ("class": "example__panel example__panel--after"))[
+        #html.elem("div", attrs: ("class": "example__panel"))[
           #html.elem("div", attrs: ("class": "example__label"))[After]
           #right
         ]
