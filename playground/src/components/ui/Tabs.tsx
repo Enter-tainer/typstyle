@@ -60,7 +60,7 @@ export function Tabs({
 
   // Internal state management
   const [internalActiveTab, setInternalActiveTab] = useState<string>(
-    defaultActiveTab || tabs[0]?.key || ""
+    defaultActiveTab || tabs[0]?.key || "",
   );
 
   // Determine if we're using external or internal state management

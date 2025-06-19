@@ -11,7 +11,7 @@ export function Header({ onSampleSelect }: HeaderProps) {
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-none">
-        <h1 className="text-2xl font-bold text-primary m-2 drop-shadow-sm">
+        <h1 className="text-2xl font-bold text-accent m-2 drop-shadow-sm">
           Typstyle Playground
         </h1>
       </div>

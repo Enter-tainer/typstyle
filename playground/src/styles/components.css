@@ -6,7 +6,7 @@
 
 .panel-header {
   @apply px-5 py-2 bg-primary text-primary-content
-           text-sm font-semibold backdrop-blur-md
+           font-semibold backdrop-blur-md
            border-b-0 flex-shrink-0 relative overflow-hidden;
 }
 
@@ -16,16 +16,12 @@
 
 .tab {
   @apply flex-1 font-semibold transition-all duration-300
-           cursor-pointer text-center relative border-b-2 bg-transparent;
-  @apply text-koishi-green-500 border-b-transparent;
-  @apply hover:text-koishi-purple-700 hover:bg-koishi-green-50/10 hover:shadow-soft;
-  @apply dark:text-koishi-purple-300;
-  @apply dark:hover:text-koishi-green-300 dark:hover:bg-koishi-green-300/10;
+           cursor-pointer text-center relative border-b-2 bg-transparent
+           text-base-content/60 border-b-transparent
+           hover:text-secondary hover:bg-secondary/10;
 }
 
 .tab.active {
-  @apply text-koishi-purple-700 border-b-koishi-purple-700
-           bg-koishi-green-50/5 shadow-medium;
-  @apply dark:text-koishi-green-300 dark:border-b-koishi-green-300
-           dark:bg-koishi-green-300/5;
+  @apply text-secondary border-b-secondary
+           bg-secondary/5;
 }

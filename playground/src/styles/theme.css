@@ -11,15 +11,13 @@
   --color-base-200: oklch(95% 0.02 120); /* Slightly darker for cards */
   --color-base-300: oklch(92% 0.03 120); /* Even darker for borders */
   --color-base-content: oklch(50% 0.12 110); /* Dark green text */
-
-  --color-primary: oklch(65% 0.12 140); /* Green primary */
-  --color-primary-content: oklch(25% 0.06 140);
+  --color-primary: oklch(75% 0.08 140); /* Soft pale green primary */
+  --color-primary-content: oklch(30% 0.08 140); /* Darker green text */
 
   --color-secondary: oklch(55% 0.15 290); /* Purple secondary */
   --color-secondary-content: oklch(96% 0.02 290);
-
-  --color-accent: oklch(75% 0.08 140); /* Light green accent */
-  --color-accent-content: oklch(30% 0.05 140);
+  --color-accent: oklch(60% 0.15 85); /* Golden yellow accent for titles */
+  --color-accent-content: oklch(20% 0.08 85); /* Dark text on golden background */
 
   --color-neutral: oklch(45% 0.08 290); /* Purple neutral */
   --color-neutral-content: oklch(96% 0.02 290);
@@ -55,15 +53,13 @@
   --color-base-200: oklch(30% 0.03 290); /* Slightly lighter for cards */
   --color-base-300: oklch(35% 0.04 290); /* Even lighter for borders */
   --color-base-content: oklch(80% 0.06 320); /* Light purple text */
-
-  --color-primary: oklch(75% 0.12 290); /* Light purple primary */
-  --color-primary-content: oklch(25% 0.02 290);
+  --color-primary: oklch(65% 0.08 320); /* Soft pale pink-purple primary */
+  --color-primary-content: oklch(25% 0.04 320); /* Dark purple text */
 
   --color-secondary: oklch(75% 0.08 140); /* Light green secondary */
   --color-secondary-content: oklch(25% 0.06 140);
-
-  --color-accent: oklch(55% 0.15 290); /* Medium purple accent */
-  --color-accent-content: oklch(96% 0.02 290);
+  --color-accent: oklch(70% 0.2 340); /* Bright magenta-pink accent for titles */
+  --color-accent-content: oklch(15% 0.05 340); /* Dark text on magenta background */
 
   --color-neutral: oklch(20% 0.02 290); /* Darker purple neutral */
   --color-neutral-content: oklch(96% 0.02 290);
@@ -136,33 +132,4 @@
   --color-koishi-gold-700: #ffa000;
   --color-koishi-gold-800: #ff8f00;
   --color-koishi-gold-900: #ff6f00;
-}
-
-/* Light theme (default) */
-:root {
-  /* Form control colors (light theme) */
-  --form-input-bg-active: rgba(232, 245, 232, 0.9);
-  --form-input-border-active: rgba(200, 230, 201, 0.8);
-  --form-input-text-active: #2e7d32;
-  --form-option-hover-bg-active: rgba(139, 195, 74, 0.2);
-  --form-option-hover-text-active: #2e7d32;
-  --form-checkbox-checked-bg-active: #388e3c;
-  --scrollbar-track-bg-active: rgba(232, 245, 232, 0.3);
-  --scrollbar-thumb-bg-active: rgba(139, 195, 74, 0.6);
-  --scrollbar-thumb-border-active: rgba(139, 195, 74, 0.3);
-  --scrollbar-thumb-hover-bg-active: rgba(139, 195, 74, 0.8);
-
-  @variant dark {
-    /* Form control colors (dark theme) */
-    --form-input-bg-active: rgba(57, 47, 90, 0.7);
-    --form-input-border-active: rgba(74, 63, 106, 0.8);
-    --form-input-text-active: #f3e5f5;
-    --form-option-hover-bg-active: rgba(163, 147, 199, 0.3);
-    --form-option-hover-text-active: #f3e5f5;
-    --form-checkbox-checked-bg-active: #a393c7;
-    --scrollbar-track-bg-active: rgba(57, 47, 90, 0.3);
-    --scrollbar-thumb-bg-active: rgba(163, 147, 199, 0.6);
-    --scrollbar-thumb-border-active: rgba(163, 147, 199, 0.3);
-    --scrollbar-thumb-hover-bg-active: rgba(163, 147, 199, 0.8);
-  }
 }

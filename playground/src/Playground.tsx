@@ -72,8 +72,8 @@ function Playground() {
     <div
       className="
         h-screen flex flex-col
-       bg-gradient-to-br from-koishi-green-50 via-koishi-green-100 to-koishi-green-200
-       dark:from-koishi-purple-900 dark:via-koishi-purple-800 dark:to-koishi-purple-700
+        bg-gradient-to-br from-koishi-green-50 via-koishi-green-100 to-koishi-green-200
+        dark:from-koishi-purple-900 dark:via-koishi-purple-800 dark:to-koishi-purple-700
       "
     >
       <Header onSampleSelect={handleSampleSelect} />

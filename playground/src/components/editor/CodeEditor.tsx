@@ -85,12 +85,7 @@ export function CodeEditor({
     ...options,
   };
   return (
-    <div
-      className={`
-        h-full flex-1 overflow-hidden flex flex-col relative
-        bg-[rgba(232,245,232,0.6)] dark:bg-[rgba(42,31,74,0.6)]
-    `}
-    >
+    <div className="h-full flex-1 overflow-hidden flex flex-col relative bg-base-200">
       <MonacoEditor
         language={language}
         value={value}
