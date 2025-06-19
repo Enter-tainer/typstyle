@@ -144,7 +144,9 @@ shiroa serve docs/pages -w . --mode static-html
 
 Build static documentation:
 ```bash
-shiroa build docs/pages
+just build-docs
+# or manually:
+shiroa build docs/pages -w . --mode static-html
 ```
 
 Generate CLI help text:

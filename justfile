@@ -12,8 +12,14 @@ generate-cli-help:
       | sed '1,/^$/d; s/typstyle\.exe/typstyle/g' \
       > "docs/assets/generated/cli-help.txt"
 
-dev-docs: build-plugin generate-cli-help
+dev-docs: pre-docs
     shiroa serve docs/pages -w . --mode static-html
 
-build-docs: build-plugin generate-cli-help
+build-docs: pre-docs
     shiroa build docs/pages -w . --mode static-html
+
+build-docs-gh: pre-docs
+    shiroa build docs/pages -w . --mode static-html --path-to-root /typstyle/
+
+[private]
+pre-docs: build-plugin generate-cli-help
