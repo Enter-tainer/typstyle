@@ -1,4 +1,4 @@
-#import "../book.typ": *
+#import "./book.typ": *
 #import "../deps.typ": *
 
 #show: book-page.with(title: "Developer Guide")
@@ -139,12 +139,12 @@ Development server with auto-reload:
 ```bash
 just dev-docs
 # or manually:
-shiroa serve docs -w . --mode static-html
+shiroa serve docs/pages -w . --mode static-html
 ```
 
 Build static documentation:
 ```bash
-shiroa build docs
+shiroa build docs/pages
 ```
 
 Generate CLI help text:
@@ -157,8 +157,9 @@ cargo run -p typstyle -- --help > docs/assets/generated/cli-help.txt
 === Documentation Structure
 
 The documentation is organized as follows:
-- `docs/book.typ` — main book configuration and metadata
+- `docs/pages/book.typ` — main book configuration and metadata
 - `docs/pages/` — individual documentation pages
+- `docs/packages/` — dependent third party packages not in universe
 - `docs/templates/` — page templates and components
 - `docs/assets/` — static assets and generated content
 

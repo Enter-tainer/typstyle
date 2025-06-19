@@ -13,7 +13,7 @@ generate-cli-help:
       > "docs/assets/generated/cli-help.txt"
 
 dev-docs: build-plugin generate-cli-help
-    shiroa serve docs -w . --mode static-html
+    shiroa serve docs/pages -w . --mode static-html
 
 build-docs: build-plugin generate-cli-help
-    shiroa build docs -w . --mode static-html
+    shiroa build docs/pages -w . --mode static-html

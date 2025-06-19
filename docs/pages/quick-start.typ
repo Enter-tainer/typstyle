@@ -1,4 +1,4 @@
-#import "../book.typ": *
+#import "./book.typ": *
 #import "../deps.typ": typstyle
 
 #show: book-page.with(title: "Quick Start")

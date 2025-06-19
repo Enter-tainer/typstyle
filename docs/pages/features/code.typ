@@ -1,4 +1,4 @@
-#import "../../book.typ": *
+#import "../book.typ": *
 
 #show: book-page.with(title: "Code Formatting")
 
@@ -106,16 +106,23 @@ typstyle uses "flavor detection" to determine formatting style. If the first spa
 
 === Combinable Arguments
 
-typstyle applies special formatting when the *last* argument is "combinable" - meaning it can naturally flow as a single unit with the function call. Combinable expressions include:
+typstyle uses a compact layout when the last argument is *combinable* and certain conditions are met:
 
+*Compact Layout Conditions:*
+- No comments or intentional line breaks in arguments
+- Last argument is combinable (see types below)
+- Initial arguments can be flattened on one line
+- No blocky expressions in initial arguments
+- Same structured data type (array/dictionary) doesn't appear in earlier arguments
+
+*Combinable Expression Types:*
 - *Blocky expressions*: code blocks, conditionals, loops, context expressions, closures
 - *Structured data*: arrays, dictionaries
 - *Nested calls*: function calls, parenthesized expressions
 - *Content blocks*: markup content in square brackets
 
-When the last argument is combinable, typstyle tries to use a *compact layout*: initial arguments are placed on the first line, while the last combinable argument spans multiple lines without extra indentation (ignoring normal flavor detection).
+When conditions are met, initial arguments are placed on the first line while the last combinable argument spans multiple lines without extra indentation.
 
-However, when compact layout isn't possible (e.g., initial arguments can't be flattened due to comments or intentional line breaks), typstyle falls back to an *expanded layout*.
 
 ```typst
 #f(   if true {    let x = 3  })
@@ -127,14 +134,31 @@ However, when compact layout isn't possible (e.g., initial arguments can't be fl
       let y = 4
     },
   )
-#f(    1111,    if true {      let x = 3   },    22222, )
-  #f(    1111,    if true {      let x = 3 ;  let y = 4   },    22222, )
+#f(1111,if true {let x = 3},22222, )
+  #f(1111,if true {let x = 3 ;  let y = 4},22222, )
   #f(
-    context {
+context {
       1
     }
   )
+```
 
+```typst
+#f(
+  (x: 1, y: 2), (a: 3, b: 4), (m: 5, n: 6),)
+#f((x: 1, y: 2), (a: 3, b: 4), (m: 5, n: 6),)
+
+#f(xx: 1, 2, 3, yyy: [
+  Multiple line
+  content in array
+])
+
+#f("string", aaa: (1, 2), bbb : (x: 1, y: 2), {
+  x + y
+})
+```
+
+```typst
 #set page(
   margin: 0.5in,
  footer: context {
@@ -144,29 +168,8 @@ However, when compact layout isn't possible (e.g., initial arguments can't be fl
     []
   }
 })
-```
 
-```typst
-// Content block as last argument
-#f(xx: 1, 2, 3, yyy: [
-  Multiple line
-  content in array
-])
-
-// Code block with multiple initial args
-#f("string", aaa: (1, 2), bbb : (x: 1, y: 2), {
-  let x = 1
-  let y = 2
-  x + y
-})
-```
-
-*Exception*: If the same structured data type (array/dict) appears in earlier arguments, the last argument breaks to maintain visual distinction:
-
-```typst
-#f(
-  (x: 1, y: 2), (a: 3, b: 4), (m: 5, n: 6),)
-#f((x: 1, y: 2), (a: 3, b: 4), (m: 5, n: 6),)
+#assert.eq(parse(("asd",)), (description: "asd", types: none))
 ```
 
 == Chainable Expressions

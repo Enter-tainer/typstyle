@@ -1,7 +1,7 @@
-#import "deps.typ": shiroa
+#import "../deps.typ": shiroa
 #import shiroa: *
 
-#import "./templates/ebook.typ"
+#import "../templates/ebook.typ"
 
 #show: ebook.project.with(title: "typst-book", spec: "book.typ")
 
