@@ -1,7 +1,7 @@
 import { SAMPLE_DOCUMENTS, type SampleDocumentKey } from "@/constants";
 
 export const fetchSampleDocument = async (
-  filePath: string,
+  filePath: URL | string,
 ): Promise<string> => {
   const response = await fetch(filePath);
   if (!response.ok) {
@@ -19,7 +19,7 @@ export const getSampleFileContent = async (
   if (!sample) {
     throw new Error(`Sample with key "${sampleKey}" not found.`);
   }
-  return fetchSampleDocument((await sample.filePath).default);
+  return fetchSampleDocument(sample.filePath);
 };
 
 export const getFallbackContent = (

@@ -3,7 +3,7 @@ import type { ScreenSizeType } from "@/types";
 
 // Constants for breakpoints (could be moved to constants/index.ts)
 const BREAKPOINTS = {
-  WIDE: 1200,
+  WIDE: 960,
 } as const;
 
 function getScreenSize(width: number): ScreenSizeType {

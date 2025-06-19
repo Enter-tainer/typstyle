@@ -24,7 +24,7 @@ export function MainLayout({
       {/* Wide Layout: 3 Columns */}
       {screenSize === "wide" && (
         <>
-          <div className="panel flex-none w-[280px] card card-border">
+          <div className="panel flex-none max-w-[280px] card card-border">
             <div className="panel-header font-semibold">Settings</div>
             <div className="panel-content">{optionsPanel}</div>
           </div>

@@ -17,10 +17,7 @@ export function Header({ onSampleSelect }: HeaderProps) {
       </div>
 
       <div className="flex-1 ml-4">
-        <SampleDocumentSelector
-          onSampleSelect={onSampleSelect}
-          className="min-w-[200px] max-w-[300px]"
-        />
+        <SampleDocumentSelector onSampleSelect={onSampleSelect} />
       </div>
 
       <div className="flex-none mr-2">

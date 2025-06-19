@@ -7,12 +7,10 @@ import {
 
 interface SampleDocumentSelectorProps {
   onSampleSelect: (content: string) => void;
-  className?: string;
 }
 
 export function SampleDocumentSelector({
   onSampleSelect,
-  className = "",
 }: SampleDocumentSelectorProps) {
   const [selectedSample, setSelectedSample] = useState<SampleDocumentKey | "">(
     "",
@@ -45,48 +43,49 @@ export function SampleDocumentSelector({
   };
 
   return (
-    <div className={className}>
-      <div className="flex items-center gap-2">
-        <select
-          value={selectedSample}
-          onChange={handleSampleChange}
-          className="select w-64"
-          title={
-            selectedSample && selectedSample in SAMPLE_DOCUMENTS
-              ? SAMPLE_DOCUMENTS[selectedSample].description
-              : "📄 Choose a sample document to load"
-          }
-        >
-          <option value="" disabled>
-            Select a sample...
+    <div className="flex items-center gap-2">
+      <select
+        value={selectedSample}
+        onChange={handleSampleChange}
+        className="select w-48"
+        title={
+          selectedSample && selectedSample in SAMPLE_DOCUMENTS
+            ? SAMPLE_DOCUMENTS[selectedSample].description
+            : "📄 Choose a sample document to load"
+        }
+      >
+        <option value="" disabled>
+          Select a sample...
+        </option>
+        {Object.entries(SAMPLE_DOCUMENTS).map(([key, sample]) => (
+          <option key={key} value={key} title={sample.description}>
+            {sample.name}
           </option>
-          {Object.entries(SAMPLE_DOCUMENTS).map(([key, sample]) => (
-            <option key={key} value={key} title={sample.description}>
-              {sample.name}
-            </option>
-          ))}
-        </select>
+        ))}
+      </select>
 
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedSample("");
-            setError(null);
-            onSampleSelect("");
-          }}
-          className="btn btn-square"
-          title="Clear document and start fresh"
+      <button
+        type="button"
+        onClick={() => {
+          setSelectedSample("");
+          setError(null);
+          onSampleSelect("");
+        }}
+        className="btn btn-square"
+        title="Clear document and start fresh"
+      >
+        🗑️
+      </button>
+
+      {/* Error message moved here, to the right of the button */}
+      {error && (
+        <div
+          role="alert"
+          className="alert alert-error alert-outline text-xs py-1 px-2"
         >
-          🗑️
-        </button>
-
-        {/* Error message moved here, to the right of the button */}
-        {error && (
-          <div className="alert alert-error alert-outline text-xs p-2">
-            ⚠️ {error}
-          </div>
-        )}
-      </div>
+          <span>⚠️ {error}</span>
+        </div>
+      )}
     </div>
   );
 }
