@@ -9,9 +9,9 @@ interface HeaderProps {
 export function Header({ onSampleSelect }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   return (
-    <div className="navbar bg-base-100 shadow-sm">
-      <div className="flex-none">
-        <h1 className="text-2xl font-bold text-accent m-2 drop-shadow-sm">
+    <div className="navbar min-h-12 bg-base-200 shadow">
+      <div className="flex-none ml-2">
+        <h1 className="text-xl font-bold text-neutral m-1 drop-shadow">
           Typstyle Playground
         </h1>
       </div>
@@ -23,13 +23,13 @@ export function Header({ onSampleSelect }: HeaderProps) {
         />
       </div>
 
-      <div className="flex-none">
+      <div className="flex-none mr-2">
         {/* GitHub Repo Link */}
         <a
           href="https://github.com/enter-tainer/typstyle"
           target="_blank"
           rel="noopener noreferrer"
-          className="btn btn-ghost btn-circle btn-sm"
+          className="btn btn-ghost btn-circle"
           title="View Typstyle on GitHub"
         >
           <GitHubIcon />
@@ -39,7 +39,7 @@ export function Header({ onSampleSelect }: HeaderProps) {
         <button
           type="button"
           onClick={toggleTheme}
-          className="btn btn-ghost btn-circle btn-sm"
+          className="btn btn-ghost btn-circle"
           title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
           {theme === "light" ? <LightModeIcon /> : <DarkModeIcon />}

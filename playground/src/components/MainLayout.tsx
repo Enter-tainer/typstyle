@@ -20,21 +20,26 @@ export function MainLayout({
   irPanel,
 }: MainLayoutProps) {
   return (
-    <div className="flex overflow-hidden min-h-0 h-full p-3 gap-2">
+    <div className="flex overflow-hidden min-h-0 h-full p-2 gap-2">
       {/* Wide Layout: 3 Columns */}
       {screenSize === "wide" && (
         <>
-          <div className="panel flex-none w-[280px]">
-            <div className="panel-header">Settings</div>
+          <div className="panel flex-none w-[280px] card card-border">
+            <div className="panel-header font-semibold">Settings</div>
             <div className="panel-content">{optionsPanel}</div>
           </div>
-          <div className="panel flex-1 min-w-0">
-            <div className="panel-header">Source</div>
+          <div className="panel flex-1 min-w-0 card card-border">
+            <div className="panel-header font-semibold">Source</div>
             <div className="panel-content">{sourcePanel}</div>
           </div>
-          <div className="panel flex-1 min-w-0">
+          <div className="panel flex-1 min-w-0 card card-border">
             <div className="panel-content">
-              <Tabs defaultActiveTab="formatted">
+              <Tabs
+                defaultActiveTab="formatted"
+                className="bg-base-300"
+                tabClassName="font-semibold flex-1"
+                contentClassName="bg-base-100 border-base-300"
+              >
                 <Tab tid="formatted" label="Formatted">
                   {formattedPanel}
                 </Tab>
@@ -52,9 +57,14 @@ export function MainLayout({
 
       {/* Thin Layout: 1 Column (Full Width) */}
       {screenSize === "thin" && (
-        <div className="panel">
-          <div className="panel-content flex-1 min-w-0">
-            <Tabs defaultActiveTab="source">
+        <div className="panel flex-1 min-w-0 card card-border">
+          <div className="panel-content">
+            <Tabs
+              defaultActiveTab="source"
+              className="bg-base-300"
+              tabClassName="font-semibold flex-1"
+              contentClassName="bg-base-100 border-base-300"
+            >
               <Tab tid="options" label="Settings">
                 {optionsPanel}
               </Tab>

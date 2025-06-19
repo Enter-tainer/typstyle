@@ -6,40 +6,35 @@
   prefersdark: false;
   color-scheme: "light";
 
-  /* Light theme colors using koishi palette */
-  --color-base-100: oklch(97% 0.01 120); /* Very light green-tinted background */
-  --color-base-200: oklch(95% 0.02 120); /* Slightly darker for cards */
-  --color-base-300: oklch(92% 0.03 120); /* Even darker for borders */
-  --color-base-content: oklch(50% 0.12 110); /* Dark green text */
-  --color-primary: oklch(75% 0.08 140); /* Soft pale green primary */
-  --color-primary-content: oklch(30% 0.08 140); /* Darker green text */
-
-  --color-secondary: oklch(55% 0.15 290); /* Purple secondary */
-  --color-secondary-content: oklch(96% 0.02 290);
-  --color-accent: oklch(60% 0.15 85); /* Golden yellow accent for titles */
-  --color-accent-content: oklch(20% 0.08 85); /* Dark text on golden background */
-
-  --color-neutral: oklch(45% 0.08 290); /* Purple neutral */
-  --color-neutral-content: oklch(96% 0.02 290);
-
-  --color-info: oklch(65% 0.16 220);
-  --color-info-content: oklch(25% 0.08 220);
-  --color-success: oklch(65% 0.12 140);
-  --color-success-content: oklch(25% 0.06 140);
-  --color-warning: oklch(75% 0.15 60);
-  --color-warning-content: oklch(25% 0.08 60);
-  --color-error: oklch(65% 0.18 20);
-  --color-error-content: oklch(95% 0.02 20);
+  --color-base-100: oklch(98% 0.031 120.757);
+  --color-base-200: oklch(96% 0.067 122.328);
+  --color-base-300: oklch(93% 0.127 124.321);
+  --color-base-content: oklch(45% 0.124 130.933);
+  --color-primary: oklch(80% 0.114 19.571);
+  --color-primary-content: oklch(25% 0.092 26.042);
+  --color-secondary: oklch(81% 0.111 293.571);
+  --color-secondary-content: oklch(28% 0.141 291.089);
+  --color-accent: oklch(80% 0.105 251.813);
+  --color-accent-content: oklch(28% 0.091 267.935);
+  --color-neutral: oklch(43% 0.095 166.913);
+  --color-neutral-content: oklch(97% 0.021 166.113);
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(76% 0.177 163.223);
+  --color-success-content: oklch(26% 0.051 172.552);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(28% 0.066 53.813);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
 
   --radius-selector: 0.5rem;
-  --radius-field: 0.25rem;
+  --radius-field: 0.5rem;
   --radius-box: 0.5rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.1875rem;
   --border: 1.5px;
   --depth: 1;
-  --noise: 0;
-  --divider-m: 0.5rem;
+  --noise: 1;
 }
 
 @plugin "daisyui/theme" {
@@ -61,7 +56,7 @@
   --color-accent: oklch(70% 0.2 340); /* Bright magenta-pink accent for titles */
   --color-accent-content: oklch(15% 0.05 340); /* Dark text on magenta background */
 
-  --color-neutral: oklch(20% 0.02 290); /* Darker purple neutral */
+  --color-neutral: oklch(45% 0.211 324.591);
   --color-neutral-content: oklch(96% 0.02 290);
 
   --color-info: oklch(70% 0.16 220);
@@ -74,62 +69,11 @@
   --color-error-content: oklch(95% 0.02 20);
 
   --radius-selector: 0.5rem;
-  --radius-field: 0.25rem;
+  --radius-field: 0.5rem;
   --radius-box: 0.5rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.1875rem;
   --border: 1.5px;
   --depth: 1;
-  --noise: 0;
-  --divider-m: 0.5rem;
-}
-
-@theme {
-  /* Koishi Green Palette */
-  --color-koishi-green-50: #f1f8e9;
-  --color-koishi-green-100: #dcedc8;
-  --color-koishi-green-200: #c5e1a5;
-  --color-koishi-green-300: #aed581;
-  --color-koishi-green-400: #9ccc65;
-  --color-koishi-green-500: #8bc34a;
-  --color-koishi-green-600: #7cb342;
-  --color-koishi-green-700: #689f38;
-  --color-koishi-green-800: #558b2f;
-  --color-koishi-green-900: #33691e;
-
-  /* Koishi Purple Palette */
-  --color-koishi-purple-50: #f3e5f5;
-  --color-koishi-purple-100: #e1bee7;
-  --color-koishi-purple-200: #ce93d8;
-  --color-koishi-purple-300: #ba68c8;
-  --color-koishi-purple-400: #ab47bc;
-  --color-koishi-purple-500: #9c27b0;
-  --color-koishi-purple-600: #8e24aa;
-  --color-koishi-purple-700: #7b1fa2;
-  --color-koishi-purple-800: #6a1b9a;
-  --color-koishi-purple-900: #4a148c;
-
-  /* Koishi Pink Palette */
-  --color-koishi-pink-50: #fce4ec;
-  --color-koishi-pink-100: #f8bbd9;
-  --color-koishi-pink-200: #f48fb1;
-  --color-koishi-pink-300: #f06292;
-  --color-koishi-pink-400: #ec407a;
-  --color-koishi-pink-500: #e91e63;
-  --color-koishi-pink-600: #d81b60;
-  --color-koishi-pink-700: #c2185b;
-  --color-koishi-pink-800: #ad1457;
-  --color-koishi-pink-900: #880e4f;
-
-  /* Koishi Gold Palette */
-  --color-koishi-gold-50: #fff8e1;
-  --color-koishi-gold-100: #ffecb3;
-  --color-koishi-gold-200: #ffe082;
-  --color-koishi-gold-300: #ffd54f;
-  --color-koishi-gold-400: #ffca28;
-  --color-koishi-gold-500: #ffc107;
-  --color-koishi-gold-600: #ffb300;
-  --color-koishi-gold-700: #ffa000;
-  --color-koishi-gold-800: #ff8f00;
-  --color-koishi-gold-900: #ff6f00;
+  --noise: 1;
 }

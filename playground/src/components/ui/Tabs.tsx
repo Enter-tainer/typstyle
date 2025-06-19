@@ -92,7 +92,7 @@ export function Tabs({
       <div className="tabs tabs-border flex-shrink-0">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
-          const buttonClasses = ["tab", isActive && "active", tabClassName]
+          const buttonClasses = ["tab", isActive && "tab-active", tabClassName]
             .filter(Boolean)
             .join(" ");
 

@@ -24,14 +24,14 @@ export function SettingsPanel({
   };
 
   return (
-    <div className="p-2 overflow-y-auto flex flex-wrap gap-3 text-xs font-semibold">
+    <div className="p-2 overflow-y-auto flex flex-wrap gap-3 text-sm">
       <div className="flex items-center justify-between w-full">
         <label htmlFor={lineLengthSelectId}>Line Length:</label>
         <div className="flex gap-1 flex-shrink-0">
           <select
             id={lineLengthSelectId}
             name="lineWidth"
-            className="select select-sm select-primary w-16 px-3"
+            className="select w-16 px-3"
             value={
               [40, 60, 80, 100, 120].includes(formatOptions.maxLineLength)
                 ? formatOptions.maxLineLength
@@ -58,7 +58,7 @@ export function SettingsPanel({
           <input
             id={lineLengthInputId}
             type="number"
-            className="input input-sm input-primary w-12"
+            className="input w-16"
             min="0"
             max="200"
             aria-label="Custom Line Length"
@@ -79,7 +79,7 @@ export function SettingsPanel({
           <select
             id={indentSizeSelectId}
             name="indentSize"
-            className="select select-sm select-primary w-16 px-3"
+            className="select w-16 px-3"
             value={
               [2, 4, 8].includes(formatOptions.indentSize)
                 ? formatOptions.indentSize
@@ -100,7 +100,7 @@ export function SettingsPanel({
           <input
             id={indentSizeInputId}
             type="number"
-            className="input input-sm input-primary w-12"
+            className="input w-16"
             min="1"
             max="16"
             aria-label="Custom Indent Size"
@@ -120,7 +120,7 @@ export function SettingsPanel({
         <input
           id={collapseMarkupSpacesId}
           type="checkbox"
-          className="checkbox checkbox-sm checkbox-primary"
+          className="checkbox"
           checked={formatOptions.collapseMarkupSpaces}
           onChange={(e) =>
             setFormatOptions((prev) => ({
@@ -136,7 +136,7 @@ export function SettingsPanel({
         <input
           id={reorderImportItemsId}
           type="checkbox"
-          className="checkbox checkbox-sm checkbox-primary"
+          className="checkbox"
           checked={formatOptions.reorderImportItems}
           onChange={(e) =>
             setFormatOptions((prev) => ({
@@ -152,7 +152,7 @@ export function SettingsPanel({
         <input
           id={wrapTextId}
           type="checkbox"
-          className="checkbox checkbox-sm checkbox-primary"
+          className="checkbox"
           checked={formatOptions.wrapText}
           onChange={(e) =>
             setFormatOptions((prev) => ({
@@ -163,13 +163,7 @@ export function SettingsPanel({
         />
       </div>
 
-      <div className="divider divider-primary"></div>
-
-      <button
-        type="button"
-        className="btn btn-primary btn-sm w-full"
-        onClick={handleReset}
-      >
+      <button type="button" className="btn w-full" onClick={handleReset}>
         🔄 Reset to Defaults
       </button>
     </div>

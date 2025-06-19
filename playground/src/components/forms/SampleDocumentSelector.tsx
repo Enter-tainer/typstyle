@@ -50,7 +50,7 @@ export function SampleDocumentSelector({
         <select
           value={selectedSample}
           onChange={handleSampleChange}
-          className="select select-sm select-primary w-64"
+          className="select w-64"
           title={
             selectedSample && selectedSample in SAMPLE_DOCUMENTS
               ? SAMPLE_DOCUMENTS[selectedSample].description
@@ -74,7 +74,7 @@ export function SampleDocumentSelector({
             setError(null);
             onSampleSelect("");
           }}
-          className="btn btn-square btn-sm"
+          className="btn btn-square"
           title="Clear document and start fresh"
         >
           🗑️

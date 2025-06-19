@@ -2,6 +2,5 @@
 
 @import "./theme.css";
 @import "./components.css" layer(components);
-@import "./utility.css";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

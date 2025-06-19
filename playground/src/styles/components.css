@@ -1,27 +1,19 @@
 .panel {
-  @apply bg-base-100
-           rounded-lg shadow-medium relative overflow-hidden
-           flex flex-col h-full;
+  @apply bg-base-100 border-base-300 text-base-content
+         shadow-lg relative overflow-hidden
+         flex flex-col h-full;
 }
 
 .panel-header {
-  @apply px-5 py-2 bg-primary text-primary-content
-           font-semibold backdrop-blur-md
-           border-b-0 flex-shrink-0 relative overflow-hidden;
+  @apply px-5 flex items-center
+         bg-base-300 backdrop-blur-md;
+  height: calc(var(--size-field, 0.25rem) * 10);
 }
 
 .panel-content {
-  @apply flex-1 overflow-hidden flex flex-col;
+  @apply flex-1 overflow-hidden;
 }
 
 .tab {
-  @apply flex-1 font-semibold transition-all duration-300
-           cursor-pointer text-center relative border-b-2 bg-transparent
-           text-base-content/60 border-b-transparent
-           hover:text-secondary hover:bg-secondary/10;
-}
-
-.tab.active {
-  @apply text-secondary border-b-secondary
-           bg-secondary/5;
+  @apply transition-all duration-300;
 }
