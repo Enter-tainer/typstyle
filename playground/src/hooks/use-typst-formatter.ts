@@ -9,6 +9,7 @@ export function useTypstFormatter(
   const [formattedCode, setFormattedCode] = useState("");
   const [astOutput, setAstOutput] = useState("");
   const [irOutput, setIrOutput] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const formatCode = async () => {
@@ -29,8 +30,21 @@ export function useTypstFormatter(
         setAstOutput(ast);
         setIrOutput(formatIr);
         setFormattedCode(formatted);
+
+        if (typstyle.format(formatted, config) !== formatted) {
+          setError(
+            "Format doesn't converge! " +
+              "This means formatting the output again will result in a different output. " +
+              "This is a bug in the formatter. " +
+              "Please report it to https://github.com/Enter-tainer/typstyle with the input code.",
+          );
+        } else {
+          setError(null); // Clear error on success
+        }
       } catch (error) {
         console.error("Formatting error:", error);
+        setError(error instanceof Error ? error.message : String(error));
+        // Keep previous outputs on error
       }
     };
 
@@ -41,5 +55,6 @@ export function useTypstFormatter(
     formattedCode,
     astOutput,
     irOutput,
+    error,
   };
 }

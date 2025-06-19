@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { OutputEditor, SourceEditor } from "./components/editor";
+import { FloatingErrorCard } from "./components/FloatingErrorCard";
 import { SettingsPanel } from "./components/forms/SettingsPanel";
 import { Header } from "./components/Header";
 import { MainLayout } from "./components/MainLayout";
@@ -14,7 +15,7 @@ function Playground() {
 
   // Custom hooks
   const screenSize = useScreenSize();
-  const { formattedCode, astOutput, irOutput } = useTypstFormatter(
+  const { formattedCode, astOutput, irOutput, error } = useTypstFormatter(
     sourceCode,
     formatOptions,
   );
@@ -86,6 +87,9 @@ function Playground() {
         astPanel={astPanel}
         irPanel={irPanel}
       />
+
+      {/* Global floating error card */}
+      <FloatingErrorCard error={error} />
     </div>
   );
 }
