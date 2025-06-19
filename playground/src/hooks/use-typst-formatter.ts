@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import * as typstyle from "typstyle-wasm";
 import type { FormatOptions } from "@/types";
 
@@ -6,6 +6,7 @@ export function useTypstFormatter(
   sourceCode: string,
   formatOptions: FormatOptions,
 ) {
+  const deferredSourceCode = useDeferredValue(sourceCode);
   const [formattedCode, setFormattedCode] = useState("");
   const [astOutput, setAstOutput] = useState("");
   const [irOutput, setIrOutput] = useState("");
@@ -23,9 +24,9 @@ export function useTypstFormatter(
       };
 
       try {
-        const ast = typstyle.parse(sourceCode);
-        const formatIr = typstyle.format_ir(sourceCode, config);
-        const formatted = typstyle.format(sourceCode, config);
+        const ast = typstyle.parse(deferredSourceCode);
+        const formatIr = typstyle.format_ir(deferredSourceCode, config);
+        const formatted = typstyle.format(deferredSourceCode, config);
 
         setAstOutput(ast);
         setIrOutput(formatIr);
@@ -49,7 +50,7 @@ export function useTypstFormatter(
     };
 
     formatCode();
-  }, [sourceCode, formatOptions]);
+  }, [deferredSourceCode, formatOptions]);
 
   return {
     formattedCode,
