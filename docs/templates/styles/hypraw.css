@@ -1,0 +1,25 @@
+@layer theme, components;
+
+@layer theme {
+  :root {
+    --hypraw-fg-color: light-dark(#1f8f50, #ffb3c1);
+    --hypraw-bg-color: light-dark(#f2d63a1f, #a87ec61f);
+  }
+}
+
+@layer components {
+  .hypraw pre > code {
+    display: block;
+    overflow: auto;
+    padding: 0.7em;
+    border-radius: 0.5em;
+    color: var(--hypraw-fg-color);
+    background: var(--hypraw-bg-color);
+  }
+  code.hypraw {
+    padding: 0 0.3em;
+    border-radius: 0.3em;
+    color: var(--hypraw-fg-color);
+    background: var(--hypraw-bg-color);
+  }
+}

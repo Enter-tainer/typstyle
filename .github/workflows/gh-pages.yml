@@ -3,13 +3,13 @@ on:
   push:
     branches:
       - master
-    tags:
-      - "*"
   pull_request:
     branches:
       - master
     paths:
+      - "playground/**"
       - "docs/**"
+      - "crates/typstyle-core/**"
       - "crates/typstyle-wasm/**"
       - ".github/workflows/gh-pages.yml"
   workflow_dispatch:
@@ -26,45 +26,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { submodules: recursive }
+        with:
+          submodules: recursive
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           target: wasm32-unknown-unknown
-      - name: Install wasm-pack
-        uses: taiki-e/install-action@wasm-pack
+      - name: Install tools
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just,wasm-pack
       - uses: actions/setup-node@v4
         with:
           node-version: 18
           registry-url: "https://registry.npmjs.org"
-      - name: Install the latest version of rye
-        uses: eifinger/setup-rye@v4
-        with:
-          enable-cache: true
-          cache-prefix: "typstyle-rye"
+      - uses: Swatinem/rust-cache@v2
+      - name: Download & install shiroa
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Myriad-Dreamin/shiroa/releases/download/v0.3.1-rc2/shiroa-installer.sh | sh
+      - name: Build Book
+        run: just build-docs
 
       - name: Build wasm
         run: |
           cd crates/typstyle-wasm
           wasm-pack build
-          cp ../../README.md pkg
-          cp ../../LICENSE pkg
-
       - name: Build demo
         run: |
           cd web
           yarn
-          yarn build --outDir ../docs/demo
-      - name: Build docs site
+          yarn build
+
+      - name: Assemble deployment artifact
         run: |
-          rye sync
-          rye run docs-build
+          mkdir -p github-pages
+          cp -r docs/dist/* github-pages/
+
+          mkdir github-pages/demo
+          cp web/dist/index.html github-pages/demo/
 
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          # This path will be the root of what 'actions/deploy-pages' deploys
-          path: "site"
+          path: "./github-pages"
 
   deploy:
     name: Deploy to GitHub Pages
