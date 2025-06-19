@@ -132,6 +132,7 @@
   // Put your custom CSS here.
   context if shiroa-sys-target() == "html" {
     html.elem("style", read("styles/base.css"))
+    html.elem("style", read("styles/callout.css"))
     html.elem("style", read("styles/example.css"))
     html.elem("style", read("styles/hypraw.css"))
   }

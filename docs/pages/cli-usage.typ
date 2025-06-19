@@ -71,7 +71,7 @@ typstyle -t 4 file.typ
 typstyle --indent-width 4 file.typ
 ```
 
-==== Text Wrapping (Experimental)
+==== Text Wrapping
 
 ```bash
 # Wrap text in markup to fit line width
@@ -96,20 +96,13 @@ typstyle -p file.typ
 typstyle --pretty-doc file.typ
 ```
 
+=== Timing Information
+
+```bash
+# Show elapsed time taken by the formatter
+typstyle --timing file.typ
+```
+
 == Logging Options
 
-=== Verbose Logging
-
-```bash
-# Enable verbose logging
-typstyle -v file.typ
-typstyle --verbose file.typ
-```
-
-=== Quiet Mode
-
-```bash
-# Print only diagnostics
-typstyle -q file.typ
-typstyle --quiet file.typ
-```
+See CLI help.

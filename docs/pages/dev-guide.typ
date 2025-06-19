@@ -68,8 +68,8 @@ cargo build -p typstyle-typlugin --release --target wasm32-unknown-unknown
 
 == Running Tests
 
-#box(fill: rgb("#f0f8ff"), inset: 8pt, radius: 4pt)[
-  *Important:* Update snapshots with `cargo insta` when changing core library or fixtures.
+#callout.important[
+  Update snapshots with `cargo insta` when changing core library or fixtures.
 
   Add CLI tests to `crates/typstyle/tests/` when modifying CLI behavior.
   For style arguments, add tests to `test_style_args.rs`.
@@ -156,8 +156,32 @@ cargo run -p typstyle -- --help > docs/assets/generated/cli-help.txt
 
 === Documentation Structure
 
-TODO
+The documentation is organized as follows:
+- `docs/book.typ` — main book configuration and metadata
+- `docs/pages/` — individual documentation pages
+- `docs/templates/` — page templates and components
+- `docs/assets/` — static assets and generated content
+
+==== Using Callout Components
+
+#import callout: *
+
+The documentation supports various callout types for highlighting important information:
+
+#note[This is a standard note callout for general information.]
+
+#important[This is an important callout for critical information that users must be aware of.]
+
+#warning[This is a warning callout for potential issues or dangerous operations.]
+
+#tip[This is a tip callout for helpful suggestions and best practices.]
+
+#caution[This is a caution callout for operations that require careful consideration.]
+
+You can also use custom titles:
+
+#callout(type: "important", title: "Custom Title")[
+  This callout has a custom title instead of the default "Important".
+]
 
 == Development Workflow
-
-TODO

@@ -26,7 +26,7 @@ Consider the time complexity analysis for sorting algorithms.The bubble sort alg
 == Performance Comparison
 
 #figure(
-table(columns:(auto,1fr,1fr,1fr),
+table(columns:(auto,  )+(1fr,)*3,
 [Algorithm],[Best Case],[Average Case],[Worst Case],
 [Bubble Sort],$O(n)$,$O(n^2)$,$O(n^2)$,[Quick Sort],$O(n log n)$,$O(n log n)$,$O(n^2)$,
 [Merge Sort],$O(n log n)$,$O(n log n)$,$O(n log n)$),caption:[Time complexity comparison]
@@ -124,7 +124,7 @@ typstyle -t 4 file.typ
 typstyle --no-reorder-import-items file.typ
 ```
 
-=== Text Wrapping (Experimental)
+=== Text Wrapping
 
 ```bash
 # Enable text wrapping in markup
@@ -137,12 +137,12 @@ typstyle --wrap-text file.typ
 
 1. Install Tinymist extension
 2. Add to `settings.json`:
-```json
-{
-  "tinymist.formatterMode": "typstyle",
-  "editor.formatOnSave": true
-}
-```
+  ```json
+  {
+    "tinymist.formatterMode": "typstyle",
+    "editor.formatOnSave": true
+  }
+  ```
 
 == Next Steps
 

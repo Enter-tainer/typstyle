@@ -59,8 +59,8 @@ The escape hatch does not penetrate through comments:
 
 ```typst
 // @typstyle off
-/* This comment prevents formatting of the following code */
-#let formatted=func(arg1,arg2)  // This will be formatted normally
+/* This comment prevents turning typstyle off for the following code */
+  #let formatted=func(arg1,   arg2)  // This will be formatted normally
 ```
 
 === Specific Syntax Nodes
@@ -84,22 +84,7 @@ $
 
 == Use Cases
 
-Common scenarios where the escape hatch is useful:
-
-=== Intentional Alignment
-
 When you have carefully aligned data that improves readability:
-
-```typst
-// @typstyle off
-#table(
-  columns: 4,
-  [Name]    , [Age], [Height], [Weight],
-  [Alice]   , [25] , [5'6"]  , [130lb] ,
-  [Bob]     , [30] , [6'1"]  , [180lb] ,
-  [Charlie] , [35] , [5'9"]  , [165lb] ,
-)
-```
 
 ```typst
 // @typstyle off
@@ -117,18 +102,5 @@ When you have carefully aligned data that improves readability:
   width:  100pt,  // Total width
   height:  50pt,  // Total height
   margin:  10pt,  // Edge spacing
-)
-```
-
-=== Dense Data Structures
-
-For compact data where spacing improves readability:
-
-```typst
-// @typstyle off
-#let coordinates = (
-  (0,0),(1,0),(2,0),(3,0),
-  (0,1),(1,1),(2,1),(3,1),
-  (0,2),(1,2),(2,2),(3,2)
 )
 ```
