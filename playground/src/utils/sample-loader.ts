@@ -41,7 +41,7 @@ Error: ${errorMessage}
 You can try selecting a different sample document from the dropdown.
 
 ${Object.values(SAMPLE_DOCUMENTS)
-  .map((doc) => `- ${doc.name}: ${doc.description}`)
+  .map((doc) => `- ${doc.name}: ${doc.filePath}`)
   .join("\n")}
 
 Try refreshing the page or check your internet connection.`;

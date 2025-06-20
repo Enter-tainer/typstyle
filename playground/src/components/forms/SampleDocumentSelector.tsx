@@ -48,17 +48,12 @@ export function SampleDocumentSelector({
         value={selectedSample}
         onChange={handleSampleChange}
         className="select w-48"
-        title={
-          selectedSample && selectedSample in SAMPLE_DOCUMENTS
-            ? SAMPLE_DOCUMENTS[selectedSample].description
-            : "📄 Choose a sample document to load"
-        }
       >
         <option value="" disabled>
           Select a sample...
         </option>
         {Object.entries(SAMPLE_DOCUMENTS).map(([key, sample]) => (
-          <option key={key} value={key} title={sample.description}>
+          <option key={key} value={key}>
             {sample.name}
           </option>
         ))}
