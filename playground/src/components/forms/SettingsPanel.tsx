@@ -46,7 +46,7 @@ export function SettingsPanel({
               }
             }}
           >
-            <option disabled value="custom">
+            <option value="custom" disabled>
               Custom
             </option>
             <option value={40}>40</option>
@@ -92,7 +92,9 @@ export function SettingsPanel({
               }));
             }}
           >
-            <option disabled>Custom</option>
+            <option value="custom" disabled>
+              Custom
+            </option>
             <option value={2}>2</option>
             <option value={4}>4</option>
             <option value={8}>8</option>

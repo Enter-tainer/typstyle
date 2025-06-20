@@ -22,7 +22,7 @@ export const initMonaco = async () => {
     },
   ]);
 
-  // Register Typst language
+  // Register Typst language (doesn't need sync)
   registerTypstLanguage(monaco);
 };
 

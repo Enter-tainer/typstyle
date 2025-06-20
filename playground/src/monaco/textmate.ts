@@ -1,5 +1,6 @@
 // Generic TextMate integration utilities for Monaco Editor
 // Based on: https://github.com/janpoem/react-monaco/blob/main/packages/plugin-textmate/src/monaco-editor-textmate
+// Logic remain unchanged.
 
 import { INITIAL, type Registry } from "vscode-textmate";
 import type { monaco } from "./types";
