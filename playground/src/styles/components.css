@@ -1,3 +1,7 @@
+.navbar {
+  @apply transition-colors duration-300 ease-out;
+}
+
 .panel {
   @apply bg-base-100 border-base-300 text-base-content
          shadow-lg relative overflow-hidden

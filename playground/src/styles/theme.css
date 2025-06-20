@@ -43,7 +43,6 @@
   prefersdark: false;
   color-scheme: "dark";
 
-  /* Dark theme colors using koishi palette */
   --color-base-100: oklch(25% 0.02 290); /* Dark purple background */
   --color-base-200: oklch(30% 0.03 290); /* Slightly lighter for cards */
   --color-base-300: oklch(35% 0.04 290); /* Even lighter for borders */
