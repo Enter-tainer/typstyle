@@ -48,6 +48,7 @@ export function SampleDocumentSelector({
         value={selectedSample}
         onChange={handleSampleChange}
         className="select w-48"
+        aria-label="Select a sample Typst document"
       >
         <option value="" disabled>
           Select a sample...

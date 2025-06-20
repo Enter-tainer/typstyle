@@ -1,10 +1,4 @@
-import {
-  Children,
-  isValidElement,
-  type ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { Children, isValidElement, type ReactNode, useState } from "react";
 
 export interface TabItem {
   key: string;
@@ -20,7 +14,6 @@ export interface TabProps {
 
 export interface TabsProps {
   children?: ReactNode;
-  activeTab?: string;
   onTabChange?: (tabId: string) => void;
   defaultActiveTab?: string;
   className?: string;
@@ -36,8 +29,7 @@ export function Tab({ children }: TabProps) {
 
 export function Tabs({
   children,
-  activeTab: externalActiveTab,
-  onTabChange: externalOnTabChange,
+  onTabChange,
   defaultActiveTab,
   className = "",
   tabClassName = "",
@@ -59,31 +51,16 @@ export function Tabs({
     : [];
 
   // Internal state management
-  const [internalActiveTab, setInternalActiveTab] = useState<string>(
+  const [activeTab, setActiveTab] = useState<string>(
     defaultActiveTab || tabs[0]?.key || "",
   );
 
-  // Determine if we're using external or internal state management
-  const isControlled = externalActiveTab !== undefined;
-  const activeTab = isControlled ? externalActiveTab : internalActiveTab;
-
   // Handle tab changes
   const handleTabChange = (tabId: string) => {
-    if (isControlled) {
-      // External state management
-      externalOnTabChange?.(tabId);
-    } else {
-      // Internal state management
-      setInternalActiveTab(tabId);
-    }
+    setActiveTab(tabId);
+    // Emit the tab change event
+    onTabChange?.(tabId);
   };
-
-  // Sync internal state with external prop changes (for controlled mode)
-  useEffect(() => {
-    if (isControlled && externalActiveTab) {
-      setInternalActiveTab(externalActiveTab);
-    }
-  }, [externalActiveTab, isControlled]);
 
   const activeTabContent = tabs.find((tab) => tab.key === activeTab)?.content;
 

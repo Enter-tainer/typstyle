@@ -1,14 +1,15 @@
-import type React from "react";
+import type { ReactNode } from "react";
 import type { ScreenSizeType } from "@/types";
 import { Tab, Tabs } from "./ui";
 
 interface MainLayoutProps {
   screenSize: ScreenSizeType;
-  optionsPanel: React.ReactNode;
-  sourcePanel: React.ReactNode;
-  formattedPanel: React.ReactNode;
-  astPanel: React.ReactNode;
-  irPanel: React.ReactNode;
+  optionsPanel: ReactNode;
+  sourcePanel: ReactNode;
+  formattedPanel: ReactNode;
+  astPanel: ReactNode;
+  irPanel: ReactNode;
+  onActiveTabChange?: (activeTab: string) => void;
 }
 
 export function MainLayout({
@@ -18,6 +19,7 @@ export function MainLayout({
   formattedPanel,
   astPanel,
   irPanel,
+  onActiveTabChange,
 }: MainLayoutProps) {
   return (
     <div className="flex overflow-hidden min-h-0 h-full p-2 gap-2">
@@ -39,6 +41,7 @@ export function MainLayout({
                 className="bg-base-300"
                 tabClassName="font-semibold flex-1"
                 contentClassName="bg-base-100 border-base-300"
+                onTabChange={(tabId) => onActiveTabChange?.(tabId)}
               >
                 <Tab tid="formatted" label="Formatted">
                   {formattedPanel}
@@ -64,6 +67,7 @@ export function MainLayout({
               className="bg-base-300"
               tabClassName="font-semibold flex-1"
               contentClassName="bg-base-100 border-base-300"
+              onTabChange={(tabId) => onActiveTabChange?.(tabId)}
             >
               <Tab tid="options" label="Settings">
                 {optionsPanel}

@@ -3,7 +3,9 @@ import type { FormatOptions } from "./types";
 // Sample Typst documents for testing
 export const SAMPLE_DOCUMENTS: {
   [key: string]: { name: string; filePath: URL };
-} = {} as const;
+} = {
+  // TODO: add samples
+} as const;
 
 // Type for sample document keys
 export type SampleDocumentKey = keyof typeof SAMPLE_DOCUMENTS;

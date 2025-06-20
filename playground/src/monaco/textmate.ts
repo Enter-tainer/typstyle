@@ -28,7 +28,6 @@ class TokenizerState implements monaco.languages.IState {
     if (
       !other ||
       !(other instanceof TokenizerState) ||
-      other !== this ||
       other._ruleStack !== this._ruleStack
     ) {
       return false;

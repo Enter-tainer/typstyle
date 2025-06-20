@@ -6,19 +6,18 @@ import { Header } from "./components/Header";
 import { MainLayout } from "./components/MainLayout";
 import { DEFAULT_FORMAT_OPTIONS } from "./constants";
 import { useInitialSample, useScreenSize, useTypstFormatter } from "./hooks";
+import type { OutputType } from "./types";
 
 function Playground() {
   const [sourceCode, setSourceCode] = useState("");
   // Load initial sample document
   useInitialSample({ setSourceCode });
   const [formatOptions, setFormatOptions] = useState(DEFAULT_FORMAT_OPTIONS);
+  const [activeOutput, setActiveOutput] = useState<OutputType>("formatted");
 
   // Custom hooks
   const screenSize = useScreenSize();
-  const { formattedCode, astOutput, irOutput, error } = useTypstFormatter(
-    sourceCode,
-    formatOptions,
-  );
+  const formatter = useTypstFormatter(sourceCode, formatOptions, activeOutput);
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
       setSourceCode(value);
@@ -27,6 +26,13 @@ function Playground() {
 
   const handleSampleSelect = (content: string) => {
     setSourceCode(content);
+  };
+
+  const handleActiveTabChange = (tabId: string) => {
+    // Only update activeOutput if the tab is an output type
+    if (tabId === "formatted" || tabId === "ast" || tabId === "ir") {
+      setActiveOutput(tabId);
+    }
   };
 
   const optionsPanel = (
@@ -46,7 +52,7 @@ function Playground() {
   const formattedPanel = (
     <OutputEditor
       key="output-formatted"
-      content={formattedCode}
+      content={formatter.formattedCode}
       language="typst"
       indentSize={formatOptions.indentSize}
       lineLengthGuide={formatOptions.maxLineLength}
@@ -55,7 +61,7 @@ function Playground() {
   const astPanel = (
     <OutputEditor
       key="output-ast"
-      content={astOutput}
+      content={formatter.astOutput}
       language="json"
       indentSize={4}
     />
@@ -63,7 +69,7 @@ function Playground() {
   const irPanel = (
     <OutputEditor
       key="output-ir"
-      content={irOutput}
+      content={formatter.irOutput}
       language="python"
       indentSize={4}
     />
@@ -80,10 +86,11 @@ function Playground() {
         formattedPanel={formattedPanel}
         astPanel={astPanel}
         irPanel={irPanel}
+        onActiveTabChange={handleActiveTabChange}
       />
 
       {/* Global floating error card */}
-      <FloatingErrorCard error={error} />
+      <FloatingErrorCard error={formatter.error} />
     </div>
   );
 }

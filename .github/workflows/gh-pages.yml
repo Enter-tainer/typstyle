@@ -24,6 +24,8 @@ jobs:
   build-gh-pages:
     name: Build Docs & Playground and Prepare Artifact
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       # 1. Checkout and Setup
       - uses: actions/checkout@v4
