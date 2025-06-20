@@ -25,10 +25,12 @@ jobs:
     name: Build Docs & Playground and Prepare Artifact
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout and Setup
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Setup Rust
+
+      - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           target: wasm32-unknown-unknown
@@ -36,26 +38,31 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: just,wasm-pack
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+
+      # 2. Node.js and pnpm setup
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
           run_install: false
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: 'pnpm'
+          cache-dependency-path: 'playground/pnpm-lock.yaml'
 
-      - uses: Swatinem/rust-cache@v2
+      # 3. Build documentation
       - name: Download & install shiroa
         run: |
           curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Myriad-Dreamin/shiroa/releases/download/v0.3.1-rc2/shiroa-installer.sh | sh
       - name: Build Book
         run: just build-docs-gh
 
+      # 4. Build playground
       - name: Build playground
         working-directory: playground
         run: |
@@ -64,6 +71,7 @@ jobs:
           # Assumes vite.config.ts has base: '/<repo>/playground/'
           pnpm build
 
+      # 5. Prepare deployment
       - name: Assemble deployment artifact
         run: |
           mkdir -p github-pages
