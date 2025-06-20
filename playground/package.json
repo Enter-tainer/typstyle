@@ -25,9 +25,9 @@
     "build": "tsc -b && vite build",
     "dev:wasm": "wasm-pack build ../crates/typstyle-wasm --dev --out-dir ../../playground/typstyle-wasm",
     "build:wasm": "wasm-pack build ../crates/typstyle-wasm --out-dir ../../playground/typstyle-wasm",
-    "lint": "bunx @biomejs/biome lint ./src",
-    "format": "bunx @biomejs/biome format --write ./src",
-    "check": "bunx @biomejs/biome check --write ./src",
+    "lint": "npx @biomejs/biome lint ./src",
+    "format": "npx @biomejs/biome format --write ./src",
+    "check": "npx @biomejs/biome check --write ./src",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -41,6 +41,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
     "@tailwindcss/vite": "^4.1.10",
+    "@types/node": "^24.0.3",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",

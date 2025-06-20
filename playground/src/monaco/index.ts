@@ -1,6 +1,6 @@
 // Generic Monaco utilities
 
-import loader from "@monaco-editor/loader";
+import { loader } from "@monaco-editor/react";
 import type { Monaco } from "./types";
 
 export { setupLanguage } from "./language-registry";

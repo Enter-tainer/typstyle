@@ -37,8 +37,18 @@ jobs:
         with:
           tool: just,wasm-pack
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
       - uses: Swatinem/rust-cache@v2
       - name: Download & install shiroa
         run: |
@@ -49,10 +59,10 @@ jobs:
       - name: Build playground
         working-directory: playground
         run: |
-          bun build:wasm
-          bun install
+          pnpm build:wasm
+          pnpm install
           # Assumes vite.config.ts has base: '/<repo>/playground/'
-          bun run build --outDir dist
+          pnpm build
 
       - name: Assemble deployment artifact
         run: |
