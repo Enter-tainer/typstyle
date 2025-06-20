@@ -1,0 +1,56 @@
+{
+  "name": "typstyle-playground",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Interactive playground for the Typstyle formatter for Typst documents",
+  "type": "module",
+  "homepage": "https://github.com/enter-tainer/typstyle",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enter-tainer/typstyle.git",
+    "directory": "playground"
+  },
+  "keywords": [
+    "typst",
+    "formatter",
+    "playground",
+    "editor",
+    "typescript",
+    "react"
+  ],
+  "author": "Typstyle Contributors",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "dev:wasm": "wasm-pack build ../crates/typstyle-wasm --dev --out-dir ../../playground/typstyle-wasm",
+    "build:wasm": "wasm-pack build ../crates/typstyle-wasm --out-dir ../../playground/typstyle-wasm",
+    "lint": "npx @biomejs/biome lint ./src",
+    "format": "npx @biomejs/biome format --write ./src",
+    "check": "npx @biomejs/biome check --write ./src",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "typstyle-wasm": "file:typstyle-wasm",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "@types/node": "^24.0.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.2",
+    "daisyui": "^5.0.43",
+    "monaco-editor": "^0.52.2",
+    "tailwindcss": "^4.1.10",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-top-level-await": "^1.5.0",
+    "vite-plugin-wasm": "^3.4.1"
+  }
+}

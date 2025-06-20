@@ -1,0 +1,78 @@
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+
+  --color-base-100: oklch(98% 0.031 120.757);
+  --color-base-200: oklch(96% 0.067 122.328);
+  --color-base-300: oklch(93% 0.127 124.321);
+  --color-base-content: oklch(45% 0.124 130.933);
+  --color-primary: oklch(80% 0.114 19.571);
+  --color-primary-content: oklch(25% 0.092 26.042);
+  --color-secondary: oklch(81% 0.111 293.571);
+  --color-secondary-content: oklch(28% 0.141 291.089);
+  --color-accent: oklch(80% 0.105 251.813);
+  --color-accent-content: oklch(28% 0.091 267.935);
+  --color-neutral: oklch(43% 0.095 166.913);
+  --color-neutral-content: oklch(97% 0.021 166.113);
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(76% 0.177 163.223);
+  --color-success-content: oklch(26% 0.051 172.552);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(28% 0.066 53.813);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.1875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 1;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: false;
+  color-scheme: "dark";
+
+  --color-base-100: oklch(25% 0.02 290); /* Dark purple background */
+  --color-base-200: oklch(30% 0.03 290); /* Slightly lighter for cards */
+  --color-base-300: oklch(35% 0.04 290); /* Even lighter for borders */
+  --color-base-content: oklch(80% 0.06 320); /* Light purple text */
+  --color-primary: oklch(65% 0.08 320); /* Soft pale pink-purple primary */
+  --color-primary-content: oklch(25% 0.04 320); /* Dark purple text */
+
+  --color-secondary: oklch(75% 0.08 140); /* Light green secondary */
+  --color-secondary-content: oklch(25% 0.06 140);
+  --color-accent: oklch(70% 0.2 340); /* Bright magenta-pink accent for titles */
+  --color-accent-content: oklch(15% 0.05 340); /* Dark text on magenta background */
+
+  --color-neutral: oklch(45% 0.211 324.591);
+  --color-neutral-content: oklch(96% 0.02 290);
+
+  --color-info: oklch(70% 0.16 220);
+  --color-info-content: oklch(25% 0.08 220);
+  --color-success: oklch(75% 0.08 140);
+  --color-success-content: oklch(25% 0.06 140);
+  --color-warning: oklch(80% 0.15 60);
+  --color-warning-content: oklch(25% 0.08 60);
+  --color-error: oklch(70% 0.18 20);
+  --color-error-content: oklch(95% 0.02 20);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.1875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 1;
+}
