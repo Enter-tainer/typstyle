@@ -2,9 +2,11 @@
 
 import * as oniguruma from "vscode-oniguruma";
 import * as vsctm from "vscode-textmate";
-import { CDN_URLS } from "./constants";
 import { wireTmGrammar } from "./textmate";
 import type { LanguageConfiguration, Monaco } from "./types";
+
+const ONIG_WASM_CDN =
+  "https://cdn.jsdelivr.net/npm/vscode-oniguruma/release/onig.wasm";
 
 export type GrammarLoader = (
   scopeName: string,
@@ -26,7 +28,7 @@ const createOnigurumaLib = async () => {
 
   onigurumaLibPromise = (async () => {
     try {
-      const response = await fetch(new URL(CDN_URLS.ONIGURUMA_WASM));
+      const response = await fetch(ONIG_WASM_CDN);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch oniguruma WASM: ${response.status}`);

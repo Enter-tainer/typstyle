@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { SAMPLE_DOCUMENTS, type SampleDocumentKey } from "../../constants";
-import {
-  getFallbackContent,
-  getSampleFileContent,
-} from "../../utils/sample-loader";
+import { SAMPLE_DOCUMENTS } from "@/constants";
+import { loadSample } from "@/utils/sample-loader";
 
 interface SampleDocumentSelectorProps {
   onSampleSelect: (content: string) => void;
@@ -12,28 +9,25 @@ interface SampleDocumentSelectorProps {
 export function SampleDocumentSelector({
   onSampleSelect,
 }: SampleDocumentSelectorProps) {
-  const [selectedSample, setSelectedSample] = useState<SampleDocumentKey | "">(
-    "",
-  );
+  const [selectedSample, setSelectedSample] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
-  const loadSampleDocument = async (sampleKey: SampleDocumentKey) => {
+  const loadSampleDocument = async (sampleKey: string) => {
     setError(null);
-    try {
-      const content = await getSampleFileContent(sampleKey);
-      onSampleSelect(content);
-      setSelectedSample(sampleKey);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      console.error("Error loading sample document:", err);
-      setError(errorMessage);
-      const fallback = getFallbackContent(sampleKey, errorMessage);
-      onSampleSelect(fallback);
-    }
+
+    await loadSample(sampleKey, {
+      onSuccess: (content) => {
+        onSampleSelect(content);
+        setSelectedSample(sampleKey);
+      },
+      onError: (errorMessage) => {
+        setError(errorMessage);
+      },
+    });
   };
 
   const handleSampleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value as SampleDocumentKey | "";
+    const value = e.target.value;
     if (value && value in SAMPLE_DOCUMENTS) {
       loadSampleDocument(value);
     } else {
@@ -73,7 +67,7 @@ export function SampleDocumentSelector({
         🗑️
       </button>
 
-      {/* Error message moved here, to the right of the button */}
+      {/* Error message */}
       {error && (
         <div
           role="alert"

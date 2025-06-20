@@ -55,10 +55,8 @@ export function Tabs({
     defaultActiveTab || tabs[0]?.key || "",
   );
 
-  // Handle tab changes
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
-    // Emit the tab change event
     onTabChange?.(tabId);
   };
 

@@ -1,13 +1,8 @@
 import { useLayoutEffect, useState } from "react";
 import type { ScreenSizeType } from "@/types";
 
-// Constants for breakpoints (could be moved to constants/index.ts)
-const BREAKPOINTS = {
-  WIDE: 960,
-} as const;
-
 function getScreenSize(width: number): ScreenSizeType {
-  if (width >= BREAKPOINTS.WIDE) return "wide";
+  if (width >= 960) return "wide";
   return "thin";
 }
 

@@ -1,8 +1,11 @@
-import { SAMPLE_DOCUMENTS, type SampleDocumentKey } from "@/constants";
+import { SAMPLE_DOCUMENTS } from "@/constants";
 
-export const fetchSampleDocument = async (
-  filePath: URL | string,
-): Promise<string> => {
+interface LoadSampleOptions {
+  onSuccess: (content: string) => void;
+  onError?: (error: string) => void;
+}
+
+const fetchSampleDocument = async (filePath: URL | string): Promise<string> => {
   const response = await fetch(filePath);
   if (!response.ok) {
     throw new Error(
@@ -12,9 +15,7 @@ export const fetchSampleDocument = async (
   return response.text();
 };
 
-export const getSampleFileContent = async (
-  sampleKey: SampleDocumentKey,
-): Promise<string> => {
+const getSampleFileContent = async (sampleKey: string): Promise<string> => {
   const sample = SAMPLE_DOCUMENTS[sampleKey];
   if (!sample) {
     throw new Error(`Sample with key "${sampleKey}" not found.`);
@@ -22,15 +23,13 @@ export const getSampleFileContent = async (
   return fetchSampleDocument(sample.filePath);
 };
 
-export const getFallbackContent = (
-  sampleKey: SampleDocumentKey | null,
+const getFallbackContent = (
+  sampleKey: string,
   error: Error | string,
 ): string => {
   const errorMessage = error instanceof Error ? error.message : error;
   const sampleName =
-    sampleKey && sampleKey in SAMPLE_DOCUMENTS
-      ? SAMPLE_DOCUMENTS[sampleKey].name
-      : "the requested sample";
+    SAMPLE_DOCUMENTS[sampleKey]?.name ?? "the requested sample";
 
   return `= Sample Document Loading Error
 
@@ -45,4 +44,24 @@ ${Object.values(SAMPLE_DOCUMENTS)
   .join("\n")}
 
 Try refreshing the page or check your internet connection.`;
+};
+
+export const loadSample = async (
+  sampleKey: string,
+  { onSuccess, onError }: LoadSampleOptions,
+): Promise<void> => {
+  try {
+    const content = await getSampleFileContent(sampleKey);
+    onSuccess(content);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error(`Failed to load ${sampleKey} sample:`, error);
+
+    onError?.(errorMessage);
+
+    // Always provide fallback content
+    const fallback = getFallbackContent(sampleKey, error as Error);
+    onSuccess(fallback);
+  }
 };

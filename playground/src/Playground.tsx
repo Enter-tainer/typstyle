@@ -5,13 +5,11 @@ import { SettingsPanel } from "./components/forms/SettingsPanel";
 import { Header } from "./components/Header";
 import { MainLayout } from "./components/MainLayout";
 import { DEFAULT_FORMAT_OPTIONS } from "./constants";
-import { useInitialSample, useScreenSize, useTypstFormatter } from "./hooks";
+import { useScreenSize, useTypstFormatter } from "./hooks";
 import type { OutputType } from "./types";
 
 function Playground() {
   const [sourceCode, setSourceCode] = useState("");
-  // Load initial sample document
-  useInitialSample({ setSourceCode });
   const [formatOptions, setFormatOptions] = useState(DEFAULT_FORMAT_OPTIONS);
   const [activeOutput, setActiveOutput] = useState<OutputType>("formatted");
 

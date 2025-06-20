@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { ThemeType } from "../types";
+import type { ThemeType } from "@/types";
 import { ThemeContext } from "./theme-context";
 
 interface ThemeProviderProps {
@@ -22,11 +22,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   // Apply theme to document root and save to localStorage
   useEffect(() => {
     const root = document.documentElement;
-
-    // Set data-theme attribute instead of class
     root.setAttribute("data-theme", theme);
-
-    // Save preference
     localStorage.setItem("theme", theme);
   }, [theme]);
 

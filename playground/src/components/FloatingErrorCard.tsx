@@ -9,7 +9,7 @@ export interface FloatingErrorCardProps {
 export function FloatingErrorCard({ error }: FloatingErrorCardProps) {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Reset dismissed state and show animation when error changes
+  // Show animation when error changes
   useEffect(() => {
     if (error) {
       // Small delay to ensure animation triggers
@@ -35,10 +35,8 @@ export function FloatingErrorCard({ error }: FloatingErrorCardProps) {
     >
       <div
         className="
-        bg-error/10 backdrop-blur-sm
-        border border-error/20
-        rounded-lg shadow-lg
-        max-w-2xl w-full
+        bg-error/10 backdrop-blur-sm border border-error/20
+        rounded-lg shadow-lg max-w-2xl w-full
       "
       >
         <div className="p-3">

@@ -66,7 +66,6 @@ export function useTypstFormatter(
         }
       }
     } catch (error) {
-      console.error("Formatting error:", error);
       setError(error instanceof Error ? error.message : String(error));
       // Keep previous outputs on error
     }

@@ -7,9 +7,6 @@ export const SAMPLE_DOCUMENTS: {
   // TODO: add samples
 } as const;
 
-// Type for sample document keys
-export type SampleDocumentKey = keyof typeof SAMPLE_DOCUMENTS;
-
 // Default format style options
 export const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   maxLineLength: 80,
