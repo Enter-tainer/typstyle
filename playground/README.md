@@ -1,153 +1,65 @@
 # Typstyle Playground
 
-An interactive playground for the [Typstyle](https://github.com/enter-tainer/typstyle) formatter, built with React, TypeScript, and Vite.
+An interactive web playground for the [Typstyle](https://github.com/enter-tainer/typstyle) formatter for Typst documents.
 
-## 🚀 Features
+Try it at https://enter-tainer.github.io/typstyle/playground
 
-- **Two-Panel Editor**: Source code editor (left) and formatted output viewer (right)
-- **Multiple Output Views**: Switch between formatted code, AST visualization, and Pretty IR views
-- **Real-time Formatting**: Reactive formatting without manual button clicks
-- **Customizable Options**: Configure formatting settings (indent size, line length, etc.)
-- **Professional Editor**: Monaco Editor with custom Typst syntax highlighting
-- **Modern UI**: Clean, responsive interface with light/dark theme support
-- **Frosted Glass Design**: Beautiful modern UI with backdrop blur effects
+## Tech Stack
 
-## 🛠️ Tech Stack
+- **React 19** + **TypeScript** + **Vite**
+- **TailwindCSS 4.x** + **DaisyUI** for styling
+- **Monaco Editor** with custom Typst language support
+- **Typstyle WASM** for client-side formatting
+- **pnpm** for package management
+- **Biome** for linting and formatting
 
-- **Frontend**: React 19 + TypeScript
-- **Build Tool**: Vite 6.x
-- **Package Manager**: Bun
-- **Styling**: TailwindCSS 4.x + SCSS
-- **Code Editor**: Monaco Editor with custom Typst language support
-- **Linting**: ESLint with TypeScript support
+## Prerequisites
 
-## 🏗️ Project Structure
+- **Node.js** 18+
+- **pnpm** for package management
+- **Modern browser** with WebAssembly support
 
-```text
-playground/
-├── public/
-│   ├── favicon.svg              # Custom Typstyle favicon
-│   └── apple-touch-icon.png     # Apple touch icon
-├── src/
-│   ├── App.tsx                  # Main application component
-│   ├── index.scss               # Main stylesheet that imports all modular CSS
-│   ├── main.tsx                 # React app entry point
-│   ├── typst-language.ts        # Monaco Editor Typst language definition
-│   ├── vite-env.d.ts           # Vite environment types
-│   └── styles/                 # Modular SCSS files for better organization
-│       ├── _reset.scss         # CSS reset and base HTML styles
-│       ├── _themes.scss        # CSS custom properties for theming
-│       ├── _base.scss          # Base app styles, header, and layout
-│       ├── _components.scss    # Glass panels, buttons, and UI components
-│       ├── _forms.scss         # Form inputs, checkboxes, and labels
-│       ├── _layouts.scss       # Responsive layout styles (wide/middle/thin)
-│       └── _monaco.scss        # Monaco Editor specific styles
-├── package.json                 # Project dependencies and scripts
-├── tailwind.config.mjs          # TailwindCSS configuration
-├── vite.config.ts              # Vite build configuration
-└── README.md                   # This file
+## Quick Start
+
+```bash
+# Development
+pnpm dev              # Start Vite development server with hot reload
+pnpm preview          # Preview production build locally
+
+# Building
+pnpm build            # TypeScript compilation + Vite production build
+pnpm dev:wasm         # Build Typstyle WASM module in development mode
+pnpm build:wasm       # Build Typstyle WASM module for production
+
+# Code Quality
+pnpm lint             # Run Biome linter to check for issues
+pnpm format           # Auto-format code with Biome
+pnpm check            # Run Biome linter and formatter together
 ```
 
-## 🚦 Getting Started
+## Integration Details
 
-1. **Install dependencies:**
+### WASM Integration
 
-   ```bash
-   bun install
-   ```
+Typstyle is compiled to WebAssembly using `wasm-pack` and loaded directly in the browser for client-side formatting without server dependencies.
 
-2. **Start development server:**
+### TextMate Grammar
 
-   ```bash
-   bun run dev
-   ```
+Typst language support is configured with grammar and language definitions adapted from [Tinymist](https://github.com/Myriad-Dreamin/tinymist), providing syntax highlighting and editor features for Typst documents.
 
-3. **Build for production:**
+Monaco Editor doesn't natively support `.tmLanguage.json` files, so we use `vscode-textmate` (including `vscode-oniguruma`) to convert TextMate grammars into Monaco-acceptable format, enabling rich syntax highlighting and token recognition.
 
-   ```bash
-   bun run build
-   ```
+## Credits
 
-4. **Preview production build:**
+- **Typst Language Support**: TextMate grammar and language configuration from [Tinymist](https://github.com/Myriad-Dreamin/tinymist)
+- **Design Inspiration**: [Ruff Playground](https://play.ruff.rs/) and [Biome Playground](https://biomejs.dev/playground/)
+- **UI Components**: [DaisyUI](https://daisyui.com/) for beautiful Tailwind CSS components
+- **Theme Inspiration**: Color palette inspired by Komeiji Koishi
 
-   ```bash
-   bun run preview
-   ```
+## Contributing
 
-## 🎨 Theme Support
+Contributions welcome! Submit issues and PRs to the main [Typstyle repository](https://github.com/enter-tainer/typstyle).
 
-The playground features a comprehensive theming system:
+## License
 
-- **Light Theme**: Green/mint color palette inspired by Komeiji Koishi
-- **Dark Theme**: Dark blue-teal color palette
-- **CSS Custom Properties**: All theming managed through CSS variables
-- **Automatic Monaco Editor Integration**: Themes automatically applied to code editors
-
-## 🏗️ Architecture & Recent Improvements
-
-### Modular CSS Structure
-
-The project uses a well-organized modular CSS architecture:
-
-- **`src/styles/_reset.scss`**: CSS reset and base HTML element styles
-- **`src/styles/_themes.scss`**: CSS custom properties for theming (light/dark modes)
-- **`src/styles/_base.scss`**: Base application styles, header, and layout foundations
-- **`src/styles/_components.scss`**: Glass panels, buttons, and UI component styles
-- **`src/styles/_forms.scss`**: Form inputs, checkboxes, labels, and form controls
-- **`src/styles/_layouts.scss`**: Responsive layout styles for wide/middle/thin breakpoints
-- **`src/styles/_monaco.scss`**: Monaco Editor specific styling and customizations
-
-### Unified Editor Architecture
-
-The playground now features a unified editor system with a single `UnifiedEditor` component that handles both code editing and output display:
-
-- **Single Source of Truth**: One `UnifiedEditor` component replaces multiple editor implementations
-- **Configuration-Based Behavior**: Editor behavior (readonly, language, features) controlled via props
-- **Consistent Styling**: All editors share the same Monaco Editor options and theming
-- **Reduced Code Duplication**: Eliminated repetitive editor configuration across components
-
-**Editor Configurations by Use Case:**
-
-- **Source Code Editor**: `typst` language, editable, line numbers, folding, word wrap
-- **Formatted Output**: `typst` language, readonly, no line numbers, no folding
-- **AST/IR Output**: `json` language, readonly, no line numbers, folding enabled
-
-### Editor State Management
-
-- **Shared Editor Instances**: Single Monaco Editor instances shared across responsive layouts
-- **State Preservation**: Cursor position, scroll state, and undo history persist across layout changes
-- **Centralized Management**: `EditorManager` component handles editor lifecycle and configuration
-- **Responsive Design**: Seamless editor experience across wide (3-column), middle (2-column), and thin (tabbed) layouts
-
-## 🔧 Format Options
-
-Customize the formatting behavior:
-
-- **Indent Size**: 1-8 spaces (default: 2)
-- **Max Line Length**: 40-200 characters (default: 80)
-- **Insert Final Newline**: Add newline at end of file
-- **Trim Trailing Whitespace**: Remove trailing spaces
-
-## 🚧 Future Enhancements
-
-- [ ] Integrate actual Typstyle WASM module or API
-- [ ] Enhanced Typst syntax highlighting
-- [ ] Real AST and IR parsing
-- [ ] Export functionality for formatted code
-- [ ] File import/export capabilities
-- [ ] Keyboard shortcuts for common actions
-
-## ✅ Recent Improvements
-
-- ✅ **Modular CSS Architecture**: Split monolithic CSS into organized SCSS modules for better maintainability
-- ✅ **Responsive Layout System**: Three responsive breakpoints (wide/middle/thin) with optimized layouts
-- ✅ **Editor State Persistence**: Monaco editors preserve cursor position, scroll state, and undo history across layout changes
-- ✅ **Enhanced Monaco Integration**: Full Monaco Editor integration for all output views with proper syntax highlighting
-
-## 📄 License
-
-This project is licensed under the Apache-2.0 License - see the [LICENSE](../LICENSE) file for details.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request to the main [Typstyle repository](https://github.com/enter-tainer/typstyle).
+Apache-2.0 License - see [LICENSE](../LICENSE) for details.
