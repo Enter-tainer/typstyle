@@ -6,10 +6,10 @@ on:
     tags:
       - "v*"
   pull_request:
-    types: [opened, synchronize]
-    branches:
-      - master
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 env:
   CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
@@ -53,6 +53,8 @@ jobs:
       - run: cargo check --workspace
 
   test:
+    needs: [pre_build]
+    if: needs.pre_build.outputs.should_skip != 'true'
     name: Run tests
     runs-on: ubuntu-latest
     steps:
@@ -99,6 +101,7 @@ jobs:
 
   build:
     needs: [pre_build]
+    if: needs.pre_build.outputs.should_skip != 'true'
     strategy:
       matrix:
         include:
@@ -214,6 +217,7 @@ jobs:
 
   build_alpine:
     needs: [pre_build]
+    if: needs.pre_build.outputs.should_skip != 'true'
     name: build (x86_64-unknown-linux-musl)
     runs-on: ubuntu-latest
     container:
