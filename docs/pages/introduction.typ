@@ -24,6 +24,12 @@ Typstyle automatically formats your Typst source code to ensure consistency and 
 - *Opinionated*: Consistent style with minimal configuration.
 - *Convergent*: Multiple runs produce identical results.
 
+== Try It Online
+
+Try typstyle in your browser: #link("https://enter-tainer.github.io/typstyle/playground")[playground]
+
+The playground integrates the latest version of typstyle. If you encounter formatting issues, please verify them in the playground first before reporting bugs.
+
 == How It Works
 
 Typstyle parses your code into an Abstract Syntax Tree (AST), applies formatting rules based on Philip Wadler's pretty printing algorithms, and outputs clean, consistently formatted code.
