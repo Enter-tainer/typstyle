@@ -1,14 +1,13 @@
 name: Benchmark for PR
 on:
   pull_request_target:
-    branches:
-      - master
     paths:
       - "crates/typstyle-core/**"
+      - ".github/workflows/bench-pr.yml"
   workflow_dispatch:
 
 jobs:
-  pre_build:
+  pre_job:
     permissions:
       actions: write
       contents: read
@@ -20,11 +19,14 @@ jobs:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          cancel_others: true
+          cancel_others: "true"
 
   bench:
     name: Run benches
     runs-on: ubuntu-latest
+    needs: pre_job
+    if: needs.pre_job.outputs.should_skip != 'true'
+    timeout-minutes: 30
     permissions:
       pull-requests: write
     steps:
@@ -53,10 +55,10 @@ jobs:
 
       - name: Compare and comment results
         run: |
-          # 生成比较结果
+          # Generate comparison results
           BENCH_RESULT=$(critcmp --color never base pr)
 
-          # 生成评论内容
+          # Generate comment content
           echo "BENCHMARK_COMMENT<<EOF" >> $GITHUB_ENV
           echo "### 📊 Benchmark Performance Report" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
