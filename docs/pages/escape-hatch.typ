@@ -1,4 +1,5 @@
 #import "./book.typ": *
+#import callout: *
 
 #show: book-page.with(title: "Escape Hatch")
 
@@ -6,16 +7,22 @@
 
 = Escape Hatch
 
-Sometimes you may want to preserve specific formatting that differs from typstyle's default style, or typstyle may not handle certain cases optimally. The escape hatch feature allows you to selectively disable formatting for particular code sections using special comments.
+Typstyle aims to format all code consistently, but occasionally you may need to override its formatting decisions. The escape hatch is a workaround for rare cases where typstyle's output isn't suitable or when working around limitations.
 
-== When to Use the Escape Hatch
+#warning[
+  The escape hatch should be used sparingly. It breaks consistency and may indicate areas where typstyle could be improved. Consider reporting issues instead of relying on escape hatches.
+]
 
-While typstyle handles most Typst code well, there are situations where manual formatting is preferable:
+== When You Might Need This
 
-1. *Intentional alignment and structure* that improves readability
-2. *Complex data structures* where compact formatting is clearer
-3. *Edge cases* where typstyle's formatting doesn't match your intent
-4. *Workarounds* for formatting bugs or limitations
+Escape hatches are intended as a last resort for specific situations:
+
++ *Temporary workarounds* for formatting bugs
++ *Legacy code compatibility* during migration
++ *Rare edge cases* where automatic formatting genuinely harms readability
++ *Unsatisfactory formatting results* that significantly impact code clarity
+
+Most formatting preferences can be achieved by working with typstyle's style rather than against it.
 
 == Basic Usage
 
@@ -84,7 +91,11 @@ $
 
 == Use Cases
 
-When you have carefully aligned data that improves readability:
+#tip[
+  Before using escape hatches, consider if the formatting issue could be solved by restructuring your code to work better with typstyle's conventions.
+]
+
+As a last resort, when you need to work around current limitations:
 
 ```typst
 // @typstyle off

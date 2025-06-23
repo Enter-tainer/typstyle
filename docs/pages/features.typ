@@ -85,4 +85,4 @@ Use `// @typstyle off` to disable formatting for specific code regions:
   There is no closing `// @typstyle on` directive.
 ]
 
-For details, please see #cross-link("/pages/escape-hatch.typ")[Escape Hatch].
+For details, please see #cross-link("/escape-hatch.typ")[Escape Hatch].

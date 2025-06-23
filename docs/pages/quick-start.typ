@@ -146,5 +146,5 @@ typstyle --wrap-text file.typ
 
 == Next Steps
 
-- Learn about #cross-link("/pages/features.typ")[features]
-- See #cross-link("/pages/cli-usage.typ")[detailed CLI usage]
+- Learn about #cross-link("/features.typ")[features]
+- See #cross-link("/cli-usage.typ")[detailed CLI usage]

@@ -102,7 +102,9 @@ Typstyle has been integrated into [tinymist](https://github.com/Myriad-Dreamin/t
 
 ### Use as a web app
 
-Try the online version of the formatter at: <https://enter-tainer.github.io/typstyle/demo/>. You can see how it formats your code.
+Try the playground at: <https://enter-tainer.github.io/typstyle/playground>
+
+The playground integrates the latest version of typstyle. If you encounter formatting issues, please verify them in the playground first before reporting bugs.
 
 ### Use as a Library
 

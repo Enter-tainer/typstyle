@@ -3,7 +3,7 @@
 /* override existing styles, which are defined outside layers */
 
 :root {
-  --content-max-width: 1200px;
+  --content-max-width: 960px;
 }
 
 :root.coal,
