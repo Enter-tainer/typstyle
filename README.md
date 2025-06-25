@@ -3,8 +3,8 @@
 A beautiful and reliable code formatter for [Typst](https://typst.app/).
 
 [![crates.io](https://img.shields.io/crates/v/typstyle)](https://crates.io/crates/typstyle)
-[![docs](https://img.shields.io/badge/docs-latest-blue)](https://enter-tainer.github.io/typstyle/)
-[![CI](https://github.com/Enter-tainer/typstyle/workflows/Test%20and%20Release/badge.svg)](…)
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://typstyle-rs.github.io/typstyle/)
+[![CI](https://github.com/typstyle-rs/typstyle/workflows/Test%20and%20Release/badge.svg)](…)
 [![License](https://img.shields.io/crates/l/typstyle)](LICENSE)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/typstyle.svg)](https://repology.org/project/typstyle/versions)
@@ -17,7 +17,7 @@ A beautiful and reliable code formatter for [Typst](https://typst.app/).
 
 You can install `typstyle` using any of the following methods:
 
-1. Download the binary from the [release page](https://github.com/Enter-tainer/typstyle/releases/).
+1. Download the binary from the [release page](https://github.com/typstyle-rs/typstyle/releases/).
 2. Install it from your package manager: <https://repology.org/project/typstyle/versions>.
    1. Notably, typstyle is available in [Archlinux CN](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/) repo.
 3. Install using [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall):
@@ -102,7 +102,7 @@ Typstyle has been integrated into [tinymist](https://github.com/Myriad-Dreamin/t
 
 ### Use as a web app
 
-Try the playground at: <https://enter-tainer.github.io/typstyle/playground>
+Try the playground at: <https://typstyle-rs.github.io/typstyle/playground>
 
 The playground integrates the latest version of typstyle. If you encounter formatting issues, please verify them in the playground first before reporting bugs.
 
@@ -133,7 +133,7 @@ Typstyle also gives up formatting **part** of the code if it is not able to form
 - contains syntax error
 - contains syntaxes that are not supported by the formatter
 
-And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/Enter-tainer/typstyle)
+And please let us know the issue by creating an issue on the [GitHub repository](https://github.com/typstyle-rs/typstyle)
 
 ### Testing
 
@@ -165,15 +165,15 @@ So I decided to write something from scratch. I started it about half a year ago
 
 ## Documentation
 
-See <https://enter-tainer.github.io/typstyle/>.
+See <https://typstyle-rs.github.io/typstyle/>.
 
 ## Roadmap
 
-See the [tracking issue](https://github.com/Enter-tainer/typstyle/issues/15).
+See the [tracking issue](https://github.com/typstyle-rs/typstyle/issues/15).
 
 ## Known Issues
 
-You tell us! Bad formatting? Incorrect output? Please create an issue on the [GitHub repository](https://github.com/Enter-tainer/typstyle)!
+You tell us! Bad formatting? Incorrect output? Please create an issue on the [GitHub repository](https://github.com/typstyle-rs/typstyle)!
 
 We've set up comprehensive test suites to ensure the correctness of the formatter. If you find any issues, please let us know! And we can add more tests to prevent the issue from happening again.
 
