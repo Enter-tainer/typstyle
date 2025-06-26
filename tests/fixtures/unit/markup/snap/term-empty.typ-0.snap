@@ -1,0 +1,56 @@
+---
+source: tests/src/unit.rs
+input_file: tests/fixtures/unit/markup/term-empty.typ
+---
+#show terms.item: it => [
+  #it
+
+  #repr(
+    it,
+  )
+
+]
+
+/ :
+/ : a
+/ : b
+/ c:
+/ d:
+/
+  :
+/
+
+  :
+/ e
+  :
+#[
+  / :
+]
+#[
+  / :
+]
+#[
+  / : a
+]
+#[
+  / : b
+]
+#[
+  / : c
+]
+#[
+  / : d
+]
+#[
+  /
+    :
+]
+#[
+  /
+
+    :
+]
+#[
+  /
+    :
+]
