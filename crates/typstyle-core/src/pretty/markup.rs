@@ -118,7 +118,10 @@ impl<'a> PrettyPrinter<'a> {
         let mut seen_term = false;
         self.convert_flow_like(ctx, node, |ctx, child, _| match child.kind() {
             SyntaxKind::TermMarker => FlowItem::spaced(self.arena.text(child.text().as_str())),
-            SyntaxKind::Colon => FlowItem::tight_spaced(self.arena.text(child.text().as_str())),
+            SyntaxKind::Colon => {
+                seen_term = true;
+                FlowItem::tight_spaced(self.arena.text(child.text().as_str()))
+            }
             SyntaxKind::Space if child.text().has_linebreak() => {
                 FlowItem::tight(self.arena.hardline())
             }
@@ -128,7 +131,7 @@ impl<'a> PrettyPrinter<'a> {
                     .repeat_n(child.text().count_linebreaks()),
             ),
             SyntaxKind::Markup => {
-                let res = if child.children().next().is_some() {
+                if !seen_term || child.children().next().is_some() {
                     // empty markup is ignored here
                     FlowItem::spaced(self.convert_markup_impl(
                         ctx,
@@ -141,9 +144,7 @@ impl<'a> PrettyPrinter<'a> {
                     ))
                 } else {
                     FlowItem::none()
-                };
-                seen_term = true;
-                res
+                }
             }
             _ => FlowItem::none(),
         })
