@@ -45,7 +45,7 @@ export function useTypstFormatter(
               "Format doesn't converge! " +
                 "This means formatting the output again will result in a different output. " +
                 "This is a bug in the formatter. " +
-                "Please report it to https://github.com/Enter-tainer/typstyle with the input code.",
+                "Please report it to https://github.com/typstyle-rs/typstyle with the input code.",
             );
           } else {
             setError(null);

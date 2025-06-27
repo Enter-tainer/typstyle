@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "description": "Interactive playground for the Typstyle formatter for Typst documents",
   "type": "module",
-  "homepage": "https://github.com/enter-tainer/typstyle",
+  "homepage": "https://github.com/typstyle-rs/typstyle",
   "repository": {
     "type": "git",
-    "url": "https://github.com/enter-tainer/typstyle.git",
+    "url": "https://github.com/typstyle-rs/typstyle.git",
     "directory": "playground"
   },
   "keywords": [

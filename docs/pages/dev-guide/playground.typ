@@ -5,7 +5,7 @@
 
 = Playground Development
 
-The #link("https://enter-tainer.github.io/typstyle/playground")[typstyle playground] is an interactive web application for trying typstyle formatting in the browser.
+The #link("https://typstyle-rs.github.io/typstyle/playground")[typstyle playground] is an interactive web application for trying typstyle formatting in the browser.
 
 == Tech Stack
 

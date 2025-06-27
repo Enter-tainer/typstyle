@@ -10,8 +10,8 @@ edition = "2021"
 authors = ["Wenzhuo Liu"]
 description = "Beautiful and reliable typst code formatter"
 license = "Apache-2.0"
-repository = "https://github.com/Enter-tainer/typstyle"
-homepage = "https://enter-tainer.github.io/typstyle/"
+repository = "https://github.com/typstyle-rs/typstyle"
+homepage = "https://typstyle-rs.github.io/typstyle/"
 
 [workspace.dependencies]
 typstyle-core = { path = "crates/typstyle-core", version = "0.13.11" }

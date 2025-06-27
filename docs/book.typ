@@ -6,8 +6,8 @@
 #book-meta(
   title: "typstyle",
   description: "Typstyle Documentation",
-  repository: "https://github.com/Enter-tainer/typstyle",
-  repository-edit: "https://github.com/Enter-tainer/typstyle/edit/master/docs/pages/{path}",
+  repository: "https://github.com/typstyle-rs/typstyle",
+  repository-edit: "https://github.com/typstyle-rs/typstyle/edit/master/docs/pages/{path}",
   summary: [
     #prefix-chapter("introduction.typ")[Introduction]
     = User Guide
