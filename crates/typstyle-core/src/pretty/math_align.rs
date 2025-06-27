@@ -44,7 +44,7 @@ impl<'a> PrettyPrinter<'a> {
             return None;
         }
 
-        let mut col_widths = vec![0; col_num];
+        let mut col_widths = vec![0; col_num]; // including padding (1 or 2 spaces)
         let mut grid_width = col_num;
 
         // Render each raw row into a Row and set column widths
@@ -125,7 +125,6 @@ impl<'a> PrettyPrinter<'a> {
             }
             sums
         };
-        let grid_width = col_widths_sum.last().unwrap() + num_cols;
 
         enum Alignment {
             Left,
@@ -155,7 +154,7 @@ impl<'a> PrettyPrinter<'a> {
                     };
                     let col_width = col_widths[j];
 
-                    let need_pad_right = !is_last_cell_in_row || needs_backslash;
+                    let need_pad_right = !is_last_cell_in_row;
                     let pad = |cell_doc: ArenaDoc<'a>, width: usize| match alignment {
                         Alignment::Left if !need_pad_right => cell_doc,
                         Alignment::Left => cell_doc + self.arena.spaces(col_width - width),
@@ -216,15 +215,12 @@ impl<'a> PrettyPrinter<'a> {
                 // If row has fewer cells than columns, add trailing spaces
                 // Do not add trailing spaces when no trailing backslash.
                 let is_last_row = i + 1 == num_rows;
-                if num_cells < num_cols && needs_backslash {
-                    let mut padding = grid_width - num_cells - col_widths_sum[num_cells];
-                    if !is_prev_empty {
-                        padding += 1;
-                    }
-                    row_doc += self.arena.spaces(padding);
-                }
                 if needs_backslash {
-                    row_doc += self.arena.text(" \\");
+                    row_doc += self.arena.text(if num_cells == 1 && is_prev_empty {
+                        "\\" // do not add space when this row is empty
+                    } else {
+                        " \\"
+                    });
                 }
                 if !is_last_row {
                     row_doc += self.arena.hardline();

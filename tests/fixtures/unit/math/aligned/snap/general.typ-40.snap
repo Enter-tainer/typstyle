@@ -75,15 +75,15 @@ $
 
 // Varying column counts
 $
-  x & = 1    & = 2 & = 33      \
-  y & = 4444                   \
-  z & = 55   & = 6             \
+  x & = 1    & = 2 & = 33 \
+  y & = 4444 \
+  z & = 55   & = 6 \
   w & =      &     &      && 7
 $
 
 // Mixed equation lengths
 $
-   "Identity 1:" & = a + b             \
+   "Identity 1:" & = a + b \
                  & = c + d & = "final" \
   "Identity 22:" & = x
 $
@@ -99,6 +99,6 @@ $
 // Equations with side conditions
 $
   f(x) & = 2x  & "if" & x > 0 \
-       & = 0                  \
+       & = 0 \
        & = -2x & "if" & x < 0
 $

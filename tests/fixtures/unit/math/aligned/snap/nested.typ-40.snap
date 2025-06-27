@@ -15,7 +15,7 @@ $
                             a, b; & c, d; \
                             & e,
                             f
-                          )          \
+                          ) \
                         & = "result"
 $
 
@@ -52,7 +52,7 @@ $
     x & = alpha &  = beta \
       & = gamma & = delta,
     y & = epsilon \
-      & = zeta    \
+      & = zeta \
       & = eta,
     z & = theta &   = iota \
       & = kappa & = lambda \
@@ -63,7 +63,7 @@ $
 // Cases with mixed content and breaks
 $
   cases(
-    "Case 1:" & = sum x_n     \
+    "Case 1:" & = sum x_n \
               & = product y_n,
     "Case 2: " & = integral_0^1 f(t) \
                & = g(x),

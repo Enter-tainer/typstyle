@@ -6,10 +6,10 @@ input_file: tests/fixtures/unit/math/aligned/commented.typ
 $
   x & = y /* basic comment */ \
     & = z /* another
-          block comment */    \
+          block comment */ \
     & = w /* multi
           line
-          comment */          \
+          comment */ \
 $
 
 // Block comments between alignment markers
@@ -25,7 +25,7 @@ $
 
 // Empty block comments
 $
-  m & = n /**/  \
+  m & = n /**/ \
     & = p /* */ \
     & = q /*    */
 $
@@ -62,7 +62,7 @@ $
     // Middle comment
     z & = w /* Second case */
   ) & = sum x // Right hand side
-                             \
+        \
   // Line comment between rows
     & = product y /* Block
                   comment */ \
@@ -72,7 +72,7 @@ $
 // Mixed Unicode and comments
 $
   α & = β // Greek variables
-                                      \
+        \
     & = γ /* Mixed شرح explanation */ \
     & = θ // 说明
 $
@@ -81,7 +81,7 @@ $
 $
   arrow(
     x & = y // Inside arrow
-            \
+          \
       & = z /* Still inside */
   )
 $
