@@ -5,7 +5,7 @@ input_file: tests/fixtures/unit/math/aligned/unicode.typ
 // Non-ASCII variables and symbols
 $
   α & = β + γ & = δ \
-  ε & = ζ           \
+  ε & = ζ \
   η & = θ     & = ι \
 $
 
@@ -17,7 +17,7 @@ $
 
 // Chinese characters in equations
 $
-  f(零) & = 一 + 二                        \
+  f(零) & = 一 + 二 \
         & = 三            & "满足" & x ∈ ℂ \
         & = "四十四" + 五
 $
@@ -25,7 +25,7 @@ $
 // Japanese and Korean in aligned math
 $
   "関数" f(x) & = ア β & "かつ" & x ≥ 0 \
-              & = イ γ                  \
+              & = イ γ \
   "함수" g(x) & = 값   &   "및" & x ≤ 0
 $
 

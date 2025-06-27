@@ -61,37 +61,37 @@ $
 
 // Merging short related equations
 $
-   f(x) & = x^2 &  g(x) & = 2x &  h(x) & = sqrt(x)      \
+   f(x) & = x^2 &  g(x) & = 2x &  h(x) & = sqrt(x) \
   f'(x) & = 2x  & g'(x) & = 2  & h'(x) & = 1/(2sqrt(x))
 $
 
 // Mixed breaking and alignment patterns
 $
-  "Long equation:" & a + b + c + d                       \
-                   & = (x + y) + (z + w)                 \
-                   & = alpha + beta                      \
+  "Long equation:" & a + b + c + d \
+                   & = (x + y) + (z + w) \
+                   & = alpha + beta \
      "Short ones:" & x                   & = 1 & y & = 2
 $
 
 // Varying column counts
 $
-  x & = 1    & = 2 & = 33      \
-  y & = 4444                   \
-  z & = 55   & = 6             \
+  x & = 1    & = 2 & = 33 \
+  y & = 4444 \
+  z & = 55   & = 6 \
   w & =      &     &      && 7
 $
 
 // Mixed equation lengths
 $
-   "Identity 1:" & = a + b             \
+   "Identity 1:" & = a + b \
                  & = c + d & = "final" \
   "Identity 22:" & = x
 $
 
 // Complex mixed alignment
 $
-  sum x & = y       & text("where") & x in X           \
-        & = z                                          \
+  sum x & = y       & text("where") & x in X \
+        & = z \
         & = w       &         "and" & y in Y & "holds" \
         & = "final"
 $
@@ -99,6 +99,6 @@ $
 // Equations with side conditions
 $
   f(x) & = 2x  & "if" & x > 0 \
-       & = 0                  \
+       & = 0 \
        & = -2x & "if" & x < 0
 $
