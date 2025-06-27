@@ -23,7 +23,7 @@ export function Header({ onSampleSelect }: HeaderProps) {
       <div className="flex-none mr-2">
         {/* GitHub Repo Link */}
         <a
-          href="https://github.com/enter-tainer/typstyle"
+          href="https://github.com/typstyle-rs/typstyle"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-ghost btn-circle"

@@ -10,7 +10,7 @@ Typstyle can be installed and used in multiple ways. Choose the method that best
 
 === Download Binary
 
-The easiest way to get started is to download the pre-built binary from the #link("https://github.com/Enter-tainer/typstyle/releases")[release page].
+The easiest way to get started is to download the pre-built binary from the #link("https://github.com/typstyle-rs/typstyle/releases")[release page].
 
 === Package Managers
 

@@ -26,7 +26,7 @@ Typstyle automatically formats your Typst source code to ensure consistency and 
 
 == Try It Online
 
-Try typstyle in your browser: #link("https://enter-tainer.github.io/typstyle/playground")[playground]
+Try typstyle in your browser: #link("https://typstyle-rs.github.io/typstyle/playground")[playground]
 
 The playground integrates the latest version of typstyle. If you encounter formatting issues, please verify them in the playground first before reporting bugs.
 

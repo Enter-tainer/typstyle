@@ -19,7 +19,7 @@ This guide covers environment setup, building, testing, and documentation for ty
 Clone and build the project:
 
 ```bash
-git clone https://github.com/Enter-tainer/typstyle.git
+git clone https://github.com/typstyle-rs/typstyle.git
 cd typstyle
 cargo build              # Debug build
 cargo build --release    # Release build

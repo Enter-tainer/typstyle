@@ -1,8 +1,8 @@
 # Typstyle Playground
 
-An interactive web playground for the [Typstyle](https://github.com/enter-tainer/typstyle) formatter for Typst documents.
+An interactive web playground for the [Typstyle](https://github.com/typstyle-rs/typstyle) formatter for Typst documents.
 
-Try it at https://enter-tainer.github.io/typstyle/playground
+Try it at https://typstyle-rs.github.io/typstyle/playground
 
 ## Tech Stack
 
@@ -58,7 +58,7 @@ Monaco Editor doesn't natively support `.tmLanguage.json` files, so we use `vsco
 
 ## Contributing
 
-Contributions welcome! Submit issues and PRs to the main [Typstyle repository](https://github.com/enter-tainer/typstyle).
+Contributions welcome! Submit issues and PRs to the main [Typstyle repository](https://github.com/typstyle-rs/typstyle).
 
 ## License
 
