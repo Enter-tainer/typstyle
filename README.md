@@ -113,7 +113,7 @@ The playground integrates the latest version of typstyle. If you encounter forma
 
 ### [3rd party] Use as a GitHub Action
 
-The [typstyle-action](https://github.com/grayespinoza/typstyle-action) maintained by [@grayespinoza](https://github.com/grayespinoza) can install and run typstyle in github action.
+The [typstyle-action](https://github.com/typstyle-rs/typstyle-action) maintained by [@grayespinoza](https://github.com/grayespinoza) can install and run typstyle in a GitHub Action.
 
 ## Features & Design
 
