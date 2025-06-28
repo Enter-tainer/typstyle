@@ -111,7 +111,7 @@ The playground integrates the latest version of typstyle. If you encounter forma
 - **NPM**: <https://www.npmjs.com/package/typstyle-core>
 - **Rust**: <https://crates.io/crates/typstyle-core>
 
-### [3rd party] Use as a GitHub Action
+ ### Use as a GitHub Action
 
 The [typstyle-action](https://github.com/typstyle-rs/typstyle-action) maintained by [@grayespinoza](https://github.com/grayespinoza) can install and run typstyle in a GitHub Action.
 
